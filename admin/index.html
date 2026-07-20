@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
+<title>{{ADMIN_SEO_TITLE}}</title>
+<meta name="description" content="{{ADMIN_META_DESCRIPTION}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;100,800;125,900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/template.css">
+<script src="../client.config.js"></script>
+<script src="../assets/tracking.js"></script>
+</head>
+<body data-template-page>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../hot-tubs/">Hot Tubs</a><a href="../swim-spas/">Swim Spas</a><a href="../saunas/">Saunas</a><a href="../inventory.html">Inventory</a><a href="../financing.html">Financing</a><a href="../contact.html">Contact</a>
+    </nav>
+    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a><a class="btn btn-gold" href="../inventory.html">Shop Inventory</a></div>
+    <button class="mobile-menu" aria-label="Open menu">☰</button>
+  </div>
+</header>
+<main class="admin-shell"><aside class="admin-sidebar"><h1 style="font-family:var(--display)">{{CLIENT_NAME}} Admin</h1><p>{{ADMIN_SIDEBAR_COPY}}</p><nav class="grid" style="margin-top:20px"><a href="#products">Products</a><a href="#uploads">Images</a><a href="#settings">Settings</a></nav></aside><section class="admin-main"><div class="section-head"><span class="kicker">Inventory CRUD</span><h2>{{ADMIN_HEADLINE}}</h2><p class="lead">{{ADMIN_SUBHEAD}}</p></div><div class="grid grid-3"><div class="admin-stat"><h3>{{ADMIN_STAT_PRODUCTS}}</h3><p>D1 products table</p></div><div class="admin-stat"><h3>{{ADMIN_STAT_IMAGES}}</h3><p>R2 image bucket</p></div><div class="admin-stat"><h3>{{ADMIN_STAT_LEADS}}</h3><p>GHL + Sheets routing</p></div></div><section class="section" id="products"><div class="table-wrap"><table data-admin-source="/api/admin/products"><thead><tr><th>Product</th><th>Status</th><th>Price</th><th>Monthly</th><th>Tags</th><th>Actions</th></tr></thead><tbody><tr><td>{{PRODUCT_NAME}}</td><td><span class="status available">{{PRODUCT_STATUS}}</span></td><td>{{PRODUCT_PRICE}}</td><td>{{PRODUCT_MONTHLY_PAYMENT}}</td><td>{{PRODUCT_GHL_TAGS}}</td><td>Edit · Hide · Delete</td></tr></tbody></table></div></section><section class="section" id="uploads"><div class="form-card"><h3>{{ADMIN_UPLOAD_TITLE}}</h3><form class="form-grid"><input type="file" name="image"><input name="alt" placeholder="Image alt text"><button class="btn btn-gold" type="button">Upload To R2</button></form></div></section></section></main><footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p>{{CLIENT_MARKET}} dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured.</p></div>
+    <div><h4>Shop</h4><p><a href="../hot-tubs/">Hot Tubs</a><br><a href="../swim-spas/">Swim Spas</a><br><a href="../saunas/">Saunas</a></p></div>
+    <div><h4>Company</h4><p><a href="../financing.html">Financing</a><br><a href="../contact.html">Contact</a><br><a href="../admin/">Admin</a></p></div>
+    <div><h4>Contact</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
+  </div>
+</footer>
+<script src="../assets/template.js"></script>
+<script src="../assets/traffic-attribution.js"></script>
+<script src="../assets/view-content.js"></script>
+<script src="../assets/lead-form.js"></script>
+</body>
+</html>

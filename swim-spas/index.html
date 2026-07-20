@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
+<title>{{SWIM_SPAS_SEO_TITLE}}</title>
+<meta name="description" content="{{CATEGORY_META_DESCRIPTION}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;100,800;125,900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/template.css">
+<script src="../client.config.js"></script>
+<script src="../assets/tracking.js"></script>
+</head>
+<body data-template-page>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../hot-tubs/">Hot Tubs</a><a href="../swim-spas/">Swim Spas</a><a href="../saunas/">Saunas</a><a href="../inventory.html">Inventory</a><a href="../financing.html">Financing</a><a href="../contact.html">Contact</a>
+    </nav>
+    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a><a class="btn btn-gold" href="../inventory.html">Shop Inventory</a></div>
+    <button class="mobile-menu" aria-label="Open menu">☰</button>
+  </div>
+</header>
+<main>
+<section class="hero"><div class="hero-inner"><div><h1>{{SWIM_SPAS_HERO_HEADLINE}}</h1><p>{{SWIM_SPAS_HERO_SUBHEAD}}</p><div class="hero-actions"><a class="btn btn-gold" href="#category-products">{{CATEGORY_PRIMARY_CTA}}</a><button class="btn btn-outline" data-open-lead data-product="{{SWIM_SPAS_CATEGORY_INTEREST}}">{{CATEGORY_SECONDARY_CTA}}</button></div></div><div class="hero-card"><div class="media-frame"><img src="{{SWIM_SPAS_HERO_IMAGE}}" alt="{{SWIM_SPAS_HERO_IMAGE_ALT}}"></div></div></div></section>
+<section class="section" id="category-products"><div class="wrap section-head"><span class="kicker">Available Now</span><h2>{{SWIM_SPAS_GRID_HEADLINE}}</h2><p class="lead">{{SWIM_SPAS_GRID_COPY}}</p></div><div class="wrap product-grid" data-inventory-source="/api/inventory?category=swim-spa"><article class="product-card" data-product-card data-source="D1_PRODUCTS">
+  <div class="availability-bar">{{PRODUCT_STATUS_LABEL}}</div>
+  <div class="product-image"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" loading="lazy"><span class="sale-badge">{{PRODUCT_PROMO_LABEL}}</span></div>
+  <div class="product-body">
+    <h3>{{PRODUCT_NAME}}</h3>
+    <div class="facts"><span>{{PRODUCT_FACT_1}}</span><span>{{PRODUCT_FACT_2}}</span><span>{{PRODUCT_FACT_3}}</span></div>
+    <p>{{PRODUCT_CARD_SUMMARY}}</p>
+    <div class="price"><span>From</span><b>{{PRODUCT_PRICE}}</b><span>{{PRODUCT_MONTHLY_PAYMENT}} with approved credit</span></div>
+    <div class="product-actions"><button class="btn btn-red" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><a class="btn btn-outline" href="{{PRODUCT_DETAIL_URL}}">View Details</a></div>
+  </div>
+</article><article class="product-card" data-product-card data-source="D1_PRODUCTS">
+  <div class="availability-bar">{{PRODUCT_STATUS_LABEL}}</div>
+  <div class="product-image"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" loading="lazy"><span class="sale-badge">{{PRODUCT_PROMO_LABEL}}</span></div>
+  <div class="product-body">
+    <h3>{{PRODUCT_NAME}}</h3>
+    <div class="facts"><span>{{PRODUCT_FACT_1}}</span><span>{{PRODUCT_FACT_2}}</span><span>{{PRODUCT_FACT_3}}</span></div>
+    <p>{{PRODUCT_CARD_SUMMARY}}</p>
+    <div class="price"><span>From</span><b>{{PRODUCT_PRICE}}</b><span>{{PRODUCT_MONTHLY_PAYMENT}} with approved credit</span></div>
+    <div class="product-actions"><button class="btn btn-red" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><a class="btn btn-outline" href="{{PRODUCT_DETAIL_URL}}">View Details</a></div>
+  </div>
+</article><article class="product-card" data-product-card data-source="D1_PRODUCTS">
+  <div class="availability-bar">{{PRODUCT_STATUS_LABEL}}</div>
+  <div class="product-image"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" loading="lazy"><span class="sale-badge">{{PRODUCT_PROMO_LABEL}}</span></div>
+  <div class="product-body">
+    <h3>{{PRODUCT_NAME}}</h3>
+    <div class="facts"><span>{{PRODUCT_FACT_1}}</span><span>{{PRODUCT_FACT_2}}</span><span>{{PRODUCT_FACT_3}}</span></div>
+    <p>{{PRODUCT_CARD_SUMMARY}}</p>
+    <div class="price"><span>From</span><b>{{PRODUCT_PRICE}}</b><span>{{PRODUCT_MONTHLY_PAYMENT}} with approved credit</span></div>
+    <div class="product-actions"><button class="btn btn-red" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><a class="btn btn-outline" href="{{PRODUCT_DETAIL_URL}}">View Details</a></div>
+  </div>
+</article></div></section>
+<section class="section alt"><div class="wrap grid grid-3"><div class="panel"><h3>{{SWIM_SPAS_BENEFIT_1_TITLE}}</h3><p>{{SWIM_SPAS_BENEFIT_1_COPY}}</p></div><div class="panel"><h3>{{SWIM_SPAS_BENEFIT_2_TITLE}}</h3><p>{{SWIM_SPAS_BENEFIT_2_COPY}}</p></div><div class="panel"><h3>{{SWIM_SPAS_BENEFIT_3_TITLE}}</h3><p>{{SWIM_SPAS_BENEFIT_3_COPY}}</p></div></div></section>
+<aside class="form-card" data-lead-panel hidden aria-label="Lead form drawer">
+  <button class="btn btn-outline" data-close-lead type="button">Close</button>
+  <h3>Get today's local price</h3>
+  <form class="form-grid" data-template-form action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
+    <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
+    <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME}}">
+    <input name="full_name" autocomplete="name" placeholder="Full name" required>
+    <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
+    <input name="email" autocomplete="email" placeholder="Email">
+    <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
+    <button class="btn btn-gold" type="submit">Send My Price</button>
+    <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
+    <p class="fine-print" data-template-result></p>
+  </form>
+</aside>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p>{{CLIENT_MARKET}} dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured.</p></div>
+    <div><h4>Shop</h4><p><a href="../hot-tubs/">Hot Tubs</a><br><a href="../swim-spas/">Swim Spas</a><br><a href="../saunas/">Saunas</a></p></div>
+    <div><h4>Company</h4><p><a href="../financing.html">Financing</a><br><a href="../contact.html">Contact</a><br><a href="../admin/">Admin</a></p></div>
+    <div><h4>Contact</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
+  </div>
+</footer>
+<script src="../assets/template.js"></script>
+<script src="../assets/traffic-attribution.js"></script>
+<script src="../assets/view-content.js"></script>
+<script src="../assets/lead-form.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "hot-tub-dealer-site-template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "brand:guard": "node scripts/check-template-guard.mjs",
+    "build:config": "node scripts/build-config.mjs",
+    "db:init:local": "wrangler d1 execute DB --local --file=functions/db/schema.sql",
+    "db:init:remote": "wrangler d1 execute DB --remote --file=functions/db/schema.sql",
+    "deploy": "npm run brand:guard && npm run build:config && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch main",
+    "preview:deploy": "npm run brand:guard && npm run build:config && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch preview"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}

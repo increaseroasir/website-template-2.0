@@ -1,0 +1,35 @@
+name = "{{CLOUDFLARE_PAGES_PROJECT}}"
+compatibility_date = "2026-07-20"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "{{D1_DATABASE_NAME}}"
+database_id = "{{D1_DATABASE_ID}}"
+
+[[r2_buckets]]
+binding = "PRODUCT_IMAGES"
+bucket_name = "{{R2_BUCKET_NAME}}"
+
+[vars]
+ALLOWED_ORIGIN = "{{ALLOWED_ORIGIN}}"
+CLIENT_NAME = "{{CLIENT_NAME}}"
+CLIENT_WEBSITE_URL = "{{CLIENT_WEBSITE_URL}}"
+CLIENT_PHONE = "{{CLIENT_PHONE}}"
+CLIENT_PHONE_E164 = "{{CLIENT_PHONE_E164}}"
+LEAD_VALUE = "{{LEAD_VALUE|950}}"
+LEAD_CURRENCY = "USD"
+
+# Secrets set per client with wrangler pages secret put:
+# GHL_API_TOKEN
+# GHL_LOCATION_ID
+# GOOGLE_SHEETS_ID
+# GOOGLE_SERVICE_ACCOUNT_EMAIL
+# GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+# META_CAPI_ACCESS_TOKEN
+# META_PIXEL_ID
+# TURNSTILE_SECRET_KEY
+# ADMIN_PASSWORD
+# ADMIN_SESSION_SECRET
+# ALERT_EMAIL
+# RESEND_API_KEY (optional)
