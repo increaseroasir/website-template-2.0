@@ -11,6 +11,7 @@ This checklist is the launch gate for every client website built from this templ
 - [ ] Run `npm run build:config`.
 - [ ] Run `npm run placeholder:check`.
 - [ ] Run `npm run launch:check` locally before production deploy. If a live preview exists, run `LAUNCH_CHECK_URL=https://preview-url.example npm run launch:check`.
+- [ ] Run `LAUNCH_CHECK_URL=https://preview-url.example ADMIN_PASSWORD=<client-admin-password> npm run admin:smoke`.
 - [ ] Confirm `client.config.js` contains the correct client values.
 - [ ] Confirm `wrangler.toml` contains the correct Cloudflare Pages project, D1 database, R2 bucket, and allowed origin.
 
@@ -70,6 +71,7 @@ Submit one controlled test lead with a real deliverable phone/email controlled b
 - [ ] GHL contact has correct source tag: `src-meta`, `src-organic`, or `src-inbound-call`.
 - [ ] GHL contact has correct campaign tag.
 - [ ] GHL contact has correct product/intent tags when submitted from inventory or product pages.
+- [ ] Product-specific tags come from the D1 product record, not only from hidden form fields.
 - [ ] GHL contact has required custom field values.
 - [ ] Run `npm run ghl:fields:check` with the client's GHL credentials. If fields are missing and the user approved creation, run `npm run ghl:fields:create`.
 - [ ] Duplicate lead behavior works for repeat submissions.
@@ -101,6 +103,7 @@ Submit one controlled test lead with a real deliverable phone/email controlled b
 - [ ] Category filters return expected data.
 - [ ] Product detail page loads from a product slug.
 - [ ] Product cards render from `/api/inventory`, not static placeholder product data.
+- [ ] `npm run admin:smoke` passes against the preview URL.
 - [ ] Product lead form includes product name, slug, category, status, and tags.
 - [ ] `/admin` login works with `ADMIN_PASSWORD`.
 - [ ] Admin can create a product.

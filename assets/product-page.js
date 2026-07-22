@@ -14,6 +14,18 @@
     return Number(value || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   }
 
+  function safeImageUrl(value) {
+    var url = clean(value);
+    if (!url) return '';
+    if (url.charAt(0) === '/') return url;
+    try {
+      var parsed = new URL(url);
+      return parsed.protocol === 'https:' ? parsed.toString() : '';
+    } catch (err) {
+      return '';
+    }
+  }
+
   function statusConfig(product) {
     var map = window.ActiveInventoryAvailabilityStatus || {};
     return map[(product && (product.inventoryStatus || product.status)) || 'available'] || map.available || {};
@@ -56,7 +68,7 @@
     setText('main > .section:last-of-type h2', product.inventory_name + ' Details');
     setText('main > .section:last-of-type .lead', product.delivery_promise || 'Contact the store for current details.');
     if (image && product.primary_image) {
-      image.src = product.primary_image;
+      image.src = safeImageUrl(product.primary_image) || image.src;
       image.alt = product.inventory_name;
     }
     document.querySelectorAll('[data-open-lead]').forEach(function (button) {

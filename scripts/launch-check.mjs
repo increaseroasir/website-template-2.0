@@ -140,6 +140,7 @@ const liveUrlArg = process.argv.find((arg) => arg.startsWith('--url='));
 const liveUrl = liveUrlArg ? liveUrlArg.slice('--url='.length) : process.env.LAUNCH_CHECK_URL;
 if (liveUrl) {
   await checkUrl(liveUrl);
+  run('node', ['scripts/admin-inventory-smoke.mjs', '--url=' + liveUrl]);
 } else {
   warn('No --url or LAUNCH_CHECK_URL provided, so live route/API checks were skipped.');
 }

@@ -7,12 +7,21 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const category = url.searchParams.get('category');
   const slug = url.searchParams.get('slug');
+  const status = url.searchParams.get('status');
   const featured = url.searchParams.get('featured') === '1';
   const allowed = ['available', 'pending', 'sold'];
   let query = 'SELECT * FROM products WHERE status IN (?,?,?)';
   const params = allowed.slice();
   if (slug) { query += ' AND slug = ?'; params.push(slug); }
   if (category) { query += ' AND category = ?'; params.push(category); }
+  if (status && status !== 'public') {
+    if (!allowed.includes(status)) return jsonResponse({ ok: false, error: 'Invalid public inventory status.' }, 400, env, request);
+    query = 'SELECT * FROM products WHERE status = ?';
+    params.length = 0;
+    params.push(status);
+    if (slug) { query += ' AND slug = ?'; params.push(slug); }
+    if (category) { query += ' AND category = ?'; params.push(category); }
+  }
   if (featured) query += ' AND featured = 1';
   query += ' ORDER BY sort_order ASC, inventory_name ASC';
   const result = await env.DB.prepare(query).bind(...params).all();

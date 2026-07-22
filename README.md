@@ -43,6 +43,7 @@ Use these commands in the generated client repo before any production handoff:
 
 - `npm run placeholder:check` — fails if unresolved `{{TOKEN}}` values remain in deployable files.
 - `npm run launch:check` — runs fulfillment artifact validation, brand guard, required config checks, placeholder scan, and optional live URL/API checks with `LAUNCH_CHECK_URL`.
+- `npm run admin:smoke` — checks live inventory JSON, product page routing, `/admin` login, admin product JSON, and optional create/hide/delete with `ADMIN_SMOKE_MUTATE=1`.
 - `npm run ghl:fields:check` — verifies required GHL custom fields exist.
 - `npm run ghl:fields:create` — creates missing GHL custom fields after approval.
 - `npm run ga4:funnel` — writes a GA4 funnel JSON report from the client property.

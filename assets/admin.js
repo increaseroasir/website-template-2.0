@@ -30,6 +30,7 @@
       "'": '&#39;'
     })[char]);
   }
+  const escapeAttr = escapeHtml;
 
   function renderShell() {
     app.innerHTML = `
@@ -53,8 +54,8 @@
           <div class="form-card">
             <h3 data-form-title>Add Product</h3>
             <form class="form-grid" data-product-form>
-              <input name="inventory_name" placeholder="Product name" required>
-              <input name="slug" placeholder="slug-auto-or-custom">
+              <input name="inventory_name" placeholder="Product name" maxlength="140" required>
+              <input name="slug" placeholder="slug-auto-or-custom" maxlength="90" pattern="[a-z0-9-]*">
               <select name="category" required>
                 <option value="hot-tub">Hot Tubs</option>
                 <option value="swim-spa">Swim Spas</option>
@@ -67,15 +68,15 @@
                 <option value="sold">Sold</option>
                 <option value="hidden">Hidden</option>
               </select>
-              <input name="price" type="number" placeholder="Price">
-              <input name="monthly_payment" type="number" placeholder="Monthly payment">
-              <input name="quantity" type="number" placeholder="Quantity">
-              <input name="primary_image" placeholder="Primary image URL">
-              <input name="promo_label" placeholder="Badge / promo label">
-              <input name="delivery_promise" placeholder="Delivery promise">
-              <textarea name="quick_facts" placeholder="Quick facts, one per line"></textarea>
-              <textarea name="ghl_tags" placeholder="GHL tags, one per line"></textarea>
-              <input name="sort_order" type="number" placeholder="Sort order">
+              <input name="price" type="number" min="0" max="999999" placeholder="Price">
+              <input name="monthly_payment" type="number" min="0" max="99999" placeholder="Monthly payment">
+              <input name="quantity" type="number" min="0" max="999" placeholder="Quantity">
+              <input name="primary_image" placeholder="Primary image URL" inputmode="url">
+              <input name="promo_label" placeholder="Badge / promo label" maxlength="80">
+              <input name="delivery_promise" placeholder="Delivery promise" maxlength="220">
+              <textarea name="quick_facts" placeholder="Quick facts, one per line. Max 8 facts."></textarea>
+              <textarea name="ghl_tags" placeholder="GHL tags, one per line. Max 30 tags."></textarea>
+              <input name="sort_order" type="number" min="-9999" max="9999" placeholder="Sort order">
               <label><input name="featured" type="checkbox"> Featured</label>
               <button class="btn btn-gold" type="submit">Save Product</button>
               <button class="btn btn-outline" type="button" data-clear-form>Clear</button>
@@ -85,7 +86,7 @@
           <div class="form-card">
             <h3>Upload Image</h3>
             <form class="form-grid" data-upload-form>
-              <input type="file" name="image" accept="image/*" required>
+              <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" required>
               <button class="btn btn-gold" type="submit">Upload To R2</button>
               <input name="uploaded_url" placeholder="Uploaded URL appears here" readonly>
               <p class="fine-print" data-upload-result></p>
@@ -149,9 +150,9 @@
         <td>${product.monthly_payment ? money(product.monthly_payment) : '-'}</td>
         <td>${(product.ghl_tags || []).slice(0, 3).map(escapeHtml).join('<br>')}</td>
         <td>
-          <button type="button" class="btn btn-outline" data-edit="${product.slug}">Edit</button>
-          <button type="button" class="btn btn-outline" data-hide="${product.slug}">Hide</button>
-          <button type="button" class="btn btn-red" data-delete="${product.slug}">Delete</button>
+          <button type="button" class="btn btn-outline" data-edit="${escapeAttr(product.slug)}">Edit</button>
+          <button type="button" class="btn btn-outline" data-hide="${escapeAttr(product.slug)}">Hide</button>
+          <button type="button" class="btn btn-red" data-delete="${escapeAttr(product.slug)}">Delete</button>
         </td>
       </tr>`).join('');
   }
@@ -199,7 +200,9 @@
     document.querySelector('[data-product-form]').addEventListener('submit', async event => {
       event.preventDefault();
       const result = document.querySelector('[data-product-result]');
+      const submit = event.currentTarget.querySelector('[type="submit"]');
       try {
+        submit.disabled = true;
         await api('', { method: 'POST', headers: headers(), body: JSON.stringify(currentProductFormPayload(event.currentTarget)) });
         result.textContent = 'Saved.';
         event.currentTarget.reset();
@@ -207,6 +210,8 @@
         await loadProducts();
       } catch (error) {
         result.textContent = error.message;
+      } finally {
+        submit.disabled = false;
       }
     });
 
@@ -214,7 +219,9 @@
       event.preventDefault();
       const result = document.querySelector('[data-upload-result]');
       const data = new FormData(event.currentTarget);
+      const submit = event.currentTarget.querySelector('[type="submit"]');
       try {
+        submit.disabled = true;
         const res = await fetch('/api/admin?action=upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token() }, body: data });
         const payload = await res.json();
         if (!res.ok || !payload.ok) throw new Error(payload.error || 'Upload failed');
@@ -224,6 +231,8 @@
         result.textContent = 'Uploaded.';
       } catch (error) {
         result.textContent = error.message;
+      } finally {
+        submit.disabled = false;
       }
     });
 
@@ -232,13 +241,17 @@
       const hideSlug = event.target.getAttribute('data-hide');
       const deleteSlug = event.target.getAttribute('data-delete');
       if (editSlug) fillForm(products.find(product => product.slug === editSlug));
-      if (hideSlug) {
-        await api('', { method: 'PATCH', headers: headers(), body: JSON.stringify({ slug: hideSlug, status: 'hidden' }) });
-        await loadProducts();
-      }
-      if (deleteSlug && confirm('Mark this product deleted?')) {
-        await api('?slug=' + encodeURIComponent(deleteSlug), { method: 'DELETE', headers: { Authorization: 'Bearer ' + token() } });
-        await loadProducts();
+      try {
+        if (hideSlug) {
+          await api('', { method: 'PATCH', headers: headers(), body: JSON.stringify({ slug: hideSlug, status: 'hidden' }) });
+          await loadProducts();
+        }
+        if (deleteSlug && confirm('Mark this product deleted?')) {
+          await api('?slug=' + encodeURIComponent(deleteSlug), { method: 'DELETE', headers: { Authorization: 'Bearer ' + token() } });
+          await loadProducts();
+        }
+      } catch (error) {
+        alert(error.message);
       }
       if (event.target.matches('[data-clear-form]')) {
         document.querySelector('[data-product-form]').reset();

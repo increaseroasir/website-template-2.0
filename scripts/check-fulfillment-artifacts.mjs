@@ -7,6 +7,7 @@ const requiredFiles = [
   'docs/manus-fulfillment-skills.md',
   'scripts/launch-check.mjs',
   'scripts/scan-placeholders.mjs',
+  'scripts/admin-inventory-smoke.mjs',
   'scripts/verify-ghl-fields.mjs'
 ];
 
@@ -83,6 +84,7 @@ const requiredChecklistPhrases = [
   'D1',
   'R2',
   'launch:check',
+  'admin:smoke',
   'placeholder:check',
   'Zero-Defect Exit Rule'
 ];

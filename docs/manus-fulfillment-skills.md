@@ -169,6 +169,7 @@ Use `tracking.manifest.json` as the source of truth. At minimum verify:
 - Verify required tags exist or can be applied.
 - Verify Google Sheets Lead Vault write access.
 - Submit a controlled test lead.
+- Confirm product-page test leads are enriched from the D1 product record before GHL upsert.
 - Confirm the lead path:
   - Website form
   - `/api/lead`
@@ -223,6 +224,7 @@ Verify:
 - Confirm `/admin` login works.
 - Confirm product create/edit/hide/delete flows.
 - Confirm image upload writes to R2 and produces a public URL.
+- Run `npm run admin:smoke` against the preview URL with `ADMIN_PASSWORD`; run with `ADMIN_SMOKE_MUTATE=1` when authorized to create a hidden smoke product and mark it deleted.
 
 ### Output
 
@@ -246,6 +248,7 @@ Verify:
 
 - Run every required line in `verification.checklist.md`.
 - Run `npm run launch:check` against local config and again with `LAUNCH_CHECK_URL` after preview deploy.
+- Run `npm run admin:smoke` after preview deploy.
 - Run `npm run ga4:funnel` after test events have had time to appear in GA4.
 - Produce a pass/fail report with evidence.
 - Block production launch if any zero-defect item fails.

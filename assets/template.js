@@ -6,6 +6,25 @@
   const clean = value => String(value || '').replace(/\{\{[^}]+\}\}/g, '').trim();
   const productUrl = product => '/active-inventory/' + encodeURIComponent(product.slug || '') + '/';
   const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640"%3E%3Crect width="960" height="640" fill="%23071a40"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23d7b56d" font-family="Arial" font-size="42" font-weight="700"%3EInventory Photo%3C/text%3E%3C/svg%3E';
+  const escapeHtml = value => clean(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char]);
+  const escapeAttr = escapeHtml;
+  const safeImageUrl = value => {
+    const url = clean(value);
+    if (!url) return fallbackImage;
+    if (url.startsWith('/') || url.startsWith('data:image/')) return url;
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'https:' ? parsed.toString() : fallbackImage;
+    } catch (err) {
+      return fallbackImage;
+    }
+  };
 
   function applyBrandVar(key, cssVar) {
     const value = get(key);
@@ -96,14 +115,14 @@
     article.className = 'product-card';
     article.setAttribute('data-product-card', '');
     article.innerHTML = [
-      '<div class="availability-bar">' + clean(product.status || 'available').toUpperCase() + '</div>',
-      '<div class="product-image"><img src="' + clean(product.primary_image || fallbackImage) + '" alt="' + clean(product.inventory_name || 'Inventory product') + '" loading="lazy"><span class="sale-badge">' + clean(product.promo_label || 'Available') + '</span></div>',
+      '<div class="availability-bar">' + escapeHtml(product.status || 'available').toUpperCase() + '</div>',
+      '<div class="product-image"><img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(product.inventory_name || 'Inventory product') + '" loading="lazy"><span class="sale-badge">' + escapeHtml(product.promo_label || 'Available') + '</span></div>',
       '<div class="product-body">',
-      '<h3>' + clean(product.inventory_name || 'Inventory Product') + '</h3>',
-      '<div class="facts">' + facts.slice(0, 3).map(fact => '<span>' + clean(fact) + '</span>').join('') + '</div>',
-      '<p>' + clean(product.delivery_promise || 'Ask for current local availability and delivery timing.') + '</p>',
+      '<h3>' + escapeHtml(product.inventory_name || 'Inventory Product') + '</h3>',
+      '<div class="facts">' + facts.slice(0, 3).map(fact => '<span>' + escapeHtml(fact) + '</span>').join('') + '</div>',
+      '<p>' + escapeHtml(product.delivery_promise || 'Ask for current local availability and delivery timing.') + '</p>',
       '<div class="price"><span>From</span><b>' + money(product.price) + '</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : 'Ask for payment options') + '</span></div>',
-      '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + clean(product.inventory_name) + '">Get Today&apos;s Price</button><a class="btn btn-outline" href="' + productUrl(product) + '">View Details</a></div>',
+      '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + escapeAttr(product.inventory_name) + '">Get Today&apos;s Price</button><a class="btn btn-outline" href="' + escapeAttr(productUrl(product)) + '">View Details</a></div>',
       '</div>'
     ].join('');
     const leadButton = article.querySelector('[data-open-lead]');

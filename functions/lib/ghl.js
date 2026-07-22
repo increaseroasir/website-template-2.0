@@ -13,6 +13,7 @@ function tagsForLead(env, lead) {
   if (lead.productSlug || (lead.productPageUrl || lead.pageUrl || '').includes('/active-inventory/')) tags.push('productlead');
   if (lead.modelInterestTag) tags.push(lead.modelInterestTag);
   if (lead.inventoryStatusTag) tags.push(lead.inventoryStatusTag);
+  if (Array.isArray(lead.productGhlTags)) tags = tags.concat(lead.productGhlTags);
   if (lead.campaign) tags.push('Campaign - ' + lead.campaign);
   if (lead.formIntent) tags.push('Intent - ' + lead.formIntent);
   return uniqueTags(tags);
