@@ -92,6 +92,7 @@ Ask only for missing required values:
 - Create R2 bucket and bind it as `PRODUCT_IMAGES`.
 - Apply `functions/db/schema.sql` to D1.
 - Set required Cloudflare variables and secrets.
+- Run `npm run placeholder:check` and block if unresolved deploy tokens remain.
 - Deploy preview branch only.
 
 ### Stop Conditions
@@ -164,6 +165,7 @@ Use `tracking.manifest.json` as the source of truth. At minimum verify:
 
 - Verify GHL connection.
 - Verify or create required custom fields from the manifest.
+- Run `npm run ghl:fields:check`; if approved, run `npm run ghl:fields:create` to create missing fields.
 - Verify required tags exist or can be applied.
 - Verify Google Sheets Lead Vault write access.
 - Submit a controlled test lead.
@@ -243,6 +245,8 @@ Verify:
 ### Responsibilities
 
 - Run every required line in `verification.checklist.md`.
+- Run `npm run launch:check` against local config and again with `LAUNCH_CHECK_URL` after preview deploy.
+- Run `npm run ga4:funnel` after test events have had time to appear in GA4.
 - Produce a pass/fail report with evidence.
 - Block production launch if any zero-defect item fails.
 - Deploy production only after verification passes.

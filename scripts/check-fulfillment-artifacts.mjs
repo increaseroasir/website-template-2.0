@@ -4,7 +4,10 @@ const requiredFiles = [
   'client.fulfillment.schema.json',
   'tracking.manifest.json',
   'verification.checklist.md',
-  'docs/manus-fulfillment-skills.md'
+  'docs/manus-fulfillment-skills.md',
+  'scripts/launch-check.mjs',
+  'scripts/scan-placeholders.mjs',
+  'scripts/verify-ghl-fields.mjs'
 ];
 
 const missing = requiredFiles.filter((file) => !existsSync(file));
@@ -79,6 +82,8 @@ const requiredChecklistPhrases = [
   'Microsoft Clarity',
   'D1',
   'R2',
+  'launch:check',
+  'placeholder:check',
   'Zero-Defect Exit Rule'
 ];
 

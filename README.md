@@ -37,6 +37,19 @@ This repo includes the durable files Manus should use to fulfill new client webs
 
 Run `npm run fulfillment:check` to verify these fulfillment artifacts exist and parse correctly.
 
+## Launch Automation
+
+Use these commands in the generated client repo before any production handoff:
+
+- `npm run placeholder:check` — fails if unresolved `{{TOKEN}}` values remain in deployable files.
+- `npm run launch:check` — runs fulfillment artifact validation, brand guard, required config checks, placeholder scan, and optional live URL/API checks with `LAUNCH_CHECK_URL`.
+- `npm run ghl:fields:check` — verifies required GHL custom fields exist.
+- `npm run ghl:fields:create` — creates missing GHL custom fields after approval.
+- `npm run ga4:funnel` — writes a GA4 funnel JSON report from the client property.
+- `npm run leads:reimport-missed` — reimports failed rows from the `Missed Leads` sheet into GHL.
+
+`npm run deploy` now runs the launch gate before Cloudflare Pages production deploy.
+
 ## No-Hardcoding Rule
 
 Client-specific values stay in `client.config.js` or build-time tokens: dealer name, address, phone, market, offers, tracking IDs, GHL tags, inventory records, product images, CRM custom fields, and API secrets.
