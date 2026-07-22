@@ -4,6 +4,25 @@
   if (!app) return;
 
   let products = [];
+  const demoMode = new URLSearchParams(location.search).get('demo') === '1' && /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(location.hostname);
+  const demoProducts = [
+    {
+      inventory_name: 'Luxury 6-Seat Lounger',
+      slug: 'luxury-6-seat-lounger',
+      category: 'hot-tub',
+      status: 'available',
+      price: 8995,
+      monthly_payment: 99,
+      quantity: 1,
+      primary_image: '',
+      promo_label: 'Available Now',
+      delivery_promise: 'Local delivery window available this week.',
+      quick_facts: ['6 seats', 'Lounger seat', 'LED package'],
+      ghl_tags: ['Model Interest - Luxury 6-Seat Lounger'],
+      sort_order: 1,
+      featured: true
+    }
+  ];
 
   function token() {
     return sessionStorage.getItem(tokenKey) || '';
@@ -42,6 +61,7 @@
       <section class="section" data-admin-login>
         <div class="form-card">
           <h3>Admin Login</h3>
+          ${demoMode ? '<p class="fine-print"><b>Demo mode:</b> use password <b>demo</b>.</p>' : ''}
           <form class="form-grid" data-login-form>
             <input type="password" name="password" placeholder="Admin password" autocomplete="current-password" required>
             <button class="btn btn-gold" type="submit">Log In</button>
@@ -123,10 +143,35 @@
   }
 
   async function api(path, options = {}) {
+    if (demoMode) return demoApi(path, options);
     const res = await fetch('/api/admin' + path, options);
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.ok === false) throw new Error(data.error || 'Request failed');
     return data;
+  }
+
+  async function demoApi(path, options = {}) {
+    await new Promise(resolve => setTimeout(resolve, 80));
+    const method = (options.method || 'GET').toUpperCase();
+    if (path.includes('action=login')) return { ok: true, token: 'demo-admin-token' };
+    if (!products.length) products = demoProducts.slice();
+    if (method === 'PATCH') {
+      const body = JSON.parse(options.body || '{}');
+      products = products.map(product => product.slug === body.slug ? { ...product, status: body.status } : product);
+      return { ok: true };
+    }
+    if (method === 'DELETE') {
+      const slug = new URLSearchParams(path.split('?')[1] || '').get('slug');
+      products = products.filter(product => product.slug !== slug);
+      return { ok: true };
+    }
+    if (method === 'POST') {
+      const body = JSON.parse(options.body || '{}');
+      const saved = { ...body, slug: body.slug || body.inventory_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') };
+      products = [saved].concat(products.filter(product => product.slug !== saved.slug));
+      return { ok: true, product: saved };
+    }
+    return { ok: true, products };
   }
 
   async function loadProducts() {
@@ -183,6 +228,7 @@
       event.preventDefault();
       const result = document.querySelector('[data-login-result]');
       try {
+        if (demoMode && event.currentTarget.password.value !== 'demo') throw new Error('Use password: demo');
         const data = await api('?action=login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -222,9 +268,14 @@
       const submit = event.currentTarget.querySelector('[type="submit"]');
       try {
         submit.disabled = true;
-        const res = await fetch('/api/admin?action=upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token() }, body: data });
-        const payload = await res.json();
-        if (!res.ok || !payload.ok) throw new Error(payload.error || 'Upload failed');
+        let payload;
+        if (demoMode) {
+          payload = { ok: true, url: 'https://example.com/demo-product-image.webp' };
+        } else {
+          const res = await fetch('/api/admin?action=upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token() }, body: data });
+          payload = await res.json();
+          if (!res.ok || !payload.ok) throw new Error(payload.error || 'Upload failed');
+        }
         event.currentTarget.uploaded_url.value = payload.url;
         const imageField = document.querySelector('[data-product-form] [name="primary_image"]');
         if (imageField && !imageField.value) imageField.value = payload.url;

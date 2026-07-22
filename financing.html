@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;100,800;125,900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/template.css">
-<script src="client.config.js"></script>
-<script src="assets/tracking.js"></script>
+<link rel="stylesheet" href="/assets/template.css">
+<script src="/client.config.js"></script>
+<script src="/assets/tracking.js"></script>
 </head>
-<body data-template-page>
+<body data-template-page data-lead-source="financing-survey" data-lead-campaign="{{CAMPAIGN_NAME|Financing Survey}}">
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href="/" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
@@ -24,22 +24,87 @@
     <button class="mobile-menu" aria-label="Open menu">☰</button>
   </div>
 </header>
-<main><section class="hero"><div class="hero-inner"><div><h1>{{FINANCING_HEADLINE}}</h1><p>{{FINANCING_SUBHEAD}}</p><div class="hero-actions"><button class="btn btn-gold" data-open-lead data-product="Financing Request">{{FINANCING_PRIMARY_CTA}}</button><a class="btn btn-outline" href="/inventory.html">Shop Inventory</a></div></div><div class="form-card"><h3>{{PAYMENT_CALCULATOR_TITLE}}</h3><form class="form-grid"><input name="budget" placeholder="Target monthly payment"><input name="down_payment" placeholder="Down payment"><select><option>{{CREDIT_RANGE_OPTION_1}}</option><option>{{CREDIT_RANGE_OPTION_2}}</option></select><button class="btn btn-blue" type="button">{{CALCULATOR_CTA}}</button></form></div></div></section><section class="section"><div class="wrap grid grid-3"><div class="panel"><h3>{{FINANCING_STEP_1_TITLE}}</h3><p>{{FINANCING_STEP_1_COPY}}</p></div><div class="panel"><h3>{{FINANCING_STEP_2_TITLE}}</h3><p>{{FINANCING_STEP_2_COPY}}</p></div><div class="panel"><h3>{{FINANCING_STEP_3_TITLE}}</h3><p>{{FINANCING_STEP_3_COPY}}</p></div></div></section><aside class="form-card" data-lead-panel hidden aria-label="Lead form drawer">
-  <button class="btn btn-outline" data-close-lead type="button">Close</button>
-  <h3>Get today's local price</h3>
-  <form class="form-grid" data-template-form action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
-    <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
-    <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME}}">
-    <input name="full_name" autocomplete="name" placeholder="Full name" required>
-    <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
-    <input name="email" autocomplete="email" placeholder="Email">
-    <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
-    <button class="btn btn-gold" type="submit">Send My Price</button>
-    <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
-    <p class="fine-print" data-template-result></p>
-  </form>
-</aside>
-</main><footer class="site-footer">
+
+<main class="financing-survey-page">
+  <section class="financing-survey-hero">
+    <div class="wrap financing-survey-wrap">
+      <div class="financing-survey-card" data-financing-survey>
+        <div class="financing-survey-progress" aria-hidden="true"><span data-survey-progress></span></div>
+        <p class="kicker">Financing Check</p>
+        <h1>{{FINANCING_HEADLINE|See Your Financing Options}}</h1>
+        <p class="lead" data-survey-subhead>Answer 3 quick questions. Takes under a minute.</p>
+
+        <div data-survey-step="1">
+          <h2 class="financing-q">What are you shopping for?</h2>
+          <div class="financing-answers">
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Hot Tub">Hot Tub</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Swim Spa">Swim Spa</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Sauna">Sauna</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Not sure yet">Not sure yet</button>
+          </div>
+        </div>
+
+        <div data-survey-step="2" hidden>
+          <h2 class="financing-q">What monthly payment are you aiming for?</h2>
+          <div class="financing-answers">
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="Under $100/mo">Under $100/mo</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="$100–$200/mo">$100–$200/mo</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="$200+/mo">$200+/mo</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="Not sure">Not sure</button>
+          </div>
+          <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
+        </div>
+
+        <div data-survey-step="3" hidden>
+          <h2 class="financing-q">When do you want to move forward?</h2>
+          <div class="financing-answers">
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="As soon as possible">As soon as possible</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="This month">This month</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="Next 1–3 months">Next 1–3 months</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="Just researching">Just researching</button>
+          </div>
+          <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
+        </div>
+
+        <div data-survey-step="4" hidden>
+          <h2 class="financing-q">Where should we send your financing options?</h2>
+          <p class="financing-note">Someone from our team will call or text soon to discuss financing options.</p>
+          <form class="form-grid" data-template-form data-lead-success="inline" action="/api/lead" method="post">
+            <input type="hidden" name="product_name" value="Financing Request" data-survey-product>
+            <input type="hidden" name="product_interest" value="Financing Request" data-survey-product-interest>
+            <input type="hidden" name="financing_interest" value="" data-survey-payment>
+            <input type="hidden" name="form_intent" value="Check financing">
+            <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME|Financing Survey}}">
+            <input type="hidden" name="lead_source" value="financing-survey">
+            <input type="hidden" name="message" value="" data-survey-message>
+            <input name="website_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+            <input name="full_name" autocomplete="name" placeholder="Full name" required>
+            <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
+            <input name="email" autocomplete="email" placeholder="Email">
+            <button class="btn btn-gold" type="submit">Get My Financing Options</button>
+            <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about financing options. Message/data rates may apply.}}</p>
+            <p class="fine-print" data-template-result></p>
+          </form>
+          <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
+        </div>
+
+        <div data-survey-step="done" hidden>
+          <div class="financing-done">
+            <p class="kicker">Request Received</p>
+            <h2>You're all set.</h2>
+            <p>Someone will call or text you soon to discuss our financing options.</p>
+            <div class="financing-done-actions">
+              <a class="btn btn-gold" href="/inventory.html">Browse Inventory</a>
+              <a class="btn btn-outline" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}">Call Us Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
   <div class="wrap footer-grid">
     <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p>{{CLIENT_MARKET}} dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured.</p></div>
     <div><h4>Shop</h4><p><a href="/hot-tubs/">Hot Tubs</a><br><a href="/swim-spas/">Swim Spas</a><br><a href="/saunas/">Saunas</a></p></div>
@@ -47,6 +112,11 @@
     <div><h4>Contact</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
   </div>
 </footer>
+
 <script src="/assets/template.js"></script>
+<script src="/assets/traffic-attribution.js"></script>
+<script src="/assets/call-tracking.js"></script>
+<script src="/assets/lead-form.js"></script>
+<script src="/assets/financing-survey.js"></script>
 </body>
 </html>
