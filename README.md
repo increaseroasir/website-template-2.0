@@ -26,6 +26,17 @@ API routes are Cloudflare Functions, not HTML pages:
 - `/api/inventory` returns public D1 products as JSON.
 - `/api/admin` handles authenticated inventory management and image upload.
 
+## Manus Fulfillment Artifacts
+
+This repo includes the durable files Manus should use to fulfill new client websites:
+
+- `client.fulfillment.schema.json` — the required client intake shape. Manus should create a `client.fulfillment.json` per client and validate it against this schema before provisioning.
+- `tracking.manifest.json` — the canonical browser, server, CRM, Sheets, and attribution event contract for every client website.
+- `verification.checklist.md` — the zero-defect launch gate. A client site is not launched until every required line passes or is explicitly documented as blocked.
+- `docs/manus-fulfillment-skills.md` — the operating instructions for Manus skills: orchestrator, intake, provisioning, tracking, GHL/Sheets, inventory/admin, verification, and handoff.
+
+Run `npm run fulfillment:check` to verify these fulfillment artifacts exist and parse correctly.
+
 ## No-Hardcoding Rule
 
 Client-specific values stay in `client.config.js` or build-time tokens: dealer name, address, phone, market, offers, tracking IDs, GHL tags, inventory records, product images, CRM custom fields, and API secrets.

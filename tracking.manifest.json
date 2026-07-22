@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "system": "increase-roas-hot-tub-dealer-site-template",
+  "purpose": "Canonical event, attribution, CRM, and operational metric contract for every fulfilled dealer website.",
+  "identity": {
+    "browserServerDedupeKey": "meta_event_id",
+    "leadSubmissionKey": "submission_id",
+    "primaryLeadValueEnv": "LEAD_VALUE",
+    "primaryLeadCurrencyEnv": "LEAD_CURRENCY"
+  },
+  "requiredDestinations": [
+    "ga4",
+    "meta_pixel",
+    "meta_capi",
+    "microsoft_clarity",
+    "google_sheets_lead_vault",
+    "gohighlevel"
+  ],
+  "browserEvents": [
+    {
+      "name": "PageView",
+      "destination": "meta_pixel",
+      "trigger": "every page load when META_PIXEL_ID is configured",
+      "implementedIn": "assets/tracking.js",
+      "requiredParameters": ["pixel_id"]
+    },
+    {
+      "name": "page_view",
+      "destination": "ga4",
+      "trigger": "gtag config on every page load when GA4_ID is configured",
+      "implementedIn": "assets/tracking.js",
+      "requiredParameters": ["ga4_id", "page_location"]
+    },
+    {
+      "name": "ViewContent",
+      "destination": "meta_pixel",
+      "trigger": "content pages after Meta Pixel is available",
+      "implementedIn": "assets/view-content.js",
+      "requiredParameters": ["content_name", "content_category"]
+    },
+    {
+      "name": "Lead",
+      "destination": "meta_pixel",
+      "trigger": "successful non-duplicate lead after server confirms GHL success",
+      "implementedIn": "assets/lead-form.js",
+      "requiredParameters": ["eventID", "value", "currency", "content_name", "content_category"]
+    },
+    {
+      "name": "generate_lead",
+      "destination": "ga4",
+      "trigger": "successful non-duplicate lead after server confirms GHL success",
+      "implementedIn": "assets/lead-form.js",
+      "requiredParameters": ["event_category", "event_label", "page_path"]
+    },
+    {
+      "name": "click_call",
+      "destination": "ga4",
+      "trigger": "click on any tel: link",
+      "implementedIn": "assets/call-tracking.js",
+      "requiredParameters": ["event_category", "event_label", "page_path"]
+    },
+    {
+      "name": "Contact",
+      "destination": "meta_pixel",
+      "trigger": "click on any tel: link",
+      "implementedIn": "assets/call-tracking.js",
+      "requiredParameters": []
+    },
+    {
+      "name": "call_click",
+      "destination": "microsoft_clarity",
+      "trigger": "click on any tel: link",
+      "implementedIn": "assets/call-tracking.js",
+      "requiredParameters": ["call_click_source", "call_click_page"]
+    },
+    {
+      "name": "pricing_click",
+      "destination": "ga4",
+      "trigger": "click on pricing, inventory, product, or lead-form CTA",
+      "implementedIn": "assets/pricing-tracking.js",
+      "requiredParameters": ["click_source", "page_path"]
+    },
+    {
+      "name": "pricing_click",
+      "destination": "microsoft_clarity",
+      "trigger": "click on pricing, inventory, product, or lead-form CTA",
+      "implementedIn": "assets/pricing-tracking.js",
+      "requiredParameters": ["pricing_click_source", "pricing_click_page"]
+    }
+  ],
+  "eventsToAddBeforeScale": [
+    {
+      "name": "form_start",
+      "destination": "ga4_and_clarity",
+      "trigger": "first focus or interaction with a lead form",
+      "reason": "Separates landing page quality from form friction."
+    },
+    {
+      "name": "form_step_complete",
+      "destination": "ga4_and_clarity",
+      "trigger": "each multi-step form step completion",
+      "reason": "Shows where survey funnels lose people."
+    },
+    {
+      "name": "form_submit_attempt",
+      "destination": "ga4_and_clarity",
+      "trigger": "lead form submit before API response",
+      "reason": "Finds API failures separate from user intent."
+    },
+    {
+      "name": "form_submit_success",
+      "destination": "ga4_and_clarity",
+      "trigger": "lead API returns ok",
+      "reason": "Confirms frontend success independent of Meta/CRM."
+    },
+    {
+      "name": "form_submit_error",
+      "destination": "ga4_and_clarity",
+      "trigger": "validation or API error shown to user",
+      "reason": "Quantifies broken or rejected submissions."
+    },
+    {
+      "name": "product_card_click",
+      "destination": "ga4_and_clarity",
+      "trigger": "inventory card or product CTA click",
+      "reason": "Identifies winning product cards and copy angles."
+    },
+    {
+      "name": "inventory_filter_click",
+      "destination": "ga4_and_clarity",
+      "trigger": "category, status, sort, or search interaction on inventory pages",
+      "reason": "Shows shopper intent before lead submission."
+    }
+  ],
+  "serverEvents": [
+    {
+      "name": "Lead",
+      "destination": "meta_capi",
+      "trigger": "lead API validates payload, writes Sheets, and GHL upsert succeeds",
+      "implementedIn": "functions/lib/meta-capi.js",
+      "requiredParameters": ["event_id", "event_time", "action_source", "event_source_url", "user_data", "custom_data"],
+      "dedupesWith": "Meta Pixel Lead eventID"
+    }
+  ],
+  "attributionFields": [
+    "traffic_channel",
+    "landing_page_url",
+    "referrer_url",
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_content",
+    "utm_term",
+    "fbclid",
+    "gclid",
+    "msclkid",
+    "fbp",
+    "fbc"
+  ],
+  "crmCustomFields": [
+    "financing_interest",
+    "contact_message",
+    "product_interest",
+    "product_slug",
+    "product_id",
+    "product_category",
+    "product_page_url",
+    "inventory_status",
+    "available_quantity",
+    "inventory_status_tag",
+    "lead_source",
+    "campaign",
+    "model_interest_tag",
+    "form_intent",
+    "submission_timestamp",
+    "estimated_retail_price",
+    "our_price",
+    "monthly_payment",
+    "lead_source_page",
+    "landing_page_url",
+    "referrer_url",
+    "traffic_channel",
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_content",
+    "utm_term",
+    "fbclid",
+    "gclid",
+    "msclkid"
+  ],
+  "crmTags": {
+    "sourceTags": ["src-meta", "src-organic", "src-inbound-call"],
+    "dynamicTags": [
+      "Campaign - {campaign}",
+      "Intent - {form_intent}",
+      "Model Interest - {product_name}",
+      "{inventory_status_tag}"
+    ],
+    "productLeadTag": "productlead"
+  },
+  "operationalStatuses": [
+    "PENDING",
+    "SENT",
+    "FAILED",
+    "DUPLICATE",
+    "RETRY"
+  ],
+  "verificationProof": {
+    "ga4": ["Realtime or DebugView shows page_view and generate_lead"],
+    "metaPixel": ["Pixel Helper or Events Manager shows PageView, ViewContent, and Lead"],
+    "metaCapi": ["Events Manager shows server Lead with matching event_id and no dedupe warning"],
+    "clarity": ["Clarity project receives session and custom events"],
+    "sheets": ["Lead Vault row receives PENDING then SENT/DUPLICATE/FAILED status"],
+    "ghl": ["Contact exists with required tags and custom fields"],
+    "alerts": ["Missed lead and failure alert paths are tested or documented"]
+  }
+}

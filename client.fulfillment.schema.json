@@ -1,0 +1,296 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://increase-roas.com/schemas/client.fulfillment.schema.json",
+  "title": "Increase ROAS Hot Tub Dealer Website Fulfillment Manifest",
+  "description": "Canonical client intake manifest used by Manus skills to provision, configure, track, verify, and hand off a templatized dealer website.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "client",
+    "brand",
+    "domain",
+    "offers",
+    "cloudflare",
+    "tracking",
+    "crm",
+    "leadVault",
+    "inventory",
+    "security",
+    "handoff"
+  ],
+  "properties": {
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "legalName",
+        "market",
+        "primaryPhone",
+        "primaryPhoneE164",
+        "address",
+        "mapUrl",
+        "hours",
+        "timezone"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 2 },
+        "legalName": { "type": "string", "minLength": 2 },
+        "market": { "type": "string", "minLength": 2 },
+        "tagline": { "type": "string" },
+        "primaryPhone": { "type": "string", "minLength": 7 },
+        "primaryPhoneE164": { "type": "string", "pattern": "^\\+1[0-9]{10}$" },
+        "address": { "type": "string", "minLength": 5 },
+        "mapUrl": { "type": "string", "format": "uri" },
+        "hours": { "type": "string", "minLength": 2 },
+        "timezone": { "type": "string", "examples": ["America/Chicago"] },
+        "websiteUrl": { "type": "string", "format": "uri" },
+        "storagePrefix": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+        "productsSold": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": ["hot-tubs", "swim-spas", "saunas", "massage-chairs", "other"]
+          }
+        }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "deep", "night", "accent", "urgent"],
+      "properties": {
+        "logoUrl": { "type": "string" },
+        "primary": { "$ref": "#/$defs/hexColor" },
+        "deep": { "$ref": "#/$defs/hexColor" },
+        "night": { "$ref": "#/$defs/hexColor" },
+        "accent": { "$ref": "#/$defs/hexColor" },
+        "urgent": { "$ref": "#/$defs/hexColor" },
+        "fontPreference": { "type": "string" },
+        "voiceNotes": { "type": "string" }
+      }
+    },
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hostname", "dnsOwner", "launchMode"],
+      "properties": {
+        "hostname": { "type": "string", "minLength": 4 },
+        "dnsOwner": { "type": "string", "enum": ["client", "agency", "unknown"] },
+        "launchMode": { "type": "string", "enum": ["new-domain", "subdomain", "replace-existing-site", "preview-only"] },
+        "wwwRedirect": { "type": "boolean", "default": true },
+        "notes": { "type": "string" }
+      }
+    },
+    "offers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "financing", "delivery"],
+      "properties": {
+        "primary": { "type": "string", "minLength": 5 },
+        "financing": { "type": "string" },
+        "delivery": { "type": "string" },
+        "seasonalCampaigns": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/campaign" }
+        }
+      }
+    },
+    "cloudflare": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accountId", "pagesProject", "d1DatabaseName", "r2BucketName", "allowedOrigin"],
+      "properties": {
+        "accountId": { "type": "string", "minLength": 5 },
+        "pagesProject": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "d1DatabaseName": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+        "d1DatabaseId": { "type": "string" },
+        "r2BucketName": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "r2PublicBucketId": { "type": "string" },
+        "allowedOrigin": { "type": "string", "format": "uri" }
+      }
+    },
+    "tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ga4", "meta", "clarity", "leadValue", "leadCurrency"],
+      "properties": {
+        "ga4": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["measurementId"],
+          "properties": {
+            "measurementId": { "type": "string", "pattern": "^G-[A-Z0-9]+$" },
+            "propertyId": { "type": "string" },
+            "debugViewVerified": { "type": "boolean", "default": false }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pixelId"],
+          "properties": {
+            "pixelId": { "type": "string", "pattern": "^[0-9]+$" },
+            "capiAccessTokenSecretName": { "type": "string", "default": "META_CAPI_ACCESS_TOKEN" },
+            "testEventCode": { "type": "string" },
+            "dedupeVerified": { "type": "boolean", "default": false }
+          }
+        },
+        "clarity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["projectId"],
+          "properties": {
+            "projectId": { "type": "string", "minLength": 3 }
+          }
+        },
+        "turnstile": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "siteKey": { "type": "string" },
+            "secretName": { "type": "string", "default": "TURNSTILE_SECRET_KEY" }
+          }
+        },
+        "leadValue": { "type": "number", "minimum": 0 },
+        "leadCurrency": { "type": "string", "default": "USD" }
+      }
+    },
+    "crm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "ghlLocationId", "requiredTags", "requiredCustomFields"],
+      "properties": {
+        "provider": { "type": "string", "enum": ["gohighlevel"] },
+        "ghlLocationId": { "type": "string", "minLength": 5 },
+        "ghlApiTokenSecretName": { "type": "string", "default": "GHL_API_TOKEN" },
+        "pipelineId": { "type": "string" },
+        "calendarIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "baseTags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "requiredTags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "requiredCustomFields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/customField" }
+        }
+      }
+    },
+    "leadVault": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["googleSheetsId", "tabs"],
+      "properties": {
+        "googleSheetsId": { "type": "string", "minLength": 10 },
+        "serviceAccountEmailSecretName": { "type": "string", "default": "GOOGLE_SERVICE_ACCOUNT_EMAIL" },
+        "privateKeySecretName": { "type": "string", "default": "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY" },
+        "tabs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["leadVault", "missedLeads"],
+          "properties": {
+            "leadVault": { "type": "string", "default": "Lead Vault" },
+            "missedLeads": { "type": "string", "default": "Missed Leads" }
+          }
+        }
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "initialProducts"],
+      "properties": {
+        "source": { "type": "string", "enum": ["admin-entry", "csv", "google-sheet", "none"] },
+        "initialProducts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product" }
+        },
+        "adminPasswordSecretName": { "type": "string", "default": "ADMIN_PASSWORD" },
+        "adminSessionSecretName": { "type": "string", "default": "ADMIN_SESSION_SECRET" }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alertEmail", "secretsSetBy"],
+      "properties": {
+        "alertEmail": { "type": "string", "format": "email" },
+        "resendApiKeySecretName": { "type": "string", "default": "RESEND_API_KEY" },
+        "secretsSetBy": { "type": "string", "enum": ["manus", "agency-operator", "client", "unknown"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ownerName", "ownerEmail", "agencyOperator"],
+      "properties": {
+        "ownerName": { "type": "string", "minLength": 2 },
+        "ownerEmail": { "type": "string", "format": "email" },
+        "agencyOperator": { "type": "string", "minLength": 2 },
+        "handoffRecipients": {
+          "type": "array",
+          "items": { "type": "string", "format": "email" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "offer", "leadSource", "thankYouPath"],
+      "properties": {
+        "name": { "type": "string", "minLength": 2 },
+        "offer": { "type": "string", "minLength": 5 },
+        "leadSource": { "type": "string", "minLength": 2 },
+        "thankYouPath": { "type": "string", "pattern": "^/" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" }
+      }
+    },
+    "customField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "dataType"],
+      "properties": {
+        "key": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "label": { "type": "string", "minLength": 2 },
+        "dataType": {
+          "type": "string",
+          "enum": ["TEXT", "LARGE_TEXT", "NUMERICAL", "PHONE", "MONETARY", "DATE", "SINGLE_OPTIONS", "MULTIPLE_OPTIONS"]
+        }
+      }
+    },
+    "product": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["slug", "inventoryName", "category", "status"],
+      "properties": {
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "inventoryName": { "type": "string", "minLength": 2 },
+        "category": { "type": "string", "enum": ["hot-tub", "swim-spa", "sauna", "massage-chair", "other"] },
+        "status": { "type": "string", "enum": ["draft", "available", "pending", "sold", "hidden", "deleted"] },
+        "price": { "type": "number", "minimum": 0 },
+        "monthlyPayment": { "type": "number", "minimum": 0 },
+        "ghlTags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}
