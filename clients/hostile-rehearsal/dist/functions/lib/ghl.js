@@ -26,6 +26,7 @@ function customFieldsForLead(lead) {
 }
 function buildContactPayload(env, lead, locationId, forCreate) {
   const payload = { firstName: lead.firstName, lastName: lead.lastName || '.', email: lead.email, phone: '+1' + lead.phone, source: lead.leadSource || ((env.CLIENT_NAME || 'Dealer Website') + ' — ' + lead.source), tags: tagsForLead(env, lead) };
+  if (!payload.email) delete payload.email; // GHL rejects email:"" with "email must be an email" — omit instead (phone-first booking flow)
   if (forCreate) payload.locationId = locationId;
   payload.customFields = customFieldsForLead(lead);
   return payload;
@@ -50,7 +51,10 @@ async function resolveCustomFields(env, locationId, customFields) {
 async function searchContact(env, locationId, lead) {
   const query = encodeURIComponent(lead.email || lead.phone || '');
   if (!query) return null;
-  const res = await fetch(GHL_BASE + '/contacts/search/duplicate?locationId=' + encodeURIComponent(locationId) + '&email=' + encodeURIComponent(lead.email) + '&number=' + encodeURIComponent('+1' + lead.phone), { headers: ghlHeaders(env.GHL_API_TOKEN) });
+  const params = new URLSearchParams({ locationId });
+  if (lead.email) params.set('email', lead.email); // omit when empty — phone-only dedupe still works
+  if (lead.phone) params.set('number', '+1' + lead.phone);
+  const res = await fetch(GHL_BASE + '/contacts/search/duplicate?' + params.toString(), { headers: ghlHeaders(env.GHL_API_TOKEN) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) return null;
   return data.contact || (data.contacts && data.contacts[0]) || null;

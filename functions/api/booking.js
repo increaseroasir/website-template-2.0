@@ -118,7 +118,7 @@ export async function onRequestPost(context) {
   let body;
   try { body = await request.json(); } catch (err) { return jsonResponse({ ok: false, error: 'Invalid JSON.' }, 400, env, request); }
 
-  const validated = validateLeadPayload(body);
+  const validated = validateLeadPayload(body, { emailOptional: true }); // booking is phone-first; email is a nice-to-have
   if (!validated.ok) return jsonResponse({ ok: false, error: validated.error }, 400, env, request);
   const lead = validated.data;
 

@@ -118,3 +118,19 @@ logo, apostrophes in copy) + 298 filler tokens in
 | Hostile rebuild | **PASS** | Staging gate 13/0, prod-token rebuild gate 13/0. `/book/` auto-included in sitemap (9 URLs). Request-mode fallback screenshotted at 390/1280 (hostile config has empty calendar ID — page degrades exactly as designed). Brand guard green. |
 
 Analytics: booking submit fires `generate_lead` (GA4) and `Schedule` (Meta) so booking conversions are distinguishable from form leads.
+
+### Booking module — live verification + adversarial pass (2026-07-23, snapshot sub-account)
+
+| Test | Result |
+| --- | --- |
+| End-to-end booking via production function | **PASS** — appointment stored at exact store-local time (9:30–10:00 -04:00), status `confirmed`, team member auto-assigned, tags intact, GHL shows Source "Third party". |
+| Slot removal after booking | **PASS** — booked slot vanished from free-slots immediately. |
+| Double-booking | **PASS** — GHL rejects (`400 The slot you have selected is no longer available`); production code classifies via free-slots re-check → `slotTaken` retry UX. |
+| Dedupe | **PASS** — same person submitting 3× = one contact (merge), never duplicates. |
+| Malformed JSON / missing fields / bad phone / honeypot / PUT-DELETE | **PASS** — clean 400s, `Spam detected.`, 405s. |
+| Fake / past / garbage slot strings | **PASS** — no phantom appointments possible; lead captured, safe fallback responses. |
+| 50KB name | **FIXED → PASS** — validator now rejects names >120 chars (was: forwarded to GHL, which rejected it downstream). Message field truncated at 2000 chars. |
+| Email-optional booking | **FIXED → PASS** — shared validator gains `emailOptional` opt-in (booking only; lead forms unchanged); GHL payload omits empty `email` key (GHL rejects `email:""`); duplicate search parameterized to skip empty email. Phone-only contacts create + dedupe correctly. |
+| GET cache | **PASS** — repeat availability hits served ~2 ms from edge cache vs ~300 ms GHL round trip. |
+
+Workflow trigger guidance (verified via GHL UI evidence): API-created appointments surface as Source "Third party" and DO reach the automation engine. Recommended trigger: **Customer Booked Appointment** filtered to the booking calendar; alternative **Appointment Status = confirmed**. Live Execution Logs verification remains a launch-checklist step per client.

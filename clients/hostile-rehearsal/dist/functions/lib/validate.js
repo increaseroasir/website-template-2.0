@@ -14,7 +14,8 @@ export function normalizePhone(phone) {
   return digits;
 }
 
-export function validateLeadPayload(body) {
+export function validateLeadPayload(body, opts) {
+  const options = opts || {}; // { emailOptional: true } for phone-first flows (booking page)
   if (!body || typeof body !== 'object') return { ok: false, error: 'Invalid request body.' };
   if (body.website_url) return { ok: false, error: 'Spam detected.' };
 
@@ -34,7 +35,8 @@ export function validateLeadPayload(body) {
   const names = splitName(fullName);
 
   if (!fullName || fullName.length < 2) return { ok: false, error: 'Please enter your full name.' };
-  if (!EMAIL_RE.test(email)) return { ok: false, error: 'Please enter a valid email.' };
+  if (fullName.length > 120) return { ok: false, error: 'Please enter a valid name.' }; // oversized input is never a name — GHL would reject it downstream anyway
+  if (!EMAIL_RE.test(email) && !(options.emailOptional && !email)) return { ok: false, error: 'Please enter a valid email.' };
   if (phone.length < PHONE_DIGITS_MIN) return { ok: false, error: 'Please enter a valid phone number.' };
 
   let availableQuantity = parseInt(availableQuantityRaw, 10);
@@ -50,7 +52,7 @@ export function validateLeadPayload(body) {
     phone,
     source,
     financingInterest,
-    message: String(body.message || '').trim(),
+    message: String(body.message || '').trim().slice(0, 2000),
     productName,
     productSlug,
     productId: String(body.product_id || body.productId || '').trim(),
