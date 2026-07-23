@@ -21,6 +21,8 @@ R2_PUBLIC_BUCKET_ID = "pub-0000000000000000"
 MAX_PRODUCT_IMAGE_BYTES = "6291456"
 LEAD_VALUE = "950"
 LEAD_CURRENCY = "USD"
+# GHL calendar for /book/ — empty = booking page runs in request-mode (still captures leads)
+GHL_BOOKING_CALENDAR_ID = ""
 
 # Secrets set per client with wrangler pages secret put:
 # GHL_API_TOKEN

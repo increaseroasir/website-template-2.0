@@ -24,6 +24,16 @@ facts, see content-rules.md).
 | `ADMIN_STAT_PRODUCTS` | admin/ | text | text | — | YES | — |
 | `ADMIN_SUBHEAD` | admin/ | text | subhead | — | YES | ≤140 chars (2–3 lines at 390px) |
 | `ADMIN_UPLOAD_TITLE` | admin/ | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
+| `BOOK_CAMPAIGN` | book/ | attribute | campaign value on booking leads | booking | no | — |
+| `BOOK_CTA_LABEL` | book/ | text | button label | Lock In My Visit | no | ≤22 chars (btn is white-space:nowrap — long labels overflow) |
+| `BOOK_HEADLINE` | book/ | text | headline | Pick a time. We'll have it ready. | no | ≤48 chars (wraps to 3 lines at 390px past that) |
+| `BOOK_KICKER` | book/ | text | mono label | Showroom visit | no | ≤28 chars |
+| `BOOK_META_DESCRIPTION` | book/ | meta | body copy | (benefit line) | no | ≤300 chars |
+| `BOOK_SEO_TITLE` | book/ | meta/title | headline | Book a Showroom Visit | no | lead with service + city per content-rules |
+| `BOOK_SUBHEAD` | book/ | text | subhead | (20-second promise line) | no | ≤140 chars (2–3 lines at 390px) |
+| `BOOK_SUCCESS_COPY` | book/ | text | body copy | (confirm-by-text line) | no | ≤200 chars |
+| `BOOK_SUCCESS_HEADLINE` | book/ | text | headline | You're on the calendar. | no | ≤48 chars |
+| `BOOK_TRUST_LINE` | book/ | text | mono trust line | Family-owned · Local delivery · Real people answer | no | ≤70 chars, · separators |
 | `CAMPAIGN_NAME` | active-inventory/SLUG/, active-inventory/, financing.html | attribute | text | Financing Survey | no | — |
 | `CATEGORIES_HEADLINE` | index.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `CATEGORIES_KICKER` | index.html | text | mono label | Find your fit | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
@@ -91,6 +101,7 @@ facts, see content-rules.md).
 | `FLOOR_COUNT_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `FOOTER_BLURB` | hot-tubs/, index.html, inventory.html, saunas/, swim-spas/ | text | text | — | YES | — |
 | `FOOTER_PROMISE_LINE` | index.html | text | text | — | YES | — |
+| `GHL_BOOKING_CALENDAR_ID` | build-level (wrangler.toml → /api/booking) | build artifact | GHL calendar ID for live slot booking on /book/ | `''` via `tracking.ghlBookingCalendarId` | no | empty → request-mode: no live slots, preferred-day capture, leads confirmed by text |
 | `GHL_EXTERNAL_TRACKING` | every page via `tracking.js` (incl. 404) | script src | GHL External Tracking snippet URL (session stitching + page-view attribution) | `''` via `tracking.ghlExternalTracking` | no | empty → nothing injected (attribution loss, not lead loss; add within 48h — wiring ID #9); must be an https URL; NEVER a real value on staging |
 | `GSC_VERIFICATION` | every page (head) | meta | Search Console verification token | `''` via `tracking.gscVerification` | no | empty → the whole meta tag is stripped at build (never ships blank); absent at launch = open wiring item, verify within 48h |
 | `GUIDE_COPY` | index.html | text | body copy | — | YES | ≤300 chars per block |

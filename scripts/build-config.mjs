@@ -77,7 +77,10 @@ function tokenMapFromConfig(cfg) {
     GSC_VERIFICATION: usable(cfg.tracking?.gscVerification) ? cfg.tracking.gscVerification : '',
     /* GHL External Tracking is optional the same way: missing/empty hydrates
        to "" and tracking.js injects nothing (attribution loss, not lead loss). */
-    GHL_EXTERNAL_TRACKING: usable(cfg.tracking?.ghlExternalTracking) ? cfg.tracking.ghlExternalTracking : ''
+    GHL_EXTERNAL_TRACKING: usable(cfg.tracking?.ghlExternalTracking) ? cfg.tracking.ghlExternalTracking : '',
+    /* Booking calendar is optional: empty = /book/ runs in request-mode
+       (preferred-day capture, no live slots) — leads still captured. */
+    GHL_BOOKING_CALENDAR_ID: usable(cfg.tracking?.ghlBookingCalendarId) ? cfg.tracking.ghlBookingCalendarId : ''
   };
   for (const [key, value] of Object.entries(process.env)) {
     if (/^[A-Z0-9_]+$/.test(key) && value) map[key] = value;

@@ -106,3 +106,15 @@ logo, apostrophes in copy) + 298 filler tokens in
 | 4 Decision-table rows | **PASS** | Key absent → launch proceeds (cosmetic tier, attribution loss not lead loss), open wiring item, add within 48h alongside GSC; staging never carries a real ID (gate-enforced); duplicate contacts = FAIL ID #9. |
 | 5 SKILL.md gotcha | **PASS** | "External tracking requires native DOM forms; an iframe/widget form silently stops tracking capture for it." |
 | 6 Docs + hostile re-run | **PASS** | token-reference + launch-checklist updated. Hostile rebuild: `ghlExternalTracking: ''` in built config, zero tracking scripts in dist HTML, staging gate 13 PASS/0 FAIL. Negative tests: prod build with a fake https URL → PASS "injected from …"; same dist gated as staging → exit 1. Validator PASS with cosmetic warning. |
+
+## Booking page module (added 2026-07-23)
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| `/book/` native booking page | **PASS** | New conversion-minimal page: slim header (logo + phone, no nav exits), one glass card, three taps — day chips (next 7 days with availability, soonest preselected) → time chips → name/phone/email(optional) → confirm. Native DOM form (external tracking + attribution intact), Turnstile, TCPA fine print, inline success state. No images = no LCP payload. |
+| `/api/booking` function | **PASS** | GET pulls real free slots from the GHL calendar (`GHL_BOOKING_CALENDAR_ID`, calendar API Version 2021-04-15), capped 10 days / 14 slots per day. POST reuses `validateLeadPayload` + `verifyTurnstile` + `upsertContact` (dedupe-merge; tags src-*, `Intent - Showroom Visit`, `Campaign - booking`) then creates the appointment as `confirmed`. |
+| Lead-safety ordering | **PASS** | Contact upsert happens BEFORE the appointment write. Calendar unconfigured, no slots, or appointment API failure → `booked:false` confirm-by-text path; the lead is already in GHL. Slot fetch failure fails open into request-mode (preferred-day capture). A calendar outage can cost a timestamp, never a lead. |
+| Config/token wiring | **PASS** | `tracking.ghlBookingCalendarId` (config template + hostile `''`) → `{{GHL_BOOKING_CALENDAR_ID}}` → `wrangler.toml` var; hydrates to `""` when empty. Validator: cosmetic warning (request-mode is a working fallback, not lead loss). All `BOOK_*` copy tokens carry `|defaults` — page ships with zero new intake requirements; rows added to token-reference. |
+| Hostile rebuild | **PASS** | Staging gate 13/0, prod-token rebuild gate 13/0. `/book/` auto-included in sitemap (9 URLs). Request-mode fallback screenshotted at 390/1280 (hostile config has empty calendar ID — page degrades exactly as designed). Brand guard green. |
+
+Analytics: booking submit fires `generate_lead` (GA4) and `Schedule` (Meta) so booking conversions are distinguishable from form leads.

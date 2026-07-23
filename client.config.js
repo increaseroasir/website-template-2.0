@@ -34,6 +34,7 @@ window.CLIENT_CONFIG = {
     clarityId: '{{CLARITY_ID}}',
     turnstileSiteKey: '{{TURNSTILE_SITE_KEY}}',
     ghlExternalTracking: '{{GHL_EXTERNAL_TRACKING}}',
+    ghlBookingCalendarId: '{{GHL_BOOKING_CALENDAR_ID}}',
     leadValue: '{{LEAD_VALUE|950}}',
     leadCurrency: 'USD'
   },

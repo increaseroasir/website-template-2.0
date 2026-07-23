@@ -50,6 +50,7 @@ window.CLIENT_CONFIG = {
     turnstileSiteKey: '0x4AAAAAAAFakeHostileKey000',
     gscVerification: '',            // deliberately empty — asserts the GSC meta is stripped, not shipped blank
     ghlExternalTracking: '',        // deliberately empty — asserts no external tracking script is injected
+    ghlBookingCalendarId: '',       // deliberately empty — asserts /book/ degrades to request-mode cleanly
 
     leadValue: '950',
     leadCurrency: 'USD'

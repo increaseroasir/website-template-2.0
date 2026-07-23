@@ -138,6 +138,7 @@ for (const [key, v] of required) if (!val(v)) errors.push(`CRITICAL config key e
 if (!val(cfg.tracking?.clarityId)) warnings.push('tracking.clarityId empty — no session recordings (cosmetic; wiring gate B2 still expects it before launch).');
 if (!val(cfg.tracking?.ghlExternalTracking)) warnings.push('tracking.ghlExternalTracking empty — no GHL session stitching/page-view attribution (cosmetic: attribution loss, not lead loss; add within 48h of launch, wiring ID #9).');
 else if (!/^https:\/\/\S+$/.test(String(cfg.tracking.ghlExternalTracking))) errors.push(`tracking.ghlExternalTracking must be the https script src URL from the GHL External Tracking snippet, got "${cfg.tracking.ghlExternalTracking}"`);
+if (!val(cfg.tracking?.ghlBookingCalendarId)) warnings.push('tracking.ghlBookingCalendarId empty — /book/ runs in request-mode (no live slots; leads still captured and confirmed by text). Set the GHL calendar ID to enable real slot booking.');
 warnings.push('GHL sub-account routing (GHL_API_TOKEN, GHL_LOCATION_ID) and TURNSTILE_SECRET_KEY are wrangler secrets this validator cannot read — they are launch-blocking LIVE verifications per references/wiring.md.');
 
 /* E164 */
@@ -200,7 +201,8 @@ const configTokenMap = {
   /* mirrors build-config.mjs: missing/tokenized gscVerification builds as ""
      and the empty meta tag is stripped — cosmetic, never a hard error */
   GSC_VERIFICATION: val(cfg.tracking?.gscVerification) || '',
-  GHL_EXTERNAL_TRACKING: val(cfg.tracking?.ghlExternalTracking) || ''
+  GHL_EXTERNAL_TRACKING: val(cfg.tracking?.ghlExternalTracking) || '',
+  GHL_BOOKING_CALENDAR_ID: val(cfg.tracking?.ghlBookingCalendarId) || ''
 };
 const covered = new Set(Object.keys(envTokens));
 /* Explicit empty string is a legitimate value: build-config hydrates it to ""

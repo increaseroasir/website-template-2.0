@@ -305,3 +305,41 @@ body:has(.admin-shell) .site-footer::after{animation:none;display:none}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2306183D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"),linear-gradient(180deg,#FFD46A,#F5AD0E);
   background-repeat:no-repeat,no-repeat;background-position:center,center;background-size:16px 16px,100% 100%;
   box-shadow:0 10px 22px -8px rgba(232,164,0,.6)}
+
+/* ============ Booking page (/book/) — conversion-minimal ============ */
+.page-book .book-hero .hero-inner{padding:44px 20px 40px;text-align:center;justify-items:center}
+.page-book .book-hero h1{margin-inline:auto}
+.page-book .book-hero p{margin-inline:auto;max-width:560px}
+.book-section{padding:34px 0 64px}
+.book-card{max-width:560px;padding:26px 22px 24px}
+.book-label{font-family:'Spline Sans Mono',monospace;font-weight:600;font-size:.66rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold-dark);margin:4px 0 10px}
+.book-step + .book-step{margin-top:18px}
+.book-step.on{animation:bookIn .35s var(--ease-out)}
+@keyframes bookIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.book-chips{display:flex;gap:9px;flex-wrap:wrap}
+.book-chip{min-height:48px;min-width:48px;padding:8px 14px;border-radius:13px;cursor:pointer;
+  border:1px solid rgba(11,37,89,.16);background:rgba(255,255,255,.85);
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.92rem;color:var(--navy-deep);
+  transition:transform .2s var(--ease-out),border-color .2s,background .2s,box-shadow .2s}
+.book-chip:hover{transform:translateY(-2px);border-color:rgba(232,164,0,.5)}
+.book-chip.sel{background:linear-gradient(180deg,var(--navy-royal),var(--navy-deep));color:#fff;
+  border-color:var(--navy-deep);box-shadow:0 10px 22px -10px rgba(6,24,61,.55)}
+.book-chip-day{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;padding:9px 10px}
+.book-chip-day span{font-family:'Spline Sans Mono',monospace;font-weight:600;font-size:.56rem;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.book-chip-day b{font-size:1.25rem;line-height:1.15}
+.book-chips-time{max-height:224px;overflow-y:auto}
+.book-picked{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.95rem;
+  color:var(--navy-deep);background:linear-gradient(180deg,rgba(255,184,28,.18),rgba(255,184,28,.1));
+  border:1px solid rgba(232,164,0,.42);border-radius:11px;padding:10px 14px;margin:0 0 12px}
+.book-fallback input[type="date"]{width:100%}
+.book-error{color:var(--red);font-weight:600}
+.book-success{text-align:center;padding:14px 4px 6px}
+.book-success.on{animation:bookIn .4s var(--ease-out)}
+.book-success h3{margin-bottom:8px}
+.book-success .hero-actions{justify-content:center;margin-top:16px}
+.book-trust{margin-top:16px;font-family:'Spline Sans Mono',monospace;font-size:.62rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.page-book .site-footer .footer-grid{grid-template-columns:1fr;text-align:center}
+@media(max-width:420px){.book-chip{flex:1 1 auto}}
