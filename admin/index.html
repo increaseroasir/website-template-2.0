@@ -8,7 +8,10 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20260710">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260710">
 <meta name="theme-color" content="#030C20">
-<meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
+<!-- Back office: always noindex regardless of environment. robots.txt also
+     Disallows /admin/, but Disallow alone hides this noindex from crawlers
+     while the URL can still be indexed by reference — we want both layers. -->
+<meta name="robots" content="noindex">
 <meta name="google-site-verification" content="{{GSC_VERIFICATION}}">
 <title>{{ADMIN_SEO_TITLE}}</title>
 <meta name="description" content="{{ADMIN_META_DESCRIPTION}}">

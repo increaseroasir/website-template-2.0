@@ -217,9 +217,11 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   const want = env === 'prod' ? /index\s*,\s*follow/i : /noindex/i;
   const bad = [];
   for (const p of pages) {
-    /* 404.html is deliberately noindex in every environment — an indexed
-       error page is the bug, not the noindex. */
-    if (relative(dist, p) === '404.html') continue;
+    /* 404.html and admin/ are deliberately noindex in every environment —
+       an indexed error page or back office is the bug, not the noindex.
+       (admin/ is also robots.txt-Disallowed; both layers are intentional.) */
+    const rel = relative(dist, p);
+    if (rel === '404.html' || rel.startsWith('admin/')) continue;
     const text = readFileSync(p, 'utf8');
     const m = text.match(/<meta\s+name="robots"\s+content="([^"]*)"/i);
     if (!m) bad.push(`${relative(dist, p)}: no robots meta`);
