@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "brand:guard": "node scripts/check-template-guard.mjs",
-    "client:new": "node skills/client-site-build/scripts/new-client.mjs",
-    "client:validate": "node skills/client-site-build/scripts/new-client.mjs",
-    "client:gate": "node skills/client-site-build/scripts/gate.mjs",
+    "client:new": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
+    "client:validate": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
+    "client:gate": "node manus-skills/dealer-site-launch/scripts/gate.mjs",
     "build:config": "node scripts/build-config.mjs",
     "placeholder:check": "node scripts/scan-placeholders.mjs --launch",
     "launch:check": "node scripts/launch-check.mjs",
