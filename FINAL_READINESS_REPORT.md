@@ -13,7 +13,7 @@ Full row-by-row evidence in `TEMPLATE_CERTIFICATION.md`.
 |---|---|
 | A1 — Reveal audit (financing/contact) + image manifest | PASS (manifest 12/12; contact reveal verified firing live) |
 | A2 — Cross-browser | PASS at code level (webkit twins, dvh fallbacks, clip-path prefix, scrollbar hiding — 6 defects fixed); real-device pass MANUAL |
-| A3 — Hostile hydration rehearsal | PASS — gate exit 0, zero `{{`, zero fingerprints, evergreen active, 68-char name clean at 390/320, empty/404 images render as gradient wells; 24 screenshots archived |
+| A3 — Hostile hydration rehearsal | PASS — gate exit 0, zero `{{`, zero fingerprints, evergreen active, 68-char name clean at 390/320, empty/404 images render as gradient wells; 24 screenshots archived (all 12 dist pages × 2 widths — the 11 template pages + the additive 404 page; none skipped, admin included) |
 | A4 — Mechanical sweeps | PASS — console-clean interaction pass, links green (favicons + admin `#settings` fixed), duplicate-ID clean incl. post-injection, forms fit 390×650/320, reduced-motion static, robots honored, 404 page + neutral favicon set shipped |
 
 ## 2. Skill pack status

@@ -46,7 +46,7 @@ logo, apostrophes in copy) + 298 filler tokens in
 | Empty/explicitly-blank tokens don't leak | **FIXED → PASS** | Real defect found: explicitly-empty config values (logo, map embed, offer label) stayed as raw `{{TOKENS}}` in shipped HTML — two in visible text. Fixed in the build layer: `build-config.mjs` now hydrates explicit empty strings to `""`, and all four top-level stylesheets hide `img[src=""]`/`iframe[src=""]` (alongside the existing unfilled-token hiding). |
 | 68-char name doesn't break header at 390 | **PASS** | `document.documentElement.scrollWidth === 390` on every page at 390px (and 320 at 320px); header wraps to two lines cleanly (screenshots). |
 | Empty/404 images render as clean gradient wells | **PASS** | All image tokens point at 404 URLs in the rehearsal; `onerror` + gradient wells + empty-src hiding keep every card clean (screenshots). |
-| Screenshots 1440 + 390, every page | **PASS** | 24 full-page PNGs in `clients/hostile-rehearsal/screenshots/` (12 pages × 2 widths, incl. 404). |
+| Screenshots 1440 + 390, every page | **PASS** | 24 full-page JPEGs in `clients/hostile-rehearsal/screenshots/` — 12 pages × 2 widths, 1:1 with the 12 HTML files in dist: index, hot-tubs, swim-spas, saunas, inventory, active-inventory, product-slug (SLUG detail), financing, contact, thank-you, admin, 404. No page skipped; the 404 page is additive (11 template pages + the new 404 = 12). |
 
 ## A4 — Mechanical sweeps
 
