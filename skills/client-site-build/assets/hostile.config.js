@@ -48,6 +48,8 @@ window.CLIENT_CONFIG = {
     ga4Id: 'G-FAKE0HOSTL',
     clarityId: 'zzfake0000',
     turnstileSiteKey: '0x4AAAAAAAFakeHostileKey000',
+    gscVerification: '',            // deliberately empty — asserts the GSC meta is stripped, not shipped blank
+
     leadValue: '950',
     leadCurrency: 'USD'
   },

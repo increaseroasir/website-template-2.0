@@ -194,7 +194,10 @@ const configTokenMap = {
   HOME_HERO_IMAGE: cfg.home?.heroImage, HOME_HERO_IMAGE_ALT: cfg.home?.heroImageAlt,
   HOME_EYEBROW: cfg.home?.eyebrow, HOME_HERO_HEADLINE: cfg.home?.headline,
   HOME_HERO_HEADLINE_ACCENT: cfg.home?.headlineAccent, HOME_HERO_SUBHEAD: cfg.home?.subhead,
-  HOME_CAMPAIGN: cfg.home?.campaign, LEAD_ENDPOINT: cfg.endpoints?.lead
+  HOME_CAMPAIGN: cfg.home?.campaign, LEAD_ENDPOINT: cfg.endpoints?.lead,
+  /* mirrors build-config.mjs: missing/tokenized gscVerification builds as ""
+     and the empty meta tag is stripped — cosmetic, never a hard error */
+  GSC_VERIFICATION: val(cfg.tracking?.gscVerification) || ''
 };
 const covered = new Set(Object.keys(envTokens));
 /* Explicit empty string is a legitimate value: build-config hydrates it to ""

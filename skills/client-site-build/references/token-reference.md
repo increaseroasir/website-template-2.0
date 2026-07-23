@@ -64,6 +64,7 @@ facts, see content-rules.md).
 | `CONTACT_META_DESCRIPTION` | contact.html | meta | body copy | — | YES | ≤300 chars per block |
 | `CONTACT_SEO_TITLE` | contact.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `CONTACT_SUBHEAD` | contact.html | text | subhead | — | YES | ≤140 chars (2–3 lines at 390px) |
+| `DOMAIN` | build-level (robots.txt + sitemap.xml) | build artifact | bare production host, e.g. `example-spas.com` | derived from `client.websiteUrl` host | no | env override only; when neither exists the build skips robots.txt/sitemap.xml with a loud warning |
 | `FAQ_1_A` | index.html | text | text | — | YES | — |
 | `FAQ_1_Q` | index.html | text | text | — | YES | — |
 | `FAQ_2_A` | index.html | text | text | — | YES | — |
@@ -90,6 +91,7 @@ facts, see content-rules.md).
 | `FLOOR_COUNT_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `FOOTER_BLURB` | hot-tubs/, index.html, inventory.html, saunas/, swim-spas/ | text | text | — | YES | — |
 | `FOOTER_PROMISE_LINE` | index.html | text | text | — | YES | — |
+| `GSC_VERIFICATION` | every page (head) | meta | Search Console verification token | `''` via `tracking.gscVerification` | no | empty → the whole meta tag is stripped at build (never ships blank); absent at launch = open wiring item, verify within 48h |
 | `GUIDE_COPY` | index.html | text | body copy | — | YES | ≤300 chars per block |
 | `GUIDE_CTA_LABEL` | index.html | text | button label | — | YES | ≤22 chars (btn is white-space:nowrap — long labels overflow) |
 | `GUIDE_DISCLAIMER` | index.html | text | body copy | — | YES | ≤300 chars per block |

@@ -27,4 +27,7 @@ the build report — don't improvise silently (Law 4).
 | Client provides reviews without names/dates | Use "Verified customer" + month/source if the source is real; drop otherwise | Reviews are facts; unverifiable ones don't ship |
 | Token value needs a `\|` | Rephrase with "and"/"·"/"—" in tokens.env | Pipe corrupts the `{{TOKEN\|default}}` parser |
 | Staging URL needs to be shared publicly | Keep `noindex`; share the URL; never flip robots early | An indexed staging site cannibalizes the launch domain |
+| GSC verification token absent at launch | Launch proceeds; flag as open wiring item; verify the property within 48h | The token gates reporting, not indexing — the meta is stripped when empty, so nothing broken ships |
+| Staging build + indexing | robots.txt `Disallow: /` + `noindex` meta (automatic); NEVER submit staging to IndexNow or GSC — `indexnow.mjs` refuses staging dists | One indexed staging URL competes with the launch domain forever |
+| Client has no Google Business Profile | Flag at Checkpoint 1; launch proceeds; GBP creation is an upsell, not a blocker | The GBP website link is a huge local lever, but it's the client's asset to create — not a build dependency |
 | Anything not in this table | Propose a new row in the build report; do NOT improvise silently | The table only stays load-bearing if gaps get ruled once, centrally |

@@ -102,6 +102,29 @@
     if (window.DealerLeadForm && typeof window.DealerLeadForm.bindAll === 'function') window.DealerLeadForm.bindAll();
   }
 
+  /* Product JSON-LD — built from the exact data this page renders. Emits
+     nothing when the fetch fails or the name is missing (never fabricate). */
+  function emitProductSchema(product) {
+    if (!product || !product.inventory_name) return;
+    var data = { '@context': 'https://schema.org', '@type': 'Product', name: product.inventory_name };
+    var image = safeImageUrl(product.primary_image);
+    if (image) { try { data.image = [new URL(image, location.origin).toString()]; } catch (err) { /* skip bad URL */ } }
+    if (product.category) data.category = product.category;
+    var price = Number(product.price);
+    if (price > 0) {
+      var availability = {
+        available: 'https://schema.org/InStock',
+        pending: 'https://schema.org/LimitedAvailability',
+        sold: 'https://schema.org/SoldOut'
+      }[product.inventoryStatus || product.status] || 'https://schema.org/InStock';
+      data.offers = { '@type': 'Offer', price: String(price), priceCurrency: 'USD', availability: availability, url: location.href.split('#')[0] };
+    }
+    var script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(data);
+    document.head.appendChild(script);
+  }
+
   async function loadProduct() {
     var slug = slugForPage();
     if (!slug || slug.toUpperCase() === 'SLUG') return;
@@ -112,6 +135,7 @@
       if (!res.ok || !product) throw new Error((data && data.error) || 'Product not found');
       hydrateProductContent(product);
       hydrateProductForms(product);
+      emitProductSchema(product);
     } catch (error) {
       console.error('Product hydration failed:', error);
       document.querySelector('main')?.insertAdjacentHTML('afterbegin', '<section class="section"><div class="wrap panel"><h1>Product unavailable</h1><p>Please call or text the store for current inventory.</p></div></section>');

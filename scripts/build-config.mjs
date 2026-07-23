@@ -70,7 +70,11 @@ function tokenMapFromConfig(cfg) {
     HOME_HERO_HEADLINE_ACCENT: cfg.home?.headlineAccent,
     HOME_HERO_SUBHEAD: cfg.home?.subhead,
     HOME_CAMPAIGN: cfg.home?.campaign,
-    LEAD_ENDPOINT: cfg.endpoints?.lead || '/api/lead'
+    LEAD_ENDPOINT: cfg.endpoints?.lead || '/api/lead',
+    /* GSC verification is optional: missing/empty hydrates to "" and the
+       build strips the empty meta tag entirely (decision-table: launch may
+       proceed without it, flagged as an open wiring item). */
+    GSC_VERIFICATION: usable(cfg.tracking?.gscVerification) ? cfg.tracking.gscVerification : ''
   };
   for (const [key, value] of Object.entries(process.env)) {
     if (/^[A-Z0-9_]+$/.test(key) && value) map[key] = value;
@@ -96,9 +100,58 @@ function walk(dir) {
     else if (/\.(html|css|js|toml)$/i.test(name)) {
       let text = readFileSync(file, 'utf8');
       text = replaceTokens(text);
+      /* Empty GSC token → omit the verification meta entirely (same
+         empty-hydration philosophy as empty logo/map values). */
+      if (/\.html$/i.test(name)) text = text.replace(/[ \t]*<meta name="google-site-verification" content="">\r?\n?/g, '');
       writeFileSync(file, text);
     }
   }
 }
 walk(root);
+
+/* ---- SEO artifacts: robots.txt + sitemap.xml, generated into the build root.
+   Skipped (with a loud warning) when no usable domain exists — e.g. when this
+   script is run against the raw template instead of a hydrated dist/. ---- */
+function generateSeoArtifacts() {
+  let domain = tokenMap.DOMAIN || '';
+  if (!domain && /^https?:\/\//.test(tokenMap.CLIENT_WEBSITE_URL || '')) {
+    try { domain = new URL(tokenMap.CLIENT_WEBSITE_URL).host; } catch { /* fall through */ }
+  }
+  if (!domain || domain.includes('{{')) {
+    console.warn('SEO artifacts skipped: no usable DOMAIN or CLIENT_WEBSITE_URL — robots.txt/sitemap.xml not generated.');
+    return;
+  }
+  const staging = /noindex/i.test(tokenMap.ROBOTS_DIRECTIVE || '');
+  /* Staging: disallow everything, matching the noindex robots meta. Production:
+     allow all except admin/ (back office; also excluded from the sitemap). */
+  const robots = staging
+    ? 'User-agent: *\nDisallow: /\n'
+    : `User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: https://${domain}/sitemap.xml\n`;
+  writeFileSync(join(root, 'robots.txt'), robots);
+
+  const htmlPages = [];
+  (function collect(dir, rel) {
+    for (const name of readdirSync(dir)) {
+      if (['node_modules', '.wrangler', '.git', 'scripts', 'functions', 'clients', 'skills', 'docs'].includes(name)) continue;
+      const file = join(dir, name);
+      const relPath = rel ? `${rel}/${name}` : name;
+      if (statSync(file).isDirectory()) collect(file, relPath);
+      else if (/\.html$/i.test(name)) htmlPages.push(relPath);
+    }
+  })(root, '');
+  /* Excluded from the sitemap: 404, thank-you (terminal page), admin (back
+     office), and the SLUG product template (real product URLs are dynamic). */
+  const EXCLUDED = /^(404\.html|thank-you\.html|admin\/|active-inventory\/SLUG\/)/;
+  const lastmod = new Date().toISOString().slice(0, 10);
+  const urls = htmlPages
+    .filter(p => !EXCLUDED.test(p))
+    .map(p => (p === 'index.html' ? '' : p.replace(/index\.html$/, '')))
+    .sort()
+    .map(p => `  <url><loc>https://${domain}/${p}</loc><lastmod>${lastmod}</lastmod></url>`);
+  writeFileSync(join(root, 'sitemap.xml'),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`);
+  console.log(`SEO artifacts: robots.txt (${staging ? 'staging — Disallow: /' : 'production — allow + sitemap'}), sitemap.xml (${urls.length} URLs).`);
+}
+generateSeoArtifacts();
+
 console.log('Build config pass complete.');

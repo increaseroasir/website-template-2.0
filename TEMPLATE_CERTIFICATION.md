@@ -75,3 +75,22 @@ logo, apostrophes in copy) + 298 filler tokens in
 5. `404.html` + neutral favicon set + icon links on all pages.
 6. WebKit twins ×2, `100vh` fallbacks ×2, `-webkit-clip-path` on the shield.
 7. `brand:guard` re-scoped to buildable sources only (owner ruling c).
+
+---
+
+## SEO + Indexing module (added 2026-07-23)
+
+| Item | Status | Evidence |
+|---|---|---|
+| A1 robots.txt tokenized, generated at build | **PASS** | `build-config.mjs` emits it into the build root: staging (`noindex` directive) → `Disallow: /`; prod → `Allow: /` + `Disallow: /admin/` + `Sitemap: https://<domain>/sitemap.xml`. Domain from `DOMAIN` env or `client.websiteUrl` host; skipped with a loud warning when neither exists. Both paths exercised on the hostile build. |
+| A2 sitemap.xml generated from dist page list | **PASS** | 8 absolute URLs, `lastmod` = build date; 404/thank-you/admin/SLUG-template excluded. New gate check verifies existence, well-formedness, URL→file resolution, exclusions — green in staging and prod runs. |
+| A3 GSC verification meta | **PASS** | `<meta name="google-site-verification" content="{{GSC_VERIFICATION}}">` on all 12 page heads; empty token → tag stripped at build (0 metas in hostile dist). Config key `tracking.gscVerification`; documented in token-reference.md; gate check added. |
+| A4 FAQPage JSON-LD | **PASS** | `assets/seo-schema.js` builds it from the rendered `.faq` blocks; hostile homepage emits a valid FAQPage with 4 questions; contact page (no FAQ) emits nothing. |
+| A4 Product JSON-LD | **PASS** | Emitted by `product-page.js` from the same `/api/inventory` data the page renders (name/image/category/offer price+availability). Verified against a mock API: valid Product schema; with the API unavailable, nothing is emitted (never fabricates). |
+| A4 BreadcrumbList | **PASS** | Category pages (Home > Category) and product detail (Home > Inventory > Product), from rendered H1s; skipped when text is missing/tokenized. |
+| A4 JSON-LD validation | **PASS + MANUAL** | Gate parses all static ld+json blocks; runtime-emitted schema verified by JSON.parse in-browser on the hostile build; per-client Rich Results Test is a standing MANUAL gate row. |
+| A5 Local-SEO formulas | **PASS** | Title/H1/meta-description formulas with reasons added to `references/content-rules.md` (service+city leads titles, one natural city mention, no stuffing, no invented geography). |
+| B6 indexnow.mjs | **PASS** | Zero-dep Node 18+; `--init` idempotent (created → exists on rerun), `--submit` validates host vs sitemap, refuses staging dists (dry-run warns instead), `--dry-run` clean on hostile (8 URLs). `--help` states Google does not use IndexNow. |
+| B7–B9 skill docs | **PASS** | launch-checklist.md "Search indexing" + "Day-7 crawl verification" sections; SKILL.md steps 10–11 + indexing-honesty note + scripts index; decision-table rows (GSC absent → proceed+48h, staging → never submit, no GBP → flag, upsell); WIRING template indexing table. |
+| B10 hostile re-run | **PASS** | Rebuilt dist: gate exit 0 (12 PASS/0 FAIL/8 MANUAL), zero `{{`, zero fingerprints, evergreen active (`body.offer-static`), GSC meta absent, indexnow dry-run clean, zero aggregateRating anywhere, no schema where data is missing. |
+| Gate fix surfaced by this work | **FIXED** | Pre-existing robots check flagged `404.html` as `noindex` in prod — a noindex 404 is correct, so the check now exempts it. Prod gate green after fix. |

@@ -51,8 +51,17 @@ skip a validation step or proceed past a FAIL.**
 - [ ] 7. Wiring live-verification (read references/wiring.md now)
 - [ ] 8. Manual launch items (read references/launch-checklist.md now)
 - [ ] 9. HUMAN CHECKPOINT 2: final gate sign-off before DNS
-- [ ] 10. Post-launch: test lead end-to-end; archive WIRING.md + screenshots
+- [ ] 10. Post-launch: test lead end-to-end; archive WIRING.md + screenshots;
+         run the "Search indexing" section of references/launch-checklist.md
+         (GSC verify + sitemap submit + Request Indexing + indexnow --submit + GBP link)
+- [ ] 11. Day-7 crawl VERIFICATION (scheduled): GSC Pages report indexed ≥
+         (sitemap count − intentional exclusions); Request Indexing on any
+         "Discovered/Crawled – not indexed" URLs; log the count in WIRING.md
 ```
+
+Indexing honesty: submission is automatable (sitemap, IndexNow), **Google
+indexing itself is not** — step 11 verifies crawl happened; nothing can
+force it.
 
 Step 5 build command (from the client dir, config already validated):
 
@@ -110,9 +119,16 @@ only ever run inside `dist/`, never in the template checkout.
 - `scripts/gate.mjs --env staging|prod [--dist <path>]` — mechanical launch
   gate against a built `dist/` only: `{{` leftovers, template fingerprints
   (`scripts/template-fingerprints.json`), duplicate IDs, dead hrefs/anchors,
-  img alt/dimensions, preload count, robots-vs-env, E164 tel/sms. JSON table
+  img alt/dimensions, preload count, robots-vs-env, E164 tel/sms,
+  robots.txt/sitemap validity, GSC meta, static JSON-LD parse. JSON table
   `{check, status, evidence}`; rows it can't check emit `MANUAL`. Exit 0
   all-pass / 1 fails present.
+
+- `scripts/indexnow.mjs --init [--dist <path>]` — generate the IndexNow key
+  file into `dist/` at build (idempotent; reuses an existing key).
+- `scripts/indexnow.mjs --submit <domain> [--dry-run]` — after deploy, POST
+  the sitemap's URLs to api.indexnow.org (Bing/Yandex instantly; **Google
+  does not use IndexNow**). Refuses staging dists.
 
 npm aliases: `npm run client:new -- --init <name>`,
 `npm run client:validate -- --validate <name>`, `npm run client:gate -- --env staging`.

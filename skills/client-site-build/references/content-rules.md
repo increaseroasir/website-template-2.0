@@ -56,3 +56,31 @@ fit a name** (decision-table.md).
   it never hides.
 - **Offer copy**: an offer with no `OFFER_ENDS_AT` is evergreen — remove or
   neutralize urgency phrasing ("this weekend only" with no deadline is a lie).
+
+## Local-SEO title/H1 formulas (formulas, not padding)
+
+These are the highest-leverage on-page signals for a local dealer. Apply
+once per page, naturally — a second stuffed mention reads as spam to both
+Google and humans.
+
+- **Title tags lead with service + city**, brand last:
+  `Hot Tubs, Swim Spas & Saunas in {{CITY}} | {{CLIENT_NAME}}` —
+  because Google truncates titles around ~60 chars and weights leading
+  words; "service in city" is what local buyers actually type.
+- **Category page titles narrow to the one service**:
+  `Hot Tubs for Sale in {{CITY}} | {{CLIENT_NAME}}` — because a category
+  page competing for all three services ranks for none of them.
+- **Homepage H1 contains the city or market phrase** (`CLIENT_MARKET`
+  works: "the Knoxville area") — because the H1 is the strongest on-page
+  relevance signal after the title, and a hero that never names the market
+  reads as a national brand to the algorithm.
+- **Category H1/body mentions the city or service area exactly once,
+  naturally** ("Shop hot tubs in {{CITY}}" / "serving {{MARKET}}") —
+  because zero mentions loses the local signal and 3+ mentions is keyword
+  stuffing, which suppresses rather than boosts.
+- **Meta descriptions**: one city mention + the offer/differentiator + a
+  verb ("Shop", "Compare", "See prices") — because descriptions don't rank
+  but decide the click, and local intent converts on proximity + price.
+- Never invent neighborhoods/suburbs the client doesn't serve to widen
+  reach — areaServed claims must match the real service area (honesty rules
+  above apply to geography too).

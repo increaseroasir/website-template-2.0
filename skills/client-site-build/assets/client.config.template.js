@@ -41,6 +41,7 @@ window.CLIENT_CONFIG = {
     ga4Id: '',                      // G-XXXXXXXXXX — verify in Realtime
     clarityId: '',
     turnstileSiteKey: '',           // EMPTY = SILENT LEAD LOSS. Block launch if missing.
+    gscVerification: '',            // Search Console meta token. Empty = meta omitted (launch may proceed; verify within 48h).
     leadValue: '950',
     leadCurrency: 'USD'
   },

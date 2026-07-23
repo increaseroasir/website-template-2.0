@@ -34,6 +34,13 @@ CHECKS (static)
                   preloads is a PASS on pages with no hero
   robots          robots meta matches --env
   phones          tel:/sms: hrefs are E164 and match the built config
+  robots.txt      exists; staging = "Disallow: /", prod = allow + Sitemap line
+  sitemap         parses, absolute URLs resolve to shipped pages, excluded
+                  pages (404/thank-you/admin/SLUG template) absent
+  gsc-meta        google-site-verification absent when token empty, never
+                  empty/tokenized when present
+  json-ld         every static application/ld+json block parses (runtime
+                  FAQ/Breadcrumb/Product schema is a MANUAL rich-results row)
 
 MANUAL rows are emitted for: console errors, duplicate IDs after inventory
 injection, form fit at 390x650/320, reduced-motion, Lighthouse, live wiring
@@ -210,6 +217,9 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   const want = env === 'prod' ? /index\s*,\s*follow/i : /noindex/i;
   const bad = [];
   for (const p of pages) {
+    /* 404.html is deliberately noindex in every environment — an indexed
+       error page is the bug, not the noindex. */
+    if (relative(dist, p) === '404.html') continue;
     const text = readFileSync(p, 'utf8');
     const m = text.match(/<meta\s+name="robots"\s+content="([^"]*)"/i);
     if (!m) bad.push(`${relative(dist, p)}: no robots meta`);
@@ -249,6 +259,77 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('phones: tel/sms match built config (E164)', status, evidence);
 }
 
+/* 9. robots.txt exists and matches env */
+{
+  const robotsPath = join(dist, 'robots.txt');
+  if (!existsSync(robotsPath)) add('robots.txt: exists and matches --env', 'FAIL', 'robots.txt missing from dist (build-config.mjs generates it — check DOMAIN/CLIENT_WEBSITE_URL)');
+  else {
+    const text = readFileSync(robotsPath, 'utf8');
+    const bad = [];
+    if (env === 'staging') {
+      if (!/^Disallow:\s*\/\s*$/m.test(text)) bad.push('staging robots.txt must contain "Disallow: /"');
+    } else {
+      if (/^Disallow:\s*\/\s*$/m.test(text)) bad.push('prod robots.txt contains blanket "Disallow: /"');
+      if (!/^Sitemap:\s*https:\/\/\S+\/sitemap\.xml\s*$/m.test(text)) bad.push('prod robots.txt missing "Sitemap: https://<domain>/sitemap.xml" line');
+    }
+    if (text.includes('{{')) bad.push('robots.txt contains unhydrated tokens');
+    add('robots.txt: exists and matches --env', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : `robots.txt correct for ${env}`);
+  }
+}
+
+/* 10. sitemap.xml: parses, URLs resolve to shipped pages, no excluded pages */
+{
+  const sitemapPath = join(dist, 'sitemap.xml');
+  if (!existsSync(sitemapPath)) {
+    add('sitemap: exists, parses, URLs resolve, exclusions honored', env === 'staging' ? 'MANUAL' : 'FAIL',
+      env === 'staging' ? 'sitemap.xml not generated on this staging build — required before prod' : 'sitemap.xml missing from dist');
+  } else {
+    const text = readFileSync(sitemapPath, 'utf8');
+    const bad = [];
+    if (!/^<\?xml[^>]*\?>\s*<urlset[^>]*>[\s\S]*<\/urlset>\s*$/.test(text.trim())) bad.push('sitemap.xml is not a well-formed <urlset> document');
+    const locs = [...text.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+    if (!locs.length) bad.push('sitemap.xml contains zero <loc> entries');
+    const EXCLUDED = /\/(404\.html|thank-you\.html|admin\/|active-inventory\/SLUG\/)/;
+    for (const loc of locs) {
+      if (!/^https:\/\//.test(loc)) { bad.push(`non-absolute URL: ${loc}`); continue; }
+      if (EXCLUDED.test(loc)) { bad.push(`excluded page present in sitemap: ${loc}`); continue; }
+      const rel = loc.replace(/^https:\/\/[^/]+\//, '');
+      const candidate = rel === '' ? 'index.html' : (rel.endsWith('/') ? rel + 'index.html' : rel);
+      if (!existsSync(join(dist, candidate))) bad.push(`sitemap URL has no shipped page: ${loc} → ${candidate}`);
+    }
+    add('sitemap: exists, parses, URLs resolve, exclusions honored', bad.length ? 'FAIL' : 'PASS',
+      bad.length ? cap(bad, 12) : `${locs.length} URLs, all resolve, 404/thank-you/admin/SLUG excluded`);
+  }
+}
+
+/* 11. GSC verification meta: absent (empty token) or non-empty and untokenized */
+{
+  const bad = [];
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    const m = text.match(/<meta\s+name="google-site-verification"\s+content="([^"]*)"/i);
+    if (!m) continue; // omitted entirely = valid (empty token path)
+    if (m[1] === '') bad.push(`${relative(dist, p)}: empty GSC meta shipped — build should have stripped it`);
+    else if (m[1].includes('{{')) bad.push(`${relative(dist, p)}: GSC meta still tokenized: "${m[1]}"`);
+  }
+  add('gsc-meta: absent when empty, valid when present', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'no empty/tokenized verification metas');
+}
+
+/* 12. JSON-LD: every static <script type="application/ld+json"> block parses */
+{
+  const bad = [];
+  let count = 0;
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    for (const m of text.matchAll(/<script\s+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)) {
+      count++;
+      try { JSON.parse(m[1]); } catch (e) { bad.push(`${relative(dist, p)}: JSON-LD does not parse — ${e.message}`); }
+    }
+  }
+  add('json-ld: all static blocks parse', bad.length ? 'FAIL' : 'PASS',
+    bad.length ? cap(bad) : `${count} static block(s) parse (FAQ/Breadcrumb/Product schema is JS-emitted; see MANUAL rich-results row)`);
+}
+
 /* MANUAL rows — a script cannot verify these; never fake a PASS */
 for (const [check, evidence] of [
   ['console: zero errors on load+scroll+interaction', 'Run each page in a browser; interact with drawer, FAQ, form step 1, a card CTA'],
@@ -257,7 +338,8 @@ for (const [check, evidence] of [
   ['reduced-motion: fully static, final values shown', 'Enable OS reduced motion and reload every page'],
   ['lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1', 'Run Lighthouse on the staging URL'],
   ['wiring: 8 IDs live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing'],
-  ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md']
+  ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md'],
+  ['rich results: JS-emitted JSON-LD valid per page type', 'Run homepage (FAQPage), a category page (BreadcrumbList), and a live product URL (Product+Breadcrumb) through https://search.google.com/test/rich-results']
 ]) add(check, 'MANUAL', evidence);
 
 const summary = {

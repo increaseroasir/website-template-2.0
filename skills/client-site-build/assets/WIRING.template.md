@@ -36,6 +36,17 @@ launch; update in the same change whenever an ID changes after launch.
 | GA4 Realtime + Meta Test Events on CLIENT IDs | | |
 | Screenshot archive (1440/390, every page) location | | |
 
+## Search indexing
+
+| Item | Result | Date |
+|---|---|---|
+| GSC property verified (meta token) | | |
+| sitemap.xml submitted in GSC (status Success) | | |
+| Request Indexing: homepage + inventory + one category | | |
+| IndexNow key live + `--submit <domain>` run | | |
+| Google Business Profile website link updated | | |
+| **Day-7 crawl verification**: indexed count vs sitemap count | | |
+
 ## Notes / decision-table rulings applied
 
 -
