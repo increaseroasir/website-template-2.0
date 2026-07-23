@@ -16,6 +16,7 @@
 import { corsHeaders, jsonResponse } from '../lib/cors.js';
 import { validateLeadPayload, verifyTurnstile } from '../lib/validate.js';
 import { upsertContact, ghlConfigured } from '../lib/ghl.js';
+import { sendFailureAlert } from '../lib/alert.js';
 
 const GHL_BASE = 'https://services.leadconnectorhq.com';
 const CALENDAR_VERSION = '2021-04-15'; // calendar endpoints use their own API version
@@ -39,6 +40,24 @@ async function fetchFreeSlots(env, startMs, endMs) {
     .filter(([key, value]) => /^\d{4}-\d{2}-\d{2}$/.test(key) && value && Array.isArray(value.slots) && value.slots.length)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, value]) => ({ date, slots: value.slots }));
+}
+
+/* Alert the operator when availability fetch breaks (revoked PIT, deleted
+   calendar, …) — otherwise /book/ silently degrades to request-mode and
+   nobody notices live booking went dark. Debounced to one email per 6h via
+   the Cache API so a broken calendar doesn't email on every page load. */
+async function alertSlotsDown(context, env, request, errText) {
+  try {
+    const cache = caches.default;
+    const marker = new Request(new URL('/api/booking?__alert=slots-down', request.url).toString(), { method: 'GET' });
+    if (await cache.match(marker)) return;
+    await cache.put(marker, new Response('1', { headers: { 'Cache-Control': 'public, max-age=21600' } }));
+  } catch (err) { return; } // no Cache API (local dev) — skip rather than spam
+  try {
+    await sendFailureAlert(env,
+      { submissionId: 'booking-slots-' + Date.now(), fullName: '(no lead — availability fetch)', email: '', phone: '', pageUrl: '/book/' },
+      'BOOKING availability fetch is failing — /book/ is running in request-mode (leads still captured, no live slots). Error: ' + errText);
+  } catch (err) { /* alerting is best-effort */ }
 }
 
 /* After an appointment-create failure, decide whether the slot was simply
@@ -81,6 +100,7 @@ export async function onRequestGet(context) {
       : jsonResponse({ ok: true, bookable: false }, 200, env, request);
   } catch (err) {
     console.error('Booking slots fetch failed:', err.message || err);
+    await alertSlotsDown(context, env, request, err.message || String(err));
     return jsonResponse({ ok: true, bookable: false }, 200, env, request); // fail open, never cached
   }
   try {
@@ -148,6 +168,13 @@ export async function onRequestPost(context) {
          and submit. Tell the visitor to pick another; resubmit merges cleanly. */
       return jsonResponse({ ok: true, booked: false, slotTaken: true }, 200, env, request);
     }
+    /* Not a taken slot → the calendar write path itself is broken (no assigned
+       user, revoked scope, …). Lead is safe in GHL; tell the operator. */
+    try {
+      await sendFailureAlert(env,
+        { submissionId: 'booking-' + Date.now(), fullName: (lead.firstName || '') + ' ' + (lead.lastName || ''), email: lead.email || '', phone: lead.phone || '', pageUrl: '/book/' },
+        'Booking appointment create failed (contact WAS saved to GHL with Intent - Showroom Visit — confirm their time by text). Requested slot: ' + slot + '. Error: ' + (err.message || err));
+    } catch (alertErr) { /* alerting is best-effort */ }
     return jsonResponse({ ok: true, booked: false, message: 'Request received — we will text you shortly to confirm your visit time.' }, 200, env, request);
   }
 }

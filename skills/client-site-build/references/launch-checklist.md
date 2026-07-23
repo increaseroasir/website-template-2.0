@@ -48,6 +48,28 @@ the client repo as `LAUNCH_GATE.md`; an unchecked box blocks launch (Law 4).
 - [ ] **Screenshot archive**: every page at 1440 and 390, stored alongside
       `WIRING.md` with the launch date.
 
+## Booking calendar (/book/) — only if `tracking.ghlBookingCalendarId` is set
+
+API-created appointments do not necessarily fire the same GHL automations as
+native widget bookings. Never assume — verify in Execution Logs.
+
+- [ ] Calendar has at least one **assigned team member** (free slots can show
+      without one, but appointment creation fails without it).
+- [ ] Load `/book/` on the live domain — real slots render (not request-mode).
+- [ ] Make **one real test booking** end-to-end from the page.
+- [ ] Appointment appears in GHL at the **correct store-local time** with the
+      contact tagged `Intent - Showroom Visit` + `Campaign - booking`.
+- [ ] Open **Automation → Execution Logs**: confirm the appointment-booked
+      workflow actually fired for the API-created appointment. If it triggers
+      on a different appointment status than `confirmed`, adjust the workflow
+      trigger (or flag the mismatch) before sign-off.
+- [ ] Confirmation SMS/email reached the test contact.
+- [ ] If the calendar syncs with Google Calendar: know that sync lag
+      (~30–60 s) can rarely double-book a slot. GHL is the source of truth;
+      the page's slot-taken retry handles the rejection path. No action —
+      just don't promise the client it is impossible.
+- [ ] Delete the test appointment and test contact.
+
 ## Search indexing (same day as DNS)
 
 Submission is automatable; Google indexing itself is not. These steps get the
