@@ -27,6 +27,31 @@ function calHeaders(env) {
 }
 function bookable(env) { return ghlConfigured(env) && !!env.GHL_BOOKING_CALENDAR_ID; }
 
+/* Raw free-slots fetch; returns [{ date, slots }] sorted, or throws. */
+async function fetchFreeSlots(env, startMs, endMs) {
+  const url = GHL_BASE + '/calendars/' + encodeURIComponent(env.GHL_BOOKING_CALENDAR_ID) +
+    '/free-slots?startDate=' + startMs + '&endDate=' + endMs;
+  const res = await fetch(url, { headers: calHeaders(env) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || data.error || ('free-slots HTTP ' + res.status));
+  /* Response keys are dates ("2026-07-24": { slots: [ISO, ...] }) plus metadata. */
+  return Object.entries(data)
+    .filter(([key, value]) => /^\d{4}-\d{2}-\d{2}$/.test(key) && value && Array.isArray(value.slots) && value.slots.length)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, value]) => ({ date, slots: value.slots }));
+}
+
+/* After an appointment-create failure, decide whether the slot was simply
+   taken (it vanished from free-slots) or something else broke. */
+async function slotStillFree(env, slot) {
+  try {
+    const t = Date.parse(slot);
+    if (!Number.isFinite(t)) return null;
+    const days = await fetchFreeSlots(env, t - 60 * 60 * 1000, t + 24 * 60 * 60 * 1000);
+    return days.some(day => day.slots.includes(slot));
+  } catch (err) { return null; } // unknown — don't claim it was taken
+}
+
 export async function onRequestOptions(context) {
   return new Response(null, { status: 204, headers: corsHeaders(context.env, context.request) });
 }
@@ -34,25 +59,38 @@ export async function onRequestOptions(context) {
 export async function onRequestGet(context) {
   const { env, request } = context;
   if (!bookable(env)) return jsonResponse({ ok: true, bookable: false }, 200, env, request);
+
+  /* 60s edge cache: dealer traffic never notices, but a bot hammering the
+     page can't burn the location's GHL rate budget. */
+  let cache = null, cacheKey = null;
+  try {
+    cache = caches.default;
+    cacheKey = new Request(new URL(request.url).toString(), { method: 'GET' });
+    const hit = await cache.match(cacheKey);
+    if (hit) return hit;
+  } catch (err) { /* Cache API unavailable (local dev) — fetch fresh */ }
+
+  let response;
   try {
     const start = Date.now() + 60 * 60 * 1000; // nothing sooner than an hour out
     const end = Date.now() + DAYS_AHEAD * 24 * 60 * 60 * 1000;
-    const url = GHL_BASE + '/calendars/' + encodeURIComponent(env.GHL_BOOKING_CALENDAR_ID) +
-      '/free-slots?startDate=' + start + '&endDate=' + end;
-    const res = await fetch(url, { headers: calHeaders(env) });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || data.error || ('free-slots HTTP ' + res.status));
-    /* Response keys are dates ("2026-07-24": { slots: [ISO, ...] }) plus metadata. */
-    const days = Object.entries(data)
-      .filter(([key, value]) => /^\d{4}-\d{2}-\d{2}$/.test(key) && value && Array.isArray(value.slots) && value.slots.length)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([date, value]) => ({ date, slots: value.slots.slice(0, MAX_SLOTS_PER_DAY) }));
-    if (!days.length) return jsonResponse({ ok: true, bookable: false }, 200, env, request);
-    return jsonResponse({ ok: true, bookable: true, days }, 200, env, request);
+    const days = (await fetchFreeSlots(env, start, end))
+      .map(day => ({ date: day.date, slots: day.slots.slice(0, MAX_SLOTS_PER_DAY) }));
+    response = days.length
+      ? jsonResponse({ ok: true, bookable: true, days }, 200, env, request)
+      : jsonResponse({ ok: true, bookable: false }, 200, env, request);
   } catch (err) {
     console.error('Booking slots fetch failed:', err.message || err);
-    return jsonResponse({ ok: true, bookable: false }, 200, env, request); // fail open into request-mode
+    return jsonResponse({ ok: true, bookable: false }, 200, env, request); // fail open, never cached
   }
+  try {
+    if (cache && cacheKey) {
+      const toCache = response.clone();
+      toCache.headers.set('Cache-Control', 'public, max-age=60');
+      context.waitUntil ? context.waitUntil(cache.put(cacheKey, toCache)) : await cache.put(cacheKey, toCache);
+    }
+  } catch (err) { /* caching is best-effort */ }
+  return response;
 }
 
 export async function onRequestPost(context) {
@@ -102,8 +140,14 @@ export async function onRequestPost(context) {
     if (!res.ok) throw new Error(data.message || data.error || ('appointment HTTP ' + res.status));
     return jsonResponse({ ok: true, booked: true, slot }, 200, env, request);
   } catch (err) {
-    /* Contact is already captured with intent tags — degrade to confirm-by-text. */
+    /* Contact is already captured with intent tags — nothing below can lose the lead. */
     console.error('Appointment create failed (lead captured):', err.message || err);
+    const stillFree = await slotStillFree(env, slot);
+    if (stillFree === false) {
+      /* The slot vanished from free-slots → someone took it between page load
+         and submit. Tell the visitor to pick another; resubmit merges cleanly. */
+      return jsonResponse({ ok: true, booked: false, slotTaken: true }, 200, env, request);
+    }
     return jsonResponse({ ok: true, booked: false, message: 'Request received — we will text you shortly to confirm your visit time.' }, 200, env, request);
   }
 }

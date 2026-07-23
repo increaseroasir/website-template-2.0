@@ -33,11 +33,22 @@
     var d = new Date(iso + 'T12:00:00');
     return { top: d.toLocaleDateString('en-US', { weekday: 'short' }), big: String(d.getDate()), sub: d.toLocaleDateString('en-US', { month: 'short' }) };
   }
+  /* Slots arrive in the STORE's timezone with the offset baked in
+     (e.g. 2026-07-23T09:30:00-04:00). Format the wall-clock time straight
+     from the string — new Date().toLocaleTimeString() would shift it into
+     the visitor's timezone, showing an out-of-town visitor the wrong time
+     for an in-person visit. */
   function timeLabel(iso) {
-    return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    var m = String(iso).match(/T(\d{2}):(\d{2})/);
+    if (!m) return iso;
+    var h = parseInt(m[1], 10);
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + m[2] + ' ' + ampm;
   }
   function fullLabel(iso) {
-    var d = new Date(iso);
+    var datePart = String(iso).slice(0, 10);
+    var d = new Date(datePart + 'T12:00:00');
     return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + ' at ' + timeLabel(iso);
   }
   function chip(html, cls) {
@@ -58,6 +69,10 @@
   }
 
   function renderDays() {
+    daysWrap.innerHTML = '';
+    timesWrap.innerHTML = '';
+    slotField.value = '';
+    picked.hidden = true;
     days.slice(0, 7).forEach(function (day, i) {
       var l = dayLabel(day.date);
       var c = chip('<span>' + l.top + '</span><b>' + l.big + '</b><span>' + l.sub + '</span>', 'book-chip-day');
@@ -89,6 +104,9 @@
   }
   function requestMode() {
     daysWrap.hidden = true;
+    stepTime.hidden = true;
+    slotField.value = ''; // never resubmit a stale slot from request-mode
+    picked.hidden = true;
     fallbackWrap.hidden = false;
     var label = card.querySelector('[data-book-step="day"] .book-label');
     if (label) label.textContent = '1 · When works for you?';
@@ -97,15 +115,18 @@
     showDetails();
   }
 
-  fetch('/api/booking', { headers: { Accept: 'application/json' } })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data && data.ok && data.bookable && Array.isArray(data.days) && data.days.length) {
-        days = data.days;
-        renderDays();
-      } else { requestMode(); }
-    })
-    .catch(requestMode);
+  function loadSlots(onEmpty) {
+    fetch('/api/booking', { headers: { Accept: 'application/json' } })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.ok && data.bookable && Array.isArray(data.days) && data.days.length) {
+          days = data.days;
+          renderDays();
+        } else { (onEmpty || requestMode)(); }
+      })
+      .catch(onEmpty || requestMode);
+  }
+  loadSlots();
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -137,6 +158,19 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!data.ok) throw new Error(data.error || 'Something went wrong.');
+        if (data.slotTaken) {
+          /* Someone grabbed that time between page load and submit. Refresh
+             the real availability and ask for another pick — the contact is
+             already saved server-side, so resubmitting just merges. */
+          errorOut.textContent = 'That time was just taken \u2014 please pick another.';
+          errorOut.hidden = false;
+          loadSlots(function () {
+            /* No slots left at all → flip to request-mode; resubmit captures preferred day. */
+            errorOut.textContent = 'That time was just taken and the calendar is now full \u2014 tell us a day that works and we\u2019ll text you options.';
+            requestMode();
+          });
+          return;
+        }
         if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'engagement', event_label: 'booking', page_path: location.pathname });
         if (typeof fbq === 'function') fbq('track', 'Schedule', { content_name: 'showroom-visit' });
         form.hidden = true;
