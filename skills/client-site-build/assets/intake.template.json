@@ -1,0 +1,62 @@
+{
+  "_instructions": "Normalized intake brief. Fill from the GHL intake form — never from memory. Every field maps to config keys or tokens.env values. Empty string = intentionally absent (will be flagged); do not delete keys.",
+  "business": {
+    "tradingName": "",
+    "legalName": "",
+    "market": "",
+    "tagline": "",
+    "address": "",
+    "hours": "",
+    "email": "",
+    "phoneDisplay": "",
+    "phoneE164": "",
+    "websiteDomain": "",
+    "facebookUrl": "",
+    "gmbMapUrl": "",
+    "timezone": ""
+  },
+  "reputation": {
+    "googleRating": null,
+    "googleReviewCount": null,
+    "yearsInBusiness": null,
+    "deliveriesOrCustomers": null,
+    "reviews": [
+      { "firstName": "", "month": "", "source": "", "text": "" }
+    ]
+  },
+  "market": {
+    "serviceAreaTowns": [],
+    "zipNote": "zip validation is generic 5-digit; list towns for the footer chips"
+  },
+  "offer": {
+    "active": false,
+    "name": "",
+    "headline": "",
+    "endsAtISO": "",
+    "financingPromise": "",
+    "deliveryPromise": ""
+  },
+  "wiring": {
+    "ga4Id": "",
+    "metaPixelId": "",
+    "clarityId": "",
+    "ghlSubAccountId": "",
+    "leadEndpoint": "/api/lead",
+    "ghlChatWidgetId": "",
+    "closebotSourceId": "",
+    "turnstileSiteKey": ""
+  },
+  "images": {
+    "logoUrl": "",
+    "logoFooterUrl": "",
+    "heroImage": "",
+    "heroImageAlt": "",
+    "notes": "fill remaining image tokens in tokens.env per references/images.md"
+  },
+  "signoff": {
+    "templateVersion": "",
+    "intakeSource": "",
+    "preparedBy": "",
+    "date": ""
+  }
+}

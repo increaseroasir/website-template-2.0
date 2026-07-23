@@ -1,0 +1,33 @@
+{
+  "comment": "Labeled queries for testing the SKILL.md description's triggering. should_trigger includes indirect phrasings with no mention of template/tokens; should_not_trigger are deliberate near-misses (design-system work that belongs to the template repo).",
+  "should_trigger": [
+    "Build the site for Bubba's Backyard Oasis in Tulsa, here's their info",
+    "Set up a new client website for a hot tub dealer in Boise",
+    "Swap Paradise's stuff out for the new dealer we just signed",
+    "Is the new client site ready to go live?",
+    "Run the launch gate on the Johnson City build",
+    "Wire up GA4 and the pixel for the new dealer site",
+    "The client sent over their logo and photos — get them onto the site",
+    "Hydrate the template with Lakeside Spas' config",
+    "Point the lead form at the new client's GHL sub-account",
+    "We're launching Friday — what's left on the checklist for the dealer site?",
+    "Update the hours and phone number on the Chattanooga client's site",
+    "Their summer sale ended, switch the site to no-offer mode",
+    "Create the client config for the intake form that just came in",
+    "Push the staging build live for Mountain View Hot Tubs",
+    "Validate the config for the new customer before I show the owner",
+    "The dealer's reviews and stats need to go in before launch",
+    "New customer signed: hot tub store in Asheville, spin up their site"
+  ],
+  "should_not_trigger": [
+    "Make the template's buttons rounder",
+    "Change the gold to red sitewide",
+    "Add a blog section to the template",
+    "The hero animation feels slow, speed up the stagger on the template",
+    "Redesign the compare table layout",
+    "Add a new pricing-calculator section to the design system",
+    "Refactor home.css to use CSS nesting",
+    "Update SITE_MASTER_SPEC with a new card hover treatment",
+    "Ship a template version bump with the new footer design"
+  ]
+}

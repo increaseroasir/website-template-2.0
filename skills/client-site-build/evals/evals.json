@@ -1,0 +1,50 @@
+{
+  "comment": "Output-quality eval cases for the client-site-build skill. Each case gives setup, the task prompt an agent receives, and objective assertions.",
+  "cases": [
+    {
+      "id": "hostile-build",
+      "name": "Full hostile-config build passes the mechanical gate",
+      "setup": [
+        "node skills/client-site-build/scripts/new-client.mjs --init hostile-rehearsal",
+        "cp skills/client-site-build/assets/hostile.config.js clients/hostile-rehearsal/client.config.js",
+        "Fill clients/hostile-rehearsal/tokens.env with safe filler for every key (e.g. KEY=\"Sample <key text>\"), honoring: rating stat 4.2, review count 3, JSON-LD aggregateRating dropped, at least one value with an apostrophe, zero values containing '|', all *_IMAGE tokens as https URLs except one left empty",
+        "Build to clients/hostile-rehearsal/dist/ per SKILL.md step 5"
+      ],
+      "prompt": "Build the hostile rehearsal client and run the staging gate.",
+      "assertions": [
+        "gate.mjs --env staging exits 0 (no FAIL rows)",
+        "grep -r '{{' clients/hostile-rehearsal/dist/ --include='*.html' returns nothing",
+        "No fingerprint hits: gate 'fingerprints' row is PASS (no origin-dealer strings or template IDs)",
+        "dist/index.html body has data-offer-ends=\"\" and loading the page adds body.offer-static (evergreen: no visible countdown tiles, no NaN, no 00:00:00)",
+        "At 390px the header/drawer/footer render the 68-char business name without horizontal overflow (scrollWidth <= clientWidth on header)",
+        "The empty image token's card shows the gradient well; the 404 logo image is removed/hidden by onerror with no broken-image glyph"
+      ]
+    },
+    {
+      "id": "missing-hours-blocks",
+      "name": "Validation blocks an intake with missing hours",
+      "setup": [
+        "node skills/client-site-build/scripts/new-client.mjs --init missing-hours-test",
+        "Fill clients/missing-hours-test/client.config.js completely EXCEPT client.hours (leave '')"
+      ],
+      "prompt": "Validate the missing-hours-test client and proceed with the build.",
+      "assertions": [
+        "new-client.mjs --validate exits 1",
+        "JSON output status is FAIL and errors[] contains an entry naming client.hours",
+        "The agent STOPS at workflow step 3 and reports the block for HUMAN CHECKPOINT 1 — it does not build, does not invent hours, does not proceed past the FAIL (Law 4 + decision-table 'Missing hours or address')"
+      ]
+    },
+    {
+      "id": "retheme-escalates",
+      "name": "Palette change request escalates, changes nothing",
+      "setup": ["Any initialized client build"],
+      "prompt": "The client wants a blue-and-red theme instead of the navy and gold — update their site.",
+      "assertions": [
+        "The agent cites Law 3 (palette is the product) / decision-table row 'Client wants different colors/palette'",
+        "Zero edits to any CSS, config brand.* values, or site files — git diff is empty",
+        "The agent escalates: describes it as a template-repo re-theming project (version bump to the fleet), and logs the ruling in the build report",
+        "brand.* values in the client config still read #16469B/#0B2559/#06183D/#FFB81C/#D7261E"
+      ]
+    }
+  ]
+}

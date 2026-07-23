@@ -1,95 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
-<title>{{HOT_TUBS_SEO_TITLE}}</title>
-<meta name="description" content="{{CATEGORY_META_DESCRIPTION}}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;100,800;125,900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/template.css">
-<script src="../client.config.js"></script>
-<script src="../assets/tracking.js"></script>
+  <link rel="icon" href="/favicon.ico?v=20260710" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20260710">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20260710">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260710">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030C20">
+  <meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
+  <title>{{HOT_TUBS_SEO_TITLE}}</title>
+  <meta name="description" content="{{CATEGORY_META_DESCRIPTION}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="{{HOT_TUBS_HERO_IMAGE}}">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/inventory.css">
+  <link rel="stylesheet" href="/assets/category.css">
+  <script src="/client.config.js"></script>
+  <script src="/assets/tracking.js"></script>
 </head>
-<body data-template-page>
-<header class="site-header">
-  <div class="header-inner">
-    <a class="logo" href="../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
-    <nav class="nav" aria-label="Primary">
-      <a href="../hot-tubs/">Hot Tubs</a><a href="../swim-spas/">Swim Spas</a><a href="../saunas/">Saunas</a><a href="../inventory.html">Inventory</a><a href="../financing.html">Financing</a><a href="../contact.html">Contact</a>
-    </nav>
-    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a><a class="btn btn-gold" href="../inventory.html">Shop Inventory</a></div>
-    <button class="mobile-menu" aria-label="Open menu">☰</button>
-  </div>
-</header>
-<main>
-<section class="hero"><div class="hero-inner"><div><h1>{{HOT_TUBS_HERO_HEADLINE}}</h1><p>{{HOT_TUBS_HERO_SUBHEAD}}</p><div class="hero-actions"><a class="btn btn-gold" href="#category-products">{{CATEGORY_PRIMARY_CTA}}</a><button class="btn btn-outline" data-open-lead data-product="{{HOT_TUBS_CATEGORY_INTEREST}}">{{CATEGORY_SECONDARY_CTA}}</button></div></div><div class="hero-card"><div class="media-frame"><img src="{{HOT_TUBS_HERO_IMAGE}}" alt="{{HOT_TUBS_HERO_IMAGE_ALT}}"></div></div></div></section>
-<section class="section" id="category-products"><div class="wrap section-head"><span class="kicker">Available Now</span><h2>{{HOT_TUBS_GRID_HEADLINE}}</h2><p class="lead">{{HOT_TUBS_GRID_COPY}}</p></div><div class="wrap product-grid" data-inventory-source="/api/inventory?category=hot-tub"><article class="product-card" data-product-card data-source="D1_PRODUCTS">
-  <div class="availability-bar">{{PRODUCT_STATUS_LABEL}}</div>
-  <div class="product-image"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" loading="lazy"><span class="sale-badge">{{PRODUCT_PROMO_LABEL}}</span></div>
-  <div class="product-body">
-    <h3>{{PRODUCT_NAME}}</h3>
-    <div class="facts"><span>{{PRODUCT_FACT_1}}</span><span>{{PRODUCT_FACT_2}}</span><span>{{PRODUCT_FACT_3}}</span></div>
-    <p>{{PRODUCT_CARD_SUMMARY}}</p>
-    <div class="price"><span>From</span><b>{{PRODUCT_PRICE}}</b><span>{{PRODUCT_MONTHLY_PAYMENT}} with approved credit</span></div>
-    <div class="product-actions"><button class="btn btn-red" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><a class="btn btn-outline" href="{{PRODUCT_DETAIL_URL}}">View Details</a></div>
-  </div>
-</article><article class="product-card" data-product-card data-source="D1_PRODUCTS">
-  <div class="availability-bar">{{PRODUCT_STATUS_LABEL}}</div>
-  <div class="product-image"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" loading="lazy"><span class="sale-badge">{{PRODUCT_PROMO_LABEL}}</span></div>
-  <div class="product-body">
-    <h3>{{PRODUCT_NAME}}</h3>
-    <div class="facts"><span>{{PRODUCT_FACT_1}}</span><span>{{PRODUCT_FACT_2}}</span><span>{{PRODUCT_FACT_3}}</span></div>
-    <p>{{PRODUCT_CARD_SUMMARY}}</p>
-    <div class="price"><span>From</span><b>{{PRODUCT_PRICE}}</b><span>{{PRODUCT_MONTHLY_PAYMENT}} with approved credit</span></div>
-    <div class="product-actions"><button class="btn btn-red" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><a class="btn btn-outline" href="{{PRODUCT_DETAIL_URL}}">View Details</a></div>
-  </div>
-</article><article class="product-card" data-product-card data-source="D1_PRODUCTS">
-  <div class="availability-bar">{{PRODUCT_STATUS_LABEL}}</div>
-  <div class="product-image"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" loading="lazy"><span class="sale-badge">{{PRODUCT_PROMO_LABEL}}</span></div>
-  <div class="product-body">
-    <h3>{{PRODUCT_NAME}}</h3>
-    <div class="facts"><span>{{PRODUCT_FACT_1}}</span><span>{{PRODUCT_FACT_2}}</span><span>{{PRODUCT_FACT_3}}</span></div>
-    <p>{{PRODUCT_CARD_SUMMARY}}</p>
-    <div class="price"><span>From</span><b>{{PRODUCT_PRICE}}</b><span>{{PRODUCT_MONTHLY_PAYMENT}} with approved credit</span></div>
-    <div class="product-actions"><button class="btn btn-red" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><a class="btn btn-outline" href="{{PRODUCT_DETAIL_URL}}">View Details</a></div>
-  </div>
-</article></div></section>
-<section class="section alt"><div class="wrap grid grid-3"><div class="panel"><h3>{{HOT_TUBS_BENEFIT_1_TITLE}}</h3><p>{{HOT_TUBS_BENEFIT_1_COPY}}</p></div><div class="panel"><h3>{{HOT_TUBS_BENEFIT_2_TITLE}}</h3><p>{{HOT_TUBS_BENEFIT_2_COPY}}</p></div><div class="panel"><h3>{{HOT_TUBS_BENEFIT_3_TITLE}}</h3><p>{{HOT_TUBS_BENEFIT_3_COPY}}</p></div></div></section>
-<aside class="form-card" data-lead-panel hidden aria-label="Lead form drawer">
-  <button class="btn btn-outline" data-close-lead type="button">Close</button>
-  <h3>Get today's local price</h3>
-  <form class="form-grid" data-template-form action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
-    <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
-    <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME}}">
-    <input name="full_name" autocomplete="name" placeholder="Full name" required>
-    <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
-    <input name="email" autocomplete="email" placeholder="Email">
-    <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
-    <button class="btn btn-gold" type="submit">Send My Price</button>
-    <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
-    <p class="fine-print" data-template-result></p>
-  </form>
-</aside>
+<body class="category-page category-hot-tubs" data-template-page
+  data-lead-source="{{HOT_TUBS_LEAD_SOURCE|hot-tubs}}"
+  data-lead-campaign="{{HOT_TUBS_LEAD_CAMPAIGN|hot-tubs}}"
+  data-lead-api="/api/lead"
+  data-thank-you-url="/thank-you.html"
+  data-turnstile-site-key="{{TURNSTILE_SITE_KEY}}"
+  data-meta-view-content="{{HOT_TUBS_SEO_TITLE}}"
+  data-meta-view-category="hot-tub">
 
-</main>
+<div class="announcement-bar">
+  {{HOT_TUBS_ANNOUNCEMENT|In-stock hot tubs · local delivery available}}
+</div>
+
+<nav class="navbar">
+  <a href="/" class="nav-logo" aria-label="{{CLIENT_NAME}} home">
+    <img src="{{CLIENT_LOGO_URL}}" alt="{{CLIENT_NAME}}" width="160" height="40" decoding="async" data-config-src="client.logoUrl" onerror="this.style.display='none'; this.nextElementSibling && (this.nextElementSibling.hidden=false)">
+    <b class="nav-logo-text" data-config="client.name" hidden>{{CLIENT_NAME}}</b>
+  </a>
+  <a id="navStickyCta" href="tel:{{CLIENT_PHONE_E164}}" class="nav-call-cta phone-link"
+     data-config-href="client.primaryPhoneHref"
+     data-call-source="header_call"
+     data-call-href="tel:{{CLIENT_PHONE_E164}}"
+     data-map-href="{{CLIENT_MAP_URL}}"
+     data-call-label="Call Us 24/7"
+     data-map-label="Get Directions"
+     aria-label="Call {{CLIENT_NAME}} 24/7">
+    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <span data-nav-sticky-label>Call Us 24/7</span>
+  </a>
+  <div class="nav-links">
+    <a href="/hot-tubs/" class="nav-active">HOT TUBS</a>
+    <a href="/swim-spas/">SWIM SPAS</a>
+    <a href="/saunas/">SAUNAS</a>
+    <a href="/financing.html">FINANCING</a>
+    <a href="/contact.html">VISIT US</a>
+  </div>
+  <div class="nav-actions">
+    <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap nav-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="header_phone">
+      <span class="phone-badge-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        24/7
+      </span>
+      <span class="phone-badge-number"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></span>
+    </a>
+    <a href="/inventory.html" class="btn-coupon">Shop Inventory</a>
+  </div>
+  <button class="nav-hamburger" id="navHamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMobileMenu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-mobile-menu" id="navMobileMenu">
+  <a href="/hot-tubs/" class="nav-active">HOT TUBS</a>
+  <a href="/swim-spas/">SWIM SPAS</a>
+  <a href="/saunas/">SAUNAS</a>
+  <a href="/inventory.html">INVENTORY</a>
+  <a href="/financing.html">FINANCING</a>
+  <a href="/contact.html">VISIT US</a>
+  <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap mobile-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="mobile_menu_phone">
+    <span class="phone-badge-pill">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      24/7
+    </span>
+    <span class="phone-badge-number"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></span>
+  </a>
+  <a href="{{CLIENT_MAP_URL}}" class="btn-coupon" target="_blank" rel="noopener">Get Directions</a>
+</div>
+
+<section class="cat-hero">
+  <img class="cat-hero-img" src="{{HOT_TUBS_HERO_IMAGE}}" alt="" width="1600" height="1000" decoding="async" fetchpriority="high" aria-hidden="true" onerror="this.remove()">
+  <div class="cat-hero-bg" aria-hidden="true"></div>
+  <div class="cat-hero-steam cat-hero-steam-1" aria-hidden="true"></div>
+  <div class="cat-hero-steam cat-hero-steam-2" aria-hidden="true"></div>
+  <div class="cat-hero-inner">
+    <div class="cat-hero-seq">
+      <p class="cat-brand" data-config="client.name">{{CLIENT_NAME}}<span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></p>
+      <span class="cat-eyebrow">{{HOT_TUBS_EYEBROW|Hot tubs}}</span>
+      <h1>{{HOT_TUBS_HERO_HEADLINE}}</h1>
+      <p class="cat-sub">{{HOT_TUBS_HERO_SUBHEAD}}</p>
+      <div class="cat-hero-ctas" id="catHeroCtas">
+        <a class="cat-btn cat-btn-gold" href="#category-products" data-pricing-source="hot-tubs_hero_primary">{{CATEGORY_PRIMARY_CTA}}</a>
+        <button class="cat-btn cat-btn-ghost" type="button" data-open-lead data-product="{{HOT_TUBS_CATEGORY_INTEREST}}" data-pricing-source="hot-tubs_hero_secondary">{{CATEGORY_SECONDARY_CTA}}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cat-benefits">
+  <div class="wrap cat-reveal">
+    <div class="cat-benefits-head">
+      <span class="cat-eyebrow">{{HOT_TUBS_BENEFITS_KICKER|Why buy local}}</span>
+      <h2>{{HOT_TUBS_BENEFITS_HEADLINE|Built for nightly use — backed by a local team}}</h2>
+      <p>{{HOT_TUBS_BENEFITS_COPY|See real floor models, get straight answers on delivery, and leave with a price that matches what is in stock.}}</p>
+    </div>
+    <div class="cat-benefit-grid">
+      <article class="cat-benefit">
+        <span class="cat-benefit-n">01</span>
+        <h3>{{HOT_TUBS_BENEFIT_1_TITLE}}</h3>
+        <p>{{HOT_TUBS_BENEFIT_1_COPY}}</p>
+      </article>
+      <article class="cat-benefit">
+        <span class="cat-benefit-n">02</span>
+        <h3>{{HOT_TUBS_BENEFIT_2_TITLE}}</h3>
+        <p>{{HOT_TUBS_BENEFIT_2_COPY}}</p>
+      </article>
+      <article class="cat-benefit">
+        <span class="cat-benefit-n">03</span>
+        <h3>{{HOT_TUBS_BENEFIT_3_TITLE}}</h3>
+        <p>{{HOT_TUBS_BENEFIT_3_COPY}}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cat-inventory" id="category-products">
+  <div class="wrap cat-reveal">
+    <div class="cat-inventory-head">
+      <span class="cat-eyebrow">{{HOT_TUBS_GRID_KICKER|Available now}}</span>
+      <h2>{{HOT_TUBS_GRID_HEADLINE}}</h2>
+      <p>{{HOT_TUBS_GRID_COPY}}</p>
+    </div>
+    <div class="cat-results-bar">
+      <p><strong id="catResultCount">0</strong> <span id="catResultLabel" data-singular="hot tub shown" data-plural="hot tubs shown">hot tubs shown</span></p>
+      <span class="cat-results-note">{{HOT_TUBS_RESULTS_NOTE|Ask for today’s local price}}</span>
+    </div>
+    <div class="cat-grid inv-grid" id="catGrid" aria-live="polite"
+      data-inventory-source="/api/inventory?category=hot-tub"
+      data-card-style="inventory"
+      data-inventory-empty="No hot tubs are published yet."></div>
+    <p class="cat-pay-disclaimer">{{FINANCING_DISCLAIMER}}</p>
+  </div>
+</section>
+
+<section class="ht-help-section">
+  <h2>{{HOT_TUBS_HELP_HEADLINE|Not sure which hot tub fits?}}</h2>
+  <p>{{HOT_TUBS_HELP_COPY|Tell us how you’ll use it — seating, jets, and budget — and we’ll text today’s local price and availability.}}</p>
+  <button type="button" class="ht-help-cta" data-open-lead data-product="{{HOT_TUBS_CATEGORY_INTEREST}}" data-pricing-source="hot-tubs_help_cta">{{HOT_TUBS_HELP_CTA|Get My Local Price}} <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>
+</section>
+<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER}}</p>
+
 <footer class="site-footer">
-  <div class="wrap footer-grid">
-    <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p>{{CLIENT_MARKET}} dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured.</p></div>
-    <div><h4>Shop</h4><p><a href="../hot-tubs/">Hot Tubs</a><br><a href="../swim-spas/">Swim Spas</a><br><a href="../saunas/">Saunas</a></p></div>
-    <div><h4>Company</h4><p><a href="../financing.html">Financing</a><br><a href="../contact.html">Contact</a><br><a href="../admin/">Admin</a></p></div>
-    <div><h4>Contact</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
+  <div class="footer-inner">
+    <div class="footer-col footer-brand">
+      <img src="{{CLIENT_LOGO_FOOTER_URL}}" alt="{{CLIENT_NAME}}" width="160" height="40" class="footer-logo" decoding="async" data-config-src="client.logoFooterUrl" onerror="this.remove()">
+      <p class="footer-blurb">{{FOOTER_BLURB}}</p>
+      <div class="footer-social">
+        <a href="{{CLIENT_FACEBOOK_URL|#}}" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+      <div class="footer-map">
+        <iframe src="{{CLIENT_MAP_EMBED_URL}}" title="Map to {{CLIENT_NAME}}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+    <div class="footer-col footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/inventory.html">Inventory</a></li>
+        <li><a href="/financing.html">Financing</a></li>
+        <li><a href="/contact.html">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="footer-col footer-showroom">
+      <h4>Visit Our Showroom</h4>
+      <p>{{CLIENT_ADDRESS_HTML}}</p>
+      <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap footer-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="footer_phone">
+        <span class="phone-badge-pill">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          24/7
+        </span>
+        <span class="phone-badge-number"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></span>
+      </a>
+      <p class="footer-hours">{{CLIENT_HOURS_HTML}}</p>
+      <a href="mailto:{{CLIENT_EMAIL}}" class="footer-email" data-config="client.email">{{CLIENT_EMAIL}}</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; <span data-current-year></span> <span data-config="client.legalName">{{CLIENT_LEGAL_NAME}}</span>. All rights reserved.</span>
+    <span>{{CLIENT_MARKET}} dealer website</span>
   </div>
 </footer>
-<script src="../assets/template.js"></script>
-<script src="../assets/traffic-attribution.js"></script>
-<script src="../assets/view-content.js"></script>
-<script src="../assets/call-tracking.js"></script>
-<script src="../assets/pricing-tracking.js"></script>
-<script src="../assets/native-form.js"></script>
-<script src="../assets/ghl-modal.js"></script>
-<script src="../assets/lead-form.js"></script>
+
+<nav class="cat-mbar" id="catMbar" aria-label="Quick contact" aria-hidden="true">
+  <a class="call phone-link" data-config-href="client.primaryPhoneHref" data-call-source="mobile_bar_call" href="tel:{{CLIENT_PHONE_E164}}">Call</a>
+  <a class="text" data-config-href="client.smsHref" href="sms:{{CLIENT_PHONE_E164}}">Text</a>
+  <a class="book" href="#category-products" data-pricing-source="hot-tubs_mobile_bar">See Models</a>
+</nav>
+
+<div id="ghl-overlay" class="ghl-overlay" data-lead-panel aria-hidden="true" hidden>
+  <div class="ghl-modal-panel">
+    <button id="ghl-close" class="ghl-modal-close" type="button" aria-label="Close form">&#10005;</button>
+    <h2 class="ghl-modal-title">{{HOT_TUBS_MODAL_HEADLINE|Check Local Price &amp; Availability}}</h2>
+    <p class="ghl-modal-sub">{{HOT_TUBS_MODAL_SUBHEAD|We’ll text today’s showroom pricing for the models you want.}}</p>
+    <p class="ghl-modal-product" id="ghl-product-line" hidden></p>
+    <div class="ghl-modal-trust">
+      <span class="ghl-trust-badge"><span class="ghl-trust-icon" aria-hidden="true">&#128274;</span> No spam — we respect your privacy</span>
+    </div>
+    <div class="ghl-form-shell" id="ghl-form-shell"
+         data-native-form
+         data-lead-source="{{HOT_TUBS_PRODUCT_LEAD_SOURCE|hot-tubs-product}}"
+         data-submit-label="Get My Local Price &amp;rarr;"
+         data-show-financing="true"
+         data-show-product="true"
+         data-lead-success="thank-you"
+         data-field-prefix="ghl-"
+         data-form-id="ghl-modal-lead-form"
+         data-error-id="ghl-modal-lead-error"></div>
+  </div>
+</div>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="/assets/template.js"></script>
+<script src="/assets/native-form.js"></script>
+<script src="/assets/lead-form.js"></script>
+<script src="/assets/ghl-modal.js"></script>
+<script src="/assets/category.js"></script>
+<script src="/assets/traffic-attribution.js"></script>
+<script src="/assets/view-content.js"></script>
+<script src="/assets/call-tracking.js"></script>
+<script src="/assets/pricing-tracking.js"></script>
 </body>
 </html>

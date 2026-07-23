@@ -1,0 +1,258 @@
+#!/usr/bin/env node
+/**
+ * gate.mjs — mechanical launch gate for a BUILT client site (dist/ only).
+ * Part of the client-site-build skill. Node 18+, zero dependencies.
+ * JSON to stdout, diagnostics to stderr. Never fakes a PASS: anything this
+ * script cannot verify statically is emitted as MANUAL.
+ */
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { join, dirname, resolve, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
+
+const skillRoot = dirname(dirname(fileURLToPath(import.meta.url)));
+
+const HELP = `gate.mjs — mechanical launch gate (runs against dist/ ONLY)
+
+USAGE
+  node skills/client-site-build/scripts/gate.mjs --env staging|prod [--dist <path>] [--verbose]
+  node skills/client-site-build/scripts/gate.mjs --help
+
+  --env      staging: robots must be noindex. prod: robots must be index,follow.
+  --dist     Path to the BUILT site (default ./dist). Errors if missing —
+             never point this at the template checkout; the template is
+             expected to fail (it still contains tokens by design).
+
+CHECKS (static)
+  tokens          zero "{{" anywhere in built html/css/js
+  fingerprints    zero template/Paradise values (scripts/template-fingerprints.json)
+  duplicate-ids   no repeated id= within a page (post-hydration, pre-injection)
+  links           internal hrefs resolve; #anchors exist on that page
+  images          every <img> has alt + width/height
+  preload         exactly one <link rel="preload"> per page
+  robots          robots meta matches --env
+  phones          tel:/sms: hrefs are E164 and match the built config
+
+MANUAL rows are emitted for: console errors, duplicate IDs after inventory
+injection, form fit at 390x650/320, reduced-motion, Lighthouse, live wiring
+(GA4/Pixel/Clarity/GHL/Closebot/Turnstile), device screenshots.
+
+OUTPUT   JSON: {env, dist, summary:{pass,fail,manual}, checks:[{check,status,evidence}]}
+EXIT     0 = no FAIL rows · 1 = one or more FAIL · 2 = bad usage
+`;
+
+function die(msg, code) { process.stderr.write(msg + '\n'); process.exit(code); }
+const args = process.argv.slice(2);
+if (args.includes('--help') || args.includes('-h')) { process.stdout.write(HELP); process.exit(0); }
+const env = args[args.indexOf('--env') + 1];
+if (!args.includes('--env') || !['staging', 'prod'].includes(env)) die('Missing/invalid --env (staging|prod). See --help.', 2);
+const verbose = args.includes('--verbose');
+const dist = resolve(args.includes('--dist') ? args[args.indexOf('--dist') + 1] : 'dist');
+if (!existsSync(dist) || !statSync(dist).isDirectory()) die(`No dist/ at ${dist}. Build first (never in place) — see SKILL.md step 5.`, 2);
+if (!existsSync(join(dist, 'index.html'))) die(`${dist} has no index.html — is this really a built site?`, 2);
+
+const fingerprints = JSON.parse(readFileSync(join(skillRoot, 'scripts', 'template-fingerprints.json'), 'utf8'))
+  .fingerprints.map(fp => ({ ...fp, value: Buffer.from(fp.b64, 'base64').toString('utf8') }));
+
+/* collect files */
+const pages = [], textFiles = [];
+(function walk(dir) {
+  for (const name of readdirSync(dir)) {
+    if (['node_modules', '.wrangler', '.git', 'functions', 'scripts', 'docs'].includes(name)) continue;
+    const f = join(dir, name);
+    if (statSync(f).isDirectory()) walk(f);
+    else if (/\.html$/i.test(name)) { pages.push(f); textFiles.push(f); }
+    else if (/\.(css|js|json|toml|xml|txt)$/i.test(name)) textFiles.push(f);
+  }
+})(dist);
+
+const checks = [];
+function add(check, status, evidence) { checks.push({ check, status, evidence }); }
+function lineOf(text, idx) { return text.slice(0, idx).split('\n').length; }
+/* Markup-only scans must ignore <script> bodies (JS template strings contain
+   href=/id= fragments that aren't real DOM at load). */
+function scriptRanges(text) {
+  const ranges = [];
+  for (const m of text.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi)) ranges.push([m.index, m.index + m[0].length]);
+  return ranges;
+}
+function inRanges(ranges, idx) { return ranges.some(([a, b]) => idx >= a && idx < b); }
+function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).concat(`…+${arr.length - n} more (--verbose)`) : arr; }
+
+/* 1. tokens */
+{
+  const hits = [];
+  for (const f of textFiles) {
+    const text = readFileSync(f, 'utf8');
+    let idx = text.indexOf('{{');
+    while (idx !== -1) {
+      const frag = text.slice(idx, idx + 40).split('\n')[0];
+      hits.push(`${relative(dist, f)}:${lineOf(text, idx)} ${frag}`);
+      idx = text.indexOf('{{', idx + 2);
+    }
+  }
+  add('tokens: zero {{ in built output', hits.length ? 'FAIL' : 'PASS', hits.length ? cap(hits) : `scanned ${textFiles.length} files`);
+}
+
+/* 2. fingerprints */
+{
+  const hits = [];
+  for (const f of textFiles) {
+    const text = readFileSync(f, 'utf8');
+    const lower = text.toLowerCase();
+    for (const fp of fingerprints) {
+      const hay = fp.caseSensitive ? text : lower;
+      const needle = fp.caseSensitive ? fp.value : fp.value.toLowerCase();
+      const idx = hay.indexOf(needle);
+      if (idx !== -1) hits.push(`${relative(dist, f)}:${lineOf(text, idx)} → ${fp.kind}: "${fp.value}"`);
+    }
+  }
+  add('fingerprints: zero template/Paradise values', hits.length ? 'FAIL' : 'PASS', hits.length ? cap(hits) : `${fingerprints.length} fingerprints checked`);
+}
+
+/* 3. duplicate ids per page */
+{
+  const dupes = [];
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    const ranges = scriptRanges(text);
+    const idsSeen = new Map();
+    for (const m of text.matchAll(/\sid="([^"]+)"/g)) {
+      if (inRanges(ranges, m.index)) continue;
+      const id = m[1];
+      if (idsSeen.has(id)) dupes.push(`${relative(dist, p)}: duplicate id="${id}" (lines ${idsSeen.get(id)} and ${lineOf(text, m.index)})`);
+      else idsSeen.set(id, lineOf(text, m.index));
+    }
+  }
+  add('duplicate-ids (static, pre-injection)', dupes.length ? 'FAIL' : 'PASS', dupes.length ? cap(dupes) : `${pages.length} pages scanned`);
+}
+
+/* 4. links */
+{
+  const bad = [];
+  const pageIds = new Map();
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    const ranges = scriptRanges(text);
+    pageIds.set(relative(dist, p), new Set([...text.matchAll(/\sid="([^"]+)"/g)].filter(m => !inRanges(ranges, m.index)).map(m => m[1])));
+  }
+  for (const p of pages) {
+    const rel = relative(dist, p);
+    const text = readFileSync(p, 'utf8');
+    const ranges = scriptRanges(text);
+    for (const m of text.matchAll(/\shref="([^"]+)"/g)) {
+      if (inRanges(ranges, m.index)) continue;
+      const href = m[1];
+      const where = `${rel}:${lineOf(text, m.index)}`;
+      if (/^(https?:|mailto:|javascript:)/.test(href)) continue;
+      if (/^(tel:|sms:)/.test(href)) {
+        if (!/^(tel|sms):\+1[2-9]\d{9}$/.test(href)) bad.push(`${where} non-E164 ${href}`);
+        continue;
+      }
+      const [pathPart, anchor] = href.split('#');
+      let targetPage = rel;
+      if (pathPart) {
+        const clean = pathPart.replace(/\?.*$/, '');
+        let fsPath = clean.startsWith('/') ? join(dist, clean) : resolve(dirname(p), clean);
+        if (existsSync(fsPath) && statSync(fsPath).isDirectory()) fsPath = join(fsPath, 'index.html');
+        if (!existsSync(fsPath)) { bad.push(`${where} dead href ${href}`); continue; }
+        targetPage = relative(dist, fsPath);
+      }
+      if (anchor) {
+        const ids = pageIds.get(targetPage);
+        if (ids && !ids.has(anchor)) bad.push(`${where} missing #${anchor} on ${targetPage}`);
+      }
+    }
+  }
+  add('links: hrefs + #anchors resolve, tel/sms E164', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'all internal links resolve');
+}
+
+/* 5. images */
+{
+  const bad = [];
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    const ranges = scriptRanges(text);
+    for (const m of text.matchAll(/<img\b[^>]*>/g)) {
+      if (inRanges(ranges, m.index)) continue;
+      const tag = m[0];
+      const where = `${relative(dist, p)}:${lineOf(text, m.index)}`;
+      if (!/\salt="/.test(tag)) bad.push(`${where} img missing alt`);
+      if (!/\swidth="/.test(tag) || !/\sheight="/.test(tag)) bad.push(`${where} img missing width/height`);
+    }
+  }
+  add('images: every img has alt + width/height', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'all imgs dimensioned');
+}
+
+/* 6. preload */
+{
+  const bad = [];
+  for (const p of pages) {
+    const n = (readFileSync(p, 'utf8').match(/<link[^>]*rel="preload"/g) || []).length;
+    if (n !== 1) bad.push(`${relative(dist, p)}: ${n} preloads (expected exactly 1)`);
+  }
+  add('preload: exactly one per page', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
+}
+
+/* 7. robots vs env */
+{
+  const want = env === 'prod' ? /index\s*,\s*follow/i : /noindex/i;
+  const bad = [];
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    const m = text.match(/<meta\s+name="robots"\s+content="([^"]*)"/i);
+    if (!m) bad.push(`${relative(dist, p)}: no robots meta`);
+    else if (!want.test(m[1]) || (env === 'prod' && /noindex/i.test(m[1]))) bad.push(`${relative(dist, p)}: robots="${m[1]}" wrong for --env ${env}`);
+  }
+  add(`robots: matches --env ${env}`, bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : 'all pages correct');
+}
+
+/* 8. phones match built config */
+{
+  let evidence = 'client.config.js not found in dist';
+  let status = 'MANUAL';
+  const cfgPath = join(dist, 'client.config.js');
+  if (existsSync(cfgPath)) {
+    try {
+      const sandbox = { window: {} };
+      vm.createContext(sandbox);
+      vm.runInContext(readFileSync(cfgPath, 'utf8'), sandbox, { filename: 'client.config.js' });
+      const cfg = sandbox.window.CLIENT_CONFIG || {};
+      const e164 = String(cfg.client?.primaryPhoneHref || '').replace(/^tel:/, '');
+      if (!/^\+1[2-9]\d{9}$/.test(e164)) { status = 'FAIL'; evidence = `config primaryPhoneHref not E164: "${cfg.client?.primaryPhoneHref}"`; }
+      else {
+        const bad = [];
+        for (const p of pages) {
+          const text = readFileSync(p, 'utf8');
+          const ranges = scriptRanges(text);
+          for (const m of text.matchAll(/\shref="(tel|sms):([^"]+)"/g)) {
+            if (inRanges(ranges, m.index)) continue;
+            if (m[2] !== e164) bad.push(`${relative(dist, p)}:${lineOf(text, m.index)} ${m[1]}:${m[2]} ≠ config ${e164}`);
+          }
+        }
+        status = bad.length ? 'FAIL' : 'PASS';
+        evidence = bad.length ? cap(bad) : `all tel:/sms: = ${e164}`;
+      }
+    } catch (e) { status = 'FAIL'; evidence = `config does not evaluate: ${e.message}`; }
+  }
+  add('phones: tel/sms match built config (E164)', status, evidence);
+}
+
+/* MANUAL rows — a script cannot verify these; never fake a PASS */
+for (const [check, evidence] of [
+  ['console: zero errors on load+scroll+interaction', 'Run each page in a browser; interact with drawer, FAQ, form step 1, a card CTA'],
+  ['duplicate-ids after inventory injection', 'Load pages with live /api/inventory and re-scan DOM ids'],
+  ['forms fit 390x650 and 320px, consent visible, no internal scroll', 'Viewport-emulate and measure the drawer/survey/gate submit + consent'],
+  ['reduced-motion: fully static, final values shown', 'Enable OS reduced motion and reload every page'],
+  ['lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1', 'Run Lighthouse on the staging URL'],
+  ['wiring: 8 IDs live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing'],
+  ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md']
+]) add(check, 'MANUAL', evidence);
+
+const summary = {
+  pass: checks.filter(c => c.status === 'PASS').length,
+  fail: checks.filter(c => c.status === 'FAIL').length,
+  manual: checks.filter(c => c.status === 'MANUAL').length
+};
+process.stdout.write(JSON.stringify({ env, dist, summary, checks }, null, 2) + '\n');
+process.exit(summary.fail ? 1 : 0);

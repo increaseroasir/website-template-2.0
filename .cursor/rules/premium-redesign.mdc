@@ -1,0 +1,29 @@
+---
+description: Premium redesign copy — mobile UX + stay in this folder
+alwaysApply: true
+---
+
+# Premium Redesign
+
+Work only in this folder. Do not edit `website-template-2.0`.
+
+**`SITE_MASTER_SPEC.md` (repo root) is the single source of truth** — read the
+relevant Parts before every batch; run its Part 6 audit gates before reporting
+a page shipped. It supersedes the earlier handoff/punch-list/motion docs.
+
+## Required mobile UX
+1. No horizontal text overflow (placeholders must wrap on mobile).
+2. Bottom sticky Call/Text/See Models: hidden until user scrolls past hero CTA.
+3. When bottom bar is visible, nav sticky CTA = Get Directions (not Call). Never two Call buttons.
+
+## Done
+All pages. Homepage + inventory + category pages (`hot-tubs/`, `swim-spas/`, `saunas/`) with mobile UX rules.
+Pages 6–11 (`active-inventory/`, product SLUG, financing, contact, thank-you, admin) restyled via
+`assets/theme.css` (canonical token layer — never fork) + `assets/premium-pages.css`. Styling-only:
+markup/IDs/`data-*`/scripts unchanged. Image tokens registry: `assets/image-tokens.md`.
+
+## Next
+SITE_MASTER_SPEC Part 6 audit loop complete for all pages (homepage, category
+pages, inventory, and pages 6–11). Polish/QA on request only.
+
+`npm run brand:guard` before finishing. No Paradise/Minot/701 hardcodes.

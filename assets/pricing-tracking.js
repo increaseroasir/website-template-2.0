@@ -21,8 +21,8 @@
   }
   window.DealerTrackPricing = trackPricingClick;
   document.addEventListener('click', function (event) {
-    var target = event.target.closest('[data-open-lead], [data-product], a[href*="open=price"]');
+    var target = event.target.closest('[data-open-lead], [data-home-prefill], [data-pricing-source], [data-product], a[href*="open=price"]');
     if (!target) return;
-    trackPricingClick(getPricingSource(target), { productName: target.getAttribute('data-product') || target.getAttribute('data-product-name') || '' });
+    trackPricingClick(getPricingSource(target), { productName: target.getAttribute('data-home-prefill') || target.getAttribute('data-product') || target.getAttribute('data-product-name') || '' });
   }, true);
 })();

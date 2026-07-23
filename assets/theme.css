@@ -1,0 +1,109 @@
+/* ============================================================
+   PREMIUM THEME TOKEN LAYER — canonical values (do not fork).
+   Load BEFORE page CSS. Shared with home.css / inventory.css /
+   category.css visual system. Client values via config only.
+   ============================================================ */
+:root{
+  --navy-royal:var(--brand-blue,#16469B);
+  --navy-mid:#0F327A;
+  --navy-deep:var(--brand-blue-deep,#0B2559);
+  --navy-night:var(--brand-blue-night,#06183D);
+  --navy-abyss:#030C20;
+  --gold:var(--brand-gold,#FFB81C);
+  --gold-soft:#FFCB57;
+  --gold-deep:var(--brand-gold-deep,#E8A400);
+  --gold-dark:#B98200;
+  --red:var(--brand-red,#D7261E);
+  --sand:#F8F4EC;
+  --ink:#141927;
+  --ink-soft:#4A5268;
+  --line:rgba(11,37,89,.12);
+  --ease-out:cubic-bezier(.22,.68,0,1);
+  --wrap:1200px;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,sans-serif;
+  --mono:"Spline Sans Mono",ui-monospace,SFMono-Regular,monospace;
+}
+
+/* ---------- Base ---------- */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip;overflow-y:auto}
+::selection{background:var(--gold);color:var(--navy-night)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- Utilities (required by markup) ---------- */
+.text-center{text-align:center}
+.mx-auto{margin-inline:auto}
+.max-w-md{max-width:28rem}
+
+/* ---------- Gold shimmer hairline ---------- */
+.gold-hairline{position:relative;height:1px;background:rgba(255,184,28,.28);overflow:hidden}
+.gold-hairline::after{content:"";position:absolute;top:0;bottom:0;width:38%;
+  background:linear-gradient(90deg,transparent,#FFD46A 50%,transparent);
+  animation:sweep 5.5s ease-in-out infinite}
+@keyframes sweep{0%{transform:translateX(-120%)}55%,100%{transform:translateX(300%)}}
+
+/* ---------- Gradient accent text ---------- */
+.deg{background:linear-gradient(94deg,#FFE29A 0%,#FFB81C 48%,#F0A400 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- Buttons ---------- */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.01em;
+  line-height:1.1;text-decoration:none;border-radius:14px;padding:16px 26px;min-height:54px;
+  cursor:pointer;border:1px solid transparent;text-align:center;white-space:nowrap;
+  overflow:hidden;isolation:isolate;background:none;color:inherit;
+  transition:transform .3s var(--ease-out),box-shadow .3s var(--ease-out),background .3s,border-color .3s,color .3s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn-gold{color:var(--navy-night);
+  background:linear-gradient(180deg,#FFD46A 0%,#FFB81C 52%,#F0A400 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 12px 28px -10px rgba(232,164,0,.7)}
+.btn-gold:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 18px 38px -12px rgba(232,164,0,.85)}
+.btn-gold::after{content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.55) 50%,transparent 68%);
+  transform:translateX(-130%);transition:transform .65s ease}
+.btn-gold:hover::after{transform:translateX(130%)}
+.btn-ghost{background:rgba(255,255,255,.04);color:#fff;border-color:rgba(255,255,255,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.85);background:rgba(255,255,255,.1)}
+.btn-ghost-blue{background:transparent;color:var(--navy-royal);border-color:var(--line)}
+.btn-ghost-blue:hover{border-color:var(--navy-royal);background:rgba(22,70,155,.06)}
+.btn-red{color:#fff;background:linear-gradient(180deg,#E8382F,#B71E17);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 26px -10px rgba(215,38,30,.6)}
+.btn-sm{padding:11px 18px;font-size:.84rem;min-height:44px;border-radius:11px}
+
+/* ---------- Mono eyebrow with gold leader line ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:11px;font-family:var(--mono);
+  font-weight:600;font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold-dark);margin-bottom:16px}
+.eyebrow::before{content:"";width:28px;height:1px;
+  background:linear-gradient(90deg,var(--gold-deep),transparent);flex:none}
+.on-dark .eyebrow{color:var(--gold-soft)}
+.on-dark .eyebrow::before{background:linear-gradient(90deg,var(--gold),transparent)}
+
+/* ---------- Glass panel ---------- */
+.glass-panel{position:relative;border-radius:26px;
+  background:linear-gradient(168deg,rgba(255,255,255,.94),rgba(255,255,255,.84));
+  backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 44px 90px -28px rgba(3,12,32,.65),inset 0 1px 0 rgba(255,255,255,.9)}
+.glass-panel::before{content:"";position:absolute;top:0;left:24px;right:24px;height:3px;
+  border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,var(--gold-soft),var(--gold) 40%,var(--gold-deep))}
+
+/* ---------- Steam / ambient blobs ---------- */
+.steam{position:absolute;z-index:1;border-radius:9999px;filter:blur(72px);pointer-events:none}
+.steam-1{width:520px;height:340px;left:-8%;bottom:-14%;background:rgba(22,70,155,.5);animation:drift1 16s ease-in-out infinite}
+.steam-2{width:460px;height:300px;right:-6%;top:-16%;background:rgba(255,184,28,.13);animation:drift2 20s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(46px,-32px) scale(1.14)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-38px,26px) scale(1.1)}}
+
+/* ---------- Scroll reveal (JS adds .in; no-JS sees everything) ---------- */
+html.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .75s ease,transform .75s var(--ease-out)}
+html.js .reveal.in{opacity:1;transform:none}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  html.js .reveal{opacity:1;transform:none}
+}

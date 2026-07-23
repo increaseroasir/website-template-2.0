@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#030C20">
 <meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
 <title>{{PRODUCT_SEO_TITLE}}</title>
 <meta name="description" content="{{PRODUCT_META_DESCRIPTION}}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,700;100,800;125,900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/template.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/theme.css">
+<link rel="stylesheet" href="../../assets/premium-pages.css">
 <script src="../../client.config.js"></script>
 <script src="../../assets/tracking.js"></script>
 </head>
@@ -25,8 +27,8 @@
   </div>
 </header>
 <main data-product-source="/api/inventory?slug={PRODUCT_SLUG}">
-<section class="hero"><div class="hero-inner"><div><h1>{{PRODUCT_NAME}}</h1><p>{{PRODUCT_HERO_DESCRIPTION}}</p><div class="hero-actions"><button class="btn btn-gold" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><button class="btn btn-outline" data-open-lead data-product="{{PRODUCT_NAME}} financing">{{PRODUCT_SECONDARY_CTA}}</button></div></div><div class="hero-card"><div class="media-frame"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}"></div></div></div></section>
-<section class="section"><div class="wrap grid grid-2"><div><span class="kicker">Best For</span><h2>{{PRODUCT_BEST_FOR_HEADLINE}}</h2><p class="lead">{{PRODUCT_BEST_FOR_COPY}}</p></div><div class="panel"><h3>{{PRODUCT_PRICE_LABEL}}</h3><p style="font-family:var(--display);font-size:2.4rem;font-weight:900;color:var(--brand-blue-deep)">{{PRODUCT_PRICE}}</p><p>{{PRODUCT_FINANCING_LINE}}</p></div></div></section>
+<section class="hero"><div class="hero-inner"><div><h1>{{PRODUCT_NAME}}</h1><p>{{PRODUCT_HERO_DESCRIPTION}}</p><div class="hero-actions"><button class="btn btn-gold" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><button class="btn btn-outline" data-open-lead data-product="{{PRODUCT_NAME}} financing">{{PRODUCT_SECONDARY_CTA}}</button></div></div><div class="hero-card hero-card-media"><div class="media-frame"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" decoding="async" fetchpriority="high" onerror="this.style.opacity='0'" onload="this.style.opacity='1'"></div></div></div></section>
+<section class="section"><div class="wrap grid grid-2"><div><span class="kicker">Best For</span><h2>{{PRODUCT_BEST_FOR_HEADLINE}}</h2><p class="lead">{{PRODUCT_BEST_FOR_COPY}}</p></div><div class="panel price-panel"><h3>{{PRODUCT_PRICE_LABEL}}</h3><p>{{PRODUCT_PRICE}}</p><p>{{PRODUCT_FINANCING_LINE}}</p></div></div></section>
 <section class="section alt"><div class="wrap grid grid-3"><div class="panel"><h3>{{PRODUCT_FACT_1}}</h3><p>{{PRODUCT_FACT_1_COPY}}</p></div><div class="panel"><h3>{{PRODUCT_FACT_2}}</h3><p>{{PRODUCT_FACT_2_COPY}}</p></div><div class="panel"><h3>{{PRODUCT_FACT_3}}</h3><p>{{PRODUCT_FACT_3_COPY}}</p></div></div></section>
 <section class="section"><div class="wrap"><h2>{{PRODUCT_DETAILS_HEADLINE}}</h2><p class="lead">{{PRODUCT_LONG_DESCRIPTION}}</p></div></section>
 <aside class="form-card" data-lead-panel hidden aria-label="Lead form drawer">

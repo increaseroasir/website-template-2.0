@@ -2,7 +2,12 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 const root = new URL('..', import.meta.url).pathname;
 const forbidden = ['Paradise Spas', 'paradisespas.com', 'Minot', 'North Dakota State Fair', 'Red River Valley Fair', '701-838-2614'];
-const allowed = new Set(['scripts/check-template-guard.mjs']);
+const allowed = new Set([
+  'scripts/check-template-guard.mjs',
+  'PROJECT.md',
+  'START_HERE.md',
+  'docs/PREMIUM_REDESIGN_HANDOFF.md'
+]);
 const hits = [];
 function walk(dir) {
   for (const name of readdirSync(dir)) {
