@@ -85,6 +85,14 @@ only ever run inside `dist/`, never in the template checkout.
 
 ## Gotchas — read before you hit them
 
+- GHL lowercases every tag on ingest (`Model Interest - X` → `model interest - x`);
+  matching inside GHL is case-insensitive, but any external comparison
+  (sheets, Zaps, code) must compare lowercase.
+- GHL rejects `email: ""` on contact create ("email must be an email") —
+  omit the key for phone-only leads; the booking flow already does.
+- A wrong-location booking calendar ID still RENDERS slots (free-slots is
+  not location-checked) but rejects every booking — only a live test
+  booking proves wiring ID #10, never the slot grid appearing.
 - The legacy build wrote **in place** and destroyed the template's tokens;
   only ever build to `dist/` — if no dist pipeline exists, STOP and report.
 - Empty Turnstile sitekey = forms fail silently = invisible lead loss;
@@ -144,7 +152,7 @@ npm aliases: `npm run client:new -- --init <name>`,
   derived from the CSS + honesty rules for stats/reviews/JSON-LD/TCPA).
 - `references/images.md` — before sourcing or placing any image (dims,
   `_ALT` pairs, LCP handling, empty-token behavior).
-- `references/wiring.md` — before touching any integration ID (the nine
+- `references/wiring.md` — before touching any integration ID (the ten
   IDs, where they live, what a leftover looks like, live verification).
 - `references/launch-checklist.md` — at step 8; the human-only Part B items.
 - `references/decision-table.md` — when a situation isn't covered above,

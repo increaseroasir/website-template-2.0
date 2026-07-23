@@ -366,7 +366,7 @@ for (const [check, evidence] of [
   ['forms fit 390x650 and 320px, consent visible, no internal scroll', 'Viewport-emulate and measure the drawer/survey/gate submit + consent'],
   ['reduced-motion: fully static, final values shown', 'Enable OS reduced motion and reload every page'],
   ['lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1', 'Run Lighthouse on the staging URL'],
-  ['wiring: 9 IDs live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing, external-tracking stitch + dedupe (ONE contact, prior page views on timeline)'],
+  ['wiring: 10 IDs live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing, external-tracking stitch + dedupe (ONE contact, prior page views on timeline), booking calendar live test (correct store-local time + Execution Logs workflow fired, or intentionally empty = request-mode)'],
   ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md'],
   ['rich results: JS-emitted JSON-LD valid per page type', 'Run homepage (FAQPage), a category page (BreadcrumbList), and a live product URL (Product+Breadcrumb) through https://search.google.com/test/rich-results']
 ]) add(check, 'MANUAL', evidence);

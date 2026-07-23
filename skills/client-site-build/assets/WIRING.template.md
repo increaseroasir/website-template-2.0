@@ -14,7 +14,7 @@ launch; update in the same change whenever an ID changes after launch.
 | Staging URL | |
 | Production domain | |
 
-## The nine IDs (each row: value + live verification)
+## The ten IDs (each row: value + live verification)
 
 | # | Integration | ID / value | Verified how | By | Date |
 |---|---|---|---|---|---|
@@ -27,6 +27,7 @@ launch; update in the same change whenever an ID changes after launch.
 | 7 | Turnstile sitekey | | Real form submit succeeded | | |
 | 8 | Phone / SMS (E164) | | Called + texted; routing confirmed | | |
 | 9 | GHL External Tracking | | Anon browse + gate submit: prior page views stitched on timeline; exactly ONE contact (no twins) | | |
+| 10 | GHL Booking Calendar ID | | ☐ team member assigned · ☐ live test booking at correct store-local time · ☐ tags present · ☐ Execution Logs show workflow fired · ☐ test deleted — or ☐ intentionally empty (request-mode) | |
 
 ## Post-launch verification (within 1 hour of DNS)
 
