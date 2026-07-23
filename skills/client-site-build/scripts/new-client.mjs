@@ -27,6 +27,12 @@ MODES
   --validate <name>  Check clients/<name>/ config + tokens against the template:
                      required keys, E164 phone, ISO offer date (or empty),
                      URL shapes, and which tokens would ship on defaults.
+                     CRITICAL keys (name, phones, address/hours/market, GA4,
+                     Meta Pixel, Turnstile sitekey, lead endpoint) HARD-FAIL
+                     when empty — broken wiring / silent lead loss. Cosmetic
+                     keys (logo, map embed, offer fields, clarity) may be
+                     explicitly empty and only warn. GHL sub-account routing
+                     lives in wrangler secrets: live-verify per wiring.md.
 
 OUTPUT (stdout, JSON)
   --init      {"status":"created"|"exists","files":[...]}
@@ -113,7 +119,9 @@ if (existsSync(envPath)) {
 
 function val(v) { return v !== undefined && v !== null && String(v) !== '' && !String(v).includes('{{') ? String(v) : ''; }
 
-/* required config keys */
+/* CRITICAL keys — empty means broken wiring or silent lead loss, never a
+   cosmetic choice. These HARD-FAIL (exit 1). Cosmetic keys (logo, map embed,
+   offer fields, clarity) may be explicitly empty and only warn. */
 const required = [
   ['client.name', cfg.client?.name],
   ['client.primaryPhone', cfg.client?.primaryPhone],
@@ -123,9 +131,12 @@ const required = [
   ['client.market', cfg.client?.market],
   ['tracking.ga4Id', cfg.tracking?.ga4Id],
   ['tracking.metaPixelId', cfg.tracking?.metaPixelId],
-  ['tracking.turnstileSiteKey', cfg.tracking?.turnstileSiteKey]
+  ['tracking.turnstileSiteKey', cfg.tracking?.turnstileSiteKey],
+  ['endpoints.lead', cfg.endpoints?.lead]
 ];
-for (const [key, v] of required) if (!val(v)) errors.push(`Required config key empty or still tokenized: ${key}`);
+for (const [key, v] of required) if (!val(v)) errors.push(`CRITICAL config key empty or still tokenized (broken wiring / silent lead loss): ${key}`);
+if (!val(cfg.tracking?.clarityId)) warnings.push('tracking.clarityId empty — no session recordings (cosmetic; wiring gate B2 still expects it before launch).');
+warnings.push('GHL sub-account routing (GHL_API_TOKEN, GHL_LOCATION_ID) and TURNSTILE_SECRET_KEY are wrangler secrets this validator cannot read — they are launch-blocking LIVE verifications per references/wiring.md.');
 
 /* E164 */
 const e164 = String(cfg.client?.primaryPhoneHref || '').replace(/^tel:/, '');
@@ -189,14 +200,16 @@ const covered = new Set(Object.keys(envTokens));
 /* Explicit empty string is a legitimate value: build-config hydrates it to ""
    (empty logo/map/offer label → element hidden by CSS, evergreen via JS).
    Only missing/null/token-containing values leave a raw {{TOKEN}} behind. */
+const CRITICAL_TOKENS = new Set(['CLIENT_NAME', 'CLIENT_PHONE', 'CLIENT_PHONE_E164', 'CLIENT_ADDRESS', 'CLIENT_HOURS', 'CLIENT_MARKET', 'GA4_ID', 'META_PIXEL_ID', 'TURNSTILE_SITE_KEY', 'LEAD_ENDPOINT']);
 const explicitEmpty = [];
 for (const [k, v] of Object.entries(configTokenMap)) {
   if (v !== undefined && v !== null && !String(v).includes('{{')) {
+    if (String(v) === '' && CRITICAL_TOKENS.has(k)) continue; // stays uncovered → hard error above
     covered.add(k);
     if (String(v) === '') explicitEmpty.push(k);
   }
 }
-if (explicitEmpty.length) warnings.push(`Explicitly empty config value(s) — hydrate to "" and the element is hidden/evergreen; confirm intended at HUMAN CHECKPOINT 1: ${explicitEmpty.join(', ')}`);
+if (explicitEmpty.length) warnings.push(`Explicitly empty cosmetic value(s) — hydrate to "" and the element is hidden/evergreen; confirm intended at HUMAN CHECKPOINT 1: ${explicitEmpty.join(', ')}`);
 
 const tokenRe = /\{\{([A-Z0-9_]+)(?:\|([^}]*))?\}\}/g;
 const seen = new Map(); // token -> hasDefault

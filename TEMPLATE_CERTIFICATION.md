@@ -68,6 +68,9 @@ logo, apostrophes in copy) + 298 filler tokens in
 1. `width`/`height` on all 8 dimension-less imgs (owner ruling a).
 2. Empty-config-value hydration + `img[src=""]` hiding (build layer + 4 css files).
 3. Legacy `#paradise-lead-error` selector removed from `lead-form.js`.
+   **Template-only change — do NOT backport to the live paradise-spas-website
+   repo,** where that ID is live on the inventory gate form and the selector
+   drives its error display.
 4. Admin `#settings` anchor target added.
 5. `404.html` + neutral favicon set + icon links on all pages.
 6. WebKit twins ×2, `100vh` fallbacks ×2, `-webkit-clip-path` on the shield.

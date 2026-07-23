@@ -40,7 +40,7 @@ Also logged in `SKILL_PACK_REPORT.md`.
 ## 4. Template defects found and fixed during closeout
 
 1. Explicitly-empty config values leaked raw `{{TOKENS}}` into shipped pages (two in visible text) → build-config hydrates explicit `""`; `img[src=""]`/`iframe[src=""]` hidden in all four top-level stylesheets; validator downgraded from error to Checkpoint-1 warning.
-2. Legacy `#paradise-lead-error` selector in `lead-form.js` (dead code, template fingerprint) → removed.
+2. Legacy `#paradise-lead-error` selector in `lead-form.js` (dead code in the template, template fingerprint) → removed. **Template-only change, do not backport:** that ID is live on the actual Paradise inventory gate form, so syncing this `lead-form.js` back to the paradise-spas-website repo would break its error display.
 3. Admin nav `#settings` anchor had no target → Settings info card added.
 4. No 404 page; favicon files referenced but never shipped (4 pages), missing entirely (8 pages) → `404.html` created; neutral navy/gold favicon set generated; icon links on all 13 pages.
 5. WebKit: 2 missing `-webkit-backdrop-filter` twins, 2 `dvh`-only gate panels (Safari <15.4 fallback), unprefixed shield clip-path → fixed.
