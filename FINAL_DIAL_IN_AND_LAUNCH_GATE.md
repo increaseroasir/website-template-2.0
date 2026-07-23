@@ -1,5 +1,10 @@
 # FINAL DIAL-IN + CLIENT LAUNCH GATE — website-template-2.0
 
+> **Guard scoping note (owner ruling, closeout):** `npm run brand:guard`
+> scans only buildable sources (html/js/css/toml/json) and built output —
+> never `*.md` docs. Documentation like this file may name fingerprints;
+> shipped pages may not.
+
 This document has three parts. **Part A runs once, right now**, to certify the
 template itself. **Parts B and C are permanent**: they run on every client
 build inside the website creator, forever. `SITE_MASTER_SPEC.md` remains canon

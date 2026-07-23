@@ -59,13 +59,17 @@ Step 5 build command (from the client dir, config already validated):
 ```bash
 mkdir -p clients/<name>/dist
 rsync -a --exclude .git --exclude node_modules --exclude skills --exclude clients \
-  --exclude .wrangler <template-root>/ clients/<name>/dist/
+  --exclude .wrangler --exclude docs --exclude '*.md' --exclude .cursor \
+  --exclude package.json --exclude package-lock.json \
+  <template-root>/ clients/<name>/dist/
 cp clients/<name>/client.config.js clients/<name>/dist/client.config.js
 cd clients/<name>/dist && set -a && . ../tokens.env && set +a && node scripts/build-config.mjs
+rm -rf scripts   # build tooling never ships in a client artifact
 ```
 
 (`tokens.env` supplies the content tokens build-config.mjs reads from the
-environment; config keys cover the wiring/identity tokens.)
+environment — **quote every value**, they contain spaces and apostrophes;
+config keys cover the wiring/identity tokens.)
 
 `build-config.mjs` rewrites files **where it runs** — that is why it must
 only ever run inside `dist/`, never in the template checkout.
@@ -99,6 +103,10 @@ only ever run inside `dist/`, never in the template checkout.
 - `scripts/new-client.mjs --validate <name>` — schema check; JSON verdict
   with `errors[]`, `warnings[]`, and `defaults[]` (every token shipping on
   its `|default`). Exit 0 pass / 1 fail / 2 bad usage.
+- `scripts/check-assets.mjs --dir <folder>` — inventory customer-uploaded
+  images (PNG/JPEG/WebP header parsing, zero deps): label→token mapping,
+  PASS/SOFT/FAIL vs minimum dims, must-have coverage. Read
+  `references/images.md` intake procedure before running it.
 - `scripts/gate.mjs --env staging|prod [--dist <path>]` — mechanical launch
   gate against a built `dist/` only: `{{` leftovers, template fingerprints
   (`scripts/template-fingerprints.json`), duplicate IDs, dead hrefs/anchors,

@@ -73,7 +73,18 @@ FINAL_DIAL_IN_AND_LAUNCH_GATE.md      saved at repo root (standing gate, was pre
    and the GA4/Pixel/Clarity IDs across pages. This is the expected failure
    that proves the detector works.
 
-## Conflicts / ambiguity calls (reported, not silently resolved)
+## Conflict resolution ledger (owner rulings applied at closeout)
+
+| # | Conflict | Ruling | Applied |
+|---|---|---|---|
+| 1 | img width/height rule vs 8 dimension-less template imgs | Fix the template — explicit width/height is a sanctioned perf-attribute markup exception; gate rule stays | width/height added to all 8 (4:3 cards/visit = 1200×900, SLUG 1:1 detail = 1200×1200); 0 dimension-less imgs remain |
+| 2 | "exactly one preload per page" vs LCP-only preloading | Gate was wrong — amended to: at most one; if present it must reference the page's LCP hero; zero = PASS on hero-less pages | gate.mjs check + --help rewritten |
+| 3 | No hydrated origin-dealer config exists for the validate demo | The tokenized template config is the canonical demo target — it's exactly the artifact a builder would mistakenly validate, and it fails loudly | Documented; demo stands |
+| 4 | build-config.mjs hydrates in place | The rsync-to-`clients/<name>/dist/` pipeline in SKILL.md is the permanent client-build path; the template script stays frozen (Law 1) | SKILL.md step 5 + the dist-only gotcha are the standing procedure |
+| 5 | Fingerprint file would trip the brand guard | Base64-encoded store is the standing format; gate.mjs decodes at runtime; additions via the documented node one-liner | Implemented and re-verified against the origin site (detector still fires) |
+| 6 | Canon gate doc tripped brand:guard | Guard re-scoped (not allowlisted): scans only buildable sources (html/js/css/toml/json) and built output, never *.md docs | `scripts/check-template-guard.mjs` extension filter narrowed; ruling noted in the canon doc header; guard green |
+
+## Original conflict notes (pre-ruling, kept for history)
 
 1. **img width/height vs template reality.** The launch gate requires every
    `<img>` to carry width/height; the template currently has 8 `<img>`

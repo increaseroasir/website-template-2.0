@@ -29,7 +29,9 @@ CHECKS (static)
   duplicate-ids   no repeated id= within a page (post-hydration, pre-injection)
   links           internal hrefs resolve; #anchors exist on that page
   images          every <img> has alt + width/height
-  preload         exactly one <link rel="preload"> per page
+  preload         at most one <link rel="preload"> per page; if present its
+                  href must be referenced by the page (the LCP hero); zero
+                  preloads is a PASS on pages with no hero
   robots          robots meta matches --env
   phones          tel:/sms: hrefs are E164 and match the built config
 
@@ -82,16 +84,16 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
 /* 1. tokens */
 {
   const hits = [];
+  /* Flag {{TOKEN-shaped leftovers. A bare "{{" without a token name is the
+     template's own leftover-detection code (JS indexOf('{{'), CSS
+     [src*="{{"]) and is functional, not a hydration miss. */
   for (const f of textFiles) {
     const text = readFileSync(f, 'utf8');
-    let idx = text.indexOf('{{');
-    while (idx !== -1) {
-      const frag = text.slice(idx, idx + 40).split('\n')[0];
-      hits.push(`${relative(dist, f)}:${lineOf(text, idx)} ${frag}`);
-      idx = text.indexOf('{{', idx + 2);
+    for (const m of text.matchAll(/\{\{[A-Z0-9_]+/g)) {
+      hits.push(`${relative(dist, f)}:${lineOf(text, m.index)} ${text.slice(m.index, m.index + 40).split('\n')[0]}`);
     }
   }
-  add('tokens: zero {{ in built output', hits.length ? 'FAIL' : 'PASS', hits.length ? cap(hits) : `scanned ${textFiles.length} files`);
+  add('tokens: zero {{TOKEN leftovers in built output', hits.length ? 'FAIL' : 'PASS', hits.length ? cap(hits) : `scanned ${textFiles.length} files`);
 }
 
 /* 2. fingerprints */
@@ -184,14 +186,23 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('images: every img has alt + width/height', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'all imgs dimensioned');
 }
 
-/* 6. preload */
+/* 6. preload — owner ruling: AT MOST one per page; if present it must
+   reference that page's LCP hero (its href appears again in the page as the
+   hero's src/style); zero preloads is a PASS on pages with no hero. */
 {
   const bad = [];
   for (const p of pages) {
-    const n = (readFileSync(p, 'utf8').match(/<link[^>]*rel="preload"/g) || []).length;
-    if (n !== 1) bad.push(`${relative(dist, p)}: ${n} preloads (expected exactly 1)`);
+    const text = readFileSync(p, 'utf8');
+    const links = [...text.matchAll(/<link[^>]*rel="preload"[^>]*>/g)];
+    if (links.length > 1) { bad.push(`${relative(dist, p)}: ${links.length} preloads (at most 1 allowed)`); continue; }
+    if (links.length === 1) {
+      const href = (links[0][0].match(/\shref="([^"]+)"/) || [])[1];
+      if (!href) { bad.push(`${relative(dist, p)}: preload has no href`); continue; }
+      const rest = text.replace(links[0][0], '');
+      if (!rest.includes(href)) bad.push(`${relative(dist, p)}: preload href "${href.slice(0, 60)}" not referenced by the page (stale hero preload)`);
+    }
   }
-  add('preload: exactly one per page', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
+  add('preload: ≤1 per page, and it must reference the LCP hero', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
 }
 
 /* 7. robots vs env */

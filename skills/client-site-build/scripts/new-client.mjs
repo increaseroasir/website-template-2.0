@@ -186,7 +186,17 @@ const configTokenMap = {
   HOME_CAMPAIGN: cfg.home?.campaign, LEAD_ENDPOINT: cfg.endpoints?.lead
 };
 const covered = new Set(Object.keys(envTokens));
-for (const [k, v] of Object.entries(configTokenMap)) if (val(v)) covered.add(k);
+/* Explicit empty string is a legitimate value: build-config hydrates it to ""
+   (empty logo/map/offer label → element hidden by CSS, evergreen via JS).
+   Only missing/null/token-containing values leave a raw {{TOKEN}} behind. */
+const explicitEmpty = [];
+for (const [k, v] of Object.entries(configTokenMap)) {
+  if (v !== undefined && v !== null && !String(v).includes('{{')) {
+    covered.add(k);
+    if (String(v) === '') explicitEmpty.push(k);
+  }
+}
+if (explicitEmpty.length) warnings.push(`Explicitly empty config value(s) — hydrate to "" and the element is hidden/evergreen; confirm intended at HUMAN CHECKPOINT 1: ${explicitEmpty.join(', ')}`);
 
 const tokenRe = /\{\{([A-Z0-9_]+)(?:\|([^}]*))?\}\}/g;
 const seen = new Map(); // token -> hasDefault

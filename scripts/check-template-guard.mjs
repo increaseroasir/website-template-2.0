@@ -2,11 +2,11 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 const root = new URL('..', import.meta.url).pathname;
 const forbidden = ['Paradise Spas', 'paradisespas.com', 'Minot', 'North Dakota State Fair', 'Red River Valley Fair', '701-838-2614'];
+/* Owner ruling (FINAL_DIAL_IN closeout): the guard scans only BUILDABLE
+   sources (html/js/css/toml/json) — never *.md docs. Documentation may name
+   fingerprints; shipped pages may not. */
 const allowed = new Set([
-  'scripts/check-template-guard.mjs',
-  'PROJECT.md',
-  'START_HERE.md',
-  'docs/PREMIUM_REDESIGN_HANDOFF.md'
+  'scripts/check-template-guard.mjs'
 ]);
 const hits = [];
 function walk(dir) {
@@ -16,7 +16,7 @@ function walk(dir) {
     const rel = file.slice(root.length).replace(/^\//, '');
     if (allowed.has(rel)) continue;
     if (statSync(file).isDirectory()) walk(file);
-    else if (/\.(html|js|css|md|toml|json)$/i.test(name)) {
+    else if (/\.(html|js|css|toml|json)$/i.test(name)) {
       const text = readFileSync(file, 'utf8');
       for (const term of forbidden) if (text.includes(term)) hits.push(`${rel}: ${term}`);
     }

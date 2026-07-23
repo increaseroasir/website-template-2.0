@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" href="/favicon.ico?v=20260710" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20260710">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20260710">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260710">
+<meta name="theme-color" content="#030C20">
+<meta name="robots" content="noindex, follow">
+<title>Financing Seo Title</title>
+<meta name="description" content="Sample copy for financing meta description, written plainly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/premium-pages.css">
+<script src="/client.config.js"></script>
+<script src="/assets/tracking.js"></script>
+</head>
+<body data-template-page data-lead-source="financing-survey" data-lead-campaign="Sample copy for campaign name, written plainly.">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="/" aria-label="Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville home"><b data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</b><span data-config="client.tagline">East Tennessee's backyard, done right</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="/hot-tubs/">Hot Tubs</a><a href="/swim-spas/">Swim Spas</a><a href="/saunas/">Saunas</a><a href="/inventory.html">Inventory</a><a href="/financing.html">Financing</a><a href="/contact.html">Contact</a>
+    </nav>
+    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:+18655550142"><b data-config="client.primaryPhone">865-555-0142</b><span>Call or text</span></a><a class="btn btn-gold" href="/inventory.html">Shop Inventory</a></div>
+    <button class="mobile-menu" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<main class="financing-survey-page">
+  <section class="financing-survey-hero">
+    <div class="wrap financing-survey-wrap">
+      <div class="financing-survey-card" data-financing-survey>
+        <div class="financing-survey-progress" aria-hidden="true"><span data-survey-progress></span></div>
+        <p class="kicker">Financing Check</p>
+        <h1>Financing Headline</h1>
+        <p class="lead" data-survey-subhead>Answer 3 quick questions. Takes under a minute.</p>
+
+        <div data-survey-step="1">
+          <h2 class="financing-q">What are you shopping for?</h2>
+          <div class="financing-answers">
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Hot Tub">Hot Tub</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Swim Spa">Swim Spa</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Sauna">Sauna</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Not sure yet">Not sure yet</button>
+          </div>
+        </div>
+
+        <div data-survey-step="2" hidden>
+          <h2 class="financing-q">What monthly payment are you aiming for?</h2>
+          <div class="financing-answers">
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="Under $100/mo">Under $100/mo</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="$100–$200/mo">$100–$200/mo</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="$200+/mo">$200+/mo</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="Not sure">Not sure</button>
+          </div>
+          <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
+        </div>
+
+        <div data-survey-step="3" hidden>
+          <h2 class="financing-q">When do you want to move forward?</h2>
+          <div class="financing-answers">
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="As soon as possible">As soon as possible</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="This month">This month</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="Next 1–3 months">Next 1–3 months</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="Just researching">Just researching</button>
+          </div>
+          <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
+        </div>
+
+        <div data-survey-step="4" hidden>
+          <h2 class="financing-q">Where should we send your financing options?</h2>
+          <p class="financing-note">Someone from our team will call or text soon to discuss financing options.</p>
+          <form class="form-grid" data-template-form data-lead-success="inline" action="/api/lead" method="post">
+            <input type="hidden" name="product_name" value="Financing Request" data-survey-product>
+            <input type="hidden" name="product_interest" value="Financing Request" data-survey-product-interest>
+            <input type="hidden" name="financing_interest" value="" data-survey-payment>
+            <input type="hidden" name="form_intent" value="Check financing">
+            <input type="hidden" name="campaign" value="Sample copy for campaign name, written plainly.">
+            <input type="hidden" name="lead_source" value="financing-survey">
+            <input type="hidden" name="message" value="" data-survey-message>
+            <input name="website_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+            <input name="full_name" autocomplete="name" placeholder="Full name" required>
+            <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
+            <input name="email" autocomplete="email" placeholder="Email">
+            <button class="btn btn-gold" type="submit">Get My Financing Options</button>
+            <p class="fine-print">Sample copy for lead form disclaimer, written plainly.</p>
+            <p class="fine-print" data-template-result></p>
+          </form>
+          <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
+        </div>
+
+        <div data-survey-step="done" hidden>
+          <div class="financing-done">
+            <p class="kicker">Request Received</p>
+            <h2>You're all set.</h2>
+            <p>Someone will call or text you soon to discuss our financing options.</p>
+            <div class="financing-done-actions">
+              <a class="btn btn-gold" href="/inventory.html">Browse Inventory</a>
+              <a class="btn btn-outline" data-config-href="client.primaryPhoneHref" href="tel:+18655550142">Call Us Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div><h4 data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</h4><p>Greater Knoxville dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured.</p></div>
+    <div><h4>Shop</h4><p><a href="/hot-tubs/">Hot Tubs</a><br><a href="/swim-spas/">Swim Spas</a><br><a href="/saunas/">Saunas</a></p></div>
+    <div><h4>Company</h4><p><a href="/financing.html">Financing</a><br><a href="/contact.html">Contact</a><br><a href="/admin/">Admin</a></p></div>
+    <div><h4>Contact</h4><p><span data-config="client.address">4217 Chapman Hwy, Knoxville, TN 37920</span><br><a data-config-href="client.primaryPhoneHref" href="tel:+18655550142" data-config="client.primaryPhone">865-555-0142</a></p></div>
+  </div>
+</footer>
+
+<script src="/assets/template.js"></script>
+<script src="/assets/traffic-attribution.js"></script>
+<script src="/assets/call-tracking.js"></script>
+<script src="/assets/lead-form.js"></script>
+<script src="/assets/financing-survey.js"></script>
+</body>
+</html>

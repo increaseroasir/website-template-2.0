@@ -44,3 +44,43 @@ have a non-empty alt).
   arrives via the logo only (Law 3 — palette is the product).
 - **Alt text**: ≤125 chars, describes the scene ("Family soaking in a
   7-person hot tub on a snowy deck"), not keywords.
+
+## Customer upload intake (Google Drive → tokens)
+
+Customers upload files labeled per `assets/CLIENT_UPLOAD_CHECKLIST.md`.
+Label → token mapping:
+
+| Filename label (prefix) | Token | Min px |
+|---|---|---|
+| `HERO` | `HOME_HERO_IMAGE` | 1600×1000 |
+| `HOTTUBS` | `HOT_TUBS_CATEGORY_IMAGE` | 1000×1250 |
+| `SWIMSPAS` | `SWIM_SPAS_CATEGORY_IMAGE` | 1000×1250 |
+| `SAUNAS` | `SAUNAS_CATEGORY_IMAGE` | 1000×1250 |
+| `SHOWROOM1` | `VISIT_IMAGE_1` | 1200×900 |
+| `SHOWROOM2` | `VISIT_IMAGE_2` | 1200×900 |
+| `LOGO` | `CLIENT_LOGO_URL` | 320×80 |
+| `LOGOLIGHT` | `CLIENT_LOGO_FOOTER_URL` | 320×80 |
+| `HEROHOTTUBS` | `HOT_TUBS_HERO_IMAGE` | 1600×1000 |
+| `HEROSWIMSPAS` | `SWIM_SPAS_HERO_IMAGE` | 1600×1000 |
+| `HEROSAUNAS` | `SAUNAS_HERO_IMAGE` | 1600×1000 |
+| `PRODUCT` | `PRODUCT_PRIMARY_IMAGE` (per-product via admin/D1) | 1200×900 |
+
+Ambiguity note: `HEROHOTTUBS/HEROSWIMSPAS/HEROSAUNAS` are matched BEFORE
+`HERO` and `HOTTUBS/...` (longest label wins).
+
+**Procedure:**
+
+1. **Inventory** every uploaded file: name, format, true pixel dimensions —
+   run `node skills/client-site-build/scripts/check-assets.mjs --dir <folder>`
+   (parses PNG/JPEG/WebP headers, no dependencies; emits the mapping table
+   as JSON with per-file PASS/SOFT/FAIL).
+2. **Match by filename prefix**, case-insensitive, ignoring trailing
+   numbers/words (`Hero_backyard_2.JPG` → `HERO`). Longest label wins.
+3. **Multiple matches for one token** → the file with the largest pixel
+   dimensions wins; the rest are noted as spares.
+4. **Under-minimum files** → apply the upscaling rules in
+   `references/decision-table.md` (≤2× with the approved scaler; below half
+   the minimum → request a better original).
+5. **Every mapping + every flag** (unmatched files, missing must-haves,
+   upscales, spares) goes in the Checkpoint 1 table — the owner sees exactly
+   which photo landed where before the build proceeds.

@@ -1,0 +1,9 @@
+/hot-tubs.html /hot-tubs/ 301
+/swim-spas.html /swim-spas/ 301
+/saunas.html /saunas/ 301
+/active-inventory/:slug /active-inventory/:slug/ 301
+/active-inventory/:slug/ /active-inventory/SLUG/index.html 200
+/docs/* / 404
+/api/lead /api/lead 200
+/api/inventory /api/inventory 200
+/api/admin /api/admin 200

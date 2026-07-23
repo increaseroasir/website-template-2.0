@@ -15,8 +15,12 @@ function loadClientConfig(source) {
   return sandbox.window.CLIENT_CONFIG || {};
 }
 
+/* A value is usable when the config explicitly provides it — INCLUDING an
+   explicit empty string (empty logo/map/offer values must hydrate to "",
+   which the CSS/JS neutralize, instead of leaking raw {{TOKENS}} into
+   shipped pages). Missing keys stay unhydrated so they fail loudly. */
 function usable(value) {
-  return value !== undefined && value !== null && String(value).indexOf('{{') === -1 ? String(value) : '';
+  return value !== undefined && value !== null && String(value).indexOf('{{') === -1;
 }
 
 function tokenMapFromConfig(cfg) {
@@ -71,14 +75,14 @@ function tokenMapFromConfig(cfg) {
   for (const [key, value] of Object.entries(process.env)) {
     if (/^[A-Z0-9_]+$/.test(key) && value) map[key] = value;
   }
-  return Object.fromEntries(Object.entries(map).map(([key, value]) => [key, usable(value)]).filter(([, value]) => value));
+  return Object.fromEntries(Object.entries(map).filter(([, value]) => usable(value)).map(([key, value]) => [key, String(value)]));
 }
 
 const tokenMap = tokenMapFromConfig(loadClientConfig(config));
 
 function replaceTokens(text) {
   return text.replace(/\{\{([A-Z0-9_.-]+)(?:\|([^}]+))?\}\}/g, (match, token, fallback) => {
-    if (tokenMap[token]) return tokenMap[token];
+    if (token in tokenMap) return tokenMap[token];
     if (fallback !== undefined) return fallback;
     return match;
   });

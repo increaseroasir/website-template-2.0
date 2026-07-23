@@ -11,6 +11,9 @@ the build report — don't improvise silently (Law 4).
 | Offer date given without timezone | Block at `--validate` (it enforces TZ); ask intake for the client's local TZ, don't guess | Midnight in the wrong zone ends promos 5+ hours early/late |
 | Missing image for a token | Leave the token empty (gradient well renders) + flag at Checkpoint 1 | Empty degrades cleanly by design; a stock-photo guess misrepresents the showroom |
 | Image URL 404s | Fix or empty it before launch — never ship | `onerror` hides it, but a 404 still costs a request and fails the archive |
+| Uploaded image under the token's minimum size | Upscale with the approved scaling tool **up to 2×**; record every upscale (file, from→to dims) in the build report | Modest AI upscales are invisible in gradient wells; past 2× artifacts show |
+| Uploaded image below HALF the minimum | Request a better original — do not upscale | 2×+ upscaling produces visible mush on hero-sized surfaces |
+| LCP hero image under minimum | Ship native-res whenever possible; an upscaled hero gets its own Checkpoint 1 flag | The hero is the first paint and the largest surface — quality loss is most visible there |
 | <10 Google reviews | Drop the JSON-LD aggregateRating block entirely; stats band uses other true numbers | Thin ratings in schema invite penalties; honesty rules forbid padding |
 | Rating below ~4.0 | Drop schema rating AND the stats-band rating stat; use years/deliveries instead | Advertising a 3.2 hurts; inventing a better one is fraud |
 | Business name too long for header | Short trading name in `CLIENT_NAME`, full name in `CLIENT_LEGAL_NAME`/JSON-LD/TCPA — **never shrink fonts** | Header/drawer/footer are sized for ~40 chars; font hacks are a Law 1 violation |
