@@ -74,7 +74,10 @@ function tokenMapFromConfig(cfg) {
     /* GSC verification is optional: missing/empty hydrates to "" and the
        build strips the empty meta tag entirely (decision-table: launch may
        proceed without it, flagged as an open wiring item). */
-    GSC_VERIFICATION: usable(cfg.tracking?.gscVerification) ? cfg.tracking.gscVerification : ''
+    GSC_VERIFICATION: usable(cfg.tracking?.gscVerification) ? cfg.tracking.gscVerification : '',
+    /* GHL External Tracking is optional the same way: missing/empty hydrates
+       to "" and tracking.js injects nothing (attribution loss, not lead loss). */
+    GHL_EXTERNAL_TRACKING: usable(cfg.tracking?.ghlExternalTracking) ? cfg.tracking.ghlExternalTracking : ''
   };
   for (const [key, value] of Object.entries(process.env)) {
     if (/^[A-Z0-9_]+$/.test(key) && value) map[key] = value;

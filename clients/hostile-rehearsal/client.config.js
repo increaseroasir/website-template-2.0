@@ -49,6 +49,7 @@ window.CLIENT_CONFIG = {
     clarityId: 'zzfake0000',
     turnstileSiteKey: '0x4AAAAAAAFakeHostileKey000',
     gscVerification: '',            // deliberately empty — asserts the GSC meta is stripped, not shipped blank
+    ghlExternalTracking: '',        // deliberately empty — asserts no external tracking script is injected
 
     leadValue: '950',
     leadCurrency: 'USD'

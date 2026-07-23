@@ -104,6 +104,9 @@ only ever run inside `dist/`, never in the template checkout.
   compaction ladders shed logo → chips → lead paragraph, never consent.
 - First-party asset URLs are cache-busted (`?v=`); a stale-looking JS bug is
   usually a missing version stamp, not a code bug — bump the stamp first.
+- External tracking requires native DOM forms; if any future form is ever
+  embedded as an iframe/widget, tracking capture silently stops for it —
+  the page looks fine, attribution just vanishes.
 
 ## Scripts
 
@@ -141,7 +144,7 @@ npm aliases: `npm run client:new -- --init <name>`,
   derived from the CSS + honesty rules for stats/reviews/JSON-LD/TCPA).
 - `references/images.md` — before sourcing or placing any image (dims,
   `_ALT` pairs, LCP handling, empty-token behavior).
-- `references/wiring.md` — before touching any integration ID (the eight
+- `references/wiring.md` — before touching any integration ID (the nine
   IDs, where they live, what a leftover looks like, live verification).
 - `references/launch-checklist.md` — at step 8; the human-only Part B items.
 - `references/decision-table.md` — when a situation isn't covered above,

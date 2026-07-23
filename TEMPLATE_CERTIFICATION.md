@@ -95,3 +95,14 @@ logo, apostrophes in copy) + 298 filler tokens in
 | B10 hostile re-run | **PASS** | Rebuilt dist: gate exit 0 (12 PASS/0 FAIL/8 MANUAL), zero `{{`, zero fingerprints, evergreen active (`body.offer-static`), GSC meta absent, indexnow dry-run clean, zero aggregateRating anywhere, no schema where data is missing. |
 | Gate fix surfaced by this work | **FIXED** | Pre-existing robots check flagged `404.html` as `noindex` in prod — a noindex 404 is correct, so the check now exempts it. Prod gate green after fix. |
 | Admin noindex ruling (ratified 2026-07-23) | **PASS** | Prod robots.txt keeps `Disallow: /admin/` AND `admin/index.html` now carries a hardcoded `<meta name="robots" content="noindex">` regardless of `{{ROBOTS_DIRECTIVE}}` — both layers, because Disallow alone hides the noindex from crawlers while the URL can still be indexed by reference. Gate robots check exempts admin/ like 404.html; staging + prod gates green. |
+
+## GHL External Tracking module (added 2026-07-23)
+
+| Item | Status | Evidence |
+|---|---|---|
+| 1 Config + injection | **PASS** | `tracking.ghlExternalTracking` (script src URL) injected by `tracking.js` async+defer alongside the other pixels — immediate load, never on a deferral (late load misses the page view). Injected on every page incl. 404 (404.html now loads tracking.js). Empty/tokenized → nothing injected; new gate check `ghl-external-tracking` fails tokenized values and any REAL URL on staging (attribution pollution). |
+| 2 Wiring ID #9 | **PASS** | wiring.md is now "the nine IDs": #9 live verification = anonymous 2–3 page browse + gate-form submit → prior page views stitched on the contact timeline AND exactly ONE contact (dedupe-merge on email/phone; twins = FAIL, investigate before launch). Row added to the WIRING.md template; gate MANUAL wiring row updated to 9 IDs. |
+| 3 Fingerprint | **MANUAL (pending)** | The origin dealer has NO External Tracking snippet yet — verified by scanning that repo (only the chat-widget loader exists). A `pending` fingerprint entry documents this; gate.mjs skips pending entries with a stderr note. Populate the real ID the day it's created. |
+| 4 Decision-table rows | **PASS** | Key absent → launch proceeds (cosmetic tier, attribution loss not lead loss), open wiring item, add within 48h alongside GSC; staging never carries a real ID (gate-enforced); duplicate contacts = FAIL ID #9. |
+| 5 SKILL.md gotcha | **PASS** | "External tracking requires native DOM forms; an iframe/widget form silently stops tracking capture for it." |
+| 6 Docs + hostile re-run | **PASS** | token-reference + launch-checklist updated. Hostile rebuild: `ghlExternalTracking: ''` in built config, zero tracking scripts in dist HTML, staging gate 13 PASS/0 FAIL. Negative tests: prod build with a fake https URL → PASS "injected from …"; same dist gated as staging → exit 1. Validator PASS with cosmetic warning. |

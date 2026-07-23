@@ -41,6 +41,9 @@ CHECKS (static)
                   empty/tokenized when present
   json-ld         every static application/ld+json block parses (runtime
                   FAQ/Breadcrumb/Product schema is a MANUAL rich-results row)
+  ghl-tracking    tracking.ghlExternalTracking is "" (stripped) or a valid
+                  https URL; never tokenized; staging must NOT carry a real
+                  ID (staging page views would pollute client attribution)
 
 MANUAL rows are emitted for: console errors, duplicate IDs after inventory
 injection, form fit at 390x650/320, reduced-motion, Lighthouse, live wiring
@@ -60,8 +63,11 @@ const dist = resolve(args.includes('--dist') ? args[args.indexOf('--dist') + 1] 
 if (!existsSync(dist) || !statSync(dist).isDirectory()) die(`No dist/ at ${dist}. Build first (never in place) — see SKILL.md step 5.`, 2);
 if (!existsSync(join(dist, 'index.html'))) die(`${dist} has no index.html — is this really a built site?`, 2);
 
-const fingerprints = JSON.parse(readFileSync(join(skillRoot, 'scripts', 'template-fingerprints.json'), 'utf8'))
-  .fingerprints.map(fp => ({ ...fp, value: Buffer.from(fp.b64, 'base64').toString('utf8') }));
+const fingerprintsRaw = JSON.parse(readFileSync(join(skillRoot, 'scripts', 'template-fingerprints.json'), 'utf8')).fingerprints;
+for (const fp of fingerprintsRaw.filter(f => f.pending))
+  process.stderr.write(`NOTE: pending fingerprint not yet enforceable — ${fp.kind}: ${fp.note || 'value unknown'}\n`);
+const fingerprints = fingerprintsRaw.filter(fp => !fp.pending)
+  .map(fp => ({ ...fp, value: Buffer.from(fp.b64, 'base64').toString('utf8') }));
 
 /* collect files */
 const pages = [], textFiles = [];
@@ -332,6 +338,27 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
     bad.length ? cap(bad) : `${count} static block(s) parse (FAQ/Breadcrumb/Product schema is JS-emitted; see MANUAL rich-results row)`);
 }
 
+/* 13. GHL External Tracking: '' (stripped) or a real https URL; never
+   tokenized; staging builds never carry a real tracking ID */
+{
+  let status = 'MANUAL', evidence = 'client.config.js not found in dist';
+  const cfgPath = join(dist, 'client.config.js');
+  if (existsSync(cfgPath)) {
+    try {
+      const sandbox = { window: {} };
+      vm.createContext(sandbox);
+      vm.runInContext(readFileSync(cfgPath, 'utf8'), sandbox, { filename: 'client.config.js' });
+      const v = String((sandbox.window.CLIENT_CONFIG || {}).tracking?.ghlExternalTracking ?? '');
+      if (v.includes('{{')) { status = 'FAIL'; evidence = `tracking.ghlExternalTracking still tokenized: "${v}"`; }
+      else if (v === '') { status = 'PASS'; evidence = 'empty — not injected (attribution loss only; wiring ID #9 open item)'; }
+      else if (env === 'staging') { status = 'FAIL'; evidence = `staging build carries a real external tracking URL ("${v.slice(0, 60)}") — staging page views would pollute the client's GHL attribution`; }
+      else if (!/^https:\/\/\S+$/.test(v)) { status = 'FAIL'; evidence = `not an https script URL: "${v.slice(0, 80)}"`; }
+      else { status = 'PASS'; evidence = `injected from ${v.slice(0, 80)}`; }
+    } catch (e) { status = 'FAIL'; evidence = `config does not evaluate: ${e.message}`; }
+  }
+  add('ghl-external-tracking: empty-stripped or valid https, never on staging', status, evidence);
+}
+
 /* MANUAL rows — a script cannot verify these; never fake a PASS */
 for (const [check, evidence] of [
   ['console: zero errors on load+scroll+interaction', 'Run each page in a browser; interact with drawer, FAQ, form step 1, a card CTA'],
@@ -339,7 +366,7 @@ for (const [check, evidence] of [
   ['forms fit 390x650 and 320px, consent visible, no internal scroll', 'Viewport-emulate and measure the drawer/survey/gate submit + consent'],
   ['reduced-motion: fully static, final values shown', 'Enable OS reduced motion and reload every page'],
   ['lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1', 'Run Lighthouse on the staging URL'],
-  ['wiring: 8 IDs live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing'],
+  ['wiring: 9 IDs live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing, external-tracking stitch + dedupe (ONE contact, prior page views on timeline)'],
   ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md'],
   ['rich results: JS-emitted JSON-LD valid per page type', 'Run homepage (FAQPage), a category page (BreadcrumbList), and a live product URL (Product+Breadcrumb) through https://search.google.com/test/rich-results']
 ]) add(check, 'MANUAL', evidence);

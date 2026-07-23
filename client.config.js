@@ -33,6 +33,7 @@ window.CLIENT_CONFIG = {
     ga4Id: '{{GA4_ID}}',
     clarityId: '{{CLARITY_ID}}',
     turnstileSiteKey: '{{TURNSTILE_SITE_KEY}}',
+    ghlExternalTracking: '{{GHL_EXTERNAL_TRACKING}}',
     leadValue: '{{LEAD_VALUE|950}}',
     leadCurrency: 'USD'
   },

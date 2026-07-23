@@ -14,7 +14,7 @@ launch; update in the same change whenever an ID changes after launch.
 | Staging URL | |
 | Production domain | |
 
-## The eight IDs (each row: value + live verification)
+## The nine IDs (each row: value + live verification)
 
 | # | Integration | ID / value | Verified how | By | Date |
 |---|---|---|---|---|---|
@@ -26,6 +26,7 @@ launch; update in the same change whenever an ID changes after launch.
 | 6 | Closebot source ID | | Dashboard registered visit | | |
 | 7 | Turnstile sitekey | | Real form submit succeeded | | |
 | 8 | Phone / SMS (E164) | | Called + texted; routing confirmed | | |
+| 9 | GHL External Tracking | | Anon browse + gate submit: prior page views stitched on timeline; exactly ONE contact (no twins) | | |
 
 ## Post-launch verification (within 1 hour of DNS)
 

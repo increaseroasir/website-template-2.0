@@ -1,19 +1,76 @@
 {
-  "comment": "Values that must NEVER appear in a client build's dist/. Sources: the origin dealer's live site (the template's first client) and the template's own guard list. Values are base64-encoded so this file itself never trips the repo's brand guard and can't be copy-pasted into a build by accident — gate.mjs decodes at runtime. To add one: node -e \"console.log(Buffer.from('VALUE').toString('base64'))\"",
+  "comment": "Values that must NEVER appear in a client build's dist/. Sources: the origin dealer's live site (the template's first client) and the template's own guard list. Values are base64-encoded so this file itself never trips the repo's brand guard and can't be copy-pasted into a build by accident \u2014 gate.mjs decodes at runtime. To add one: node -e \"console.log(Buffer.from('VALUE').toString('base64'))\"",
   "encoding": "base64",
   "fingerprints": [
-    { "b64": "UGFyYWRpc2UgU3Bhcw==", "kind": "business name", "caseSensitive": false },
-    { "b64": "cGFyYWRpc2VzcGFz", "kind": "domain/handle fragment", "caseSensitive": false },
-    { "b64": "cGFyYWRpc2VzbUBvdXRsb29rLmNvbQ==", "kind": "email", "caseSensitive": false },
-    { "b64": "TWlub3Q=", "kind": "city", "caseSensitive": true },
-    { "b64": "Tm9ydGggRGFrb3RhIFN0YXRlIEZhaXI=", "kind": "market event", "caseSensitive": false },
-    { "b64": "UmVkIFJpdmVyIFZhbGxleSBGYWly", "kind": "market event", "caseSensitive": false },
-    { "b64": "NzAxLTgzOC0yNjE0", "kind": "phone (display)", "caseSensitive": false },
-    { "b64": "NzAxODM4MjYxNA==", "kind": "phone (digits, catches E164 and bare)", "caseSensitive": false },
-    { "b64": "Ry1FNVdHU0VHWllQ", "kind": "GA4 measurement ID", "caseSensitive": false },
-    { "b64": "MTMxNzczODExMDUxMzUxMg==", "kind": "Meta Pixel ID", "caseSensitive": false },
-    { "b64": "eGVvZTdnMjBtbA==", "kind": "Clarity project ID", "caseSensitive": false },
-    { "b64": "NmE0NDU0ZmQ2MzhlZWM1YWY0MTk1YTUx", "kind": "GHL chat widget ID", "caseSensitive": false },
-    { "b64": "Y29NUlZtaDhTUjZvR1hUQQ==", "kind": "Closebot source ID", "caseSensitive": true }
+    {
+      "b64": "UGFyYWRpc2UgU3Bhcw==",
+      "kind": "business name",
+      "caseSensitive": false
+    },
+    {
+      "b64": "cGFyYWRpc2VzcGFz",
+      "kind": "domain/handle fragment",
+      "caseSensitive": false
+    },
+    {
+      "b64": "cGFyYWRpc2VzbUBvdXRsb29rLmNvbQ==",
+      "kind": "email",
+      "caseSensitive": false
+    },
+    {
+      "b64": "TWlub3Q=",
+      "kind": "city",
+      "caseSensitive": true
+    },
+    {
+      "b64": "Tm9ydGggRGFrb3RhIFN0YXRlIEZhaXI=",
+      "kind": "market event",
+      "caseSensitive": false
+    },
+    {
+      "b64": "UmVkIFJpdmVyIFZhbGxleSBGYWly",
+      "kind": "market event",
+      "caseSensitive": false
+    },
+    {
+      "b64": "NzAxLTgzOC0yNjE0",
+      "kind": "phone (display)",
+      "caseSensitive": false
+    },
+    {
+      "b64": "NzAxODM4MjYxNA==",
+      "kind": "phone (digits, catches E164 and bare)",
+      "caseSensitive": false
+    },
+    {
+      "b64": "Ry1FNVdHU0VHWllQ",
+      "kind": "GA4 measurement ID",
+      "caseSensitive": false
+    },
+    {
+      "b64": "MTMxNzczODExMDUxMzUxMg==",
+      "kind": "Meta Pixel ID",
+      "caseSensitive": false
+    },
+    {
+      "b64": "eGVvZTdnMjBtbA==",
+      "kind": "Clarity project ID",
+      "caseSensitive": false
+    },
+    {
+      "b64": "NmE0NDU0ZmQ2MzhlZWM1YWY0MTk1YTUx",
+      "kind": "GHL chat widget ID",
+      "caseSensitive": false
+    },
+    {
+      "b64": "Y29NUlZtaDhTUjZvR1hUQQ==",
+      "kind": "Closebot source ID",
+      "caseSensitive": true
+    },
+    {
+      "pending": true,
+      "kind": "GHL External Tracking ID (origin dealer)",
+      "note": "The origin dealer has no External Tracking snippet yet (verified: only the chat-widget loader exists in that repo). When it is created in their GHL location, base64 its ID/URL here and remove this pending flag \u2014 never let it leak into another client's build."
+    }
   ]
 }

@@ -91,6 +91,7 @@ facts, see content-rules.md).
 | `FLOOR_COUNT_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `FOOTER_BLURB` | hot-tubs/, index.html, inventory.html, saunas/, swim-spas/ | text | text | — | YES | — |
 | `FOOTER_PROMISE_LINE` | index.html | text | text | — | YES | — |
+| `GHL_EXTERNAL_TRACKING` | every page via `tracking.js` (incl. 404) | script src | GHL External Tracking snippet URL (session stitching + page-view attribution) | `''` via `tracking.ghlExternalTracking` | no | empty → nothing injected (attribution loss, not lead loss; add within 48h — wiring ID #9); must be an https URL; NEVER a real value on staging |
 | `GSC_VERIFICATION` | every page (head) | meta | Search Console verification token | `''` via `tracking.gscVerification` | no | empty → the whole meta tag is stripped at build (never ships blank); absent at launch = open wiring item, verify within 48h |
 | `GUIDE_COPY` | index.html | text | body copy | — | YES | ≤300 chars per block |
 | `GUIDE_CTA_LABEL` | index.html | text | button label | — | YES | ≤22 chars (btn is white-space:nowrap — long labels overflow) |

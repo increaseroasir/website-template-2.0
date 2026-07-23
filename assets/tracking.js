@@ -15,6 +15,18 @@
     gtag('js', new Date());
     gtag('config', tracking.ga4Id);
   }
+  /* GHL External Tracking (session stitching + page-view attribution into the
+     client's sub-account). Loads immediately with the other pixels — NEVER on
+     a deferral: page-view tracking that loads late misses the page view.
+     Value = the src URL from the per-location External Tracking snippet.
+     Empty/tokenized → nothing injected (same strip pattern as the GSC meta). */
+  if (real(tracking.ghlExternalTracking) && /^https:\/\//.test(tracking.ghlExternalTracking)) {
+    var ghlx = document.createElement('script');
+    ghlx.async = true;
+    ghlx.defer = true;
+    ghlx.src = tracking.ghlExternalTracking;
+    document.head.appendChild(ghlx);
+  }
   if (real(tracking.metaPixelId)) {
     !function(f,b,e,v,n,t,s){ if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}; if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0'; n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s); }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', tracking.metaPixelId);

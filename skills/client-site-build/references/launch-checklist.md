@@ -38,6 +38,13 @@ the client repo as `LAUNCH_GATE.md`; an unchecked box blocks launch (Law 4).
 - [ ] **GA4 Realtime + Meta Test Events** show the cellular session on the
       CLIENT's IDs (not the template's — gate already fingerprint-checked,
       this confirms the live pipes).
+- [ ] **GHL External Tracking stitch + dedupe (wiring ID #9)**: browse 2–3
+      pages anonymously, submit the gate form, then confirm in the client's
+      GHL that the contact timeline shows the PRIOR page views stitched in
+      AND exactly ONE contact exists. Duplicate contacts = FAIL — the
+      /api/lead pipeline and the tracking capture must dedupe-merge on
+      email/phone; investigate before launch. (Key absent at launch is
+      allowed — attribution loss only; add within 48h alongside GSC.)
 - [ ] **Screenshot archive**: every page at 1440 and 390, stored alongside
       `WIRING.md` with the launch date.
 
