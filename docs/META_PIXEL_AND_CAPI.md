@@ -14,7 +14,7 @@
 | Channel | Runs where | Library / endpoint | Purpose |
 |---|---|---|---|
 | **Meta Pixel** | Visitor’s browser | `fbevents.js` via `fbq(...)` | PageView, ViewContent, Lead, Contact, Schedule |
-| **Conversions API (CAPI)** | Our Cloudflare Pages Function (server) | `POST https://graph.facebook.com/v21.0/{PIXEL_ID}/events` (Graph API v21.0) | Server-side `Lead` only (today) |
+| **Conversions API (CAPI)** | Our Cloudflare Pages Function (server) | `POST https://graph.facebook.com/v21.0/{PIXEL_ID}/events` (Graph API v21.0) | `Lead` (website, value 0) from `/api/lead`; `Schedule` from `/api/booking`; `QualifiedLead` / `Schedule` / `Showed` / `Purchase` from `/api/meta-offline` (GHL stage webhooks) |
 
 **Design goal:** Pixel catches what the browser can see; CAPI recovers what Pixel misses (ad blockers, iOS limits). For the primary conversion (`Lead`), both channels share the **same `event_id`** so Meta deduplicates and does not double-count.
 

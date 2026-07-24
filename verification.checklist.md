@@ -37,6 +37,10 @@ Set and verify each secret in Cloudflare Pages:
 - [ ] `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 - [ ] `META_CAPI_ACCESS_TOKEN`
 - [ ] `META_PIXEL_ID`
+- [ ] `META_OFFLINE_WEBHOOK_SECRET` (for `/api/meta-offline` GHL stage webhooks)
+- [ ] GHL custom fields exist: `fbp`, `fbc`, `meta_event_id`, `event_source_url`, `external_id`, `store_pixel_id`
+- [ ] GHL Opportunity Stage Changed → webhook workflow (see `docs/GHL_META_OFFLINE_WORKFLOW.md`)
+- [ ] Website `Lead` CAPI/Pixel value is **0**; Purchase uses real sale value
 - [ ] `TURNSTILE_SECRET_KEY`
 - [ ] `ADMIN_PASSWORD`
 - [ ] `ADMIN_SESSION_SECRET`
