@@ -17,7 +17,9 @@
     "Push the staging build live for Mountain View Hot Tubs",
     "Validate the config for the new customer before I show the owner",
     "The dealer's reviews and stats need to go in before launch",
-    "New customer signed: hot tub store in Asheville, spin up their site"
+    "New customer signed: hot tub store in Asheville, spin up their site",
+    "Build the site for X, here's their info, it's urgent",
+    "Rush build — they need to be live by Friday, brief is in the chat"
   ],
   "should_not_trigger": [
     "Make the template's buttons rounder",

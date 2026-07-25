@@ -13,8 +13,8 @@ everything in the client's `WIRING.md`.
 | 2 | Meta Pixel ID | `tracking.metaPixelId` | `{{META_PIXEL_ID}}` or `1317738110513512` | Meta **Test Events**: PageView on load + ViewContent on a content page |
 | 3 | Clarity project ID | `tracking.clarityId` | `{{CLARITY_ID}}` or `xeoe7g20ml` | Clarity dashboard shows a live session/recording for your visit |
 | 4 | Lead endpoint / GHL webhook | `endpoints.lead` (+ Pages Function env) | endpoint 404s, or leads land in the WRONG sub-account | Submit a test lead; contact appears in **this client's** GHL sub-account with correct source/campaign/tags |
-| 5 | GHL chat widget ID | chat widget snippet / config | `6a4454fd638eec5af4195a51` | Widget renders after the ~20s deferral; a test chat lands in this client's GHL inbox |
-| 6 | Closebot source ID | Closebot script `?source=` | `coMRVmh8SR6oGXTA` | Closebot dashboard registers the visit/source |
+| 5 | GHL chat widget ID | Not in `client.config.js` yet — record in WIRING + paste into the location chat snippet at deploy | `6a4454fd638eec5af4195a51` | Widget renders after the ~20s deferral; a test chat lands in this client's GHL inbox |
+| 6 | Closebot source ID | Not in `client.config.js` yet — record in WIRING + Closebot `?source=` at deploy | `coMRVmh8SR6oGXTA` | Closebot dashboard registers the visit/source |
 | 7 | Turnstile sitekey | `tracking.turnstileSiteKey` | `{{TURNSTILE_SITE_KEY}}` or empty | A real form submit **succeeds** — empty/wrong key = silent lead loss |
 | 8 | Phone + SMS (E164) | `client.primaryPhoneHref` / `client.smsHref` | `tel:+17018382614` | Call + SMS routing to the client (or their tracking line) |
 | 9 | GHL External Tracking | `tracking.ghlExternalTracking` | other dealer's tracking URL | Anon 2–3 page browse + form submit → prior page views stitched + **exactly ONE** contact |

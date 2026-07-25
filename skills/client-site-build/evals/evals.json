@@ -35,6 +35,21 @@
       ]
     },
     {
+      "id": "rush-hostile",
+      "name": "Rush profile validates REQUIRED and writes 48h list",
+      "setup": [
+        "Ensure clients/hostile-rehearsal has hostile.config.js + filled tokens.env + intake.json wiring.ghlSubAccountId set",
+        "node skills/client-site-build/scripts/new-client.mjs --validate hostile-rehearsal --profile rush"
+      ],
+      "prompt": "Rush-validate the hostile rehearsal client and launch with the 48h list.",
+      "assertions": [
+        "Exit 0, status PASS, profile rush",
+        "fixList48h is non-empty and includes Meta CAPI secret + GHL External Tracking when empty in config",
+        "clients/hostile-rehearsal/WIRING.md contains ## 48-HOUR FIX LIST with checkboxes",
+        "Agent does not skip gate.mjs or the post-launch test lead (Law 5)"
+      ]
+    },
+    {
       "id": "retheme-escalates",
       "name": "Palette change request escalates, changes nothing",
       "setup": ["Any initialized client build"],

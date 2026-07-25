@@ -21,7 +21,8 @@ the build report — don't improvise silently (Law 4).
 | Client wants a layout/section change | Escalate to the template repo as a version-bump request | Law 1: hydrate, never rebuild |
 | Missing hours or address | Block at Checkpoint 1 — these feed JSON-LD, footer, and GMB consistency | A launched site with wrong NAP data poisons local SEO |
 | Missing Turnstile sitekey | **Block launch** | Forms fail silently = invisible lead loss; the page looks fine, leads vanish |
-| Missing any of the 8 wiring IDs | Block launch (B2 is all-or-nothing) | Every missing ID is either lost data or leads routed to the wrong business |
+| Missing any of browser wiring IDs 1–8 / 10 (critical path) | Block launch until present or explicitly "intentionally empty" where allowed (#10 request-mode) | Lost data or wrong-business routing; #9 and Meta 11–13 follow cosmetic/48h rules when empty |
+| Missing wiring IDs 9 / 11–13 at launch | Proceed with 48h list (attribution / offline Meta); still live-verify before calling Meta funnel "done" | Leads still flow via /api/lead; offline CAPI skips silently without fields/secrets |
 | Missing GHL sub-account entirely | Block; wiring can't be verified against nothing | A lead endpoint pointed "somewhere" is worse than down |
 | Intake silent on service-area towns | Use towns from the client's GMB profile radius; flag list at Checkpoint 1 | Chips must be real towns; GMB is the least-wrong source |
 | Client provides reviews without names/dates | Use "Verified customer" + month/source if the source is real; drop otherwise | Reviews are facts; unverifiable ones don't ship |
