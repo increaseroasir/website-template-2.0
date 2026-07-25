@@ -147,7 +147,7 @@ Forwarded with every lead form POST:
 
 | Setting | Default | Where |
 |---|---|---|
-| Lead value | `950` | Config `tracking.leadValue` + env `LEAD_VALUE` |
+| Lead value | `0` | Config `tracking.leadValue` + env `LEAD_VALUE` (Lead = $0 per Meta; value lives on later funnel events) |
 | Currency | `USD` | Config + env `LEAD_CURRENCY` |
 
 Same flat value for homepage, product-page, contact, financing forms, etc. **Not** tied to unit price, margin, or close rate unless you change the config.

@@ -52,7 +52,7 @@ window.CLIENT_CONFIG = {
     ghlExternalTracking: '',        // deliberately empty — asserts no external tracking script is injected
     ghlBookingCalendarId: '',       // deliberately empty — asserts /book/ degrades to request-mode cleanly
 
-    leadValue: '950',
+    leadValue: '0',
     leadCurrency: 'USD'
   },
   endpoints: { lead: '/api/lead', inventory: '/api/inventory', admin: '/api/admin' },

@@ -35,7 +35,7 @@ window.CLIENT_CONFIG = {
     turnstileSiteKey: '{{TURNSTILE_SITE_KEY}}',
     ghlExternalTracking: '{{GHL_EXTERNAL_TRACKING}}',
     ghlBookingCalendarId: '{{GHL_BOOKING_CALENDAR_ID}}',
-    leadValue: '{{LEAD_VALUE|950}}',
+    leadValue: '{{LEAD_VALUE|0}}',
     leadCurrency: 'USD'
   },
   endpoints: {

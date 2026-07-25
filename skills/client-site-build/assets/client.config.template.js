@@ -44,7 +44,7 @@ window.CLIENT_CONFIG = {
     gscVerification: '',            // Search Console meta token. Empty = meta omitted (launch may proceed; verify within 48h).
     ghlExternalTracking: '',        // GHL External Tracking script src URL (per-location snippet). Empty = not injected — attribution loss, not lead loss; add within 48h. NEVER a real ID on staging.
     ghlBookingCalendarId: '',       // GHL calendar ID for /book/. Empty = request-mode (no live slots; leads still captured + confirmed by text).
-    leadValue: '950',
+    leadValue: '0',
     leadCurrency: 'USD'
   },
   endpoints: {
