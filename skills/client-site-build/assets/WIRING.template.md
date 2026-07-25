@@ -14,7 +14,7 @@ launch; update in the same change whenever an ID changes after launch.
 | Staging URL | |
 | Production domain | |
 
-## The ten IDs (each row: value + live verification)
+## Browser / config IDs (1–10)
 
 | # | Integration | ID / value | Verified how | By | Date |
 |---|---|---|---|---|---|
@@ -29,6 +29,19 @@ launch; update in the same change whenever an ID changes after launch.
 | 9 | GHL External Tracking | | Anon browse + gate submit: prior page views stitched on timeline; exactly ONE contact (no twins) | | |
 | 10 | GHL Booking Calendar ID | | ☐ team member assigned · ☐ live test booking at correct store-local time · ☐ tags present · ☐ Execution Logs show workflow fired · ☐ test deleted — or ☐ intentionally empty (request-mode) | |
 
+## Meta CAPI secrets + offline funnel (11–13)
+
+Secrets live in Cloudflare only (validator cannot read them — standing MANUAL).
+Never put `META_CAPI_ACCESS_TOKEN` in GHL.
+
+| # | Integration | Value / status | Verified how | By | Date |
+|---|---|---|---|---|---|
+| 11 | `META_CAPI_ACCESS_TOKEN` (CF secret) | set / not set | Test Events: browser + server `Lead` **DEDUPED as one event** | | |
+| 12 | `META_OFFLINE_WEBHOOK_SECRET` (CF secret) | set / not set | Valid Bearer → 200; missing/wrong → 401/503 | | |
+| 13a | GHL custom fields (6 keys) | fbp, fbc, meta_event_id, event_source_url, external_id, store_pixel_id | After form lead: fields populated when Pixel cookies present | | |
+| 13b | Opportunity Stage → `/api/meta-offline` | workflow live / not yet | Simulated Qualified → server `QualifiedLead`; unknown stage → 2xx skipped | | |
+| 13c | Events Manager custom conversions | QualifiedLead + Showed mapped | Custom conversions created in Events Manager | | |
+
 ## Post-launch verification (within 1 hour of DNS)
 
 | Item | Result | Date |
@@ -36,6 +49,7 @@ launch; update in the same change whenever an ID changes after launch.
 | Cellular test lead → GHL sub-account + automation fired | | |
 | Inventory gate unlocked end-to-end; unlock persisted | | |
 | GA4 Realtime + Meta Test Events on CLIENT IDs | | |
+| Meta Lead dedupe (browser+server = one) + one offline stage event | | |
 | Screenshot archive (1440/390, every page) location | | |
 
 ## Search indexing
@@ -48,6 +62,15 @@ launch; update in the same change whenever an ID changes after launch.
 | IndexNow key live + `--submit <domain>` run | | |
 | Google Business Profile website link updated | | |
 | **Day-7 crawl verification**: indexed count vs sitemap count | | |
+
+## 48-HOUR FIX LIST
+
+Auto-filled by `--validate --profile rush` (or `map-intake.mjs --write-wiring`)
+for blank 48h-tier intake rows. Launch may proceed; close within 48 hours.
+
+| Done | What we need | Owner | config / secret |
+|---|---|---|---|
+| — | _(none yet)_ | — | — |
 
 ## Notes / decision-table rulings applied
 

@@ -1,0 +1,40 @@
+section,what_we_need,priority,config_key,token_key,owner_default,notes
+Identity & NAP,Trading / business name,REQUIRED,client.name,CLIENT_NAME,Client,Public display name — header/nav/CTAs
+Identity & NAP,Legal business name,nice,client.legalName,CLIENT_LEGAL_NAME,Client,TCPA + JSON-LD when different from trading name
+Identity & NAP,Phone display format,REQUIRED,client.primaryPhone,CLIENT_PHONE,Client,Human-readable e.g. 865-555-0142
+Identity & NAP,Phone E.164 (tel:),REQUIRED,client.primaryPhoneHref,CLIENT_PHONE_E164,Client,tel:+1XXXXXXXXXX — silent CTA loss if wrong
+Identity & NAP,SMS E.164 (sms:),REQUIRED,client.smsHref,,Client,sms:+1XXXXXXXXXX — usually same as phone
+Identity & NAP,Street address,REQUIRED,client.address,CLIENT_ADDRESS,Client,Full NAP for footer + LocalBusiness
+Identity & NAP,Business hours,REQUIRED,client.hours,CLIENT_HOURS,Client,Weekly schedule string
+Identity & NAP,Primary market / service area,REQUIRED,client.market,CLIENT_MARKET,Client,City/region for local SEO copy
+Identity & NAP,Timezone (IANA),REQUIRED,intake.timezone,,Client,Needed when offer has an end date; e.g. America/New_York
+Identity & NAP,Domain / website URL,REQUIRED,client.websiteUrl,CLIENT_WEBSITE_URL,Client,https:// canonical domain
+Offer & promises,Financing promise line,REQUIRED,offers.financing,FINANCING_PROMISE,Client,Payments / APR promise on site
+Offer & promises,Primary offer OR evergreen,REQUIRED,offers.primary,PRIMARY_OFFER,Client,Leave offers.endsAt empty for evergreen
+Offer & promises,Promo end date (if timed),nice,offers.endsAt,OFFER_ENDS_AT,Client,ISO 8601 WITH timezone; empty = evergreen
+Tracking & lead wiring,Lead form POST endpoint,REQUIRED,endpoints.lead,LEAD_ENDPOINT,HTL,Usually /api/lead
+Tracking & lead wiring,Cloudflare Turnstile site key,REQUIRED,tracking.turnstileSiteKey,TURNSTILE_SITE_KEY,HTL,Public key; empty = silent lead loss
+Tracking & lead wiring,GA4 measurement ID,REQUIRED,tracking.ga4Id,GA4_ID,Client,G-XXXXXXXX
+Tracking & lead wiring,Meta Pixel ID,REQUIRED,tracking.metaPixelId,META_PIXEL_ID,Client,Browser pixel; match CF META_PIXEL_ID secret
+Tracking & lead wiring,Microsoft Clarity project ID,48h,tracking.clarityId,CLARITY_ID,Client,Session recordings
+Tracking & lead wiring,GHL chat widget ID,48h,wiring.ghlChatWidgetId,,HTL,Chat snippet ID for this location
+Tracking & lead wiring,Closebot source ID,48h,wiring.closebotSourceId,,HTL,Closebot ?source= value
+Tracking & lead wiring,GHL External Tracking URL,48h,tracking.ghlExternalTracking,GHL_EXTERNAL_TRACKING,HTL,https script src; never on staging
+GHL CRM & Meta offline,GHL location ID,REQUIRED,wiring.ghlLocationId,,HTL,Wrangler GHL_LOCATION_ID — validator cannot read secret but intake must name the location
+GHL CRM & Meta offline,GHL Booking Calendar ID,48h,tracking.ghlBookingCalendarId,GHL_BOOKING_CALENDAR_ID,Client,Empty = /book/ request-mode
+GHL CRM & Meta offline,Meta CAPI access token,48h,secret:META_CAPI_ACCESS_TOKEN,,HTL,Cloudflare secret only — never GHL/git
+GHL CRM & Meta offline,Meta offline webhook secret,48h,secret:META_OFFLINE_WEBHOOK_SECRET,,HTL,Bearer for POST /api/meta-offline
+GHL CRM & Meta offline,GHL custom fields (6 keys),48h,ghl_fields:meta_attribution,,HTL,fbp fbc meta_event_id event_source_url external_id store_pixel_id
+GHL CRM & Meta offline,Opportunity Stage → /api/meta-offline,48h,workflow:meta-offline,,HTL,Stage-name aligned webhook with merge fields
+GHL CRM & Meta offline,Events Manager custom conversions,48h,meta:custom_conversions,,HTL,Map QualifiedLead + Showed
+Photos & brand assets,Home hero photo,REQUIRED,home.heroImage,HOME_HERO_IMAGE,Client,LCP — missing hero BLOCKS even in rush
+Photos & brand assets,Logo (header),48h,client.logoUrl,CLIENT_LOGO_URL,Client,Empty → text name; add within 48h
+Photos & brand assets,Category photos (non-hero),48h,assets.categoryPhotos,,Client,Hot tubs / swim spas / saunas cards; gradient wells OK short-term
+Photos & brand assets,Google reviews (if thin),48h,assets.reviews,,Client,<10 reviews → no aggregateRating schema
+Photos & brand assets,Inventory card photos,48h,assets.inventoryCards,,Client,Missing inventory → API/empty-state; cards in 48h
+Photos & brand assets,Secondary / lifestyle photos,nice,assets.secondaryPhotos,,Client,Showroom / team / installs
+SEO & launch extras,GSC verification token,48h,tracking.gscVerification,GSC_VERIFICATION,Client,Empty meta stripped at build
+SEO & launch extras,Facebook page URL,nice,client.facebookUrl,CLIENT_FACEBOOK_URL,Client,Footer + sameAs
+SEO & launch extras,Google Maps embed URL,nice,client.mapEmbedUrl,CLIENT_MAP_EMBED_URL,Client,Optional iframe
+SEO & launch extras,Years in business,nice,tokens.STAT_YEARS,,Client,Trust band copy — only if true
+SEO & launch extras,Tagline,nice,client.tagline,CLIENT_TAGLINE,Client,Optional polish

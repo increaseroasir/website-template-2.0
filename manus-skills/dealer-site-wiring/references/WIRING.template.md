@@ -63,6 +63,15 @@ Never put `META_CAPI_ACCESS_TOKEN` in GHL.
 | Google Business Profile website link updated | | |
 | **Day-7 crawl verification**: indexed count vs sitemap count | | |
 
+## 48-HOUR FIX LIST
+
+Auto-filled by `--validate --profile rush` (or `map-intake.mjs --write-wiring`)
+for blank 48h-tier intake rows. Launch may proceed; close within 48 hours.
+
+| Done | What we need | Owner | config / secret |
+|---|---|---|---|
+| — | _(none yet)_ | — | — |
+
 ## Notes / decision-table rulings applied
 
 -
