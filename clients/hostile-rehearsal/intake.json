@@ -1,7 +1,7 @@
 {
-  "_instructions": "Normalized intake brief. Fill from the GHL intake form — never from memory. Every field maps to config keys or tokens.env values. Empty string = intentionally absent (will be flagged); do not delete keys.",
+  "_instructions": "Normalized intake brief. Fill from the GHL intake form \u2014 never from memory. Every field maps to config keys or tokens.env values. Empty string = intentionally absent (will be flagged); do not delete keys.",
   "business": {
-    "tradingName": "",
+    "tradingName": "Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville",
     "legalName": "",
     "market": "",
     "tagline": "",
@@ -13,7 +13,7 @@
     "websiteDomain": "",
     "facebookUrl": "",
     "gmbMapUrl": "",
-    "timezone": ""
+    "timezone": "America/New_York"
   },
   "reputation": {
     "googleRating": null,
@@ -21,7 +21,12 @@
     "yearsInBusiness": null,
     "deliveriesOrCustomers": null,
     "reviews": [
-      { "firstName": "", "month": "", "source": "", "text": "" }
+      {
+        "firstName": "",
+        "month": "",
+        "source": "",
+        "text": ""
+      }
     ]
   },
   "market": {
@@ -37,14 +42,14 @@
     "deliveryPromise": ""
   },
   "wiring": {
-    "ga4Id": "",
-    "metaPixelId": "",
+    "ga4Id": "G-FAKE0HOSTL",
+    "metaPixelId": "999000999000999",
     "clarityId": "",
-    "ghlSubAccountId": "",
+    "ghlSubAccountId": "LOC_HOSTILE_FAKE_000",
     "leadEndpoint": "/api/lead",
     "ghlChatWidgetId": "",
     "closebotSourceId": "",
-    "turnstileSiteKey": ""
+    "turnstileSiteKey": "0x4AAAAAAAFakeHostileKey000"
   },
   "images": {
     "logoUrl": "",

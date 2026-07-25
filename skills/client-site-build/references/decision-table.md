@@ -39,4 +39,9 @@ the build report — don't improvise silently (Law 4).
 | Meta offline custom fields (fbp/fbc/meta_event_id/…) missing in a location | Launch proceeds; flag on 48h cosmetic list; leads still flow — CRM→Meta events skip silently until fields exist | Attribution loss, not lead loss; funnel looks alive in the browser while offline CAPI goes nowhere |
 | Opportunity stage names don't match snapshot / workflow map | Align stage names (or workflow IF branches) **before** enabling the webhook; never invent event_name mappings | Wrong stage → 2xx skipped (no retries) or wrong Meta event; guessing poisons optimization |
 | `META_CAPI_ACCESS_TOKEN` / `META_OFFLINE_WEBHOOK_SECRET` unset | Standing MANUAL (validator can't read CF secrets); block Meta offline live-verify until set | Same class as GHL API token — presence is a human/wrangler check |
+| Rush: no active offer / no end date | Evergreen — empty `offers.endsAt`; proceed | Same as standard evergreen ruling; rush does not invent a fake deadline |
+| Rush: missing non-hero photos | Ship gradient wells; list on 48h fix list (Client) | Non-hero images degrade cleanly; hero still REQUIRED |
+| Rush: hero photo missing | **Block** at validate / Checkpoint 1 | LCP surface — rush never ships without a hero |
+| Rush: &lt;3 Google reviews | Ship the reviews that exist; drop aggregateRating schema | Honesty rules; do not pad counts |
+| Rush: inventory missing / empty API | Ship empty-state / API-driven cards; inventory photos on 48h list | Convenience loss, not lead loss |
 | Anything not in this table | Propose a new row in the build report; do NOT improvise silently | The table only stays load-bearing if gaps get ruled once, centrally |
