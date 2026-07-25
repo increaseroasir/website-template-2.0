@@ -18,9 +18,17 @@ function tagsForLead(env, lead) {
   if (lead.formIntent) tags.push('Intent - ' + lead.formIntent);
   return uniqueTags(tags);
 }
-function customFieldsForLead(lead) {
+function customFieldsForLead(lead, env) {
+  /* Meta attribution fields — MUST exist as custom fields on the GHL location
+     (snapshot) or resolveCustomFields silently drops them. Never store CAPI tokens. */
   const entries = [
-    ['financing_interest', lead.financingInterest], ['contact_message', lead.message], ['product_interest', lead.productName], ['product_slug', lead.productSlug], ['product_id', lead.productId], ['product_category', lead.productCategory], ['product_page_url', lead.productPageUrl], ['inventory_status', lead.inventoryStatus], ['available_quantity', typeof lead.availableQuantity === 'number' ? String(lead.availableQuantity) : ''], ['inventory_status_tag', lead.inventoryStatusTag], ['lead_source', lead.leadSource], ['campaign', lead.campaign], ['model_interest_tag', lead.modelInterestTag], ['form_intent', lead.formIntent], ['submission_timestamp', lead.timestamp], ['estimated_retail_price', lead.estimatedRetailPrice], ['our_price', lead.ourPrice], ['monthly_payment', lead.monthlyPayment], ['lead_source_page', lead.pageUrl], ['landing_page_url', lead.landingPageUrl], ['referrer_url', lead.referrerUrl], ['traffic_channel', lead.trafficChannel], ['utm_source', lead.utmSource], ['utm_medium', lead.utmMedium], ['utm_campaign', lead.utmCampaign], ['utm_content', lead.utmContent], ['utm_term', lead.utmTerm], ['fbclid', lead.fbclid], ['gclid', lead.gclid], ['msclkid', lead.msclkid]
+    ['financing_interest', lead.financingInterest], ['contact_message', lead.message], ['product_interest', lead.productName], ['product_slug', lead.productSlug], ['product_id', lead.productId], ['product_category', lead.productCategory], ['product_page_url', lead.productPageUrl], ['inventory_status', lead.inventoryStatus], ['available_quantity', typeof lead.availableQuantity === 'number' ? String(lead.availableQuantity) : ''], ['inventory_status_tag', lead.inventoryStatusTag], ['lead_source', lead.leadSource], ['campaign', lead.campaign], ['model_interest_tag', lead.modelInterestTag], ['form_intent', lead.formIntent], ['submission_timestamp', lead.timestamp], ['estimated_retail_price', lead.estimatedRetailPrice], ['our_price', lead.ourPrice], ['monthly_payment', lead.monthlyPayment], ['lead_source_page', lead.pageUrl], ['landing_page_url', lead.landingPageUrl], ['referrer_url', lead.referrerUrl], ['traffic_channel', lead.trafficChannel], ['utm_source', lead.utmSource], ['utm_medium', lead.utmMedium], ['utm_campaign', lead.utmCampaign], ['utm_content', lead.utmContent], ['utm_term', lead.utmTerm], ['fbclid', lead.fbclid], ['gclid', lead.gclid], ['msclkid', lead.msclkid],
+    ['fbp', lead.fbp],
+    ['fbc', lead.fbc],
+    ['meta_event_id', lead.metaEventId || lead.submissionId],
+    ['event_source_url', lead.pageUrl],
+    ['external_id', lead.externalId],
+    ['store_pixel_id', (env && env.META_PIXEL_ID) || '']
   ];
   return entries.filter(([, value]) => value !== undefined && value !== null && value !== '').map(([key, field_value]) => ({ key, field_value }));
 }
@@ -28,7 +36,7 @@ function buildContactPayload(env, lead, locationId, forCreate) {
   const payload = { firstName: lead.firstName, lastName: lead.lastName || '.', email: lead.email, phone: '+1' + lead.phone, source: lead.leadSource || ((env.CLIENT_NAME || 'Dealer Website') + ' — ' + lead.source), tags: tagsForLead(env, lead) };
   if (!payload.email) delete payload.email; // GHL rejects email:"" with "email must be an email" — omit instead (phone-first booking flow)
   if (forCreate) payload.locationId = locationId;
-  payload.customFields = customFieldsForLead(lead);
+  payload.customFields = customFieldsForLead(lead, env);
   return payload;
 }
 async function resolveCustomFields(env, locationId, customFields) {

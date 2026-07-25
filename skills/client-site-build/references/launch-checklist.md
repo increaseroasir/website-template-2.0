@@ -5,6 +5,28 @@ MANUAL. Work them at workflow step 8, after the mechanical gate passes.
 Copy the full Part B checklist from `FINAL_DIAL_IN_AND_LAUNCH_GATE.md` into
 the client repo as `LAUNCH_GATE.md`; an unchecked box blocks launch (Law 4).
 
+## Meta CAPI + offline funnel (per-client onboarding — before or with staging)
+
+Code ships ready; these pieces are **location-specific** and silent when missing
+(attribution loss, not lead loss — decision-table). Do not enable the stage
+workflow until stage names match the snapshot.
+
+- [ ] **Six GHL custom field keys** in the client snapshot/location (exact
+      keys): `fbp`, `fbc`, `meta_event_id`, `event_source_url`, `external_id`,
+      `store_pixel_id`.
+- [ ] **Three Cloudflare secrets**: `META_PIXEL_ID`, `META_CAPI_ACCESS_TOKEN`,
+      `META_OFFLINE_WEBHOOK_SECRET` (CAPI token never in GHL).
+- [ ] **GHL workflow** — Opportunity Stage Changed → `POST /api/meta-offline`
+      with Bearer secret + merge fields (see `docs/GHL_META_OFFLINE_WORKFLOW.md`).
+- [ ] **Stage-name alignment** — Qualified / Booked / Showed / Won (or snapshot
+      equivalents) map to `QualifiedLead` / `Schedule` / `Showed` / `Purchase`;
+      never guess mappings.
+- [ ] **Events Manager custom conversions** — map `QualifiedLead` and `Showed`
+      as custom conversions (undocumented fifth step; also in
+      `docs/GHL_META_OFFLINE_WORKFLOW.md`).
+- [ ] **Live verify**: Test Events browser+server Lead **DEDUPED**; Schedule on
+      a real `/book/` booking; one simulated stage → server `QualifiedLead`.
+
 ## Pre-launch (staging URL)
 
 - [ ] **Defaults sign-off**: walk the client/owner through every token that
@@ -85,7 +107,7 @@ site *discovered* — the day-7 step below verifies it actually got crawled.
       page, and one category page. Manual only — Google's Indexing API does
       not cover normal pages; anyone selling "instant Google indexing" for
       regular URLs is guessing.
-- [ ] **IndexNow**: `node skills/client-site-build/scripts/indexnow.mjs
+- [ ] **IndexNow**: `node manus-skills/dealer-site-launch/scripts/indexnow.mjs
       --init` at build, redeploy so the key file is live, then
       `--submit <domain>`. Covers Bing/Yandex instantly; Google does not use
       IndexNow.

@@ -32,7 +32,7 @@ You are the router for dealer website fulfillment. **Do not do all work in this 
 |---|---|---|
 | 1 | `dealer-site-intake` | Filling `client.config.js`, `tokens.env`, images |
 | 2 | `dealer-site-hydrate` | Building `clients/<name>/dist/` |
-| 3 | `dealer-site-wiring` | Verifying the ten integration IDs live |
+| 3 | `dealer-site-wiring` | Verifying browser IDs + Meta CAPI / offline funnel live |
 | 4 | `dealer-site-launch` | Staging/prod gate, DNS, indexing, day-7 |
 
 If a situation is ambiguous, **read** `references/decision-table.md` before asking a human.
@@ -44,10 +44,16 @@ If a situation is ambiguous, **read** `references/decision-table.md` before aski
 - [ ] HUMAN CHECKPOINT 1: config + defaults signed off
 - [ ] Hydrate skill: dist build complete
 - [ ] Launch skill: gate --env staging all PASS
-- [ ] Wiring skill: all ten IDs live-verified (or documented empty)
+- [ ] Wiring skill: IDs 1–10 + Meta CAPI/offline (11–13) live-verified (or documented empty)
 - [ ] Launch skill: human checklist + HUMAN CHECKPOINT 2
 - [ ] Post-launch + day-7 crawl verification logged in WIRING.md
 ```
+
+## Gotchas
+
+- Offline Meta events need the 6 contact fields + the stage webhook; missing
+  pieces skip silently — the funnel looks alive in the browser while CRM
+  events go nowhere. CAPI token lives in Cloudflare secrets, never GHL.
 
 ## Out of scope
 

@@ -158,6 +158,7 @@ if (!val(cfg.tracking?.ghlExternalTracking)) warnings.push('tracking.ghlExternal
 else if (!/^https:\/\/\S+$/.test(String(cfg.tracking.ghlExternalTracking))) errors.push(`tracking.ghlExternalTracking must be the https script src URL from the GHL External Tracking snippet, got "${cfg.tracking.ghlExternalTracking}"`);
 if (!val(cfg.tracking?.ghlBookingCalendarId)) warnings.push('tracking.ghlBookingCalendarId empty — /book/ runs in request-mode (no live slots; leads still captured and confirmed by text). Set the GHL calendar ID to enable real slot booking.');
 warnings.push('GHL sub-account routing (GHL_API_TOKEN, GHL_LOCATION_ID) and TURNSTILE_SECRET_KEY are wrangler secrets this validator cannot read — they are launch-blocking LIVE verifications per references/wiring.md.');
+warnings.push('Meta CAPI secrets (META_CAPI_ACCESS_TOKEN, META_OFFLINE_WEBHOOK_SECRET) and META_PIXEL_ID env are Cloudflare secrets this validator cannot read — standing MANUAL per references/wiring.md (same class as GHL token). Offline CRM events also need the 6 GHL custom field keys + stage webhook (silent skip if missing = attribution loss).');
 
 /* E164 */
 const e164 = String(cfg.client?.primaryPhoneHref || '').replace(/^tel:/, '');

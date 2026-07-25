@@ -18,7 +18,7 @@ Built to match [Manus Skills](https://manus.im/docs/features/skills) and the [sh
 | `dealer-site-orchestrator/` | `/dealer-site-orchestrator` | Router + laws + checklist |
 | `dealer-site-intake/` | `/dealer-site-intake` | Scaffold, validate config, images |
 | `dealer-site-hydrate/` | `/dealer-site-hydrate` | Build `dist/` safely |
-| `dealer-site-wiring/` | `/dealer-site-wiring` | Ten IDs live verification |
+| `dealer-site-wiring/` | `/dealer-site-wiring` | IDs 1–10 + Meta CAPI/offline live verification |
 | `dealer-site-launch/` | `/dealer-site-launch` | Gate, IndexNow, launch + day-7 |
 
 ## How to put these into a Manus project

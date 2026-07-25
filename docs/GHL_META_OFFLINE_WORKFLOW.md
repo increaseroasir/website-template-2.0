@@ -12,6 +12,9 @@
    - `store_pixel_id`
 3. Website lead forms already persist those fields on contact create/update.
 4. Workflow below pointing at `https://{{CLIENT_WEBSITE_URL}}/api/meta-offline`
+5. **Events Manager custom conversions** — map `QualifiedLead` and `Showed` as
+   custom conversions so Ads Manager can optimize on CRM stages (standard
+   Pixel events alone do not surface these).
 
 ## Event map (template defaults)
 
@@ -66,8 +69,16 @@ Replace stage names to match the snapshot pipeline. Custom field merge keys must
 - Rotate `META_OFFLINE_WEBHOOK_SECRET` per client.
 - Endpoint returns 503 with `ONBOARDING_REQUIRED` if secrets are missing.
 
+## Behavior notes
+
+- Unknown `event_name` / stage → HTTP **200** `{ skipped: true }` (GHL retries non-2xx).
+- Each offline send mints a **fresh** `event_id`; contact `meta_event_id` is linkage only (`custom_data`).
+- `system_generated` events omit `event_source_url`.
+- Optional test: set Cloudflare `META_TEST_EVENT_CODE` or `TEST_EVENT_CODE` while using Events Manager Test Events.
+
 ## Verify
 
-1. Submit a website lead → contact has `fbp` / `fbc` / `meta_event_id` populated (when Pixel cookies present).
+1. Submit a website lead → contact has `fbp` / `fbc` / `meta_event_id` populated (when Pixel cookies present); Test Events shows browser + server `Lead` **deduped as one event**.
 2. Move opportunity to Qualified → Events Manager shows `QualifiedLead` with `action_source = system_generated`.
 3. Confirm Event Match Quality after a few offline events with fbp/fbc present.
+4. Confirm `QualifiedLead` and `Showed` appear as **custom conversions** in Events Manager.

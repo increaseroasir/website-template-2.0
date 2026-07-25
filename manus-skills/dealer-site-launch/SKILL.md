@@ -24,7 +24,7 @@ node manus-skills/dealer-site-launch/scripts/indexnow.mjs --submit <domain> --di
 # optional: --dry-run on submit
 ```
 
-Gate checks leftovers, fingerprints, links, robots/sitemap, GSC meta, JSON-LD, GHL external tracking rules, and emits `MANUAL` rows for human wiring (10 IDs). Exit `0` all-pass / `1` fails.
+Gate checks leftovers, fingerprints, links, robots/sitemap, GSC meta, JSON-LD, GHL external tracking rules, and emits `MANUAL` rows for human wiring (IDs 1–10 + Meta CAPI/offline secrets). Exit `0` all-pass / `1` fails.
 
 ## Load on demand
 

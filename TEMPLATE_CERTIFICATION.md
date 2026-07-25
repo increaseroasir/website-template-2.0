@@ -134,3 +134,16 @@ Analytics: booking submit fires `generate_lead` (GA4) and `Schedule` (Meta) so b
 | GET cache | **PASS** — repeat availability hits served ~2 ms from edge cache vs ~300 ms GHL round trip. |
 
 Workflow trigger guidance (verified via GHL UI evidence): API-created appointments surface as Source "Third party" and DO reach the automation engine. Recommended trigger: **Customer Booked Appointment** filtered to the booking calendar; alternative **Appointment Status = confirmed**. Live Execution Logs verification remains a launch-checklist step per client.
+
+## Module E — Meta CAPI / offline absorbed into skill + gate (2026-07-24)
+
+Funnel code shipped in `69ffe02`; this module makes fulfillment (skill/gate/checklist) aware of it and hardens offline webhook behavior.
+
+| Item | Status | Evidence |
+|---|---|---|
+| Wiring set 11–13 | **PASS** | `manus-skills/dealer-site-wiring/references/wiring.md` — `META_CAPI_ACCESS_TOKEN` + `META_OFFLINE_WEBHOOK_SECRET` (CF secrets, standing MANUAL like GHL token); 6 GHL field keys; Opportunity Stage → `/api/meta-offline`; live-verify block (Lead DEDUPED, Schedule on booking, QualifiedLead offline). WIRING.template + gate MANUAL row updated. |
+| Launch checklist + GHL doc | **PASS** | Per-client onboarding: 6 fields, 3 CF secrets, stage webhook + merge fields, stage-name alignment, **Events Manager custom conversions** for QualifiedLead/Showed (also step 5 in `docs/GHL_META_OFFLINE_WORKFLOW.md`). |
+| Hardening (`functions/lib/meta-capi.js`, `functions/api/meta-offline.js`) | **PASS** | `META_TEST_EVENT_CODE` \|\| `TEST_EVENT_CODE`; offline mints unique `event_id` (`meta_event_id` linkage only); unknown stage → **2xx skipped** (no GHL retry storm); `event_source_url` omitted when `action_source=system_generated`. |
+| Decision table + SKILL gotcha | **PASS** | Missing custom fields → cosmetic / 48h (attribution loss); stage names → align before enabling workflow, never guess; orchestrator + wiring SKILL gotcha: silent skip + CAPI token never in GHL. |
+| Fingerprints / secrets in docs | **PASS** | No live CAPI tokens in docs/templates; Pixel ID `1317738110513512` appears only as fingerprint/"leftover looks like" (gate detection), not as a client secret. |
+| Hostile rebuild + gate | **PASS** | Hostile staging gate 13 PASS / 0 FAIL / 8 MANUAL; prod-token rebuild gate 13/0/8. Dist includes `functions/api/meta-offline.js` + hardened `meta-capi.js` from `69ffe02` + Module E. Skill zips refreshed under `manus-skills/*.zip` (gitignored). |

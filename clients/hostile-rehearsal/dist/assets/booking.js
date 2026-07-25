@@ -133,13 +133,18 @@
     errorOut.hidden = true;
     if (submitBtn) { submitBtn.disabled = true; submitBtn.setAttribute('aria-busy', 'true'); }
     var attr = (window.DealerTraffic && window.DealerTraffic.getAttribution()) || {};
+    var email = (form.querySelector('[name="email"]') || {}).value || '';
+    var phone = (form.querySelector('[name="phone"]') || {}).value || '';
+    var eventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('book-' + Date.now());
+    function cookie(n) { var m = document.cookie.match(new RegExp('(^| )' + n + '=([^;]+)')); return m ? decodeURIComponent(m[2]) : ''; }
+    function getFbc() { var existing = cookie('_fbc'); if (existing) return existing; var fbclid = new URLSearchParams(location.search).get('fbclid'); return fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : ''; }
     var payload = {
       source: 'booking-page',
       slot: slotField.value || '',
       preferred_day: (form.querySelector('[name="preferred_day"]') || {}).value || '',
       full_name: (form.querySelector('[name="full_name"]') || {}).value || '',
-      phone: (form.querySelector('[name="phone"]') || {}).value || '',
-      email: (form.querySelector('[name="email"]') || {}).value || '',
+      phone: phone,
+      email: email,
       campaign: (form.querySelector('[name="campaign"]') || {}).value || 'booking',
       lead_source: 'booking-page',
       form_intent: 'Showroom Visit',
@@ -152,7 +157,11 @@
       utm_content: attr.utm_content || '', utm_term: attr.utm_term || '',
       fbclid: attr.fbclid || '', gclid: attr.gclid || '', msclkid: attr.msclkid || '',
       consent: true,
-      turnstile_token: turnstileToken()
+      turnstile_token: turnstileToken(),
+      meta_event_id: eventId,
+      external_id: String(email || '').trim().toLowerCase() || String(phone || '').replace(/\D/g, ''),
+      fbp: cookie('_fbp'),
+      fbc: getFbc()
     };
     fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       .then(function (res) { return res.json(); })
@@ -172,7 +181,18 @@
           return;
         }
         if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'engagement', event_label: 'booking', page_path: location.pathname });
-        if (typeof fbq === 'function') fbq('track', 'Schedule', { content_name: 'showroom-visit' });
+        if (typeof fbq === 'function') {
+          var pid = (cfg.tracking && cfg.tracking.metaPixelId) || '';
+          if (pid && String(pid).indexOf('{{') === -1) {
+            var am = {};
+            if (email) am.em = String(email).trim().toLowerCase();
+            if (phone) am.ph = String(phone).replace(/\D/g, '');
+            if (am.em || am.ph) try { fbq('init', pid, am); } catch (err) {}
+          }
+          var eid = data.meta_event_id || eventId;
+          if (data.booked) fbq('track', 'Schedule', { content_name: 'showroom-visit' }, { eventID: eid });
+          else fbq('track', 'Lead', { value: 0, currency: 'USD', content_name: 'showroom-visit-request' }, { eventID: eid });
+        }
         form.hidden = true;
         if (data.booked && slotField.value) {
           successCopy.textContent = 'You\u2019re booked for ' + fullLabel(slotField.value) + '. We\u2019ll text you a confirmation.';

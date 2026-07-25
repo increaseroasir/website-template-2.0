@@ -17,6 +17,7 @@ import { corsHeaders, jsonResponse } from '../lib/cors.js';
 import { validateLeadPayload, verifyTurnstile } from '../lib/validate.js';
 import { upsertContact, ghlConfigured } from '../lib/ghl.js';
 import { sendFailureAlert } from '../lib/alert.js';
+import { sendMetaEvent } from '../lib/meta-capi.js';
 
 const GHL_BASE = 'https://services.leadconnectorhq.com';
 const CALENDAR_VERSION = '2021-04-15'; // calendar endpoints use their own API version
@@ -158,7 +159,17 @@ export async function onRequestPost(context) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.message || data.error || ('appointment HTTP ' + res.status));
-    return jsonResponse({ ok: true, booked: true, slot }, 200, env, request);
+    /* Schedule CAPI (system_generated) — Pixel Schedule still fires client-side. */
+    let metaSchedule = { sent: false };
+    try {
+      metaSchedule = await sendMetaEvent(env, request, lead, {
+        eventName: 'Schedule',
+        eventId: lead.metaEventId || lead.submissionId,
+        fbp: lead.fbp,
+        fbc: lead.fbc
+      });
+    } catch (metaErr) { console.error('Booking Schedule CAPI failed:', metaErr.message || metaErr); }
+    return jsonResponse({ ok: true, booked: true, slot, meta_capi: metaSchedule.sent === true, meta_event_id: metaSchedule.event_id || lead.metaEventId }, 200, env, request);
   } catch (err) {
     /* Contact is already captured with intent tags — nothing below can lose the lead. */
     console.error('Appointment create failed (lead captured):', err.message || err);

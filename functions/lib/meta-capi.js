@@ -1,13 +1,13 @@
 /**
  * Meta Conversions API — multi-event template (Lead → Purchase).
  *
- * Lead          → action_source=website, no/zero value (browser + /api/lead)
+ * Lead          → action_source=website, value 0, event_source_url set, shared event_id w/ Pixel
  * QualifiedLead / Schedule / Showed / Purchase → action_source=system_generated
- *   (CRM/offline via /api/meta-offline; Schedule also from /api/booking)
+ *   (no event_source_url; offline path always uses a fresh event_id)
  *
  * Env:
  *   META_PIXEL_ID, META_CAPI_ACCESS_TOKEN (required to send)
- *   META_TEST_EVENT_CODE (optional)
+ *   META_TEST_EVENT_CODE or TEST_EVENT_CODE (optional Events Manager test code)
  *   META_VALUE_QUALIFIED | META_VALUE_SCHEDULE | META_VALUE_SHOWED (defaults 75/300/600)
  *   LEAD_CURRENCY (default USD)
  */
@@ -48,17 +48,15 @@ export function defaultValueForEvent(env, eventName) {
   }[eventName];
   if (eventName === 'Lead') {
     if (env.META_VALUE_LEAD !== undefined && env.META_VALUE_LEAD !== '') return Number(env.META_VALUE_LEAD);
-    return 0; // Meta high-ticket pattern: Lead trains volume, not value
+    return 0;
   }
   if (key && env[key] !== undefined && env[key] !== '') return Number(env[key]);
   return ALLOWED_EVENTS[eventName]?.defaultValue;
 }
 
 /**
- * @param {object} env
- * @param {Request} request
- * @param {object} lead — firstName, lastName, email, phone, pageUrl, fbp, fbc, externalId, submissionId, productName, campaign, source, productCategory
- * @param {object} opts — eventName, eventId, value?, fbp?, fbc?
+ * @param {object} opts — eventName, eventId?, uniqueEventId?, value?, fbp?, fbc?, originalMetaEventId?
+ *   uniqueEventId:true → always mint a new UUID (offline CRM events; meta_event_id is linkage only)
  */
 export async function sendMetaEvent(env, request, lead, opts = {}) {
   if (!metaCapiConfigured(env)) return { sent: false, reason: 'Meta CAPI not configured' };
@@ -67,7 +65,10 @@ export async function sendMetaEvent(env, request, lead, opts = {}) {
   const spec = ALLOWED_EVENTS[eventName];
   if (!spec) return { sent: false, reason: 'Unsupported event_name: ' + eventName };
 
-  const eventId = opts.eventId || lead.metaEventId || lead.submissionId || crypto.randomUUID();
+  const eventId = opts.uniqueEventId
+    ? crypto.randomUUID()
+    : (opts.eventId || lead.metaEventId || lead.submissionId || crypto.randomUUID());
+
   let value = opts.value;
   if (value === undefined || value === null || value === '') value = defaultValueForEvent(env, eventName);
   if (eventName === 'Purchase' && !(Number(value) > 0)) {
@@ -101,19 +102,26 @@ export async function sendMetaEvent(env, request, lead, opts = {}) {
   const contentCategory = lead.campaign || lead.productCategory || '';
   if (contentName) custom_data.content_name = contentName;
   if (contentCategory) custom_data.content_category = contentCategory;
+  /* Linkage only — never reused as this event's event_id on offline sends */
+  const originalMeta = opts.originalMetaEventId || lead.metaEventId || '';
+  if (opts.uniqueEventId && originalMeta) custom_data.meta_event_id = originalMeta;
 
   const event = {
     event_name: eventName,
     event_time: Math.floor(Date.now() / 1000),
     event_id: eventId,
     action_source: spec.action_source,
-    event_source_url: lead.pageUrl || lead.eventSourceUrl || env.CLIENT_WEBSITE_URL || '',
     user_data: userData
   };
+  /* Website events keep event_source_url; system_generated omits it (Meta CRM pattern). */
+  if (spec.action_source === 'website') {
+    event.event_source_url = lead.pageUrl || lead.eventSourceUrl || env.CLIENT_WEBSITE_URL || '';
+  }
   if (Object.keys(custom_data).length) event.custom_data = custom_data;
 
   const payload = { data: [event], access_token: env.META_CAPI_ACCESS_TOKEN };
-  if (env.META_TEST_EVENT_CODE) payload.test_event_code = env.META_TEST_EVENT_CODE;
+  const testCode = env.META_TEST_EVENT_CODE || env.TEST_EVENT_CODE;
+  if (testCode) payload.test_event_code = testCode;
 
   const res = await fetch(META_GRAPH + '/' + env.META_PIXEL_ID + '/events', {
     method: 'POST',
@@ -127,13 +135,14 @@ export async function sendMetaEvent(env, request, lead, opts = {}) {
     events_received: body.events_received || 0,
     fbtrace_id: body.fbtrace_id || '',
     event_id: eventId,
+    meta_event_id_linkage: originalMeta || undefined,
     event_name: eventName,
     action_source: spec.action_source,
     value: value > 0 ? value : 0
   };
 }
 
-/** Back-compat: website Lead (value 0). */
+/** Website Lead (value 0) — shares event_id with Pixel for dedupe. */
 export async function sendLeadEvent(env, request, lead, meta = {}) {
   return sendMetaEvent(env, request, lead, {
     eventName: 'Lead',

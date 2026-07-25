@@ -84,6 +84,8 @@ export function validateLeadPayload(body, opts) {
     msclkid: String(body.msclkid || '').trim(),
     fbp: String(body.fbp || '').trim(),
     fbc: String(body.fbc || '').trim(),
+    metaEventId: String(body.meta_event_id || body.metaEventId || submissionId).trim(),
+    externalId: String(body.external_id || body.externalId || email || phone || '').trim().toLowerCase(),
     consent: body.consent !== false && body.consent !== 'false'
   }};
 }

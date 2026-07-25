@@ -19,8 +19,13 @@ CLIENT_PHONE = "865-555-0142"
 CLIENT_PHONE_E164 = "+18655550142"
 R2_PUBLIC_BUCKET_ID = "pub-0000000000000000"
 MAX_PRODUCT_IMAGE_BYTES = "6291456"
-LEAD_VALUE = "950"
 LEAD_CURRENCY = "USD"
+# Offline Meta CAPI stage values (Lead website event is always value 0)
+META_VALUE_QUALIFIED = "75"
+META_VALUE_SCHEDULE = "300"
+META_VALUE_SHOWED = "600"
+# Legacy LEAD_VALUE kept for older clients — ignored for website Lead (now $0)
+LEAD_VALUE = "950"
 # GHL calendar for /book/ — empty = booking page runs in request-mode (still captures leads)
 GHL_BOOKING_CALENDAR_ID = ""
 
@@ -32,6 +37,7 @@ GHL_BOOKING_CALENDAR_ID = ""
 # GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
 # META_CAPI_ACCESS_TOKEN
 # META_PIXEL_ID
+# META_OFFLINE_WEBHOOK_SECRET   # Bearer for POST /api/meta-offline (GHL stage webhooks)
 # TURNSTILE_SECRET_KEY
 # ADMIN_PASSWORD
 # ADMIN_SESSION_SECRET

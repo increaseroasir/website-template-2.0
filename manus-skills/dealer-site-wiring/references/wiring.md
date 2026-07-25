@@ -1,38 +1,54 @@
-# Wiring — the ten IDs
+# Wiring — browser IDs + Meta CAPI / offline funnel
 
-Read this BEFORE touching any integration ID. Every ID must be (1) present,
-(2) NOT a template/Paradise value (gate.mjs checks the known fingerprints in
-`scripts/template-fingerprints.json`), and (3) **verified firing live** —
-presence in config proves nothing. Record every ID + verification timestamp
-in the client's `WIRING.md` (scaffolded by `new-client.mjs --init`).
+Read this BEFORE touching any integration ID. Every ID must be (1) present
+when required, (2) NOT a template leftover (gate.mjs fingerprints), and
+(3) **verified firing live**. Presence in config proves nothing. Record
+everything in the client's `WIRING.md`.
+
+## Browser / config IDs (1–10)
 
 | # | ID | Config location | Template leftover looks like | LIVE verification |
 |---|---|---|---|---|
 | 1 | GA4 measurement ID | `tracking.ga4Id` | `{{GA4_ID}}` or `G-E5WGSEGZYP` | Open GA4 **Realtime** on the client property; visit staging; your session appears within ~60s |
-| 2 | Meta Pixel ID | `tracking.metaPixelId` | `{{META_PIXEL_ID}}` or `1317738110513512` | Meta **Test Events** (or Pixel Helper): PageView on load + ViewContent on a product page |
+| 2 | Meta Pixel ID | `tracking.metaPixelId` | `{{META_PIXEL_ID}}` or `1317738110513512` | Meta **Test Events**: PageView on load + ViewContent on a content page |
 | 3 | Clarity project ID | `tracking.clarityId` | `{{CLARITY_ID}}` or `xeoe7g20ml` | Clarity dashboard shows a live session/recording for your visit |
 | 4 | Lead endpoint / GHL webhook | `endpoints.lead` (+ Pages Function env) | endpoint 404s, or leads land in the WRONG sub-account | Submit a test lead; contact appears in **this client's** GHL sub-account with correct source/campaign/tags |
 | 5 | GHL chat widget ID | chat widget snippet / config | `6a4454fd638eec5af4195a51` | Widget renders after the ~20s deferral; a test chat lands in this client's GHL inbox |
 | 6 | Closebot source ID | Closebot script `?source=` | `coMRVmh8SR6oGXTA` | Closebot dashboard registers the visit/source |
-| 7 | Turnstile sitekey | `tracking.turnstileSiteKey` | `{{TURNSTILE_SITE_KEY}}` or empty | A real form submit **succeeds** — an empty/wrong key = silent lead loss; the page renders fine either way, so only a submit proves it |
-| 8 | Phone + SMS (E164) | `client.primaryPhoneHref` / `client.smsHref` | `tel:+17018382614` | Call the number → rings the client (or their tracking line); tap the SMS link on a real phone → correct thread opens |
-| 9 | GHL External Tracking | `tracking.ghlExternalTracking` (script src URL from the per-location snippet) | any other dealer's tracking URL/ID (fingerprint pending for the origin dealer — see template-fingerprints.json) | Browse 2–3 pages anonymously (fresh incognito, cellular if possible), then submit the gate form. In the client's GHL confirm BOTH: (a) the contact timeline shows the PRIOR page views stitched in, and (b) exactly ONE contact exists — the /api/lead pipeline and the tracking capture must dedupe-merge on email/phone, not create twins. **Duplicate contacts = FAIL; investigate before launch.** Loads with the other pixels, never on the chat widget's 20s deferral (late loading misses the page view). Works because all template forms are native DOM `<form>` elements. |
-| 10 | GHL Booking Calendar ID | `tracking.ghlBookingCalendarId` (→ wrangler var `GHL_BOOKING_CALENDAR_ID`) | `{{GHL_BOOKING_CALENDAR_ID}}`, or another dealer's/snapshot calendar ID (slots may render — free-slots does NOT verify the calendar belongs to this location; only booking does) | Calendar has an assigned team member. Make ONE real booking on /book/: appointment lands at the correct store-local time, contact tagged `intent - showroom visit` + `campaign - booking`, then check **Automation → Execution Logs** that the appointment workflow fired (API bookings = Source "Third party" — use the **Customer Booked Appointment** trigger, never a form trigger). Delete the test. Empty ID is allowed: /book/ degrades to request-mode (leads still captured). |
+| 7 | Turnstile sitekey | `tracking.turnstileSiteKey` | `{{TURNSTILE_SITE_KEY}}` or empty | A real form submit **succeeds** — empty/wrong key = silent lead loss |
+| 8 | Phone + SMS (E164) | `client.primaryPhoneHref` / `client.smsHref` | `tel:+17018382614` | Call + SMS routing to the client (or their tracking line) |
+| 9 | GHL External Tracking | `tracking.ghlExternalTracking` | other dealer's tracking URL | Anon 2–3 page browse + form submit → prior page views stitched + **exactly ONE** contact |
+| 10 | GHL Booking Calendar ID | `tracking.ghlBookingCalendarId` | wrong-location calendar ID | Live booking at store-local time + Execution Logs, or intentional empty (request-mode) |
+
+## Meta CAPI secrets + offline funnel (11–13)
+
+Validator / gate **cannot read Cloudflare secrets** — same standing MANUAL
+warning treatment as `GHL_API_TOKEN`. Confirm in wrangler / dashboard, then
+live-verify.
+
+| # | Item | Where it lives | LIVE verification |
+|---|---|---|---|
+| 11 | `META_CAPI_ACCESS_TOKEN` | Cloudflare Pages **secret** (never GHL, never git) | With Pixel + CAPI configured: submit a test lead → Events Manager **Test Events** shows browser + server `Lead` arriving **DEDUPED as one event** (same `event_id`). Optional: set `META_TEST_EVENT_CODE` or `TEST_EVENT_CODE` while testing. |
+| 12 | `META_OFFLINE_WEBHOOK_SECRET` | Cloudflare Pages **secret**; Bearer on `POST /api/meta-offline` | Unauthorized request → 401; valid Bearer + known `event_name` → 200 + `ok:true` |
+| 13a | GHL custom field keys (6) | Snapshot / location custom fields | After a form lead (with Pixel cookies): contact has `fbp`, `fbc`, `meta_event_id`, `event_source_url`, `external_id`, `store_pixel_id` populated when data exists. Missing keys = silent skip (attribution loss). |
+| 13b | Opportunity Stage Changed → `/api/meta-offline` | GHL Automation webhook | One simulated stage change (e.g. Qualified) with merge fields → Events Manager shows server `QualifiedLead` (`action_source=system_generated`). Unknown stage names must return **2xx skipped** (not retry loops). |
+
+### Meta live-verification block (do in order)
+
+1. **Lead dedupe:** Events Manager Test Events — browser + server `Lead` = **one** event.  
+2. **Schedule:** complete a real `/book/` booking (calendar configured) — server `Schedule` + Pixel `Schedule` share `event_id` when booked.  
+3. **Offline:** fire one simulated stage webhook → `QualifiedLead` (or Showed) server-side.  
+4. **Events Manager:** map `QualifiedLead` and `Showed` as **custom conversions** (see `docs/GHL_META_OFFLINE_WORKFLOW.md`).
 
 ## Order of operations
 
-1. Fill all ten in `clients/<name>/client.config.js` from the intake brief
-   (never from memory, never from another client's WIRING.md).
-2. `new-client.mjs --validate <name>` — catches empty/tokenized IDs and
-   non-E164 phones statically.
-3. Build → `gate.mjs` — catches fingerprint leftovers with file:line evidence.
-4. **Live-verify each row on staging** (the table's last column). gate.mjs
-   emits these as MANUAL — a human or a browser session must actually do them.
-5. Fill the `WIRING.md` table: ID value, who verified, how, timestamp.
+1. Fill browser IDs in `clients/<name>/client.config.js` from intake.  
+2. Set Cloudflare secrets (GHL token, Meta CAPI, Meta offline webhook).  
+3. Ensure snapshot has the 6 Meta contact fields + stage webhook.  
+4. `new-client.mjs --validate` → build → `gate.mjs`.  
+5. Live-verify every row; fill `WIRING.md`.
 
 ## WIRING.md is the client's permanent record
 
-It also records the **template version** the build came from (Law 2) and the
-post-launch screenshot archive location. If an ID changes after launch,
-update WIRING.md in the same change — an undocumented ID swap is how the
-next rebuild silently reverts a client to someone else's pixel.
+Template version (Law 2) + post-launch archive. Undocumented ID swaps after
+launch are how the next rebuild reverts a client to someone else's pixel.
