@@ -1,32 +1,73 @@
 ---
 name: client-site-build
 description: >
-  LEGACY pointer. For Manus, use the composable skills under manus-skills/
-  (dealer-site-orchestrator, dealer-site-intake, dealer-site-hydrate,
-  dealer-site-wiring, dealer-site-launch). Do not install this folder into
-  Manus as the primary skill pack.
-compatibility: See manus-skills/README.md
+  Build and launch a hot-tub dealer client website from the premium template:
+  intake sheet or messy brief, rush 1–2 day profile, hydrate dist, wire tracking
+  (incl. Meta CAPI offline), gate, and handoff. Use when asked to build a site
+  for a dealer, fulfill a client website, or "build the site for X, here's their
+  info, it's urgent". Prefer manus-skills/ composable pack when installed in Manus;
+  this folder is the single-zip supervised pack (Modules A–E).
+compatibility: Node.js 18+. Run from the website-template repo root.
 metadata:
   author: Start Scale Automate
-  version: "1.1-legacy"
-  status: deprecated-for-manus
+  version: "3.0"
+  manus: single-zip-pack
 ---
 
-# Client Site Build (legacy)
+# Client Site Build (single-zip pack)
 
-This single-skill pack was rewritten to match **Manus Skills** progressive
-disclosure and composability.
+Supervised fulfillment in one skill folder. For Manus progressive disclosure,
+install `manus-skills/*` instead — behavior matches.
 
-## Use instead
+## Laws
 
-Open **`manus-skills/README.md`** and install the five skills listed there into
-your Manus project. Paste **`manus-skills/PROJECT_MASTER_INSTRUCTION.md`** into
-the project master instruction.
+1. Hydrate, never rebuild (config/tokens/images only).  
+2. Record template version in `WIRING.md`.  
+3. Palette is the product (navy + gold).  
+4. Fail loudly — gate FAIL or unchecked REQUIRED intake blocks launch.  
+5. **Rush reduces scope, never skips validate, gate, or post-launch test lead.**
 
-Scripts moved to:
+## Scripts
 
-- `manus-skills/dealer-site-intake/scripts/`
-- `manus-skills/dealer-site-launch/scripts/`
+```bash
+node skills/client-site-build/scripts/new-client.mjs --init <name>
+node skills/client-site-build/scripts/map-intake.mjs --sheet export.csv --client <name> --write-wiring
+node skills/client-site-build/scripts/map-intake.mjs --brief notes.txt --client <name> --write-wiring
+node skills/client-site-build/scripts/new-client.mjs --validate <name> [--profile rush]
+node skills/client-site-build/scripts/check-assets.mjs --dir clients/<name>/uploads
+node skills/client-site-build/scripts/gate.mjs --env staging|prod --dist clients/<name>/dist
+node skills/client-site-build/scripts/indexnow.mjs --init|--submit <domain> --dist clients/<name>/dist
+```
 
-Reference copies under this folder may lag; treat `manus-skills/` as canonical
-for Manus.
+Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs` inside dist only (see manus-skills hydrate SKILL for rsync excludes).
+
+## Load on demand
+
+| File | When |
+|---|---|
+| `references/intake-sheet-mapping.md` | Sheet or brief arrives |
+| `references/token-reference.md` / `content-rules.md` / `images.md` | Writing tokens/copy/photos |
+| `references/wiring.md` | Live-verify IDs 1–13 |
+| `references/decision-table.md` | Ambiguous situation |
+| `references/launch-checklist.md` | Pre/post launch humans |
+| `assets/CLIENT_INTAKE_SHEET.csv` | Blank sheet for owner |
+| `assets/hostile.config.js` | Stress rehearsal |
+
+## 10-step workflow
+
+1. `--init <name>`  
+2. Sheet **or** brief → map-intake / fill config+tokens (REQUIRED blanks → stop)  
+3. Photos per `images.md` + upload checklist; `check-assets`  
+4. `--validate` or `--validate --profile rush` → PASS + 48h list  
+5. **CP1** (rush = one message: config + defaults + photos + 48h)  
+6. Hydrate `dist/`  
+7. `gate --env staging` then wiring live-verify  
+8. **CP2** (rush = gate table + screenshots)  
+9. Prod gate → DNS; IndexNow/GSC per checklist  
+10. Post-launch cellular test lead + day-7 crawl log  
+
+## Gotchas
+
+- Empty Turnstile = silent lead loss.  
+- Offline Meta needs 6 GHL fields + stage webhook; CAPI token only in Cloudflare secrets.  
+- Missing hero blocks even in rush; non-hero photos → gradient wells + 48h list.

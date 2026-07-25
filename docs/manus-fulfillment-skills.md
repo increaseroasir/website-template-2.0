@@ -1,10 +1,12 @@
 # Manus Fulfillment Skills For Dealer Websites
 
-> **Canonical install path (2026-07-23):** use the Manus-compliant pack in
-> [`manus-skills/`](../manus-skills/README.md) — five composable skills with
-> progressive disclosure (`SKILL.md` + `references/` + `scripts/` + `templates/`).
-> This document is the earlier narrative spec; prefer the folders under
-> `manus-skills/` when uploading to a Manus project.
+> **SUPERSEDED (2026-07-24 — Module C).** This file is **provenance only**.
+> Do not implement from it. Canonical fulfillment is the Manus skill pack in
+> [`manus-skills/`](../manus-skills/README.md) (orchestrator → intake → hydrate →
+> wiring → launch). Single-zip supervised builds also ship under
+> `skills/client-site-build/`. Coverage matrix (every capability → COVERED /
+> GAP / CONTRADICTION): [`manus-fulfillment-skills-coverage.md`](./manus-fulfillment-skills-coverage.md).
+> **When this narrative contradicts the skill, the skill wins.**
 
 These skill specs turn the website template into a repeatable fulfillment system. The goal is simple: a user can say, "I need a website for XYZ company," and Manus can collect the right information, configure every system, verify tracking, and hand off a launched client website.
 
