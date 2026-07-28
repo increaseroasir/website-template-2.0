@@ -306,12 +306,54 @@ body:has(.admin-shell) .site-footer::after{animation:none;display:none}
   background-repeat:no-repeat,no-repeat;background-position:center,center;background-size:16px 16px,100% 100%;
   box-shadow:0 10px 22px -8px rgba(232,164,0,.6)}
 
-/* ============ Booking page (/book/) — conversion-minimal ============ */
-.page-book .book-hero .hero-inner{padding:44px 20px 40px;text-align:center;justify-items:center}
-.page-book .book-hero h1{margin-inline:auto}
-.page-book .book-hero p{margin-inline:auto;max-width:560px}
-.book-section{padding:34px 0 64px}
-.book-card{max-width:560px;padding:26px 22px 24px}
+/* ============ Booking page (/book/) — premium conversion scene ============
+   Full-height night-water background (same recipe as financing/thank-you),
+   glass booking card + expectation steps and showroom info. No nav exits. */
+.page-book main.book-scene{position:relative;overflow:hidden;display:grid;align-content:center;
+  min-height:calc(100vh - 64px);min-height:calc(100dvh - 64px);
+  background:radial-gradient(900px 480px at 50% -10%,rgba(22,70,155,.55),transparent 60%),
+    radial-gradient(760px 420px at 88% 110%,rgba(255,184,28,.11),transparent 62%),
+    linear-gradient(180deg,var(--navy-night),var(--navy-abyss))}
+.page-book main.book-scene::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;z-index:3;
+  background:linear-gradient(90deg,transparent,#FFD46A 50%,transparent) no-repeat,rgba(255,184,28,.28);
+  background-size:38% 100%;
+  animation:pp-sweep 5.5s ease-in-out infinite}
+.book-grid{position:relative;z-index:2;display:grid;gap:30px;padding-top:44px;padding-bottom:64px}
+.book-intro .kicker{color:var(--gold-soft)}
+.book-intro .kicker::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.book-intro h1{color:#fff;font-size:clamp(2.1rem,6.5vw,3.6rem);margin-bottom:14px}
+.book-sub{color:#C9D5EE;font-size:clamp(1rem,2vw,1.1rem);max-width:560px}
+.book-panel{min-width:0}
+.book-points{list-style:none;display:grid;gap:18px}
+.book-points li{display:flex;gap:14px;align-items:flex-start}
+.book-points span{flex:none;font-family:var(--mono);font-weight:600;font-size:.66rem;letter-spacing:.18em;
+  color:var(--gold-soft);border:1px solid rgba(255,184,28,.35);border-radius:999px;
+  min-width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;margin-top:2px}
+.book-points b{display:block;font-family:var(--display);font-weight:700;font-size:1.02rem;color:#fff;margin-bottom:3px}
+.book-points p{color:#C9D5EE;font-size:.92rem;line-height:1.55}
+.book-visit{margin-top:26px;border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:20px 20px 22px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.book-visit-title{font-family:var(--mono);font-weight:600;font-size:.66rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--gold-soft);margin-bottom:14px}
+.book-visit-list{list-style:none;display:grid;gap:11px;margin-bottom:16px}
+.book-visit-list li{display:flex;gap:11px;align-items:flex-start;color:#C6D4EF;font-size:.92rem;line-height:1.55}
+.book-visit-list svg{flex:none;color:var(--gold-soft);margin-top:3px}
+.book-visit-list a{color:#fff}
+.book-visit-list a:hover{color:var(--gold-soft)}
+.book-card{max-width:560px;padding:26px 22px 24px;
+  background:linear-gradient(168deg,rgba(255,255,255,.96),rgba(255,255,255,.88));
+  backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 44px 90px -28px rgba(3,12,32,.65),inset 0 1px 0 rgba(255,255,255,.9)}
+.page-book .book-trust{color:#8FA6D2}
+@media(min-width:1000px){
+  .book-grid{grid-template-columns:1.04fr .9fr;grid-template-areas:"intro panel" "aside panel";
+    column-gap:56px;row-gap:34px;align-items:start;padding-top:72px;padding-bottom:96px}
+  .book-intro{grid-area:intro}
+  .book-panel{grid-area:panel;position:sticky;top:92px}
+  .book-aside{grid-area:aside}
+  .book-card{margin-inline:0}
+}
 .book-label{font-family:'Spline Sans Mono',monospace;font-weight:600;font-size:.66rem;letter-spacing:.22em;
   text-transform:uppercase;color:var(--gold-dark);margin:4px 0 10px}
 .book-step + .book-step{margin-top:18px}
