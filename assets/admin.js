@@ -74,6 +74,7 @@
           <div class="form-card">
             <h3 data-form-title>Add Product</h3>
             <form class="form-grid" data-product-form>
+              <p class="form-group-label">Basics</p>
               <input name="inventory_name" placeholder="Product name" maxlength="140" required>
               <input name="slug" placeholder="slug-auto-or-custom" maxlength="90" pattern="[a-z0-9-]*">
               <select name="category" required>
@@ -88,20 +89,24 @@
                 <option value="sold">Sold</option>
                 <option value="hidden">Hidden</option>
               </select>
-              <input name="price" type="number" min="0" max="999999" placeholder="Price">
+              <p class="form-group-label">Pricing &amp; stock</p>
+              <input name="price" type="number" min="0" max="999999" placeholder="Price (leave empty for text-back pricing — never 0)">
               <input name="monthly_payment" type="number" min="0" max="99999" placeholder="Monthly payment">
-              <input name="quantity" type="number" min="0" max="999" placeholder="Quantity">
+              <input name="quantity" type="number" min="0" max="999" placeholder="Quantity (drives the 'Only X in stock' counter)">
+              <p class="form-group-label">Card merchandising</p>
               <input name="primary_image" placeholder="Primary image URL" inputmode="url">
-              <input name="promo_label" placeholder="Badge / promo label" maxlength="80">
+              <input name="promo_label" placeholder="Badge / promo label, e.g. 1 Left" maxlength="80">
               <input name="delivery_promise" placeholder="Delivery promise" maxlength="220">
               <textarea name="quick_facts" placeholder="Quick facts, one per line. Max 8 facts."></textarea>
-              <textarea name="ghl_tags" placeholder="GHL tags, one per line. Max 30 tags."></textarea>
+              <p class="form-group-label">Product page content (sales sections — auto-hide when empty)</p>
               <input name="headline" placeholder="Sales headline, e.g. Name — Benefit In Plain Words" maxlength="140">
               <input name="positioning_label" placeholder="Positioning label, e.g. VALUE / FAMILY COMFORT" maxlength="60">
               <textarea name="hero_description" placeholder="Hero description: 1-2 sentences selling this exact unit." maxlength="320"></textarea>
               <textarea name="why_bullets" placeholder="Why it stands out: one bullet per line. Max 6."></textarea>
               <textarea name="long_description" placeholder="About this unit: one honest paragraph (who it's for, what makes it worth it)." maxlength="1400"></textarea>
               <input name="best_for" placeholder="Best for: one line, e.g. Couples who want daily soaks without a huge footprint" maxlength="220">
+              <p class="form-group-label">Routing &amp; display</p>
+              <textarea name="ghl_tags" placeholder="GHL tags, one per line. Max 30 tags."></textarea>
               <input name="sort_order" type="number" min="-9999" max="9999" placeholder="Sort order">
               <label><input name="featured" type="checkbox"> Featured</label>
               <button class="btn btn-gold" type="submit">Save Product</button>

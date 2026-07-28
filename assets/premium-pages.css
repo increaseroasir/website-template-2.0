@@ -156,6 +156,12 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.08;letter-s
 .form-grid select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230B2559' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
 .form-grid textarea{min-height:110px;resize:vertical}
+/* Group headers inside long forms (admin product form) */
+.form-group-label{display:flex;align-items:center;gap:10px;margin:10px 0 0;
+  font-family:'Spline Sans Mono',monospace;font-size:.62rem;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep)}
+.form-group-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(232,164,0,.4),transparent)}
+.form-group-label:first-child{margin-top:0}
 .form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus{outline:none;border-color:var(--navy-royal);box-shadow:0 0 0 4px rgba(22,70,155,.12)}
 .form-grid input::placeholder,.form-grid textarea::placeholder{color:#8892A6}
 .form-grid input[type="checkbox"]{accent-color:var(--navy-royal);min-height:0;width:auto}
