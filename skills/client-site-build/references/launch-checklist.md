@@ -62,7 +62,11 @@ workflow until stage names match the snapshot.
       build #1's version of this.
 - [ ] **`POST /api/lead` with `{}` does NOT return 503.** A 503 "Lead vault is
       not configured" means `GOOGLE_SHEETS_ID` is missing — secrets alone are
-      not enough. Set it on BOTH production and preview environments.
+      not enough. Set it on BOTH production and preview environments. The
+      standing lead-vault service account for ALL clients is
+      `paradise-lead-vault@paradise-spas-lead-vault.iam.gserviceaccount.com`
+      (share each client sheet with it as Editor; key rotation happens in its
+      GCP project, never per client).
 - [ ] **Every `.cf-turnstile` on every page has a `data-sitekey`** (template
       ≥ `3e2fadd` / WTV-017 injects it in native-form.js). A widget without a
       sitekey never issues a token, and with `TURNSTILE_SECRET_KEY` set the
