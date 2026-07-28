@@ -29,11 +29,18 @@ facts, see content-rules.md).
 | `BOOK_HEADLINE` | book/ | text | headline | Pick a time. We'll have it ready. | no | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `BOOK_KICKER` | book/ | text | mono label | Showroom visit | no | ≤28 chars |
 | `BOOK_META_DESCRIPTION` | book/ | meta | body copy | (benefit line) | no | ≤300 chars |
+| `BOOK_POINT_1_TITLE` | book/ | text | expectation step 1 title | Lock in a time | no | ≤32 chars |
+| `BOOK_POINT_1_COPY` | book/ | text | expectation step 1 body | (20-second promise line) | no | ≤140 chars |
+| `BOOK_POINT_2_TITLE` | book/ | text | expectation step 2 title | We prep before you arrive | no | ≤32 chars |
+| `BOOK_POINT_2_COPY` | book/ | text | expectation step 2 body | (models running + wet-test line) | no | ≤140 chars |
+| `BOOK_POINT_3_TITLE` | book/ | text | expectation step 3 title | Leave with real numbers | no | ≤32 chars |
+| `BOOK_POINT_3_COPY` | book/ | text | expectation step 3 body | (pricing/delivery/no-pressure line) | no | ≤140 chars |
 | `BOOK_SEO_TITLE` | book/ | meta/title | headline | Book a Showroom Visit | no | lead with service + city per content-rules |
 | `BOOK_SUBHEAD` | book/ | text | subhead | (20-second promise line) | no | ≤140 chars (2–3 lines at 390px) |
 | `BOOK_SUCCESS_COPY` | book/ | text | body copy | (confirm-by-text line) | no | ≤200 chars |
 | `BOOK_SUCCESS_HEADLINE` | book/ | text | headline | You're on the calendar. | no | ≤48 chars |
 | `BOOK_TRUST_LINE` | book/ | text | mono trust line | Family-owned · Local delivery · Real people answer | no | ≤70 chars, · separators |
+| `BOOK_VISIT_TITLE` | book/ | text | showroom info block title | Visit the showroom | no | ≤28 chars, mono uppercase |
 | `CAMPAIGN_NAME` | active-inventory/SLUG/, active-inventory/, financing.html | attribute | text | Financing Survey | no | — |
 | `CATEGORIES_HEADLINE` | index.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `CATEGORIES_KICKER` | index.html | text | mono label | Find your fit | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
