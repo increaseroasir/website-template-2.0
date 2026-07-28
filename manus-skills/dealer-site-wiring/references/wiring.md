@@ -55,6 +55,18 @@ LIVE verification: submit a test lead → the GHL contact carries `new-lead`
 (plus the `src-*` source tag) AND the intake workflow shows a run in
 Execution Logs.
 
+### Automatic intent tags (server-side, no config)
+
+`functions/lib/ghl.js` also stamps intent tags the snapshot can route on:
+
+- **`financing-request`** — any lead whose `lead_source` contains
+  `financing` (the /financing.html funnel). The financing page is a locked
+  full-screen survey (no nav, no page scroll) whose success redirect sends
+  the visitor to `/book/`; snapshot workflows targeting financing leads
+  must trigger on this tag.
+- `productlead` — leads from a product detail page.
+- `Campaign - <campaign>` / `Intent - <form_intent>` — every lead.
+
 ## Order of operations
 
 1. Fill browser IDs in `clients/<name>/client.config.js` from intake.  

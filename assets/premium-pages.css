@@ -223,13 +223,36 @@ td{font-size:.9rem;color:var(--ink-soft)}
 body:has(.admin-shell) .site-footer::after{animation:none;display:none}
 @media(min-width:760px){.admin-shell{grid-template-columns:280px 1fr}.admin-sidebar{min-height:calc(100vh - 72px)}}
 
-/* ---------- Financing survey ---------- */
-.financing-survey-page{min-height:calc(100vh - 64px);
+/* ---------- Financing survey — locked full-screen funnel ----------
+   No nav, no footer, no page scroll: the visitor finishes the survey
+   (→ /book/) or taps the phone number. The card scrolls internally if a
+   step ever outgrows a short viewport, so nothing is ever unreachable. */
+html:has(body.financing-lock){overflow:hidden}
+body.financing-lock{height:100vh;height:100dvh;overflow:hidden}
+.fin-scene{position:relative;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;color:#fff;
   background:radial-gradient(900px 480px at 50% -10%,rgba(22,70,155,.55),transparent 60%),
     radial-gradient(700px 420px at 90% 100%,rgba(255,184,28,.1),transparent 62%),
     linear-gradient(180deg,var(--navy-night),var(--navy-abyss))}
-.financing-survey-hero{padding:clamp(24px,6vw,64px) 0}
-.financing-survey-wrap{max-width:720px}
+/* Animated gold shimmer hairline along the top edge — same canon as the
+   homepage and category bands */
+.fin-scene::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;z-index:3;
+  background:linear-gradient(90deg,transparent,#FFD46A 50%,transparent) no-repeat,rgba(255,184,28,.28);
+  background-size:38% 100%;animation:pp-sweep 5.5s ease-in-out infinite}
+/* Drifting glow orbs behind the card */
+.fin-scene::after{content:"";position:absolute;z-index:0;border-radius:9999px;filter:blur(72px);pointer-events:none;
+  width:520px;height:340px;left:-8%;bottom:-14%;background:rgba(22,70,155,.5);animation:drift1 16s ease-in-out infinite}
+.fin-topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative;z-index:2;
+  padding:14px clamp(16px,4vw,40px)}
+.fin-brand{font-family:var(--display);font-weight:800;font-size:1.1rem;letter-spacing:.01em;color:#fff}
+.fin-phone{text-align:right}
+.fin-phone b{display:block;color:#fff;font-family:var(--display);font-weight:800}
+.fin-phone span{display:block;font-family:'Spline Sans Mono',monospace;font-size:.58rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(255,212,106,.85)}
+.fin-main{flex:1;min-height:0;position:relative;z-index:2;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:6px 16px 16px}
+.fin-main .financing-survey-card{width:min(680px,100%);max-height:100%;overflow-y:auto;overscroll-behavior:contain}
+.fin-trust{flex:none;margin:14px 0 0;font-family:'Spline Sans Mono',monospace;font-size:.62rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);text-align:center}
 .financing-survey-card{position:relative;border-radius:26px;padding:clamp(20px,4vw,34px);color:var(--ink);
   background:linear-gradient(168deg,rgba(255,255,255,.96),rgba(255,255,255,.88));
   backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);

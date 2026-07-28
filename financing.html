@@ -20,21 +20,16 @@
 <script src="/client.config.js"></script>
 <script src="/assets/tracking.js"></script>
 </head>
-<body data-template-page data-lead-source="financing-survey" data-lead-campaign="{{CAMPAIGN_NAME|Financing Survey}}">
-<header class="site-header">
-  <div class="header-inner">
-    <a class="logo" href="/" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
-    <nav class="nav" aria-label="Primary">
-      <a href="/hot-tubs/">Hot Tubs</a><a href="/swim-spas/">Swim Spas</a><a href="/saunas/">Saunas</a><a href="/inventory.html">Inventory</a><a href="/financing.html">Financing</a><a href="/contact.html">Contact</a>
-    </nav>
-    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a><a class="btn btn-gold" href="/inventory.html">Shop Inventory</a></div>
-    <button class="mobile-menu" aria-label="Open menu">☰</button>
-  </div>
-</header>
+<body class="financing-lock" data-template-page data-lead-source="financing-survey" data-lead-campaign="{{CAMPAIGN_NAME|Financing Survey}}" data-thank-you-url="/book/">
+<!-- Locked full-screen funnel: no nav, no footer, no page scroll. The only
+     exits are finishing the survey (→ /book/) or the phone number. -->
+<div class="fin-scene">
+  <header class="fin-topbar">
+    <span class="fin-brand" data-config="client.name">{{CLIENT_NAME}}</span>
+    <a class="phone-link fin-phone" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a>
+  </header>
 
-<main class="financing-survey-page">
-  <section class="financing-survey-hero">
-    <div class="wrap financing-survey-wrap">
+  <main class="fin-main">
       <div class="financing-survey-card" data-financing-survey>
         <div class="financing-survey-progress" aria-hidden="true"><span data-survey-progress></span></div>
         <p class="kicker">Financing Check</p>
@@ -76,7 +71,9 @@
         <div data-survey-step="4" hidden>
           <h2 class="financing-q">Where should we send your financing options?</h2>
           <p class="financing-note">Someone from our team will call or text soon to discuss financing options.</p>
-          <form class="form-grid" data-template-form data-lead-success="inline" action="/api/lead" method="post">
+          <!-- Success redirects to data-thank-you-url (/book/) so the financing
+               lead flows straight into booking a showroom visit. -->
+          <form class="form-grid" data-template-form action="/api/lead" method="post">
             <input type="hidden" name="product_name" value="Financing Request" data-survey-product>
             <input type="hidden" name="product_interest" value="Financing Request" data-survey-product-interest>
             <input type="hidden" name="financing_interest" value="" data-survey-payment>
@@ -95,30 +92,22 @@
           <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
         </div>
 
+        <!-- Fallback only (success normally redirects to /book/ before this shows) -->
         <div data-survey-step="done" hidden>
           <div class="financing-done">
             <p class="kicker">Request Received</p>
             <h2>You're all set.</h2>
             <p>Someone will call or text you soon to discuss our financing options.</p>
             <div class="financing-done-actions">
-              <a class="btn btn-gold" href="/inventory.html">Browse Inventory</a>
+              <a class="btn btn-gold" href="/book/">Book My Visit</a>
               <a class="btn btn-outline" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}">Call Us Now</a>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-</main>
-
-<footer class="site-footer">
-  <div class="wrap footer-grid">
-    <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p>Proudly serving {{CLIENT_MARKET}} with in-stock hot tubs, swim spas, and saunas.</p></div>
-    <div><h4>Shop</h4><p><a href="/hot-tubs/">Hot Tubs</a><br><a href="/swim-spas/">Swim Spas</a><br><a href="/saunas/">Saunas</a></p></div>
-    <div><h4>Company</h4><p><a href="/financing.html">Financing</a><br><a href="/contact.html">Contact</a><br><a href="/admin/">Admin</a></p></div>
-    <div><h4>Contact</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
-  </div>
-</footer>
+      <p class="fin-trust">{{BOOK_TRUST_LINE|Family-owned · Local delivery · Real people answer}}</p>
+  </main>
+</div>
 
 <script src="/assets/template.js"></script>
 <script src="/assets/traffic-attribution.js"></script>
