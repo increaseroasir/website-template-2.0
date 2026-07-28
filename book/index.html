@@ -44,11 +44,9 @@
       <div class="book-step" data-book-step="day">
         <p class="book-label">1 · Pick a day</p>
         <div class="book-chips" data-book-days aria-label="Available days"><span class="book-loading">Checking live availability&hellip;</span></div>
-        <!-- Request-mode fallback (no live calendar): preferred day instead of slots -->
-        <div class="book-fallback" data-book-fallback hidden>
-          <label class="book-label" for="bookPreferredDay">Preferred day</label>
-          <input type="date" id="bookPreferredDay" name="preferred_day">
-        </div>
+        <!-- Request-mode (no live calendar) uses the same day/time picker; the
+             pick lands here as a preferred time the store confirms by text. -->
+        <input type="hidden" name="preferred_day" value="">
       </div>
       <div class="book-step" data-book-step="time" hidden>
         <p class="book-label">2 · Pick a time</p>

@@ -9,7 +9,6 @@
   var form = card.querySelector('[data-book-form]');
   var daysWrap = card.querySelector('[data-book-days]');
   var timesWrap = card.querySelector('[data-book-times]');
-  var fallbackWrap = card.querySelector('[data-book-fallback]');
   var stepTime = card.querySelector('[data-book-step="time"]');
   var stepDetails = card.querySelector('[data-book-step="details"]');
   var picked = card.querySelector('[data-book-picked]');
@@ -18,7 +17,9 @@
   var successCopy = card.querySelector('[data-book-success-copy]');
   var submitBtn = card.querySelector('[data-book-submit]');
   var slotField = form.querySelector('[name="slot"]');
+  var prefField = form.querySelector('[name="preferred_day"]');
   var days = [];
+  var isRequest = false; // true = no live calendar; picks are requests confirmed by text
 
   var cfg = window.CLIENT_CONFIG || {};
 
@@ -65,6 +66,7 @@
     daysWrap.innerHTML = '';
     timesWrap.innerHTML = '';
     slotField.value = '';
+    if (prefField) prefField.value = '';
     picked.hidden = true;
     days.slice(0, 7).forEach(function (day, i) {
       var l = dayLabel(day.date);
@@ -82,12 +84,20 @@
   function renderTimes(day) {
     timesWrap.innerHTML = '';
     slotField.value = '';
+    if (prefField) prefField.value = '';
     picked.hidden = true;
     day.slots.forEach(function (slot) {
       var c = chip(timeLabel(slot));
       c.addEventListener('click', function () {
         select(timesWrap, c);
-        slotField.value = slot;
+        if (isRequest) {
+          /* Request-mode: keep slot empty so the server never tries to book;
+             the pick travels as preferred_day text and the store confirms. */
+          slotField.value = '';
+          if (prefField) prefField.value = fullLabel(slot);
+        } else {
+          slotField.value = slot;
+        }
         picked.textContent = fullLabel(slot);
         picked.hidden = false;
         showDetails();
@@ -95,17 +105,28 @@
       timesWrap.appendChild(c);
     });
   }
+  /* No live calendar → same three-tap picker, but the pick is a *request*
+     (store confirms by text) instead of a hard booking. Next 7 days,
+     walk-in-friendly half-hour times. */
+  function buildRequestDays() {
+    var out = [];
+    var now = new Date();
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    for (var i = 1; i <= 7; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+      var iso = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      var slots = [];
+      for (var mins = 9 * 60 + 30; mins <= 16 * 60 + 30; mins += 30) {
+        slots.push(iso + 'T' + pad(Math.floor(mins / 60)) + ':' + pad(mins % 60) + ':00');
+      }
+      out.push({ date: iso, slots: slots });
+    }
+    return out;
+  }
   function requestMode() {
-    daysWrap.hidden = true;
-    stepTime.hidden = true;
-    slotField.value = ''; // never resubmit a stale slot from request-mode
-    picked.hidden = true;
-    fallbackWrap.hidden = false;
-    var label = card.querySelector('[data-book-step="day"] .book-label');
-    if (label) label.textContent = '1 · When works for you?';
-    var detailsLabel = card.querySelector('[data-book-details-label]');
-    if (detailsLabel) detailsLabel.textContent = '2 · Your details';
-    showDetails();
+    isRequest = true;
+    days = buildRequestDays();
+    renderDays();
   }
 
   function loadSlots(onEmpty) {
@@ -113,6 +134,7 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data && data.ok && data.bookable && Array.isArray(data.days) && data.days.length) {
+          isRequest = false;
           days = data.days;
           renderDays();
         } else { (onEmpty || requestMode)(); }
@@ -188,6 +210,8 @@
         form.hidden = true;
         if (data.booked && slotField.value) {
           successCopy.textContent = 'You\u2019re booked for ' + fullLabel(slotField.value) + '. We\u2019ll text you a confirmation.';
+        } else if (isRequest && prefField && prefField.value) {
+          successCopy.textContent = 'Requested ' + prefField.value + ' \u2014 we\u2019ll text you shortly to confirm your visit.';
         } else if (data.message) {
           successCopy.textContent = data.message;
         }
