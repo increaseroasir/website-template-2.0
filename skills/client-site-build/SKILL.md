@@ -72,8 +72,10 @@ Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs
 
 ## Gotchas
 
-- Empty Turnstile = silent lead loss. Template must be ≥ `24a700c`
-  (WTV-017/018 dynamic + WTV-019 static homepage/book widgets).  
+- Turnstile is fail-open on templates ≥ `511fa37` (TVD-024): missing token
+  accepts the lead tagged `security-unverified` — broken widgets cost spam
+  filtering, never leads. Still require ≥ `24a700c` widget fixes
+  (WTV-017/018 dynamic + WTV-019 static homepage/book) so real tokens issue.  
 - Offline Meta needs 6 GHL fields + stage webhook; CAPI token only in Cloudflare secrets.  
 - Missing hero blocks even in rush; non-hero photos → gradient wells + 48h list.  
 - `/api/*` answering with HTML = `functions/` missing from the deploy —

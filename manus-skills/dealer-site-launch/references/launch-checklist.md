@@ -101,9 +101,13 @@ without evidence, is not done and will be sent back.
       (`24a700c`+) covers the static widgets hardcoded in `index.html`
       (homepage hero form, which also gained the missing turnstile api.js
       script tag) and `book/index.html`. A widget without a sitekey never
-      issues a token, and with `TURNSTILE_SECRET_KEY` set the server rejects
-      every lead with "Please complete the security check." Check the homepage
-      and /book/ specifically — they fail invisibly on templates < `24a700c`.
+      issues a token. Templates ≥ `511fa37` are FAIL-OPEN (TVD-024): a missing
+      token no longer rejects the lead — it is accepted and the GHL contact is
+      tagged `security-unverified`. Broken widgets can no longer zero out lead
+      flow, but they still degrade spam filtering, so fix them: check the
+      homepage and /book/ specifically — they fail invisibly on templates
+      < `24a700c`. Only a token Cloudflare explicitly rejects still returns
+      "Security check failed."
 - [ ] **Ignore "blocked from indexing" on `*.pages.dev` hash URLs** — Cloudflare
       auto-noindexes deployment-hash URLs. Check robots on the canonical
       project domain (and later the custom domain) only.
