@@ -50,7 +50,9 @@ export async function onRequestPost(context) {
   if (!sheetsConfigured(env)) return jsonResponse({ ok: false, error: 'Lead vault is not configured yet. Please call the store.' }, 503, env, request);
   let body;
   try { body = await request.json(); } catch (err) { return jsonResponse({ ok: false, error: 'Invalid JSON.' }, 400, env, request); }
-  const validated = validateLeadPayload(body);
+  /* Financing funnel is phone-first (like booking): email is a nice-to-have,
+     never a reason to reject a lead. All other forms require email client-side. */
+  const validated = validateLeadPayload(body, { emailOptional: String(body.lead_source || '').toLowerCase().includes('financing') });
   if (!validated.ok) return jsonResponse({ ok: false, error: validated.error }, 400, env, request);
   const lead = validated.data;
   await enrichLeadFromInventory(env, lead);
