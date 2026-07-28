@@ -47,6 +47,32 @@ workflow until stage names match the snapshot.
 - [ ] **Favicon set, sitemap generated + referenced, SSL green, www/non-www
       redirect chosen and enforced, 404 page live.**
 
+## Post-deploy smoke (EVERY deploy — staging and prod; learned on build #1)
+
+- [ ] **Deploy with `wrangler pages deploy` only — never raw API calls.** Raw
+      API deploys can register the file manifest without uploading the blobs:
+      routing "works" (308s on .html paths) while every asset returns an empty
+      500. If wrangler errors, paste the error — do not fall back to the API.
+- [ ] **`curl` the deployment before reporting it:** `/` and `/assets/theme.css`
+      return 200.
+- [ ] **`GET /api/inventory?featured=1` returns 200 JSON.** A 500 (worker 1101)
+      on a project that predates this build usually means D1 schema drift —
+      diff live `sqlite_master` against `functions/db/schema.sql` and apply
+      additive `ALTER TABLE` migrations (never DROP). Missing `featured` was
+      build #1's version of this.
+- [ ] **`POST /api/lead` with `{}` does NOT return 503.** A 503 "Lead vault is
+      not configured" means `GOOGLE_SHEETS_ID` is missing — secrets alone are
+      not enough. Set it on BOTH production and preview environments.
+- [ ] **Every `.cf-turnstile` on every page has a `data-sitekey`** (template
+      ≥ `3e2fadd` / WTV-017 injects it in native-form.js). A widget without a
+      sitekey never issues a token, and with `TURNSTILE_SECRET_KEY` set the
+      server rejects every lead with "Please complete the security check."
+- [ ] **Ignore "blocked from indexing" on `*.pages.dev` hash URLs** — Cloudflare
+      auto-noindexes deployment-hash URLs. Check robots on the canonical
+      project domain (and later the custom domain) only.
+- [ ] **At least one product marked `featured=1` per category** (or the
+      homepage featured grid intentionally empty and flagged).
+
 ## Post-launch (within 1 hour of DNS)
 
 - [ ] **Test lead from a phone on cellular** (not office wifi, not a
