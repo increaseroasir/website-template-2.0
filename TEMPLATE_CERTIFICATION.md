@@ -147,3 +147,10 @@ Funnel code shipped in `69ffe02`; this module makes fulfillment (skill/gate/chec
 | Decision table + SKILL gotcha | **PASS** | Missing custom fields → cosmetic / 48h (attribution loss); stage names → align before enabling workflow, never guess; orchestrator + wiring SKILL gotcha: silent skip + CAPI token never in GHL. |
 | Fingerprints / secrets in docs | **PASS** | No live CAPI tokens in docs/templates; Pixel ID `1317738110513512` appears only as fingerprint/"leftover looks like" (gate detection), not as a client secret. |
 | Hostile rebuild + gate | **PASS** | Hostile staging gate 13 PASS / 0 FAIL / 8 MANUAL; prod-token rebuild gate 13/0/8. Dist includes `functions/api/meta-offline.js` + hardened `meta-capi.js` from `69ffe02` + Module E. Skill zips refreshed under `manus-skills/*.zip` (gitignored). |
+
+## WTV-016 — Footer meta-text hardcode (found by Manus during sun-pool-spa build, 2026-07-28)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Hardcoded footer copy on 7 pages | **FIXED** | `"{{CLIENT_MARKET}} dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured."` shipped as visible copy on 404, thank-you, contact, financing, admin, active-inventory, active-inventory/SLUG. Replaced with `"Proudly serving {{CLIENT_MARKET}} with in-stock hot tubs, swim spas, and saunas."` (no new token — CLIENT_MARKET is REQUIRED tier; engine fallback syntax cannot nest tokens, verified in `scripts/build-config.mjs`). |
+| Hostile dist re-verified | **PASS** | Same replacement applied hydrated in `clients/hostile-rehearsal/dist`; brand:guard green; prod gate 13 PASS / 0 FAIL / 8 MANUAL. |
