@@ -299,31 +299,54 @@ body.category-page .announcement-bar {
   to { opacity: 1; transform: none; }
 }
 
-/* ---------- Benefits ---------- */
+/* ---------- Benefits (premium night band — mirrors the homepage stats/promise
+   rhythm: dark hero flows into a dark gold-accented band, then light inventory.
+   The hero's animated gold hairline doubles as this band's top edge.) ---------- */
 .cat-benefits {
-  background: var(--sand);
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(1000px 520px at 82% -12%, rgba(255, 184, 28, 0.10), transparent 60%),
+    radial-gradient(900px 520px at 8% 110%, rgba(22, 70, 155, 0.45), transparent 62%),
+    linear-gradient(180deg, var(--navy-abyss), var(--navy-night));
   padding: 64px 0;
 }
 @media (min-width: 1024px) {
   .cat-benefits { padding: 88px 0; }
 }
+/* Animated gold shimmer hairline on the band's bottom (dark→light) edge */
+.cat-benefits::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  z-index: 3;
+  background:
+    linear-gradient(90deg, transparent, #FFD46A 50%, transparent) no-repeat,
+    rgba(255, 184, 28, 0.28);
+  background-size: 38% 100%;
+  animation: cat-sweep 5.5s ease-in-out infinite;
+}
 .cat-benefits-head { margin-bottom: 36px; }
 .cat-benefits-head .cat-eyebrow {
-  color: var(--gold-dark);
+  color: var(--gold-soft, #FFD46A);
   margin-top: 0;
 }
 .cat-benefits-head .cat-eyebrow::before {
-  background: linear-gradient(90deg, var(--gold-deep), transparent);
+  background: linear-gradient(90deg, var(--gold), transparent);
 }
 .cat-benefits-head h2 {
   font-family: var(--display);
   font-weight: 800;
   font-size: clamp(1.5rem, 4.5vw, 2.45rem);
-  color: var(--navy-deep);
+  color: #fff;
   margin-bottom: 12px;
 }
 .cat-benefits-head p {
-  color: var(--ink-soft);
+  color: #C9D5EE;
   max-width: 560px;
   font-size: 1.02rem;
   line-height: 1.65;
@@ -336,27 +359,56 @@ body.category-page .announcement-bar {
 @media (min-width: 768px) {
   .cat-benefit-grid { grid-template-columns: repeat(3, 1fr); gap: 22px; }
 }
-.cat-benefit { padding: 8px 0 4px; }
+.cat-benefit {
+  position: relative;
+  padding: 26px 24px 24px;
+  border-radius: 18px;
+  background: linear-gradient(168deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 24px 48px -28px rgba(3, 12, 32, 0.8);
+  transition: transform 0.3s var(--ease-out, ease), border-color 0.3s, box-shadow 0.3s;
+}
+.cat-benefit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 2px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, var(--gold-soft, #FFD46A), var(--gold, #FFB81C) 40%, transparent);
+  opacity: 0.55;
+  transition: opacity 0.3s;
+}
+.cat-benefit:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 184, 28, 0.32);
+  box-shadow: 0 30px 56px -26px rgba(3, 12, 32, 0.9);
+}
+.cat-benefit:hover::before { opacity: 1; }
 .cat-benefit-n {
   display: block;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold-dark);
-  margin-bottom: 12px;
+  font-family: var(--display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  background: linear-gradient(94deg, #FFE29A 0%, #FFB81C 48%, #F0A400 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 14px;
 }
 .cat-benefit h3 {
   font-family: var(--display);
   font-weight: 800;
   font-size: 1.22rem;
-  color: var(--navy-deep);
+  color: #fff;
   margin-bottom: 10px;
   line-height: 1.15;
 }
 .cat-benefit p {
-  color: var(--ink-soft);
+  color: #B9C6E2;
   font-size: 0.95rem;
   line-height: 1.65;
 }

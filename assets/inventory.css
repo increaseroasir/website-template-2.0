@@ -785,10 +785,18 @@
     }
     .ht-help-section::before, .ht-help-section::after {
       content:""; position:absolute; left:0; right:0; height:1px;
-      background:linear-gradient(90deg,transparent,rgba(255,184,28,.65),transparent);
+      background:
+        linear-gradient(90deg,transparent,#FFD46A 50%,transparent) no-repeat,
+        rgba(255,184,28,.28);
+      background-size:38% 100%;
+      animation:ht-help-sweep 5.5s ease-in-out infinite;
     }
     .ht-help-section::before { top:0; }
-    .ht-help-section::after { bottom:0; }
+    .ht-help-section::after { bottom:0; animation-delay:2.75s; }
+    @keyframes ht-help-sweep {
+      0% { background-position:-80% 0; }
+      55%, 100% { background-position:180% 0; }
+    }
     .ht-help-section h2 { color:#fff; font-size:clamp(1.6rem,5vw,2.4rem); margin-bottom:14px; overflow-wrap:anywhere; word-break:break-word; }
     .ht-help-section p { color:#C9D5EE; max-width:640px; margin:0 auto 26px; font-size:.98rem; line-height:1.65; overflow-wrap:anywhere; }
     .ht-help-cta {
