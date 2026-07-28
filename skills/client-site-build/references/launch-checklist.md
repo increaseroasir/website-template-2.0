@@ -47,8 +47,36 @@ workflow until stage names match the snapshot.
 - [ ] **Favicon set, sitemap generated + referenced, SSL green, www/non-www
       redirect chosen and enforced, 404 page live.**
 
+## Before EVERY hydrate — template freshness (learned on build #1)
+
+- [ ] **`git fetch` the template remote and confirm the checkout is current**
+      before hydrating: `git rev-parse HEAD` must equal
+      `git rev-parse origin/premium-redesign` — or exactly the commit named in
+      the work order. NEVER hydrate from whatever copy happens to be on disk:
+      build #1 redeployed a one-value GA4 fix from a stale checkout and
+      silently dropped the WTV-019 Turnstile fix it was explicitly ordered to
+      include. Record the hydrated template SHA in WIRING.md build provenance.
+
 ## Post-deploy smoke (EVERY deploy — staging and prod; learned on build #1)
 
+Every completion report MUST paste the raw curl output of this section plus
+the template SHA and gate JSON summary. A report that only claims success,
+without evidence, is not done and will be sent back.
+
+- [ ] **The deploy directory contains `functions/`** (gate.mjs now FAILs
+      without it) and `wrangler pages deploy` runs from the dist root so
+      Functions upload with the static files. Symptom of getting this wrong:
+      every `/api/*` route answers with the homepage HTML instead of JSON —
+      forms dead, product grids empty — while the static site looks perfect
+      (build #1 shipped exactly this).
+- [ ] **The deploy directory contains `_redirects` and `404.html`** (gate.mjs
+      FAILs without them) — deploy the gated dist byte-exact, never a
+      re-assembled subset. Smoke: `/hot-tubs.html` returns 301 →
+      `/hot-tubs/`, a nonsense path returns 404, and
+      `/active-inventory/<real-slug>/` serves the product template (NOT the
+      homepage). Build #1 dropped both files on every deploy: all product
+      URLs and 404s silently served the homepage with a 200, killing product
+      pages and Product schema while everything looked fine.
 - [ ] **Deploy with `wrangler pages deploy` only — never raw API calls.** Raw
       API deploys can register the file manifest without uploading the blobs:
       routing "works" (308s on .html paths) while every asset returns an empty
@@ -67,10 +95,15 @@ workflow until stage names match the snapshot.
       `paradise-lead-vault@paradise-spas-lead-vault.iam.gserviceaccount.com`
       (share each client sheet with it as Editor; key rotation happens in its
       GCP project, never per client).
-- [ ] **Every `.cf-turnstile` on every page has a `data-sitekey`** (template
-      ≥ `3e2fadd` / WTV-017 injects it in native-form.js). A widget without a
-      sitekey never issues a token, and with `TURNSTILE_SECRET_KEY` set the
-      server rejects every lead with "Please complete the security check."
+- [ ] **Every `.cf-turnstile` on every page has a `data-sitekey`** — this took
+      TWO template fixes: WTV-017/018 (`3e2fadd`+) covers the dynamically
+      injected category/product/inventory forms via native-form.js; WTV-019
+      (`24a700c`+) covers the static widgets hardcoded in `index.html`
+      (homepage hero form, which also gained the missing turnstile api.js
+      script tag) and `book/index.html`. A widget without a sitekey never
+      issues a token, and with `TURNSTILE_SECRET_KEY` set the server rejects
+      every lead with "Please complete the security check." Check the homepage
+      and /book/ specifically — they fail invisibly on templates < `24a700c`.
 - [ ] **Ignore "blocked from indexing" on `*.pages.dev` hash URLs** — Cloudflare
       auto-noindexes deployment-hash URLs. Check robots on the canonical
       project domain (and later the custom domain) only.

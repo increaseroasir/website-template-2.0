@@ -12,7 +12,7 @@ everything in the client's `WIRING.md`.
 | 1 | GA4 measurement ID | `tracking.ga4Id` | `{{GA4_ID}}` or `G-E5WGSEGZYP` | Open GA4 **Realtime** on the client property; visit staging; your session appears within ~60s |
 | 2 | Meta Pixel ID | `tracking.metaPixelId` | `{{META_PIXEL_ID}}` or `1317738110513512` | Meta **Test Events**: PageView on load + ViewContent on a content page |
 | 3 | Clarity project ID | `tracking.clarityId` | `{{CLARITY_ID}}` or `xeoe7g20ml` | Clarity dashboard shows a live session/recording for your visit |
-| 4 | Lead endpoint / GHL webhook | `endpoints.lead` (+ Pages Function env) | endpoint 404s, or leads land in the WRONG sub-account | Submit a test lead; contact appears in **this client's** GHL sub-account with correct source/campaign/tags |
+| 4 | Lead endpoint / GHL webhook | `endpoints.lead` (+ Pages Function env) | endpoint 404s, or leads land in the WRONG sub-account | Submit a test lead; contact appears in **this client's** GHL sub-account with correct source/campaign/tags — including the `new-lead` entry tag (see handshake below) |
 | 5 | GHL chat widget ID | Not in `client.config.js` yet — record in WIRING + paste into the location chat snippet at deploy | `6a4454fd638eec5af4195a51` | Widget renders after the ~20s deferral; a test chat lands in this client's GHL inbox |
 | 6 | Closebot source ID | Not in `client.config.js` yet — record in WIRING + Closebot `?source=` at deploy | `coMRVmh8SR6oGXTA` | Closebot dashboard registers the visit/source |
 | 7 | Turnstile sitekey | `tracking.turnstileSiteKey` | `{{TURNSTILE_SITE_KEY}}` or empty | A real form submit **succeeds** — empty/wrong key = silent lead loss |
@@ -40,11 +40,28 @@ live-verify.
 3. **Offline:** fire one simulated stage webhook → `QualifiedLead` (or Showed) server-side.  
 4. **Events Manager:** map `QualifiedLead` and `Showed` as **custom conversions** (see `docs/GHL_META_OFFLINE_WORKFLOW.md`).
 
+## Website ↔ snapshot tag handshake (`GHL_BASE_TAGS`)
+
+Every website build sets the Cloudflare env var `GHL_BASE_TAGS` to the
+standard entry tag **`new-lead`** (both Production and Preview). Every
+snapshot's intake workflow triggers on that same tag. This is the
+website↔snapshot handshake — **it must match or automations never fire**:
+`functions/lib/ghl.js` stamps `GHL_BASE_TAGS` onto every contact it creates,
+and the snapshot's intake workflow does nothing until a contact carries its
+trigger tag. Leads that reach GHL but start zero automations = check this
+handshake first.
+
+LIVE verification: submit a test lead → the GHL contact carries `new-lead`
+(plus the `src-*` source tag) AND the intake workflow shows a run in
+Execution Logs.
+
 ## Order of operations
 
 1. Fill browser IDs in `clients/<name>/client.config.js` from intake.  
-2. Set Cloudflare secrets (GHL token, Meta CAPI, Meta offline webhook).  
-3. Ensure snapshot has the 6 Meta contact fields + stage webhook.  
+2. Set Cloudflare secrets (GHL token, Meta CAPI, Meta offline webhook) and
+   the `GHL_BASE_TAGS=new-lead` env var (both environments).  
+3. Ensure snapshot has the 6 Meta contact fields + stage webhook, and its
+   intake workflow triggers on `new-lead`.  
 4. `new-client.mjs --validate` → build → `gate.mjs`.  
 5. Live-verify every row; fill `WIRING.md`.
 
