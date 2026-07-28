@@ -78,5 +78,8 @@ Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs
 - Missing hero blocks even in rush; non-hero photos → gradient wells + 48h list.  
 - `/api/*` answering with HTML = `functions/` missing from the deploy —
   gate.mjs FAILs an artifact without `dist/functions/api/`.  
+- Product slug URLs / unknown paths serving the homepage = `_redirects` +
+  `404.html` missing — deploy the gated dist byte-exact; smoke
+  `/hot-tubs.html` → 301 and a nonsense path → 404.  
 - Reports claiming done without evidence (template SHA, gate JSON, smoke
   curls) get sent back — paste the proof.

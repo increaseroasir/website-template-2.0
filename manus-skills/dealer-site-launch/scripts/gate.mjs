@@ -47,6 +47,9 @@ CHECKS (static)
   functions       dist/functions/api/{lead,inventory,meta-offline,booking}.js
                   exist — an artifact without them deploys a site with no
                   working APIs (build #1 regression)
+  routing         dist/_redirects + dist/404.html exist — without them every
+                  product slug URL, legacy .html redirect, and 404 serves the
+                  homepage via SPA fallback (build #1 regression)
 
 MANUAL rows are emitted for: console errors, duplicate IDs after inventory
 injection, form fit at 390x650/320, reduced-motion, Lighthouse, live wiring
@@ -373,6 +376,18 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
     missing.length
       ? `missing from dist: ${missing.join(', ')} — deploying this ships a site with NO working APIs (forms dead, grids empty, /api/* answers with HTML); re-hydrate (the rsync recipe keeps functions/) and run wrangler pages deploy from the dist root`
       : `all ${required.length} API entry points present in dist/functions/`);
+}
+
+/* 15. routing files: _redirects + 404.html ship with the artifact (build #1:
+   both were dropped at deploy — every product /active-inventory/<slug>/ URL,
+   every legacy .html 301, and every 404 silently served the homepage) */
+{
+  const missing = ['_redirects', '404.html'].filter(f => !existsSync(join(dist, f)));
+  add('routing: _redirects + 404.html present in artifact',
+    missing.length ? 'FAIL' : 'PASS',
+    missing.length
+      ? `missing from dist: ${missing.join(', ')} — without them Pages falls back to SPA mode: product slug URLs, .html redirects, and 404s ALL serve the homepage with a 200; deploy the gated dist byte-exact`
+      : 'both present — smoke-test after deploy: /hot-tubs.html must 301, a nonsense path must 404, /active-inventory/<real-slug>/ must serve the product template');
 }
 
 /* MANUAL rows — a script cannot verify these; never fake a PASS */

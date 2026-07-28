@@ -69,6 +69,14 @@ without evidence, is not done and will be sent back.
       every `/api/*` route answers with the homepage HTML instead of JSON —
       forms dead, product grids empty — while the static site looks perfect
       (build #1 shipped exactly this).
+- [ ] **The deploy directory contains `_redirects` and `404.html`** (gate.mjs
+      FAILs without them) — deploy the gated dist byte-exact, never a
+      re-assembled subset. Smoke: `/hot-tubs.html` returns 301 →
+      `/hot-tubs/`, a nonsense path returns 404, and
+      `/active-inventory/<real-slug>/` serves the product template (NOT the
+      homepage). Build #1 dropped both files on every deploy: all product
+      URLs and 404s silently served the homepage with a 200, killing product
+      pages and Product schema while everything looked fine.
 - [ ] **Deploy with `wrangler pages deploy` only — never raw API calls.** Raw
       API deploys can register the file manifest without uploading the blobs:
       routing "works" (308s on .html paths) while every asset returns an empty
