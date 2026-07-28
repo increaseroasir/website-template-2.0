@@ -88,7 +88,7 @@ Ask only for missing required values:
 ### Inputs
 
 - `client.fulfillment.json`
-- Public template repo: `https://github.com/ssaofficial/website-template-2.0`
+- Public template repo: `https://github.com/increaseroasir/website-template-2.0` (branch `premium-redesign`, default)
 
 ### Responsibilities
 

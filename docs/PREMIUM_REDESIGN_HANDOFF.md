@@ -3,7 +3,8 @@
 ## Paths
 - Work here: `/Users/alexlobaito/website-template-premium-redesign`
 - Leave alone: `/Users/alexlobaito/website-template-2.0`
-- Repo: https://github.com/ssaofficial/website-template-2.0 (`premium-redesign` branch)
+- Repo: https://github.com/increaseroasir/website-template-2.0 (`premium-redesign` branch, default)
+- Legacy remote: https://github.com/ssaofficial/website-template-2.0 (same code; `increaseroas` remote is canonical for Manus/clients)
 
 ## Done
 Premium homepage + inventory (see `PROJECT.md`).

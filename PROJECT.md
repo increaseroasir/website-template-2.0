@@ -6,8 +6,9 @@
 |---|---|
 | **This project (safe copy)** | `/Users/alexlobaito/website-template-premium-redesign` |
 | **Do not edit** | `/Users/alexlobaito/website-template-2.0` |
-| **Upstream** | https://github.com/ssaofficial/website-template-2.0 |
-| **Branch** | `premium-redesign` |
+| **Canonical repo (Manus/clients)** | https://github.com/increaseroasir/website-template-2.0 |
+| **Legacy remote (`origin`)** | https://github.com/ssaofficial/website-template-2.0 |
+| **Branch** | `premium-redesign` (default on the increaseroasir repo) |
 
 No GitHub fork required for Cursor agents — just open this folder. Fork only if you need a separate remote for another person/machine.
 
