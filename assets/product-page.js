@@ -62,8 +62,15 @@
     var name = product.inventory_name || 'Inventory Product';
     var facts = Array.isArray(product.quick_facts) ? product.quick_facts.filter(Boolean) : [];
     document.title = (product.headline || name) + ' | In-Stock Inventory';
-    setText('[data-pdp-kicker]', product.promo_label || (categoryLabel(product.category) + ' \u2014 In Stock'));
+    /* Positioning label ("VALUE / FAMILY COMFORT") is the who-is-this-for hook;
+       promo label and category are fallbacks so the kicker never sits empty. */
+    setText('[data-pdp-kicker]', product.positioning_label || product.promo_label || (categoryLabel(product.category) + ' \u2014 In Stock'));
     setText('[data-pdp-headline]', product.headline || name);
+    var model = document.querySelector('[data-pdp-model]');
+    if (model && product.headline && product.headline !== name) {
+      model.textContent = name;
+      model.hidden = false;
+    }
     setText('[data-pdp-herodesc]', product.hero_description || product.delivery_promise || 'Ask for current local pricing, availability, and delivery timing on this exact unit.');
     var image = document.querySelector('[data-pdp-image]');
     if (image && product.primary_image) {
@@ -124,6 +131,7 @@
       monthlyEl.textContent = 'or as low as ' + money(product.monthly_payment) + '/mo with approved credit';
       monthlyEl.hidden = false;
     }
+    var status = product.inventoryStatus || product.status || 'available';
     var availabilityEl = document.querySelector('[data-pdp-availability]');
     if (availabilityEl) {
       var availabilityCopy = {
@@ -131,7 +139,28 @@
         pending: 'This unit is pending sale \u2014 ask about it or similar in-stock models.',
         sold: 'This unit has sold \u2014 ask about similar in-stock models.'
       };
-      availabilityEl.textContent = availabilityCopy[product.inventoryStatus || product.status] || availabilityCopy.available;
+      availabilityEl.textContent = availabilityCopy[status] || availabilityCopy.available;
+    }
+    /* Paradise-style status callout: pending/sold units get a prominent box in
+       the price card so the visitor knows exactly what happens next. */
+    var statusNote = document.querySelector('[data-pdp-status]');
+    if (statusNote) {
+      var statusCallouts = {
+        pending: { title: 'This unit is pending pickup', copy: 'Availability may reopen. Submit a backup inquiry and we\u2019ll contact you first if it frees up.' },
+        sold: { title: 'This exact unit recently sold', copy: 'Join the restock list \u2014 we\u2019ll text you when the next one lands and shortlist similar in-stock models.' }
+      };
+      var callout = statusCallouts[status];
+      if (callout) {
+        setText('[data-pdp-status-title]', callout.title);
+        setText('[data-pdp-status-copy]', callout.copy);
+        statusNote.hidden = false;
+      }
+    }
+    /* Status-driven CTA labels (product-data.js): available units push the
+       out-the-door price; pending/sold swap to backup/restock intent. */
+    var availability = statusConfig(product);
+    if (availability.formButton) {
+      document.querySelectorAll('[data-pdp-cta]').forEach(function (cta) { cta.textContent = availability.formButton; });
     }
     setText('[data-pdp-selected]', name);
     document.querySelectorAll('[data-open-lead]').forEach(function (button) {
@@ -190,6 +219,29 @@
     document.head.appendChild(script);
   }
 
+  /* Sticky mobile CTA bar: appears once the hero (with its own CTA) scrolls
+     away, hides while the lead form is on screen so it never covers it. */
+  function initStickyBar() {
+    var bar = document.querySelector('[data-pdp-mbar]');
+    var hero = document.querySelector('.pdp-hero');
+    var formSection = document.querySelector('#get-price');
+    if (!bar || !hero || !('IntersectionObserver' in window)) return;
+    bar.hidden = false;
+    var heroGone = false;
+    var formVisible = false;
+    function update() { bar.classList.toggle('show', heroGone && !formVisible); }
+    new IntersectionObserver(function (entries) {
+      heroGone = !entries[0].isIntersecting;
+      update();
+    }).observe(hero);
+    if (formSection) {
+      new IntersectionObserver(function (entries) {
+        formVisible = entries[0].isIntersecting;
+        update();
+      }, { threshold: 0.2 }).observe(formSection);
+    }
+  }
+
   async function loadProduct() {
     var slug = slugForPage();
     if (!slug || slug.toUpperCase() === 'SLUG') return;
@@ -201,6 +253,7 @@
       hydrateProductContent(product);
       hydrateProductForms(product);
       emitProductSchema(product);
+      initStickyBar();
     } catch (error) {
       console.error('Product hydration failed:', error);
       document.querySelector('main')?.insertAdjacentHTML('afterbegin', '<section class="section"><div class="wrap panel"><h1>Product unavailable</h1><p>Please call or text the store for current inventory.</p></div></section>');

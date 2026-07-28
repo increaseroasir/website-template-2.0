@@ -8,7 +8,7 @@ window.ActiveInventoryAvailabilityStatus = {
     productStatusTitle: 'Currently available',
     formIntent: 'Price Request',
     inventoryStatusTag: 'Inventory Status - Available',
-    formButton: 'Get Today\'s Price',
+    formButton: 'Get Out-the-Door Price',
     bannerClass: 'available'
   },
   pending: {

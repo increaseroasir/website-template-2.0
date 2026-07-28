@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS products (
   promo_label TEXT,
   delivery_promise TEXT,
   headline TEXT,
+  positioning_label TEXT,
   hero_description TEXT,
   why_bullets TEXT DEFAULT '[]',
   long_description TEXT,

@@ -97,6 +97,7 @@
               <textarea name="quick_facts" placeholder="Quick facts, one per line. Max 8 facts."></textarea>
               <textarea name="ghl_tags" placeholder="GHL tags, one per line. Max 30 tags."></textarea>
               <input name="headline" placeholder="Sales headline, e.g. Name — Benefit In Plain Words" maxlength="140">
+              <input name="positioning_label" placeholder="Positioning label, e.g. VALUE / FAMILY COMFORT" maxlength="60">
               <textarea name="hero_description" placeholder="Hero description: 1-2 sentences selling this exact unit." maxlength="320"></textarea>
               <textarea name="why_bullets" placeholder="Why it stands out: one bullet per line. Max 6."></textarea>
               <textarea name="long_description" placeholder="About this unit: one honest paragraph (who it's for, what makes it worth it)." maxlength="1400"></textarea>
@@ -143,6 +144,7 @@
       promo_label: form.promo_label.value.trim(),
       delivery_promise: form.delivery_promise.value.trim(),
       headline: form.headline.value.trim(),
+      positioning_label: form.positioning_label.value.trim(),
       hero_description: form.hero_description.value.trim(),
       why_bullets: asArray(form.why_bullets.value),
       long_description: form.long_description.value.trim(),
@@ -228,6 +230,7 @@
     form.quick_facts.value = (product.quick_facts || []).join('\n');
     form.ghl_tags.value = (product.ghl_tags || []).join('\n');
     form.headline.value = product.headline || '';
+    form.positioning_label.value = product.positioning_label || '';
     form.hero_description.value = product.hero_description || '';
     form.why_bullets.value = (product.why_bullets || []).join('\n');
     form.long_description.value = product.long_description || '';

@@ -45,9 +45,10 @@
     <div class="pdp-hero-copy">
       <p class="pdp-kicker" data-pdp-kicker>{{PRODUCT_PROMO_LABEL|In Stock Now}}</p>
       <h1 data-pdp-headline>{{PRODUCT_NAME|This In-Stock Unit}}</h1>
+      <p class="pdp-model" data-pdp-model hidden></p>
       <p class="pdp-sub" data-pdp-herodesc>{{PRODUCT_HERO_DESCRIPTION|Ask for current local pricing, availability, and delivery timing on this exact unit.}}</p>
       <div class="pdp-hero-actions">
-        <a class="btn btn-gold" href="#get-price" data-pdp-cta>Get Today&rsquo;s Price</a>
+        <a class="btn btn-gold" href="#get-price" data-pdp-cta>Get Out-the-Door Price</a>
         <a class="btn btn-ghost" href="../../financing.html">Check Financing Options</a>
       </div>
     </div>
@@ -87,7 +88,7 @@
     <section class="pdp-section pdp-form-section" id="get-price">
       <div class="pdp-form-card">
         <h2>Interested in this one?</h2>
-        <p class="pdp-form-lead">Get the current local price, payment options, and availability &mdash; we&rsquo;ll text it back fast.</p>
+        <p class="pdp-form-lead">Get your written out-the-door price &mdash; unit, taxes, delivery, and startup &mdash; plus payment options and availability. We&rsquo;ll text it back fast.</p>
         <p class="pdp-selected">Selected unit: <b data-pdp-selected>{{PRODUCT_NAME|This unit}}</b></p>
         <form class="form-grid" data-template-form data-lead-success="inline" action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
           <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
@@ -105,7 +106,7 @@
 
     <section class="pdp-section pdp-faq">
       <h2>Frequently Asked Questions</h2>
-      <details class="pdp-faq-item"><summary>Is the price shown final?</summary><p>Pricing, financing, taxes, delivery, electrical work, accessories, and selected options can affect the final amount. Request the current written quote for this exact unit.</p></details>
+      <details class="pdp-faq-item"><summary>Is the price shown final?</summary><p>Pricing, financing, taxes, delivery, electrical work, accessories, and selected options can affect the final amount. Request the current written out-the-door quote for this exact unit &mdash; it spells out every line item before you commit.</p></details>
       <details class="pdp-faq-item"><summary>What does the monthly payment include?</summary><p>Any payment shown is an estimate for qualified buyers. Your actual payment depends on purchase price, down payment, term, interest rate, credit approval, and any added services or equipment.</p></details>
       <details class="pdp-faq-item"><summary>Is delivery included?</summary><p>Delivery availability and cost depend on your address, access, placement, and equipment required. We&rsquo;ll confirm the complete delivery plan before purchase.</p></details>
       <details class="pdp-faq-item"><summary>What electrical service is required?</summary><p>Requirements vary by model and configuration. Always use the specification for the exact unit and have a licensed electrician complete the installation.</p></details>
@@ -119,9 +120,15 @@
       <p class="pdp-price-label" data-pdp-price-label>Today&rsquo;s Local Price</p>
       <p class="pdp-price" data-pdp-price>Ask &mdash; we&rsquo;ll text it back</p>
       <p class="pdp-monthly" data-pdp-monthly hidden></p>
+      <p class="pdp-otd">Out-the-door pricing &mdash; taxes, delivery &amp; startup quoted in writing. No surprises at checkout.</p>
+      <!-- Status callout (pending/sold): populated + shown by product-page.js -->
+      <div class="pdp-status-note" data-pdp-status hidden>
+        <b data-pdp-status-title></b>
+        <p data-pdp-status-copy></p>
+      </div>
       <p class="pdp-fin-line">{{PRODUCT_FINANCING_LINE|Flexible financing is available for qualified buyers. Your exact payment depends on the unit, term, credit approval, taxes, delivery, and selected options.}}</p>
       <div class="pdp-cta-stack">
-        <a class="btn btn-gold" href="#get-price" data-pdp-cta>Get Today&rsquo;s Price</a>
+        <a class="btn btn-gold" href="#get-price" data-pdp-cta>Get Out-the-Door Price</a>
         <a class="btn btn-outline" href="../../financing.html">Check Financing</a>
       </div>
       <p class="pdp-availability" data-pdp-availability>This is an in-stock unit. Availability can change without notice.</p>
@@ -145,6 +152,13 @@
     <p class="fine-print" data-template-result></p>
   </form>
 </aside>
+
+<!-- Sticky mobile CTA bar: shown by product-page.js once the hero scrolls away,
+     hidden again while the lead form is on screen (never covers the form) -->
+<nav class="pdp-mbar" data-pdp-mbar aria-label="Quick actions" hidden>
+  <a class="pdp-mbar-call" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}">Call</a>
+  <a class="pdp-mbar-cta" href="#get-price" data-pdp-cta>Get Out-the-Door Price</a>
+</nav>
 
 </main>
 <footer class="site-footer">
