@@ -106,15 +106,20 @@ export async function sendMetaEvent(env, request, lead, opts = {}) {
   const originalMeta = opts.originalMetaEventId || lead.metaEventId || '';
   if (opts.uniqueEventId && originalMeta) custom_data.meta_event_id = originalMeta;
 
+  /* opts.actionSource overrides the spec default: the booking Worker sends
+     Schedule as `website` (dedupes with the browser pixel via shared event_id)
+     while the GHL offline path keeps `system_generated` for phone/manual
+     bookings. */
+  const resolvedActionSource = opts.actionSource || spec.action_source;
   const event = {
     event_name: eventName,
     event_time: Math.floor(Date.now() / 1000),
     event_id: eventId,
-    action_source: spec.action_source,
+    action_source: resolvedActionSource,
     user_data: userData
   };
   /* Website events keep event_source_url; system_generated omits it (Meta CRM pattern). */
-  if (spec.action_source === 'website') {
+  if (resolvedActionSource === 'website') {
     event.event_source_url = lead.pageUrl || lead.eventSourceUrl || env.CLIENT_WEBSITE_URL || '';
   }
   if (Object.keys(custom_data).length) event.custom_data = custom_data;

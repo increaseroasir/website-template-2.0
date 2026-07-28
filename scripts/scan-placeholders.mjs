@@ -50,6 +50,36 @@ function walk(dir, hits) {
   }
 }
 
+/* ---- Structural gate checks (launch mode only, run before the token scan).
+   Both catch "site works, tracking silently dead" failures before deploy. ---- */
+if (mode === 'launch') {
+  const failures = [];
+  /* 1. client.config.js must exist at the dist root: without it
+     window.CLIENT_CONFIG is undefined and ALL tracking (pixel fallback, GA4,
+     Clarity, GHL external) fails silently. */
+  try { statSync(join(root, 'client.config.js')); }
+  catch { failures.push('client.config.js is missing from the dist root — all runtime tracking would silently fail.'); }
+  /* 2. Every HTML page that loads tracking.js must carry the hardcoded pixel
+     (fbevents.js). Catches a skipped injectMetaPixel() (e.g. empty META_PIXEL_ID). */
+  (function checkPixel(dir) {
+    for (const name of readdirSync(dir)) {
+      if (ignoredDirs.has(name)) continue;
+      const file = join(dir, name);
+      if (statSync(file).isDirectory()) { checkPixel(file); continue; }
+      if (!/\.html$/i.test(name)) continue;
+      const text = readFileSync(file, 'utf8');
+      if (text.includes('assets/tracking.js') && !text.includes('fbevents.js')) {
+        failures.push(relative(root, file) + ' loads tracking.js but has no hardcoded Meta pixel (fbevents.js) — injectMetaPixel() was skipped.');
+      }
+    }
+  })(root);
+  if (failures.length) {
+    console.error('Structural gate checks failed:');
+    for (const failure of failures) console.error('- ' + failure);
+    process.exit(1);
+  }
+}
+
 const hits = [];
 walk(root, hits);
 

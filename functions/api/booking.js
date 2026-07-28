@@ -156,12 +156,15 @@ export async function onRequestPost(context) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.message || data.error || ('appointment HTTP ' + res.status));
-    /* Schedule CAPI (system_generated) — Pixel Schedule still fires client-side. */
+    /* Schedule CAPI (website) — same event_id as the browser pixel so Meta
+       deduplicates the pair. Phone/manual bookings get their system_generated
+       Schedule from the GHL stage workflow instead. */
     let metaSchedule = { sent: false };
     try {
       metaSchedule = await sendMetaEvent(env, request, lead, {
         eventName: 'Schedule',
         eventId: lead.metaEventId || lead.submissionId,
+        actionSource: 'website',
         fbp: lead.fbp,
         fbc: lead.fbc
       });

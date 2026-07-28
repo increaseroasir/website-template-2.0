@@ -204,7 +204,9 @@
             if (am.em || am.ph) try { fbq('init', pid, am); } catch (err) {}
           }
           var eid = data.meta_event_id || eventId;
-          if (data.booked) fbq('track', 'Schedule', { content_name: 'showroom-visit' }, { eventID: eid });
+          /* value matches META_VALUE_SCHEDULE server-side so the deduplicated
+             browser/server pair reports a consistent $ to Meta. */
+          if (data.booked) fbq('track', 'Schedule', { value: 300, currency: 'USD', content_name: 'showroom-visit' }, { eventID: eid });
           else fbq('track', 'Lead', { value: 0, currency: 'USD', content_name: 'showroom-visit-request' }, { eventID: eid });
         }
         form.hidden = true;

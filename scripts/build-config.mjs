@@ -114,6 +114,47 @@ function walk(dir) {
 }
 walk(root);
 
+/* ---- Meta pixel hardcoded into every HTML page at build time.
+   The runtime path (tracking.js reading CLIENT_CONFIG) silently died whenever
+   client.config.js was missing or cached stale — no pixel, no error. The pixel
+   snippet is now written directly into the HTML before the client.config.js
+   script tag, unconditional and independent of CLIENT_CONFIG at runtime.
+   data-cfasync="false" stops Cloudflare Rocket Loader from deferring it.
+   tracking.js keeps its config-driven pixel as a fallback but skips itself
+   when fbq already exists, so PageView never double-fires. ---- */
+function injectMetaPixel() {
+  const pixelId = tokenMap.META_PIXEL_ID || '';
+  if (!usable(pixelId) || !pixelId) {
+    console.warn('Meta pixel injection skipped: no usable META_PIXEL_ID.');
+    return;
+  }
+  const snippet = [
+    '<script data-cfasync="false">',
+    "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');",
+    `fbq('init', '${pixelId}');`,
+    "fbq('track', 'PageView');",
+    '</script>',
+    `<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"></noscript>`,
+    ''
+  ].join('\n');
+  const configTag = /<script src="[^"]*client\.config\.js"><\/script>/;
+  let injected = 0;
+  (function inject(dir) {
+    for (const name of readdirSync(dir)) {
+      if (name === 'node_modules' || name === '.wrangler' || name === '.git') continue;
+      const file = join(dir, name);
+      if (statSync(file).isDirectory()) { inject(file); continue; }
+      if (!/\.html$/i.test(name)) continue;
+      const text = readFileSync(file, 'utf8');
+      if (text.includes('fbevents.js') || !configTag.test(text)) continue;
+      writeFileSync(file, text.replace(configTag, (tag) => snippet + tag));
+      injected++;
+    }
+  })(root);
+  console.log(`Meta pixel hardcoded into ${injected} HTML file(s).`);
+}
+injectMetaPixel();
+
 /* ---- SEO artifacts: robots.txt + sitemap.xml, generated into the build root.
    Skipped (with a loud warning) when no usable domain exists — e.g. when this
    script is run against the raw template instead of a hydrated dist/. ---- */

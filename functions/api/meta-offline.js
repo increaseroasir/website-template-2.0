@@ -70,8 +70,10 @@ export async function onRequestPost(context) {
     email,
     phone,
     pageUrl: String(body.event_source_url || body.eventSourceUrl || body.page_url || '').trim(),
-    fbp: String(body.fbp || '').trim(),
-    fbc: String(body.fbc || '').trim(),
+    /* GHL resolves empty contact fields to the literal string "null" in
+       webhook bodies — strip it so Meta never matches on a bogus browser ID. */
+    fbp: String(body.fbp || '').trim().replace(/^null$/i, ''),
+    fbc: String(body.fbc || '').trim().replace(/^null$/i, ''),
     metaEventId: originalMetaEventId,
     externalId: String(body.external_id || body.externalId || email || phone || '').trim().toLowerCase(),
     submissionId: originalMetaEventId || crypto.randomUUID(),

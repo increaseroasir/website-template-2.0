@@ -131,6 +131,22 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('fingerprints: zero template/Paradise values', hits.length ? 'FAIL' : 'PASS', hits.length ? cap(hits) : `${fingerprints.length} fingerprints checked`);
 }
 
+/* 2b. tracking prerequisites — both are "site works, tracking silently dead"
+   failure modes that only surface when a client reports no pixel data. */
+{
+  const problems = [];
+  if (!existsSync(join(dist, 'client.config.js'))) {
+    problems.push('client.config.js missing from dist root — window.CLIENT_CONFIG undefined, ALL runtime tracking (GA4/Clarity/GHL external/pixel fallback) silently fails');
+  }
+  for (const p of pages) {
+    const text = readFileSync(p, 'utf8');
+    if (text.includes('assets/tracking.js') && !text.includes('fbevents.js')) {
+      problems.push(`${relative(dist, p)}: loads tracking.js but has no hardcoded Meta pixel (fbevents.js) — build-config.mjs injectMetaPixel() was skipped (empty META_PIXEL_ID?)`);
+    }
+  }
+  add('tracking: client.config.js present + Meta pixel hardcoded in every page', problems.length ? 'FAIL' : 'PASS', problems.length ? cap(problems) : `${pages.length} pages checked`);
+}
+
 /* 3. duplicate ids per page */
 {
   const dupes = [];
