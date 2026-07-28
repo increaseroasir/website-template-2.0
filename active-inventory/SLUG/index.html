@@ -10,8 +10,8 @@
 <meta name="theme-color" content="#030C20">
 <meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
 <meta name="google-site-verification" content="{{GSC_VERIFICATION}}">
-<title>{{PRODUCT_SEO_TITLE}}</title>
-<meta name="description" content="{{PRODUCT_META_DESCRIPTION}}">
+<title>{{PRODUCT_SEO_TITLE|In-Stock Inventory}}</title>
+<meta name="description" content="{{PRODUCT_META_DESCRIPTION|Request today's local price, financing options, and availability on this in-stock unit.}}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 <script src="../../client.config.js"></script>
 <script src="../../assets/tracking.js"></script>
 </head>
-<body data-template-page data-product-slug="{{PRODUCT_SLUG}}">
+<body data-template-page data-product-slug="{{PRODUCT_SLUG}}" data-lead-source="product-page" data-lead-campaign="{{CAMPAIGN_NAME|Product Page}}">
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href="../../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
@@ -32,10 +32,104 @@
   </div>
 </header>
 <main data-product-source="/api/inventory?slug={PRODUCT_SLUG}">
-<section class="hero"><div class="hero-inner"><div><h1>{{PRODUCT_NAME}}</h1><p>{{PRODUCT_HERO_DESCRIPTION}}</p><div class="hero-actions"><button class="btn btn-gold" data-open-lead data-product="{{PRODUCT_NAME}}">{{PRODUCT_PRIMARY_CTA}}</button><button class="btn btn-outline" data-open-lead data-product="{{PRODUCT_NAME}} financing">{{PRODUCT_SECONDARY_CTA}}</button></div></div><div class="hero-card hero-card-media"><div class="media-frame"><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" width="1200" height="1200" decoding="async" fetchpriority="high" onerror="this.style.opacity='0'" onload="this.style.opacity='1'"></div></div></div></section>
-<section class="section"><div class="wrap grid grid-2"><div><span class="kicker">Best For</span><h2>{{PRODUCT_BEST_FOR_HEADLINE}}</h2><p class="lead">{{PRODUCT_BEST_FOR_COPY}}</p></div><div class="panel price-panel"><h3>{{PRODUCT_PRICE_LABEL}}</h3><p>{{PRODUCT_PRICE}}</p><p>{{PRODUCT_FINANCING_LINE}}</p></div></div></section>
-<section class="section alt"><div class="wrap grid grid-3"><div class="panel"><h3>{{PRODUCT_FACT_1}}</h3><p>{{PRODUCT_FACT_1_COPY}}</p></div><div class="panel"><h3>{{PRODUCT_FACT_2}}</h3><p>{{PRODUCT_FACT_2_COPY}}</p></div><div class="panel"><h3>{{PRODUCT_FACT_3}}</h3><p>{{PRODUCT_FACT_3_COPY}}</p></div></div></section>
-<section class="section"><div class="wrap"><h2>{{PRODUCT_DETAILS_HEADLINE}}</h2><p class="lead">{{PRODUCT_LONG_DESCRIPTION}}</p></div></section>
+
+<!-- Slim strip: back link + urgency line (Paradise-style top banner) -->
+<div class="pdp-strip"><div class="wrap pdp-strip-inner">
+  <a class="pdp-back" href="../../inventory.html">&larr; Back to Active Inventory</a>
+  <span class="pdp-strip-note">{{PRODUCT_STRIP_NOTE|In-Stock Unit &mdash; Request Today&rsquo;s Exact Price}}</span>
+</div></div>
+
+<!-- Dark ambient hero: kicker → benefit headline → sub, media right -->
+<section class="pdp-hero">
+  <div class="wrap pdp-hero-grid">
+    <div class="pdp-hero-copy">
+      <p class="pdp-kicker" data-pdp-kicker>{{PRODUCT_PROMO_LABEL|In Stock Now}}</p>
+      <h1 data-pdp-headline>{{PRODUCT_NAME|This In-Stock Unit}}</h1>
+      <p class="pdp-sub" data-pdp-herodesc>{{PRODUCT_HERO_DESCRIPTION|Ask for current local pricing, availability, and delivery timing on this exact unit.}}</p>
+      <div class="pdp-hero-actions">
+        <a class="btn btn-gold" href="#get-price" data-pdp-cta>Get Today&rsquo;s Price</a>
+        <a class="btn btn-ghost" href="../../financing.html">Check Financing Options</a>
+      </div>
+    </div>
+    <div class="pdp-hero-media"><div class="media-frame"><img data-pdp-image src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT|In-stock inventory unit}}" width="1200" height="1200" decoding="async" fetchpriority="high" onerror="this.style.opacity='0'" onload="this.style.opacity='1'"></div></div>
+  </div>
+</section>
+
+<!-- Two-column body: content left, sticky glass price card right (recipe C) -->
+<div class="wrap pdp-layout">
+  <div class="pdp-main">
+
+    <section class="pdp-section pdp-facts" data-pdp-facts>
+      <h2>Quick Facts</h2>
+      <div class="pdp-facts-grid" data-pdp-facts-grid>
+        <div class="pdp-fact"><span class="pdp-fact-label">{{PRODUCT_FACT_1|Ask for specs}}</span></div>
+        <div class="pdp-fact"><span class="pdp-fact-label">{{PRODUCT_FACT_2|In stock}}</span></div>
+        <div class="pdp-fact"><span class="pdp-fact-label">{{PRODUCT_FACT_3|Local delivery}}</span></div>
+      </div>
+    </section>
+
+    <section class="pdp-section pdp-why" data-pdp-why hidden>
+      <h2>Why This One Stands Out</h2>
+      <ul class="pdp-why-list" data-pdp-why-list></ul>
+    </section>
+
+    <section class="pdp-section pdp-about" data-pdp-about hidden>
+      <h2 data-pdp-about-title>About This Unit</h2>
+      <p class="pdp-about-copy" data-pdp-about-copy></p>
+    </section>
+
+    <section class="pdp-section pdp-bestfor" data-pdp-bestfor hidden>
+      <p class="pdp-bestfor-label">Best For</p>
+      <p class="pdp-bestfor-copy" data-pdp-bestfor-copy></p>
+    </section>
+
+    <!-- Inline lead form pinned to this exact unit -->
+    <section class="pdp-section pdp-form-section" id="get-price">
+      <div class="pdp-form-card">
+        <h2>Interested in this one?</h2>
+        <p class="pdp-form-lead">Get the current local price, payment options, and availability &mdash; we&rsquo;ll text it back fast.</p>
+        <p class="pdp-selected">Selected unit: <b data-pdp-selected>{{PRODUCT_NAME|This unit}}</b></p>
+        <form class="form-grid" data-template-form data-lead-success="inline" action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
+          <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
+          <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME}}">
+          <input name="full_name" autocomplete="name" placeholder="Full name" required>
+          <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
+          <input name="email" autocomplete="email" placeholder="Email">
+          <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
+          <button class="btn btn-gold" type="submit">Get Today&rsquo;s Price</button>
+          <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
+          <p class="fine-print" data-template-result></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="pdp-section pdp-faq">
+      <h2>Frequently Asked Questions</h2>
+      <details class="pdp-faq-item"><summary>Is the price shown final?</summary><p>Pricing, financing, taxes, delivery, electrical work, accessories, and selected options can affect the final amount. Request the current written quote for this exact unit.</p></details>
+      <details class="pdp-faq-item"><summary>What does the monthly payment include?</summary><p>Any payment shown is an estimate for qualified buyers. Your actual payment depends on purchase price, down payment, term, interest rate, credit approval, and any added services or equipment.</p></details>
+      <details class="pdp-faq-item"><summary>Is delivery included?</summary><p>Delivery availability and cost depend on your address, access, placement, and equipment required. We&rsquo;ll confirm the complete delivery plan before purchase.</p></details>
+      <details class="pdp-faq-item"><summary>What electrical service is required?</summary><p>Requirements vary by model and configuration. Always use the specification for the exact unit and have a licensed electrician complete the installation.</p></details>
+      <details class="pdp-faq-item"><summary>Is this exact unit still available?</summary><p>In-stock inventory can sell quickly. Submit the form or call <a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a> to confirm this exact unit has not been reserved or sold.</p></details>
+    </section>
+
+  </div>
+
+  <aside class="pdp-aside">
+    <div class="pdp-price-card">
+      <p class="pdp-price-label" data-pdp-price-label>Today&rsquo;s Local Price</p>
+      <p class="pdp-price" data-pdp-price>Ask &mdash; we&rsquo;ll text it back</p>
+      <p class="pdp-monthly" data-pdp-monthly hidden></p>
+      <p class="pdp-fin-line">{{PRODUCT_FINANCING_LINE|Flexible financing is available for qualified buyers. Your exact payment depends on the unit, term, credit approval, taxes, delivery, and selected options.}}</p>
+      <div class="pdp-cta-stack">
+        <a class="btn btn-gold" href="#get-price" data-pdp-cta>Get Today&rsquo;s Price</a>
+        <a class="btn btn-outline" href="../../financing.html">Check Financing</a>
+      </div>
+      <p class="pdp-availability" data-pdp-availability>This is an in-stock unit. Availability can change without notice.</p>
+    </div>
+  </aside>
+</div>
+
+<!-- Drawer kept for any [data-open-lead] flows (modal JS binds to it) -->
 <aside class="form-card" data-lead-panel hidden aria-label="Lead form drawer">
   <button class="btn btn-outline" data-close-lead type="button">Close</button>
   <h3>Get today's local price</h3>

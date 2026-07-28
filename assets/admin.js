@@ -96,6 +96,11 @@
               <input name="delivery_promise" placeholder="Delivery promise" maxlength="220">
               <textarea name="quick_facts" placeholder="Quick facts, one per line. Max 8 facts."></textarea>
               <textarea name="ghl_tags" placeholder="GHL tags, one per line. Max 30 tags."></textarea>
+              <input name="headline" placeholder="Sales headline, e.g. Name — Benefit In Plain Words" maxlength="140">
+              <textarea name="hero_description" placeholder="Hero description: 1-2 sentences selling this exact unit." maxlength="320"></textarea>
+              <textarea name="why_bullets" placeholder="Why it stands out: one bullet per line. Max 6."></textarea>
+              <textarea name="long_description" placeholder="About this unit: one honest paragraph (who it's for, what makes it worth it)." maxlength="1400"></textarea>
+              <input name="best_for" placeholder="Best for: one line, e.g. Couples who want daily soaks without a huge footprint" maxlength="220">
               <input name="sort_order" type="number" min="-9999" max="9999" placeholder="Sort order">
               <label><input name="featured" type="checkbox"> Featured</label>
               <button class="btn btn-gold" type="submit">Save Product</button>
@@ -137,6 +142,11 @@
       ghl_tags: asArray(form.ghl_tags.value),
       promo_label: form.promo_label.value.trim(),
       delivery_promise: form.delivery_promise.value.trim(),
+      headline: form.headline.value.trim(),
+      hero_description: form.hero_description.value.trim(),
+      why_bullets: asArray(form.why_bullets.value),
+      long_description: form.long_description.value.trim(),
+      best_for: form.best_for.value.trim(),
       sort_order: Number(form.sort_order.value || 0),
       featured: form.featured.checked
     };
@@ -217,6 +227,11 @@
     form.delivery_promise.value = product.delivery_promise || '';
     form.quick_facts.value = (product.quick_facts || []).join('\n');
     form.ghl_tags.value = (product.ghl_tags || []).join('\n');
+    form.headline.value = product.headline || '';
+    form.hero_description.value = product.hero_description || '';
+    form.why_bullets.value = (product.why_bullets || []).join('\n');
+    form.long_description.value = product.long_description || '';
+    form.best_for.value = product.best_for || '';
     form.sort_order.value = product.sort_order || '';
     form.featured.checked = Boolean(product.featured);
     document.querySelector('[data-form-title]').textContent = 'Edit Product';

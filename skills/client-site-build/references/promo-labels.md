@@ -47,3 +47,21 @@ request instead:
 So: if the client won't publish a price, leave `price` empty — never enter 0,
 1, or a placeholder dollar amount. Setting `monthly_payment` alone is a good
 middle ground ("Financing as low as $X/mo") for MAP-restricted brands.
+
+## Product-detail content fields (TVD-027 — fuels the sales page)
+
+The product page (`/active-inventory/<slug>/`) is a Paradise-style sales
+layout. These five optional fields fill its rich sections; each section
+auto-hides when its field is empty, so a sparse record still renders clean.
+
+| Field | Section it fills | Rules |
+| --- | --- | --- |
+| `headline` (≤140) | Hero H1 | Name + plain-words benefit: "Eco Spa E4 — More Seating Without the Oversized Footprint". Falls back to the product name. |
+| `hero_description` (≤320) | Hero sub | 1–2 sentences selling this exact unit. Falls back to `delivery_promise`. |
+| `why_bullets` (≤6 × 220) | "Why This One Stands Out" checklist | One concrete, honest benefit per bullet. No invented specs. |
+| `long_description` (≤1400) | "About the <name>" paragraph | One honest paragraph: who it's for, what makes it worth it, why buy this unit now. |
+| `best_for` (≤220) | Gold "Best For" callout | One line: the exact buyer. "Families of four to six who want daily soaks." |
+
+Also on the page automatically: all `quick_facts` (up to 8) as the Quick Facts
+grid, `promo_label` as the hero kicker, price/monthly in the sticky price card
+(with the ask-treatment when empty), and status-driven availability copy.

@@ -228,6 +228,7 @@ facts, see content-rules.md).
 | `PRODUCT_PRICE_LABEL` | active-inventory/SLUG/ | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `PRODUCT_PRIMARY_CTA` | active-inventory/SLUG/, active-inventory/, index.html | text | button label | — | YES | ≤22 chars (btn is white-space:nowrap — long labels overflow) |
 | `PRODUCT_PRIMARY_IMAGE` | active-inventory/SLUG/, active-inventory/, index.html | attribute | image URL | — | YES | — |
+| `PRODUCT_STRIP_NOTE` | active-inventory/SLUG/ | text | mono label | In-Stock Unit — Request Today's Exact Price | YES | ≤48 chars (slim strip, mono uppercase) |
 | `PRODUCT_PROMO_LABEL` | active-inventory/, index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `PRODUCT_SECONDARY_CTA` | active-inventory/SLUG/ | text | button label | — | YES | ≤22 chars (btn is white-space:nowrap — long labels overflow) |
 | `PRODUCT_SEO_TITLE` | active-inventory/SLUG/ | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |

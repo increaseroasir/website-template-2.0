@@ -35,6 +35,13 @@
     var field = form.querySelector('[name="' + name + '"]');
     if (!field) { field = document.createElement('input'); field.type = 'hidden'; field.name = name; form.appendChild(field); }
     field.value = value || '';
+    /* Assigning a value with no matching <option> blanks a select (e.g. the
+       availability-driven "Price Request" intent) — add it as a real option
+       so the dropdown shows it and the form still posts the right intent. */
+    if (field.tagName === 'SELECT' && value && field.value !== value) {
+      field.appendChild(new Option(value, value, true, true));
+      field.value = value;
+    }
   }
 
   function setText(selector, value) {
@@ -42,42 +49,93 @@
     if (element && value) element.textContent = value;
   }
 
+  function categoryLabel(category) {
+    var map = { 'hot-tub': 'Hot Tub', 'swim-spa': 'Swim Spa', sauna: 'Sauna' };
+    return map[category] || 'Inventory';
+  }
+
+  /* Populates the Paradise-style sales layout (TVD-027). Every rich-content
+     section stays hidden unless its product field has data — a sparse record
+     still produces a complete, honest page. */
   function hydrateProductContent(product) {
     if (!product) return;
-    var facts = Array.isArray(product.quick_facts) ? product.quick_facts : [];
-    var image = document.querySelector('.hero-card img');
-    document.title = product.inventory_name + ' | Inventory';
-    setText('.hero h1', product.inventory_name);
-    setText('.hero p', product.delivery_promise || 'Ask for current local pricing, availability, and delivery timing.');
-    setText('.hero [data-open-lead].btn-gold', 'Get Today\'s Price');
-    setText('.hero [data-open-lead].btn-outline', product.monthly_payment ? 'Ask About ' + money(product.monthly_payment) + '/mo' : 'Ask About Payments');
-    setText('.section .grid.grid-2 h2', product.promo_label || 'Available Inventory');
-    setText('.section .grid.grid-2 .lead', product.delivery_promise || 'This product is part of current public inventory.');
-    var hasPrice = Number(product.price || 0) > 0;
-    setText('.section .panel h3', hasPrice ? 'Current Price' : 'Today\u2019s Local Price');
-    var price = document.querySelector('.section .panel p:nth-of-type(1)');
-    if (price) {
-      /* No price on record → never print "$0"; drive the price request instead */
-      price.textContent = hasPrice ? money(product.price) : 'Ask \u2014 we\u2019ll text it back in minutes';
-      if (!hasPrice) price.classList.add('price-ask');
-    }
-    var payment = document.querySelector('.section .panel p:nth-of-type(2)');
-    if (payment) payment.textContent = product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : 'Ask for payment options';
-    document.querySelectorAll('.section.alt .panel').forEach(function (panel, index) {
-      var fact = facts[index] || '';
-      var title = panel.querySelector('h3');
-      var copy = panel.querySelector('p');
-      if (title) title.textContent = fact || ['Details', 'Delivery', 'Availability'][index] || 'Details';
-      if (copy) copy.textContent = index === 0 ? (product.category || 'Inventory') : (index === 1 ? (product.delivery_promise || 'Ask for timing') : ('Status: ' + (product.status || 'available')));
-    });
-    setText('main > .section:last-of-type h2', product.inventory_name + ' Details');
-    setText('main > .section:last-of-type .lead', product.delivery_promise || 'Contact the store for current details.');
+    var name = product.inventory_name || 'Inventory Product';
+    var facts = Array.isArray(product.quick_facts) ? product.quick_facts.filter(Boolean) : [];
+    document.title = (product.headline || name) + ' | In-Stock Inventory';
+    setText('[data-pdp-kicker]', product.promo_label || (categoryLabel(product.category) + ' \u2014 In Stock'));
+    setText('[data-pdp-headline]', product.headline || name);
+    setText('[data-pdp-herodesc]', product.hero_description || product.delivery_promise || 'Ask for current local pricing, availability, and delivery timing on this exact unit.');
+    var image = document.querySelector('[data-pdp-image]');
     if (image && product.primary_image) {
       image.src = safeImageUrl(product.primary_image) || image.src;
-      image.alt = product.inventory_name;
+      image.alt = name;
     }
+
+    var factsGrid = document.querySelector('[data-pdp-facts-grid]');
+    if (factsGrid && facts.length) {
+      factsGrid.innerHTML = '';
+      facts.slice(0, 8).forEach(function (fact) {
+        var cell = document.createElement('div');
+        cell.className = 'pdp-fact';
+        var label = document.createElement('span');
+        label.className = 'pdp-fact-label';
+        label.textContent = fact;
+        cell.appendChild(label);
+        factsGrid.appendChild(cell);
+      });
+    }
+
+    var whySection = document.querySelector('[data-pdp-why]');
+    var whyList = document.querySelector('[data-pdp-why-list]');
+    var bullets = Array.isArray(product.why_bullets) ? product.why_bullets.filter(Boolean) : [];
+    if (whySection && whyList && bullets.length) {
+      whyList.innerHTML = '';
+      bullets.slice(0, 6).forEach(function (bullet) {
+        var item = document.createElement('li');
+        item.textContent = bullet;
+        whyList.appendChild(item);
+      });
+      whySection.hidden = false;
+    }
+
+    var aboutSection = document.querySelector('[data-pdp-about]');
+    if (aboutSection && product.long_description) {
+      setText('[data-pdp-about-title]', 'About the ' + name);
+      setText('[data-pdp-about-copy]', product.long_description);
+      aboutSection.hidden = false;
+    }
+
+    var bestForSection = document.querySelector('[data-pdp-bestfor]');
+    if (bestForSection && product.best_for) {
+      setText('[data-pdp-bestfor-copy]', product.best_for);
+      bestForSection.hidden = false;
+    }
+
+    var hasPrice = Number(product.price || 0) > 0;
+    setText('[data-pdp-price-label]', hasPrice ? 'Current Price' : 'Today\u2019s Local Price');
+    var priceEl = document.querySelector('[data-pdp-price]');
+    if (priceEl) {
+      /* No price on record → never print "$0"; drive the price request instead */
+      priceEl.textContent = hasPrice ? money(product.price) : 'Ask \u2014 we\u2019ll text it back';
+      priceEl.classList.toggle('pdp-price--ask', !hasPrice);
+    }
+    var monthlyEl = document.querySelector('[data-pdp-monthly]');
+    if (monthlyEl && product.monthly_payment) {
+      monthlyEl.textContent = 'or as low as ' + money(product.monthly_payment) + '/mo with approved credit';
+      monthlyEl.hidden = false;
+    }
+    var availabilityEl = document.querySelector('[data-pdp-availability]');
+    if (availabilityEl) {
+      var availabilityCopy = {
+        available: 'This is an in-stock unit. Availability can change without notice.',
+        pending: 'This unit is pending sale \u2014 ask about it or similar in-stock models.',
+        sold: 'This unit has sold \u2014 ask about similar in-stock models.'
+      };
+      availabilityEl.textContent = availabilityCopy[product.inventoryStatus || product.status] || availabilityCopy.available;
+    }
+    setText('[data-pdp-selected]', name);
     document.querySelectorAll('[data-open-lead]').forEach(function (button) {
-      button.setAttribute('data-product', product.inventory_name || '');
+      button.setAttribute('data-product', name);
       button.setAttribute('data-product-json', JSON.stringify(product));
     });
   }
@@ -115,6 +173,8 @@
     var image = safeImageUrl(product.primary_image);
     if (image) { try { data.image = [new URL(image, location.origin).toString()]; } catch (err) { /* skip bad URL */ } }
     if (product.category) data.category = product.category;
+    var description = product.hero_description || product.long_description;
+    if (description) data.description = description;
     var price = Number(product.price);
     if (price > 0) {
       var availability = {

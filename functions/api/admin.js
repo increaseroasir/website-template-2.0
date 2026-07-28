@@ -43,7 +43,8 @@ function normalizeProduct(row) {
   return Object.assign({}, row, {
     gallery_images: parseJson(row.gallery_images, []),
     quick_facts: parseJson(row.quick_facts, []),
-    ghl_tags: parseJson(row.ghl_tags, [])
+    ghl_tags: parseJson(row.ghl_tags, []),
+    why_bullets: parseJson(row.why_bullets, [])
   });
 }
 function validateProduct(body) {
@@ -70,6 +71,13 @@ function validateProduct(body) {
       ghl_tags: cleanArray(body.ghl_tags, 30, 100),
       promo_label: cleanText(body.promo_label, 80),
       delivery_promise: cleanText(body.delivery_promise, 220),
+      /* Product-detail content (TVD-027): fuels the Paradise-style sales page.
+         All optional — the page hides sections whose field is empty. */
+      headline: cleanText(body.headline, 140),
+      hero_description: cleanText(body.hero_description, 320),
+      why_bullets: cleanArray(body.why_bullets, 6, 220),
+      long_description: cleanText(body.long_description, 1400),
+      best_for: cleanText(body.best_for, 220),
       sort_order: numberInRange(body.sort_order, -9999, 9999),
       featured: body.featured ? 1 : 0
     }
@@ -122,7 +130,7 @@ export async function onRequestPost(context) {
   const validated = validateProduct(body);
   if (!validated.ok) return jsonResponse({ ok: false, error: validated.error }, 400, env, request);
   const product = validated.product;
-  await env.DB.prepare(`INSERT INTO products (slug, inventory_name, category, price, monthly_payment, status, quantity, primary_image, gallery_images, quick_facts, ghl_tags, promo_label, delivery_promise, sort_order, featured, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(slug) DO UPDATE SET inventory_name=excluded.inventory_name, category=excluded.category, price=excluded.price, monthly_payment=excluded.monthly_payment, status=excluded.status, quantity=excluded.quantity, primary_image=excluded.primary_image, gallery_images=excluded.gallery_images, quick_facts=excluded.quick_facts, ghl_tags=excluded.ghl_tags, promo_label=excluded.promo_label, delivery_promise=excluded.delivery_promise, sort_order=excluded.sort_order, featured=excluded.featured, updated_at=excluded.updated_at`).bind(product.slug, product.inventory_name, product.category, product.price, product.monthly_payment, product.status, product.quantity, product.primary_image, JSON.stringify(product.gallery_images), JSON.stringify(product.quick_facts), JSON.stringify(product.ghl_tags), product.promo_label, product.delivery_promise, product.sort_order, product.featured, Date.now()).run();
+  await env.DB.prepare(`INSERT INTO products (slug, inventory_name, category, price, monthly_payment, status, quantity, primary_image, gallery_images, quick_facts, ghl_tags, promo_label, delivery_promise, headline, hero_description, why_bullets, long_description, best_for, sort_order, featured, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(slug) DO UPDATE SET inventory_name=excluded.inventory_name, category=excluded.category, price=excluded.price, monthly_payment=excluded.monthly_payment, status=excluded.status, quantity=excluded.quantity, primary_image=excluded.primary_image, gallery_images=excluded.gallery_images, quick_facts=excluded.quick_facts, ghl_tags=excluded.ghl_tags, promo_label=excluded.promo_label, delivery_promise=excluded.delivery_promise, headline=excluded.headline, hero_description=excluded.hero_description, why_bullets=excluded.why_bullets, long_description=excluded.long_description, best_for=excluded.best_for, sort_order=excluded.sort_order, featured=excluded.featured, updated_at=excluded.updated_at`).bind(product.slug, product.inventory_name, product.category, product.price, product.monthly_payment, product.status, product.quantity, product.primary_image, JSON.stringify(product.gallery_images), JSON.stringify(product.quick_facts), JSON.stringify(product.ghl_tags), product.promo_label, product.delivery_promise, product.headline, product.hero_description, JSON.stringify(product.why_bullets), product.long_description, product.best_for, product.sort_order, product.featured, Date.now()).run();
   return jsonResponse({ ok: true, product }, 200, env, request);
 }
 

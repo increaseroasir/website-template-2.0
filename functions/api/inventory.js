@@ -1,6 +1,6 @@
 import { corsHeaders, jsonResponse } from '../lib/cors.js';
 function parseJson(value, fallback) { try { return value ? JSON.parse(value) : fallback; } catch (err) { return fallback; } }
-function publicProduct(row) { return Object.assign({}, row, { gallery_images: parseJson(row.gallery_images, []), quick_facts: parseJson(row.quick_facts, []), ghl_tags: parseJson(row.ghl_tags, []) }); }
+function publicProduct(row) { return Object.assign({}, row, { gallery_images: parseJson(row.gallery_images, []), quick_facts: parseJson(row.quick_facts, []), ghl_tags: parseJson(row.ghl_tags, []), why_bullets: parseJson(row.why_bullets, []) }); }
 export async function onRequestOptions(context) { return new Response(null, { status: 204, headers: corsHeaders(context.env, context.request) }); }
 export async function onRequestGet(context) {
   const { request, env } = context;
