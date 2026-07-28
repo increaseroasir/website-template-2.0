@@ -44,7 +44,6 @@ function tokenMapFromConfig(cfg) {
     META_PIXEL_ID: cfg.tracking?.metaPixelId,
     GA4_ID: cfg.tracking?.ga4Id,
     CLARITY_ID: cfg.tracking?.clarityId,
-    TURNSTILE_SITE_KEY: cfg.tracking?.turnstileSiteKey,
     LEAD_VALUE: cfg.tracking?.leadValue,
     LEAD_CURRENCY: cfg.tracking?.leadCurrency,
     PRIMARY_OFFER: cfg.offers?.primary,

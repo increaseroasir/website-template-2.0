@@ -16,7 +16,6 @@ function tagsForLead(env, lead) {
   if (Array.isArray(lead.productGhlTags)) tags = tags.concat(lead.productGhlTags);
   if (lead.campaign) tags.push('Campaign - ' + lead.campaign);
   if (lead.formIntent) tags.push('Intent - ' + lead.formIntent);
-  if (lead.securityUnverified) tags.push('security-unverified');
   return uniqueTags(tags);
 }
 function customFieldsForLead(lead, env) {

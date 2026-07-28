@@ -32,7 +32,6 @@ window.CLIENT_CONFIG = {
     metaPixelId: '{{META_PIXEL_ID}}',
     ga4Id: '{{GA4_ID}}',
     clarityId: '{{CLARITY_ID}}',
-    turnstileSiteKey: '{{TURNSTILE_SITE_KEY}}',
     ghlExternalTracking: '{{GHL_EXTERNAL_TRACKING}}',
     ghlBookingCalendarId: '{{GHL_BOOKING_CALENDAR_ID}}',
     leadValue: '{{LEAD_VALUE|0}}',

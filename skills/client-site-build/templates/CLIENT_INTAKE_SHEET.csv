@@ -13,7 +13,6 @@ Offer & promises,Financing promise line,REQUIRED,offers.financing,FINANCING_PROM
 Offer & promises,Primary offer OR evergreen,REQUIRED,offers.primary,PRIMARY_OFFER,Client,Leave offers.endsAt empty for evergreen
 Offer & promises,Promo end date (if timed),nice,offers.endsAt,OFFER_ENDS_AT,Client,ISO 8601 WITH timezone; empty = evergreen
 Tracking & lead wiring,Lead form POST endpoint,REQUIRED,endpoints.lead,LEAD_ENDPOINT,HTL,Usually /api/lead
-Tracking & lead wiring,Cloudflare Turnstile site key,REQUIRED,tracking.turnstileSiteKey,TURNSTILE_SITE_KEY,HTL,Public key; empty = silent lead loss
 Tracking & lead wiring,GA4 measurement ID,REQUIRED,tracking.ga4Id,GA4_ID,Client,G-XXXXXXXX
 Tracking & lead wiring,Meta Pixel ID,REQUIRED,tracking.metaPixelId,META_PIXEL_ID,Client,Browser pixel; match CF META_PIXEL_ID secret
 Tracking & lead wiring,Microsoft Clarity project ID,48h,tracking.clarityId,CLARITY_ID,Client,Session recordings

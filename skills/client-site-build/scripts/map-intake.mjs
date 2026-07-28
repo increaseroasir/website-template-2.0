@@ -152,7 +152,6 @@ function valuesFromBrief(path) {
       ['Primary offer OR evergreen', o.headline || o.name || (o.active === false ? 'evergreen' : '')],
       ['Promo end date (if timed)', o.endsAtISO],
       ['Lead form POST endpoint', w.leadEndpoint],
-      ['Cloudflare Turnstile site key', w.turnstileSiteKey],
       ['GA4 measurement ID', w.ga4Id],
       ['Meta Pixel ID', w.metaPixelId],
       ['Microsoft Clarity project ID', w.clarityId],

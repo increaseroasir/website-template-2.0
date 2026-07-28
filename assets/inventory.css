@@ -380,8 +380,6 @@
       position:absolute !important; left:-9999px !important;
       width:1px; height:1px; overflow:hidden; opacity:0;
     }
-    .inventory-gate-turnstile { margin:10px 0 0; }
-    .inventory-gate-turnstile:empty { margin:0; }
     .inventory-gate-form button[type="submit"],
     .ghl-form-shell button[type="submit"] {
       width:100%; min-height:52px; margin-top:12px; font-size:.95rem;

@@ -95,15 +95,16 @@ without evidence, is not done and will be sent back.
       `paradise-lead-vault@paradise-spas-lead-vault.iam.gserviceaccount.com`
       (share each client sheet with it as Editor; key rotation happens in its
       GCP project, never per client).
-- [ ] **Every `.cf-turnstile` on every page has a `data-sitekey`** — this took
-      TWO template fixes: WTV-017/018 (`3e2fadd`+) covers the dynamically
-      injected category/product/inventory forms via native-form.js; WTV-019
-      (`24a700c`+) covers the static widgets hardcoded in `index.html`
-      (homepage hero form, which also gained the missing turnstile api.js
-      script tag) and `book/index.html`. A widget without a sitekey never
-      issues a token, and with `TURNSTILE_SECRET_KEY` set the server rejects
-      every lead with "Please complete the security check." Check the homepage
-      and /book/ specifically — they fail invisibly on templates < `24a700c`.
+- [ ] **NO captcha / security checker anywhere (TVD-025)** — Turnstile was
+      removed from the template entirely (widgets, api.js loader, sitekey
+      token, secret, server verification). Verify zero `cf-turnstile` /
+      `challenges.cloudflare.com` references in the built dist, do NOT set
+      `TURNSTILE_SECRET_KEY` or `TURNSTILE_SITE_KEY` on the Pages project
+      (delete them on projects that predate the removal), and confirm a real
+      form submit succeeds with no security-check step. History: on old
+      templates a broken widget silently rejected 100% of leads
+      (WTV-017/018/019, then fail-open TVD-024, now full removal). Spam
+      control is the honeypot + server-side 24h dedupe.
 - [ ] **Ignore "blocked from indexing" on `*.pages.dev` hash URLs** — Cloudflare
       auto-noindexes deployment-hash URLs. Check robots on the canonical
       project domain (and later the custom domain) only.

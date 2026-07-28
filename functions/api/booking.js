@@ -4,7 +4,7 @@
  * GET  → next ~10 days of real free slots from GHL (calendar API, Version 2021-04-15).
  *        Calendar unconfigured or upstream error → { ok:true, bookable:false } so the
  *        page falls back to request-mode (never a dead end, never a lost lead).
- * POST → validate + Turnstile → upsert contact in GHL (dedupe-merge on email/phone,
+ * POST → validate → upsert contact in GHL (dedupe-merge on email/phone,
  *        tags: src-*, "Intent - Showroom Visit", "Campaign - booking") → create the
  *        appointment. Appointment failure still returns ok with booked:false — the
  *        contact is captured and the store confirms by text. Leads are never dropped
@@ -14,7 +14,7 @@
  *      (wrangler var; empty = request-mode).
  */
 import { corsHeaders, jsonResponse } from '../lib/cors.js';
-import { validateLeadPayload, verifyTurnstile } from '../lib/validate.js';
+import { validateLeadPayload } from '../lib/validate.js';
 import { upsertContact, ghlConfigured } from '../lib/ghl.js';
 import { sendFailureAlert } from '../lib/alert.js';
 import { sendMetaEvent } from '../lib/meta-capi.js';
@@ -122,10 +122,6 @@ export async function onRequestPost(context) {
   const validated = validateLeadPayload(body, { emailOptional: true }); // booking is phone-first; email is a nice-to-have
   if (!validated.ok) return jsonResponse({ ok: false, error: validated.error }, 400, env, request);
   const lead = validated.data;
-
-  const turnstile = await verifyTurnstile(body.turnstile_token || body.turnstileToken, env, request);
-  if (!turnstile.ok) return jsonResponse({ ok: false, error: turnstile.error }, 400, env, request);
-  if (turnstile.unverified) lead.securityUnverified = true;
 
   const slot = String(body.slot || '');
   const preferred = String(body.preferred_day || '');

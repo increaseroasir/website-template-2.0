@@ -21,13 +21,6 @@
   var days = [];
 
   var cfg = window.CLIENT_CONFIG || {};
-  var siteKey = document.body.getAttribute('data-turnstile-site-key') || (cfg.tracking && cfg.tracking.turnstileSiteKey) || '';
-  function turnstileToken() {
-    if (!siteKey || !window.turnstile) return '';
-    var widget = form.querySelector('.cf-turnstile');
-    if (!widget) return '';
-    try { return window.turnstile.getResponse(widget) || ''; } catch (err) { return ''; }
-  }
 
   function dayLabel(iso) {
     var d = new Date(iso + 'T12:00:00');
@@ -157,7 +150,6 @@
       utm_content: attr.utm_content || '', utm_term: attr.utm_term || '',
       fbclid: attr.fbclid || '', gclid: attr.gclid || '', msclkid: attr.msclkid || '',
       consent: true,
-      turnstile_token: turnstileToken(),
       meta_event_id: eventId,
       external_id: String(email || '').trim().toLowerCase() || String(phone || '').replace(/\D/g, ''),
       fbp: cookie('_fbp'),

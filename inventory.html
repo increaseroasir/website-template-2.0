@@ -28,7 +28,6 @@
   data-lead-campaign="{{INVENTORY_LEAD_CAMPAIGN|inventory}}"
   data-lead-api="/api/lead"
   data-thank-you-url="/thank-you.html"
-  data-turnstile-site-key="{{TURNSTILE_SITE_KEY}}"
   data-meta-view-content="{{INVENTORY_SEO_TITLE}}"
   data-meta-view-category="inventory">
 <!-- ============================================================
@@ -124,7 +123,6 @@
           <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@email.com">
           <label for="phone">Phone</label>
           <input type="tel" id="phone" name="phone" autocomplete="tel" required placeholder="(555) 555-0100">
-          <div class="inventory-gate-turnstile cf-turnstile" data-sitekey="{{TURNSTILE_SITE_KEY}}" data-theme="light"></div>
           <button type="submit">Unlock Inventory <span aria-hidden="true">&rarr;</span></button>
           <p class="inventory-gate-form-disclaimer">By submitting, I consent to receive calls, texts, and emails from <span data-config="client.name">{{CLIENT_NAME}}</span>, including automated messages. Consent is not required to purchase. Reply STOP to opt out of texts or call <a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}">{{CLIENT_PHONE}}</a>.</p>
         </form>
@@ -315,7 +313,6 @@
          data-error-id="ghl-modal-lead-error"></div>
   </div>
 </div>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script src="/assets/template.js"></script>
 <script src="/assets/inventory-gate.js"></script>

@@ -24,7 +24,7 @@ launch; update in the same change whenever an ID changes after launch.
 | 4 | Lead endpoint / GHL sub-account | | Test lead landed w/ correct tags | | |
 | 5 | GHL chat widget ID | | Widget rendered; chat routed to inbox | | |
 | 6 | Closebot source ID | | Dashboard registered visit | | |
-| 7 | Turnstile sitekey | | Real form submit succeeded | | |
+| 7 | Native form submit (no captcha) | | Real form submit succeeded; no security-check step | | |
 | 8 | Phone / SMS (E164) | | Called + texted; routing confirmed | | |
 | 9 | GHL External Tracking | | Anon browse + gate submit: prior page views stitched on timeline; exactly ONE contact (no twins) | | |
 | 10 | GHL Booking Calendar ID | | ☐ team member assigned · ☐ live test booking at correct store-local time · ☐ tags present · ☐ Execution Logs show workflow fired · ☐ test deleted — or ☐ intentionally empty (request-mode) | |

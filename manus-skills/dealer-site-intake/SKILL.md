@@ -42,7 +42,7 @@ node manus-skills/dealer-site-intake/scripts/new-client.mjs --validate <name> --
 node manus-skills/dealer-site-intake/scripts/check-assets.mjs --dir clients/<name>/uploads
 ```
 
-`--validate` exits `0` PASS / `1` FAIL. REQUIRED empties **hard-fail** (incl. hero, domain, financing, offer, Turnstile, GA4, Pixel, lead endpoint). `--profile rush` keeps that hard set; routes everything else onto `fixList48h[]` + WIRING.md.
+`--validate` exits `0` PASS / `1` FAIL. REQUIRED empties **hard-fail** (incl. hero, domain, financing, offer, GA4, Pixel, lead endpoint). `--profile rush` keeps that hard set; routes everything else onto `fixList48h[]` + WIRING.md.
 
 ## Rush build (1–2 day target)
 
@@ -75,6 +75,6 @@ Templates used by `--init` live in `templates/`.
 
 - Quote every `tokens.env` value (spaces/apostrophes).  
 - `|` inside a token **value** breaks `{{TOKEN|default}}` parsing.  
-- Empty Turnstile = silent lead loss — treat as critical.  
+- No captcha anywhere (TVD-025): the template ships without Turnstile — never add a security checker to a client form.  
 - Empty booking calendar ID = `/book/` request-mode (OK, warn / 48h).  
 - Missing hero still blocks in rush.

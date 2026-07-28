@@ -43,11 +43,10 @@ window.CLIENT_CONFIG = {
   },
   tracking: {
     /* Syntactically valid, obviously fake IDs — must NOT match any
-       fingerprint, and must not be left empty (empty Turnstile = blocked). */
+       fingerprint. */
     metaPixelId: '999000999000999',
     ga4Id: 'G-FAKE0HOSTL',
     clarityId: 'zzfake0000',
-    turnstileSiteKey: '0x4AAAAAAAFakeHostileKey000',
     gscVerification: '',            // deliberately empty — asserts the GSC meta is stripped, not shipped blank
     ghlExternalTracking: '',        // deliberately empty — asserts no external tracking script is injected
     ghlBookingCalendarId: '',       // deliberately empty — asserts /book/ degrades to request-mode cleanly

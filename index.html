@@ -21,7 +21,7 @@
 <script src="/client.config.js"></script>
 <script src="/assets/tracking.js"></script>
 </head>
-<body class="home-page" data-template-page data-lead-source="homepage" data-lead-campaign="{{HOME_CAMPAIGN|homepage}}" data-offer-ends="{{OFFER_ENDS_AT}}" data-thank-you-url="/thank-you.html" data-turnstile-site-key="{{TURNSTILE_SITE_KEY}}" data-meta-view-content="{{CLIENT_NAME}} Homepage" data-meta-view-category="homepage">
+<body class="home-page" data-template-page data-lead-source="homepage" data-lead-campaign="{{HOME_CAMPAIGN|homepage}}" data-offer-ends="{{OFFER_ENDS_AT}}" data-thank-you-url="/thank-you.html" data-meta-view-content="{{CLIENT_NAME}} Homepage" data-meta-view-category="homepage">
 
 <div class="marquee" role="region" aria-label="Current offer">
   <div class="gold-hairline" aria-hidden="true"></div>
@@ -172,7 +172,6 @@
             <input type="checkbox" id="tcpa" name="consent_display" required>
             <label for="tcpa">{{LEAD_FORM_DISCLAIMER}}</label>
           </div>
-          <div class="cf-turnstile" data-sitekey="{{TURNSTILE_SITE_KEY}}" data-theme="light"></div>
           <button type="submit" class="btn btn-gold">{{HOME_LEAD_SUBMIT_LABEL|Get my local price}}</button>
           <button type="button" class="back-link" onclick="homeStepBack(2)">← Back</button>
           <p class="fine-print" data-template-result></p>
@@ -465,7 +464,6 @@
   <a class="book" href="#lead" data-pricing-source="mobile_bar_book">{{PRIMARY_CTA_LABEL|Book my visit}}</a>
 </nav>
 
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="/assets/template.js"></script>
 <script src="/assets/traffic-attribution.js"></script>
 <script src="/assets/view-content.js"></script>

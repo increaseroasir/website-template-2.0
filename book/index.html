@@ -20,7 +20,7 @@
 <script src="/client.config.js"></script>
 <script src="/assets/tracking.js"></script>
 </head>
-<body data-template-page class="page-book" data-turnstile-site-key="{{TURNSTILE_SITE_KEY}}">
+<body data-template-page class="page-book">
 <!-- Conversion page: slim chrome, no nav exits — logo home link + phone only. -->
 <header class="site-header">
   <div class="header-inner">
@@ -63,7 +63,6 @@
         <input name="full_name" autocomplete="name" placeholder="Full name" required>
         <input name="phone" type="tel" autocomplete="tel" placeholder="Mobile phone" required>
         <input name="email" type="email" autocomplete="email" placeholder="Email (optional)">
-        <div class="cf-turnstile" data-sitekey="{{TURNSTILE_SITE_KEY}}" data-theme="light"></div>
         <button class="btn btn-gold" type="submit" data-book-submit>{{BOOK_CTA_LABEL|Lock In My Visit}}</button>
         <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
         <p class="fine-print book-error" data-book-error hidden></p>
@@ -101,7 +100,6 @@
     <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><span data-config="client.hours">{{CLIENT_HOURS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
   </div>
 </footer>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="/assets/template.js"></script>
 <script src="/assets/traffic-attribution.js"></script>
 <script src="/assets/call-tracking.js"></script>

@@ -15,7 +15,7 @@ everything in the client's `WIRING.md`.
 | 4 | Lead endpoint / GHL webhook | `endpoints.lead` (+ Pages Function env) | endpoint 404s, or leads land in the WRONG sub-account | Submit a test lead; contact appears in **this client's** GHL sub-account with correct source/campaign/tags — including the `new-lead` entry tag (see handshake below) |
 | 5 | GHL chat widget ID | Not in `client.config.js` yet — record in WIRING + paste into the location chat snippet at deploy | `6a4454fd638eec5af4195a51` | Widget renders after the ~20s deferral; a test chat lands in this client's GHL inbox |
 | 6 | Closebot source ID | Not in `client.config.js` yet — record in WIRING + Closebot `?source=` at deploy | `coMRVmh8SR6oGXTA` | Closebot dashboard registers the visit/source |
-| 7 | Turnstile sitekey | `tracking.turnstileSiteKey` | `{{TURNSTILE_SITE_KEY}}` or empty | A real form submit **succeeds** — empty/wrong key = silent lead loss |
+| 7 | Native form submit (no captcha — TVD-025) | — | — | A real form submit **succeeds** with no security-check step; zero `cf-turnstile`/`challenges.cloudflare.com` refs in the dist; `TURNSTILE_*` vars absent from the Pages project |
 | 8 | Phone + SMS (E164) | `client.primaryPhoneHref` / `client.smsHref` | `tel:+17018382614` | Call + SMS routing to the client (or their tracking line) |
 | 9 | GHL External Tracking | `tracking.ghlExternalTracking` | other dealer's tracking URL | Anon 2–3 page browse + form submit → prior page views stitched + **exactly ONE** contact |
 | 10 | GHL Booking Calendar ID | `tracking.ghlBookingCalendarId` | wrong-location calendar ID | Live booking at store-local time + Execution Logs, or intentional empty (request-mode) |

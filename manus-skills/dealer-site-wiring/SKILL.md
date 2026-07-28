@@ -2,7 +2,7 @@
 name: dealer-site-wiring
 description: >
   Live-verify dealer-site integration IDs (GA4, Meta Pixel, Clarity, lead/GHL,
-  chat, Closebot, Turnstile, phone/SMS, GHL External Tracking, Booking Calendar)
+  chat, Closebot, phone/SMS, GHL External Tracking, Booking Calendar)
   plus Meta CAPI secrets and offline stage webhook. Use when wiring tracking,
   GHL, Meta CAPI, or launch verification. Duplicate contacts on external
   tracking = FAIL.
@@ -28,7 +28,7 @@ Fill **`references/WIRING.template.md`** into the client's `WIRING.md` as you ve
 4. Lead endpoint / GHL — test lead in **this** sub-account  
 5. GHL chat widget — test chat  
 6. Closebot source — dashboard registers visit  
-7. Turnstile — real submit succeeds  
+7. Native form — real submit succeeds (no captcha anywhere per TVD-025)  
 8. Phone + SMS E164 — rings / correct thread  
 9. GHL External Tracking — page views stitched + **exactly one** contact  
 10. GHL Booking Calendar — live booking at store-local time + Execution Logs, **or** intentional empty (request-mode)

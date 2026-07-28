@@ -53,7 +53,6 @@ config_key, token_key, owner_default, notes).
 | Primary offer OR evergreen | `offers.primary` (+ empty `offers.endsAt` = evergreen) | `PRIMARY_OFFER` | REQUIRED |
 | Promo end date (if timed) | `offers.endsAt` | `OFFER_ENDS_AT` | nice |
 | Lead form POST endpoint | `endpoints.lead` | `LEAD_ENDPOINT` | REQUIRED |
-| Cloudflare Turnstile site key | `tracking.turnstileSiteKey` | `TURNSTILE_SITE_KEY` | REQUIRED |
 | GA4 measurement ID | `tracking.ga4Id` | `GA4_ID` | REQUIRED |
 | Meta Pixel ID | `tracking.metaPixelId` | `META_PIXEL_ID` | REQUIRED |
 | Microsoft Clarity project ID | `tracking.clarityId` | `CLARITY_ID` | 48h |

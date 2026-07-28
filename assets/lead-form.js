@@ -2,7 +2,6 @@
   var body = document.body;
   var cfg = window.CLIENT_CONFIG || {};
   var defaultApiPath = body.getAttribute('data-lead-api') || (cfg.endpoints && cfg.endpoints.lead) || '/api/lead';
-  var siteKey = body.getAttribute('data-turnstile-site-key') || (cfg.tracking && cfg.tracking.turnstileSiteKey) || '';
   var pixelId = (cfg.tracking && cfg.tracking.metaPixelId) || '';
   var leadCurrency = (cfg.tracking && cfg.tracking.leadCurrency) || 'USD';
   function getCookie(name) { var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)')); return match ? decodeURIComponent(match[2]) : ''; }
@@ -30,7 +29,6 @@
       fbq('track', 'Lead', { value: 0, currency: leadCurrency, content_name: contentName, content_category: campaign || 'website-form' }, { eventID: eventId });
     }
   }
-  function turnstileToken(form) { if (!siteKey || !window.turnstile) return ''; var widget = form.querySelector('.cf-turnstile'); if (!widget) return ''; try { return window.turnstile.getResponse(widget) || ''; } catch (err) { return ''; } }
   function bindForm(form) {
     if (form.dataset.leadBound === '1') return;
     form.dataset.leadBound = '1';
@@ -72,7 +70,6 @@
         utm_content: attr.utm_content || '', utm_term: attr.utm_term || '',
         fbclid: attr.fbclid || '', gclid: attr.gclid || '', msclkid: attr.msclkid || '',
         consent: true,
-        turnstile_token: turnstileToken(form),
         website_url: (form.querySelector('[name="website_url"]') || {}).value || '',
         meta_event_id: eventId,
         external_id: externalId(email, phone),

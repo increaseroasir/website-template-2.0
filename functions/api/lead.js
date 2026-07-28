@@ -1,5 +1,5 @@
 import { corsHeaders, jsonResponse } from '../lib/cors.js';
-import { validateLeadPayload, verifyTurnstile } from '../lib/validate.js';
+import { validateLeadPayload } from '../lib/validate.js';
 import { appendLeadVault, appendMissedLead, findRecentDuplicate, sheetsConfigured, updateLeadVaultRow } from '../lib/sheets.js';
 import { upsertContact, ghlConfigured } from '../lib/ghl.js';
 import { sendFailureAlert } from '../lib/alert.js';
@@ -54,9 +54,8 @@ export async function onRequestPost(context) {
   if (!validated.ok) return jsonResponse({ ok: false, error: validated.error }, 400, env, request);
   const lead = validated.data;
   await enrichLeadFromInventory(env, lead);
-  const turnstile = await verifyTurnstile(body.turnstile_token || body.turnstileToken, env, request);
-  if (!turnstile.ok) return jsonResponse({ ok: false, error: turnstile.error }, 400, env, request);
-  if (turnstile.unverified) lead.securityUnverified = true;
+  /* No captcha gate (TVD-025): spam control = honeypot + 24h dedupe. A security
+     checker must never be able to block a customer lead. */
 
   let duplicateMatch = null;
   try { duplicateMatch = await findRecentDuplicate(env, lead.email, lead.phone); } catch (err) { console.error('findRecentDuplicate failed:', err.message || err); }

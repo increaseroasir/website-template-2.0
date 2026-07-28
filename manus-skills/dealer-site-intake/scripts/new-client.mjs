@@ -46,7 +46,7 @@ MODES
                      required keys, E164 phone, ISO offer date (or empty),
                      URL shapes, and which tokens would ship on defaults.
                      CRITICAL keys (name, phones, address/hours/market, GA4,
-                     Meta Pixel, Turnstile sitekey, lead endpoint) HARD-FAIL
+                     Meta Pixel, lead endpoint) HARD-FAIL
                      when empty — broken wiring / silent lead loss. Cosmetic
                      keys (logo, map embed, offer fields, clarity) may be
                      explicitly empty and only warn. GHL sub-account routing
@@ -55,7 +55,7 @@ MODES
 PROFILES
   --profile rush     Validate ONLY the REQUIRED intake tier (identity, phone
                      E164, address/hours/market, domain, financing, offer-or-
-                     evergreen, lead endpoint, Turnstile, GA4, Pixel, GHL
+                     evergreen, lead endpoint, GA4, Pixel, GHL
                      location note, home hero). Everything else → warning +
                      fixList48h[] (also written into WIRING.md 48-HOUR FIX LIST).
                      Rush NEVER waives silent-lead-loss criticals or a missing
@@ -171,7 +171,6 @@ const required = [
   ['offers.primary', cfg.offers?.primary],
   ['tracking.ga4Id', cfg.tracking?.ga4Id],
   ['tracking.metaPixelId', cfg.tracking?.metaPixelId],
-  ['tracking.turnstileSiteKey', cfg.tracking?.turnstileSiteKey],
   ['endpoints.lead', cfg.endpoints?.lead],
   ['home.heroImage', cfg.home?.heroImage]
 ];
@@ -226,7 +225,7 @@ if (isRush) {
   push48('Closebot source ID', 'HTL', 'wiring.closebotSourceId');
   push48('Category photos (non-hero) — gradient wells OK short-term', 'Client', 'assets.categoryPhotos');
 } else {
-  warnings.push('GHL sub-account routing (GHL_API_TOKEN, GHL_LOCATION_ID) and TURNSTILE_SECRET_KEY are wrangler secrets this validator cannot read — they are launch-blocking LIVE verifications per references/wiring.md.');
+  warnings.push('GHL sub-account routing (GHL_API_TOKEN, GHL_LOCATION_ID) are wrangler secrets this validator cannot read — they are launch-blocking LIVE verifications per references/wiring.md.');
   warnings.push('Meta CAPI secrets (META_CAPI_ACCESS_TOKEN, META_OFFLINE_WEBHOOK_SECRET) and META_PIXEL_ID env are Cloudflare secrets this validator cannot read — standing MANUAL per references/wiring.md (same class as GHL token). Offline CRM events also need the 6 GHL custom field keys + stage webhook (silent skip if missing = attribution loss).');
 }
 
@@ -275,7 +274,7 @@ const configTokenMap = {
   BRAND_BLUE: cfg.brand?.primary, BRAND_BLUE_DEEP: cfg.brand?.deep, BRAND_BLUE_NIGHT: cfg.brand?.night,
   BRAND_GOLD: cfg.brand?.accent, BRAND_RED: cfg.brand?.urgent,
   META_PIXEL_ID: cfg.tracking?.metaPixelId, GA4_ID: cfg.tracking?.ga4Id, CLARITY_ID: cfg.tracking?.clarityId,
-  TURNSTILE_SITE_KEY: cfg.tracking?.turnstileSiteKey, LEAD_VALUE: cfg.tracking?.leadValue, LEAD_CURRENCY: cfg.tracking?.leadCurrency,
+  LEAD_VALUE: cfg.tracking?.leadValue, LEAD_CURRENCY: cfg.tracking?.leadCurrency,
   PRIMARY_OFFER: cfg.offers?.primary, FINANCING_PROMISE: cfg.offers?.financing, DELIVERY_PROMISE: cfg.offers?.delivery,
   OFFER_NAME: cfg.offers?.name, OFFER_HEADLINE: cfg.offers?.headline, OFFER_SHORT: cfg.offers?.short,
   OFFER_ENDS_LABEL: cfg.offers?.endsLabel, OFFER_ENDS_AT: cfg.offers?.endsAt,
@@ -297,7 +296,7 @@ const covered = new Set(Object.keys(envTokens));
 /* Explicit empty string is a legitimate value: build-config hydrates it to ""
    (empty logo/map/offer label → element hidden by CSS, evergreen via JS).
    Only missing/null/token-containing values leave a raw {{TOKEN}} behind. */
-const CRITICAL_TOKENS = new Set(['CLIENT_NAME', 'CLIENT_PHONE', 'CLIENT_PHONE_E164', 'CLIENT_ADDRESS', 'CLIENT_HOURS', 'CLIENT_MARKET', 'GA4_ID', 'META_PIXEL_ID', 'TURNSTILE_SITE_KEY', 'LEAD_ENDPOINT']);
+const CRITICAL_TOKENS = new Set(['CLIENT_NAME', 'CLIENT_PHONE', 'CLIENT_PHONE_E164', 'CLIENT_ADDRESS', 'CLIENT_HOURS', 'CLIENT_MARKET', 'GA4_ID', 'META_PIXEL_ID', 'LEAD_ENDPOINT']);
 const explicitEmpty = [];
 for (const [k, v] of Object.entries(configTokenMap)) {
   if (v !== undefined && v !== null && !String(v).includes('{{')) {

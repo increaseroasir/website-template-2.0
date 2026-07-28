@@ -145,14 +145,6 @@
             "projectId": { "type": "string", "minLength": 3 }
           }
         },
-        "turnstile": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "siteKey": { "type": "string" },
-            "secretName": { "type": "string", "default": "TURNSTILE_SECRET_KEY" }
-          }
-        },
         "leadValue": { "type": "number", "minimum": 0 },
         "leadCurrency": { "type": "string", "default": "USD" }
       }

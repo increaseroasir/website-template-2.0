@@ -341,7 +341,6 @@ facts, see content-rules.md).
 | `THANK_YOU_META_DESCRIPTION` | thank-you.html | meta | body copy | — | YES | ≤300 chars per block |
 | `THANK_YOU_SEO_TITLE` | thank-you.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `THANK_YOU_SUBHEAD` | thank-you.html | text | subhead | — | YES | ≤140 chars (2–3 lines at 390px) |
-| `TURNSTILE_SITE_KEY` | hot-tubs/, inventory.html, saunas/, swim-spas/ | attribute | integration ID | — | YES | — |
 | `VISIT_CARD_1_COPY` | index.html | text | body copy | — | YES | ≤300 chars per block |
 | `VISIT_CARD_1_TITLE` | index.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `VISIT_CARD_2_COPY` | index.html | text | body copy | — | YES | ≤300 chars per block |

@@ -43,8 +43,7 @@
     "ghlSubAccountId": "",
     "leadEndpoint": "/api/lead",
     "ghlChatWidgetId": "",
-    "closebotSourceId": "",
-    "turnstileSiteKey": ""
+    "closebotSourceId": ""
   },
   "images": {
     "logoUrl": "",

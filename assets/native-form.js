@@ -29,37 +29,11 @@
     var success = container.getAttribute('data-lead-success') || 'thank-you';
     var prefix = container.getAttribute('data-field-prefix') || (source.replace(/[^a-z0-9]+/gi, '-') + '-');
     var disclaimer = container.getAttribute('data-disclaimer') || cfg('client.leadDisclaimer', 'By submitting, I consent to receive calls, texts, and emails from this dealer. Consent is not required to purchase.');
-    /* Turnstile implicit rendering requires data-sitekey on the widget; without it the
-       widget never issues a token and the server rejects the lead when
-       TURNSTILE_SECRET_KEY is set. Omit the widget entirely when no site key exists. */
-    var siteKey = document.body.getAttribute('data-turnstile-site-key') || cfg('tracking.turnstileSiteKey', '');
-    var turnstileWidget = siteKey ? '<div class="cf-turnstile" data-sitekey="' + siteKey + '" data-theme="light"></div>' : '';
-    container.innerHTML = '<p class="inventory-gate-form-error dealer-lead-error" hidden></p><form class="form-grid" data-lead-form data-lead-source="' + source + '" data-lead-success="' + success + '" novalidate>' + honeypot(prefix) + hiddenProductFields(prefix) + (container.getAttribute('data-show-financing') === 'true' ? financingField(prefix, container.getAttribute('data-financing-required') !== 'false') : '') + contactFields(prefix, container.getAttribute('data-show-message') === 'true') + turnstileWidget + '<button class="btn btn-gold" type="submit">' + submitLabel + '</button><p class="fine-print">' + disclaimer + '</p><p class="fine-print" data-template-result></p></form>';
+    /* No visible security checker (TVD-025): customer-facing forms never gate on
+       a captcha. Spam control = honeypot + server-side dedupe/fail-open tagging. */
+    container.innerHTML = '<p class="inventory-gate-form-error dealer-lead-error" hidden></p><form class="form-grid" data-lead-form data-lead-source="' + source + '" data-lead-success="' + success + '" novalidate>' + honeypot(prefix) + hiddenProductFields(prefix) + (container.getAttribute('data-show-financing') === 'true' ? financingField(prefix, container.getAttribute('data-financing-required') !== 'false') : '') + contactFields(prefix, container.getAttribute('data-show-message') === 'true') + '<button class="btn btn-gold" type="submit">' + submitLabel + '</button><p class="fine-print">' + disclaimer + '</p><p class="fine-print" data-template-result></p></form>';
     container.classList.add('is-ready');
   }
-  /* Turnstile's implicit scan only runs when its api.js loads. Widgets injected
-     AFTER that scan never render (invisible widget → no token → server rejects
-     the lead). Explicitly mount any unrendered widget, retrying until the
-     Turnstile API is available. Widgets already rendered by the implicit scan
-     are skipped via the iframe check. */
-  function mountTurnstileWidgets() {
-    if (!window.turnstile || typeof window.turnstile.render !== 'function') return false;
-    document.querySelectorAll('.cf-turnstile[data-sitekey]').forEach(function (el) {
-      if (el.getAttribute('data-ts-mounted') || el.querySelector('iframe') || el.childNodes.length) return;
-      try {
-        window.turnstile.render(el, { sitekey: el.getAttribute('data-sitekey'), theme: el.getAttribute('data-theme') || 'light' });
-        el.setAttribute('data-ts-mounted', '1');
-      } catch (err) { /* leave for next retry */ }
-    });
-    return true;
-  }
-  function retryMountTurnstile() {
-    var tries = 0;
-    (function tick() {
-      if (mountTurnstileWidgets() || ++tries > 80) return;
-      setTimeout(tick, 250);
-    })();
-  }
-  window.DealerNativeForm = { render: render, renderAll: function () { document.querySelectorAll('[data-native-form]').forEach(render); if (window.DealerLeadForm && typeof window.DealerLeadForm.bindAll === 'function') window.DealerLeadForm.bindAll(); retryMountTurnstile(); } };
+  window.DealerNativeForm = { render: render, renderAll: function () { document.querySelectorAll('[data-native-form]').forEach(render); if (window.DealerLeadForm && typeof window.DealerLeadForm.bindAll === 'function') window.DealerLeadForm.bindAll(); } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.DealerNativeForm.renderAll); else window.DealerNativeForm.renderAll();
 })();

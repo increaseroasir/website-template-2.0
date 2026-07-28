@@ -53,7 +53,7 @@ CHECKS (static)
 
 MANUAL rows are emitted for: console errors, duplicate IDs after inventory
 injection, form fit at 390x650/320, reduced-motion, Lighthouse, live wiring
-(GA4/Pixel/Clarity/GHL/Closebot/Turnstile), device screenshots.
+(GA4/Pixel/Clarity/GHL/Closebot), device screenshots.
 
 OUTPUT   JSON: {env, dist, summary:{pass,fail,manual}, checks:[{check,status,evidence}]}
 EXIT     0 = no FAIL rows · 1 = one or more FAIL · 2 = bad usage
@@ -390,6 +390,22 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
       : 'both present — smoke-test after deploy: /hot-tubs.html must 301, a nonsense path must 404, /active-inventory/<real-slug>/ must serve the product template');
 }
 
+/* 16. no captcha anywhere (TVD-025): Turnstile was removed from the template
+   after broken widgets silently rejected 100% of live leads twice (build #1).
+   Any reference in the artifact means a stale pre-removal template. */
+{
+  const hits = [];
+  for (const f of textFiles) {
+    const text = readFileSync(f, 'utf8');
+    if (/cf-turnstile|challenges\.cloudflare\.com\/turnstile|TURNSTILE_/i.test(text)) hits.push(f.slice(dist.length + 1));
+  }
+  add('security: zero captcha / Turnstile references in artifact (TVD-025)',
+    hits.length ? 'FAIL' : 'PASS',
+    hits.length
+      ? `turnstile references found in: ${hits.slice(0, 6).join(', ')} — this is a stale pre-TVD-025 template; re-hydrate from current premium-redesign HEAD and delete TURNSTILE_* vars from the Pages project`
+      : 'no cf-turnstile / challenges.cloudflare.com / TURNSTILE_ references — also ensure TURNSTILE_* env vars are absent on the Pages project (validator cannot read them)');
+}
+
 /* MANUAL rows — a script cannot verify these; never fake a PASS */
 for (const [check, evidence] of [
   ['console: zero errors on load+scroll+interaction', 'Run each page in a browser; interact with drawer, FAQ, form step 1, a card CTA'],
@@ -397,7 +413,7 @@ for (const [check, evidence] of [
   ['forms fit 390x650 and 320px, consent visible, no internal scroll', 'Viewport-emulate and measure the drawer/survey/gate submit + consent'],
   ['reduced-motion: fully static, final values shown', 'Enable OS reduced motion and reload every page'],
   ['lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1', 'Run Lighthouse on the staging URL'],
-  ['wiring: IDs 1–10 + Meta CAPI/offline live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing, external-tracking stitch + dedupe (ONE contact), booking calendar live test (or intentionally empty); Cloudflare secrets META_CAPI_ACCESS_TOKEN + META_OFFLINE_WEBHOOK_SECRET (standing MANUAL — validator cannot read); 6 GHL Meta fields + stage→/api/meta-offline; Test Events Lead DEDUPED; Schedule on real booking; one QualifiedLead offline; Events Manager custom conversions for QualifiedLead/Showed'],
+  ['wiring: IDs 1–10 + Meta CAPI/offline live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, native form submit (no captcha — TVD-025), phone routing, external-tracking stitch + dedupe (ONE contact), booking calendar live test (or intentionally empty); Cloudflare secrets META_CAPI_ACCESS_TOKEN + META_OFFLINE_WEBHOOK_SECRET (standing MANUAL — validator cannot read); 6 GHL Meta fields + stage→/api/meta-offline; Test Events Lead DEDUPED; Schedule on real booking; one QualifiedLead offline; Events Manager custom conversions for QualifiedLead/Showed'],
   ['post-deploy API smoke: / + theme.css 200, /api/inventory 200 JSON, POST /api/lead not 503, D1 schema matches functions/db/schema.sql', 'curl after EVERY deploy (wrangler only, never raw API); /api/* answering with HTML = functions/ never deployed — redeploy from the dist root; 503 "Lead vault" = GOOGLE_SHEETS_ID missing (set prod + preview); inventory 500 = D1 schema drift — diff sqlite_master vs functions/db/schema.sql, additive ALTER only; paste the curl output in the completion report — a report without it is not done'],
   ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md'],
   ['rich results: JS-emitted JSON-LD valid per page type', 'Run homepage (FAQPage), a category page (BreadcrumbList), and a live product URL (Product+Breadcrumb) through https://search.google.com/test/rich-results']
