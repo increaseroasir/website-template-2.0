@@ -60,14 +60,23 @@ Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs
 3. Photos per `images.md` + upload checklist; `check-assets`  
 4. `--validate` or `--validate --profile rush` → PASS + 48h list  
 5. **CP1** (rush = one message: config + defaults + photos + 48h)  
-6. Hydrate `dist/`  
+6. Hydrate `dist/` — FIRST `git fetch` + confirm template HEAD = remote HEAD
+   (or the exact SHA in the work order; mismatch = STOP, never build stale);
+   after hydrate confirm `dist/functions/api/` exists  
 7. `gate --env staging` then wiring live-verify  
 8. **CP2** (rush = gate table + screenshots)  
-9. Prod gate → DNS; IndexNow/GSC per checklist  
+9. Prod gate → DNS; IndexNow/GSC per checklist; deploy = `wrangler pages
+   deploy` from the dist root; smoke-curl `/api/inventory` (JSON, not HTML)
+   + `/api/lead` (not 503) and paste output in the report  
 10. Post-launch cellular test lead + day-7 crawl log  
 
 ## Gotchas
 
-- Empty Turnstile = silent lead loss.  
+- Empty Turnstile = silent lead loss. Template must be ≥ `24a700c`
+  (WTV-017/018 dynamic + WTV-019 static homepage/book widgets).  
 - Offline Meta needs 6 GHL fields + stage webhook; CAPI token only in Cloudflare secrets.  
-- Missing hero blocks even in rush; non-hero photos → gradient wells + 48h list.
+- Missing hero blocks even in rush; non-hero photos → gradient wells + 48h list.  
+- `/api/*` answering with HTML = `functions/` missing from the deploy —
+  gate.mjs FAILs an artifact without `dist/functions/api/`.  
+- Reports claiming done without evidence (template SHA, gate JSON, smoke
+  curls) get sent back — paste the proof.

@@ -44,6 +44,9 @@ CHECKS (static)
   ghl-tracking    tracking.ghlExternalTracking is "" (stripped) or a valid
                   https URL; never tokenized; staging must NOT carry a real
                   ID (staging page views would pollute client attribution)
+  functions       dist/functions/api/{lead,inventory,meta-offline,booking}.js
+                  exist — an artifact without them deploys a site with no
+                  working APIs (build #1 regression)
 
 MANUAL rows are emitted for: console errors, duplicate IDs after inventory
 injection, form fit at 390x650/320, reduced-motion, Lighthouse, live wiring
@@ -359,6 +362,19 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('ghl-external-tracking: empty-stripped or valid https, never on staging', status, evidence);
 }
 
+/* 14. functions/: server code ships with the artifact (build #1 regression:
+   a "patch-only" redeploy dropped functions/ entirely — every /api/* route
+   returned the homepage HTML while the static gate still reported all-PASS) */
+{
+  const required = ['functions/api/lead.js', 'functions/api/inventory.js', 'functions/api/meta-offline.js', 'functions/api/booking.js'];
+  const missing = required.filter(f => !existsSync(join(dist, f)));
+  add('functions: server code present in artifact (lead/inventory/meta-offline/booking)',
+    missing.length ? 'FAIL' : 'PASS',
+    missing.length
+      ? `missing from dist: ${missing.join(', ')} — deploying this ships a site with NO working APIs (forms dead, grids empty, /api/* answers with HTML); re-hydrate (the rsync recipe keeps functions/) and run wrangler pages deploy from the dist root`
+      : `all ${required.length} API entry points present in dist/functions/`);
+}
+
 /* MANUAL rows — a script cannot verify these; never fake a PASS */
 for (const [check, evidence] of [
   ['console: zero errors on load+scroll+interaction', 'Run each page in a browser; interact with drawer, FAQ, form step 1, a card CTA'],
@@ -367,7 +383,7 @@ for (const [check, evidence] of [
   ['reduced-motion: fully static, final values shown', 'Enable OS reduced motion and reload every page'],
   ['lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1', 'Run Lighthouse on the staging URL'],
   ['wiring: IDs 1–10 + Meta CAPI/offline live-verified on the CLIENT account', 'references/wiring.md — GA4 Realtime, Pixel Test Events, Clarity, GHL webhook+widget, Closebot, Turnstile submit, phone routing, external-tracking stitch + dedupe (ONE contact), booking calendar live test (or intentionally empty); Cloudflare secrets META_CAPI_ACCESS_TOKEN + META_OFFLINE_WEBHOOK_SECRET (standing MANUAL — validator cannot read); 6 GHL Meta fields + stage→/api/meta-offline; Test Events Lead DEDUPED; Schedule on real booking; one QualifiedLead offline; Events Manager custom conversions for QualifiedLead/Showed'],
-  ['post-deploy API smoke: / + theme.css 200, /api/inventory 200 JSON, POST /api/lead not 503, D1 schema matches functions/db/schema.sql', 'curl after EVERY deploy (wrangler only, never raw API); 503 "Lead vault" = GOOGLE_SHEETS_ID missing (set prod + preview); inventory 500 = D1 schema drift — diff sqlite_master vs functions/db/schema.sql, additive ALTER only'],
+  ['post-deploy API smoke: / + theme.css 200, /api/inventory 200 JSON, POST /api/lead not 503, D1 schema matches functions/db/schema.sql', 'curl after EVERY deploy (wrangler only, never raw API); /api/* answering with HTML = functions/ never deployed — redeploy from the dist root; 503 "Lead vault" = GOOGLE_SHEETS_ID missing (set prod + preview); inventory 500 = D1 schema drift — diff sqlite_master vs functions/db/schema.sql, additive ALTER only; paste the curl output in the completion report — a report without it is not done'],
   ['device screenshots archived (1440/390 every page)', 'Store with WIRING.md per launch-checklist.md'],
   ['rich results: JS-emitted JSON-LD valid per page type', 'Run homepage (FAQPage), a category page (BreadcrumbList), and a live product URL (Product+Breadcrumb) through https://search.google.com/test/rich-results']
 ]) add(check, 'MANUAL', evidence);

@@ -19,6 +19,12 @@ Produce `clients/<name>/dist/` — the only place `build-config.mjs` may run.
 
 - `dealer-site-intake` `--validate <name>` printed **PASS**
 - HUMAN CHECKPOINT 1 signed off
+- **Template checkout is CURRENT**: `git fetch origin` then confirm
+  `git rev-parse HEAD` equals `git rev-parse origin/premium-redesign` — or
+  exactly the commit SHA named in the work order. On mismatch or pull
+  failure, STOP and report; never hydrate the copy that happens to be on
+  disk (build #1 shipped a partial fix this way). Record the SHA in
+  WIRING.md build provenance.
 
 ## Build (from repo root)
 
@@ -38,9 +44,12 @@ rm -rf scripts
 
 ## After build
 
-1. Preview from `dist/` (not the template root).  
-2. Hand off to `dealer-site-launch` for `gate.mjs --env staging`.  
-3. Stress case: hydrate with `templates/hostile.config.js` semantics when testing empty/edge tokens.
+1. Confirm `dist/functions/api/` exists (lead, inventory, meta-offline,
+   booking) — the rsync recipe keeps it; if it is missing, the deploy will
+   ship a site with no working APIs and gate.mjs will FAIL it.
+2. Preview from `dist/` (not the template root).  
+3. Hand off to `dealer-site-launch` for `gate.mjs --env staging`.  
+4. Stress case: hydrate with `templates/hostile.config.js` semantics when testing empty/edge tokens.
 
 ## Laws
 
