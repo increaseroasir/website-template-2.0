@@ -297,8 +297,11 @@ body.financing-lock{height:100vh;height:100dvh;overflow:hidden}
    (TVD-027). Slim strip → dark ambient hero → two-column body with a sticky
    glass price card (recipe C). Rich sections hide when their field is empty. */
 
-/* Slim strip */
-.pdp-strip{background:var(--navy-abyss);color:#fff;border-bottom:1px solid rgba(255,184,28,.22)}
+/* Slim strip — animated gold sweep hairline on its bottom edge (top of page) */
+.pdp-strip{position:relative;background:var(--navy-abyss);color:#fff}
+.pdp-strip::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,#FFD46A 50%,transparent) no-repeat,rgba(255,184,28,.28);
+  background-size:38% 100%;animation:pp-sweep 5.5s ease-in-out infinite}
 /* padding-block only — .wrap owns the horizontal padding */
 .pdp-strip-inner{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding-block:10px}
 .pdp-back{font-family:'Spline Sans Mono',monospace;font-size:.66rem;font-weight:600;letter-spacing:.12em;
@@ -330,9 +333,27 @@ body.financing-lock{height:100vh;height:100dvh;overflow:hidden}
 .pdp-sub{max-width:560px;margin:0 0 22px;color:rgba(255,255,255,.78);
   font-size:clamp(.98rem,2.3vw,1.08rem);line-height:1.6}
 .pdp-hero-actions{display:flex;gap:12px;flex-wrap:wrap}
-.pdp-hero-media .media-frame{border-radius:20px;overflow:hidden;
-  border:1px solid rgba(255,255,255,.14);box-shadow:0 34px 70px -30px rgba(0,0,0,.7)}
-.pdp-hero-media img{display:block;width:100%;height:100%;aspect-ratio:1.25/1;object-fit:cover}
+/* Breathing gold frame around the product photo: a 2px gradient ring with a
+   bright arc that travels around the image, plus a soft glow that breathes. */
+.pdp-hero-media .media-frame{position:relative;border-radius:20px;overflow:hidden;padding:2px;
+  box-shadow:0 34px 70px -30px rgba(0,0,0,.7);
+  animation:pdp-breathe 4.6s ease-in-out infinite}
+.pdp-hero-media .media-frame::before{content:"";position:absolute;left:50%;top:50%;
+  width:230%;aspect-ratio:1/1;transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg,
+    rgba(255,184,28,.22) 0deg 268deg,
+    rgba(255,212,106,.85) 306deg,
+    #FFB81C 322deg,
+    rgba(255,184,28,.22) 352deg 360deg);
+  animation:pdp-orbit 7s linear infinite}
+.pdp-hero-media img{position:relative;z-index:1;display:block;width:100%;height:100%;
+  aspect-ratio:1.25/1;object-fit:cover;border-radius:18px}
+@keyframes pdp-orbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes pdp-breathe{
+  0%,100%{box-shadow:0 34px 70px -30px rgba(0,0,0,.7),0 0 26px -8px rgba(255,184,28,.22)}
+  50%{box-shadow:0 34px 70px -30px rgba(0,0,0,.7),0 0 46px -4px rgba(255,184,28,.5)}}
+@media(prefers-reduced-motion:reduce){
+  .pdp-hero-media .media-frame,.pdp-hero-media .media-frame::before{animation:none}}
 @media(min-width:900px){.pdp-hero-grid{grid-template-columns:1.05fr .95fr;gap:44px}}
 
 /* Two-column body */
