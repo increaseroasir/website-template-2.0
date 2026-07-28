@@ -88,6 +88,12 @@
           if (success === 'inline') {
             var out = form.querySelector('[data-template-result]');
             if (out) { out.hidden = false; out.textContent = result.data.message || 'Thank you. Your request has been received.'; }
+            /* Optional follow-up card (e.g. booking invite) revealed under the confirmation */
+            var reveal = (form.closest('section') || form.parentElement || document).querySelector('[data-lead-reveal]');
+            if (reveal && reveal.hidden) {
+              reveal.hidden = false;
+              if (reveal.scrollIntoView) reveal.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
           } else if (success === 'unlock') {
             if (window.DealerInventoryGate && typeof window.DealerInventoryGate.unlock === 'function') window.DealerInventoryGate.unlock();
             else location.href = (body.getAttribute('data-gate-return-path') || '/inventory.html') + '?inventory_unlocked=1';
