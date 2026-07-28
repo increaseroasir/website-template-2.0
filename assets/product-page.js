@@ -134,12 +134,23 @@
     var status = product.inventoryStatus || product.status || 'available';
     var availabilityEl = document.querySelector('[data-pdp-availability]');
     if (availabilityEl) {
-      var availabilityCopy = {
-        available: 'This is an in-stock unit. Availability can change without notice.',
-        pending: 'This unit is pending sale \u2014 ask about it or similar in-stock models.',
-        sold: 'This unit has sold \u2014 ask about similar in-stock models.'
-      };
-      availabilityEl.textContent = availabilityCopy[status] || availabilityCopy.available;
+      if (status === 'available') {
+        /* Live scarcity line: pulsing dot + real stock count (never invented) */
+        var qty = parseInt(product.quantity, 10);
+        var qtyLabel;
+        if (qty === 1) qtyLabel = 'Only <b>1</b> left in stock';
+        else if (qty >= 2 && qty <= 3) qtyLabel = 'Only <b>' + qty + '</b> in stock';
+        else if (qty >= 4) qtyLabel = '<b>' + qty + '</b> in stock';
+        else qtyLabel = 'In stock now';
+        availabilityEl.classList.add('pdp-availability--live');
+        availabilityEl.innerHTML = '<span class="pdp-live" aria-hidden="true"></span><span>' + qtyLabel + ' \u2014 availability can change without notice</span>';
+      } else {
+        var availabilityCopy = {
+          pending: 'This unit is pending sale \u2014 ask about it or similar in-stock models.',
+          sold: 'This unit has sold \u2014 ask about similar in-stock models.'
+        };
+        availabilityEl.textContent = availabilityCopy[status] || '';
+      }
     }
     /* Paradise-style status callout: pending/sold units get a prominent box in
        the price card so the visitor knows exactly what happens next. */
