@@ -92,13 +92,13 @@
   <div class="inventory-gate-panel">
     <div class="inventory-gate-header">
       <img src="{{CLIENT_LOGO_URL}}" alt="" class="inventory-gate-logo" width="140" height="36" decoding="async">
-      <p class="inventory-gate-eyebrow">{{INVENTORY_GATE_EYEBROW}}</p>
-      <h2 id="inventory-gate-title">{{INVENTORY_GATE_HEADLINE}}</h2>
-      <p class="inventory-gate-lead">{{INVENTORY_GATE_LEAD}}</p>
+      <p class="inventory-gate-eyebrow">{{INVENTORY_GATE_EYEBROW|Local Pricing Unlocked Instantly}}</p>
+      <h2 id="inventory-gate-title">{{INVENTORY_GATE_HEADLINE|See today's local price on every in-stock model}}</h2>
+      <p class="inventory-gate-lead">{{INVENTORY_GATE_LEAD|Tell us where to send your pricing and the full inventory opens right away.}}</p>
       <div class="inventory-gate-stats">
-        <span class="inventory-gate-stat">{{INVENTORY_GATE_STAT_1}}</span>
-        <span class="inventory-gate-stat">{{INVENTORY_GATE_STAT_2}}</span>
-        <span class="inventory-gate-stat">{{INVENTORY_GATE_STAT_3}}</span>
+        <span class="inventory-gate-stat">{{INVENTORY_GATE_STAT_1|In stock now}}</span>
+        <span class="inventory-gate-stat">{{INVENTORY_GATE_STAT_2|Local delivery}}</span>
+        <span class="inventory-gate-stat">{{INVENTORY_GATE_STAT_3|Financing available}}</span>
       </div>
     </div>
     <div class="inventory-gate-scroll-body">
@@ -130,7 +130,7 @@
       </div>
     </div>
     <div class="inventory-gate-footer">
-      <p class="inventory-gate-trust">{{INVENTORY_GATE_TRUST}}</p>
+      <p class="inventory-gate-trust">{{INVENTORY_GATE_TRUST|Family-owned · Real people answer · Opt out anytime}}</p>
     </div>
   </div>
 </div>
@@ -138,11 +138,15 @@
 <!-- ============================================================
      HOT TUB INVENTORY — outcome-focused listings
      ============================================================ -->
+<!-- Premium hero band (canon: dark gold-accented band → light grid) -->
+<section class="inv-hero">
+  <p class="inv-hero-kicker">{{INVENTORY_KICKER|In Stock &amp; Wet-Test Ready}}</p>
+  <h1>{{INVENTORY_HEADLINE|Today's In-Stock Hot Tubs, Swim Spas &amp; Saunas}}</h1>
+  <p class="inv-hero-sub">{{INVENTORY_SUBHEAD|Every unit below is on our floor or in our local warehouse. Filter by what matters — we'll have it running for your visit.}}</p>
+</section>
 <section class="ht-inventory-section" id="hot-tub-inventory">
-  <h1>{{INVENTORY_HEADLINE}}</h1>
-  <p class="ht-sub">{{INVENTORY_SUBHEAD}}</p>
   <div class="ht-chips" id="htChips" aria-label="Filter hot tubs by use case"></div>
-  <p class="ht-pay-disclaimer">{{INVENTORY_PAYMENT_DISCLAIMER}}</p>
+  <p class="ht-pay-disclaimer">{{INVENTORY_PAYMENT_DISCLAIMER|*Example monthly payments on approved credit. See store for details.}}</p>
   <p class="ht-results-bar"><strong id="htResultCount">0</strong> hot tubs shown</p>
   <div class="ht-grid" id="htGrid" aria-live="polite" data-inventory-source="/api/inventory?category=hot-tub" data-card-style="inventory" data-inventory-empty="No hot tubs are published yet."></div>
   <p class="inv-no-results" id="htNoResults" hidden>No hot tubs match this filter. <button type="button" class="btn-reset ht-chip-reset" style="display:inline;width:auto;padding:8px 14px;margin-top:8px;">Show All Hot Tubs</button></p>
@@ -232,11 +236,11 @@
 </main>
 </div><!-- /.inventory-gated-wrap -->
 <section class="ht-help-section">
-  <h2>{{INVENTORY_HELP_HEADLINE}}</h2>
-  <p>{{INVENTORY_HELP_COPY}}</p>
+  <h2>{{INVENTORY_HELP_HEADLINE|Not sure which model fits?}}</h2>
+  <p>{{INVENTORY_HELP_COPY|Tell us your space, budget, and how many people will use it — we'll shortlist the best two or three fits, no pressure.}}</p>
   <button type="button" class="ht-help-cta" data-open-lead data-product="Help Me Pick" id="htHelpCta">Help Me Pick A Hot Tub <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>
 </section>
-<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER}}</p>
+<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER|Prices, payments, and availability can change without notice. Photos may show optional features.}}</p>
 <!-- ============================================================
      FOOTER
      ============================================================ -->

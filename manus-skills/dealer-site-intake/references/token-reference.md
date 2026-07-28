@@ -177,6 +177,7 @@ facts, see content-rules.md).
 | `INVENTORY_HEADLINE` | inventory.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `INVENTORY_HELP_COPY` | inventory.html | text | body copy | — | YES | ≤300 chars per block |
 | `INVENTORY_HELP_HEADLINE` | inventory.html | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
+| `INVENTORY_KICKER` | inventory.html | text | kicker | In Stock &amp; Wet-Test Ready | no | ≤32 chars (mono uppercase pill above H1) |
 | `INVENTORY_LEAD_CAMPAIGN` | inventory.html | attribute | text | inventory | no | — |
 | `INVENTORY_LEAD_SOURCE` | inventory.html | attribute | text | inventory-gate | no | — |
 | `INVENTORY_META_DESCRIPTION` | inventory.html | meta | body copy | — | YES | ≤300 chars per block |
