@@ -47,6 +47,7 @@ Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs
 |---|---|
 | `references/intake-sheet-mapping.md` | Sheet or brief arrives |
 | `references/token-reference.md` / `content-rules.md` / `images.md` | Writing tokens/copy/photos |
+| `references/promo-labels.md` | Filling product `promo_label` / pricing fields |
 | `references/wiring.md` | Live-verify IDs 1–13 |
 | `references/decision-table.md` | Ambiguous situation |
 | `references/launch-checklist.md` | Pre/post launch humans |

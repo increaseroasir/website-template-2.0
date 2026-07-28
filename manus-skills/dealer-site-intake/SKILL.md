@@ -56,7 +56,8 @@ Load on demand (Level 3):
 2. `references/content-rules.md` — length ceilings + honesty rules  
 3. `references/token-reference.md` — token dictionary  
 4. `references/images.md` — dims, `_ALT` pairs, LCP  
-5. `templates/CLIENT_UPLOAD_CHECKLIST.md` — photo labels for the dealer  
+5. `references/promo-labels.md` — promo-label pick-list + no-price card behavior  
+6. `templates/CLIENT_UPLOAD_CHECKLIST.md` — photo labels for the dealer  
 
 Templates used by `--init` live in `templates/`.
 

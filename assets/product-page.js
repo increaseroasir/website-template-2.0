@@ -53,9 +53,14 @@
     setText('.hero [data-open-lead].btn-outline', product.monthly_payment ? 'Ask About ' + money(product.monthly_payment) + '/mo' : 'Ask About Payments');
     setText('.section .grid.grid-2 h2', product.promo_label || 'Available Inventory');
     setText('.section .grid.grid-2 .lead', product.delivery_promise || 'This product is part of current public inventory.');
-    setText('.section .panel h3', 'Current Price');
+    var hasPrice = Number(product.price || 0) > 0;
+    setText('.section .panel h3', hasPrice ? 'Current Price' : 'Today\u2019s Local Price');
     var price = document.querySelector('.section .panel p:nth-of-type(1)');
-    if (price) price.textContent = money(product.price);
+    if (price) {
+      /* No price on record → never print "$0"; drive the price request instead */
+      price.textContent = hasPrice ? money(product.price) : 'Ask \u2014 we\u2019ll text it back in minutes';
+      if (!hasPrice) price.classList.add('price-ask');
+    }
     var payment = document.querySelector('.section .panel p:nth-of-type(2)');
     if (payment) payment.textContent = product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : 'Ask for payment options';
     document.querySelectorAll('.section.alt .panel').forEach(function (panel, index) {
