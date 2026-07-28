@@ -161,3 +161,10 @@ Funnel code shipped in `69ffe02`; this module makes fulfillment (skill/gate/chec
 |---|---|---|
 | Injected form widget had no `data-sitekey` | **FIXED** | `assets/native-form.js` injected `<div class="cf-turnstile" data-theme="light">` with no sitekey — widget never issued a token, so when `TURNSTILE_SECRET_KEY` is set the server rejects every lead from the 7 native-form pages ("Please complete the security check"). Now reads `data-turnstile-site-key` body attr or `tracking.turnstileSiteKey` config and omits the widget entirely when no key exists (server skips verification when secret unset — consistent). |
 | Verification | **PASS** | `node --check` clean; brand:guard green; hostile prod gate 13 PASS / 0 FAIL / 8 MANUAL. Live console error on sun-pool-spa inventory page ("Invalid or missing type for parameter sitekey") was the symptom. |
+
+## WTV-018 — Injected Turnstile widget never renders when api.js loads first (found live by Manus on sun-pool-spa, 2026-07-28)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Invisible Turnstile on native-form pages | **FIXED** | Turnstile's implicit scan only runs when its api.js executes; widgets injected by `native-form.js` after that scan never render — no visible control, no token, server rejects the lead. Manus patched its deployed dist (211bc446) to unblock the live test; this commit upstreams the fix into the certified template per Law 1: explicit `turnstile.render()` with 250ms retry (max 80) for any unrendered `.cf-turnstile[data-sitekey]`, iframe/mounted checks prevent double-render. Dist-level patch is now superseded — rebuilds from this head carry the fix. |
+| Verification | **PASS** | `node --check` clean; brand:guard green; hostile prod gate green; live proof: owner completed the visible challenge on 211bc446 and the lead passed Turnstile → Sheets → GHL end-to-end. |
