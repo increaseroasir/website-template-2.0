@@ -125,6 +125,7 @@ export async function onRequestPost(context) {
 
   const turnstile = await verifyTurnstile(body.turnstile_token || body.turnstileToken, env, request);
   if (!turnstile.ok) return jsonResponse({ ok: false, error: turnstile.error }, 400, env, request);
+  if (turnstile.unverified) lead.securityUnverified = true;
 
   const slot = String(body.slot || '');
   const preferred = String(body.preferred_day || '');

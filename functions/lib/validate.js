@@ -92,13 +92,25 @@ export function validateLeadPayload(body, opts) {
 
 export async function verifyTurnstile(token, env, request) {
   if (!env.TURNSTILE_SECRET_KEY) return { ok: true, skipped: true };
-  if (!token) return { ok: false, error: 'Please complete the security check.' };
-  const form = new URLSearchParams();
-  form.set('secret', env.TURNSTILE_SECRET_KEY);
-  form.set('response', token);
-  form.set('remoteip', request.headers.get('CF-Connecting-IP') || '');
-  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
-  const data = await res.json();
-  if (!data.success) return { ok: false, error: 'Security check failed. Please try again.' };
-  return { ok: true };
+  /* FAIL-OPEN (WTV-020/TVD-024): a missing token means either a bot that
+     skipped the widget OR a widget that failed to render (missing sitekey,
+     blocked/slow script, injection race). Rejecting here silently cost 100%
+     of leads on affected pages while the site looked fine. Accept the lead
+     flagged `unverified` — GHL tags it `security-unverified` so the client
+     can filter — and reject ONLY when Cloudflare explicitly says a supplied
+     token is invalid. A lost lead costs more than a spam row. */
+  if (!token) return { ok: true, unverified: true };
+  try {
+    const form = new URLSearchParams();
+    form.set('secret', env.TURNSTILE_SECRET_KEY);
+    form.set('response', token);
+    form.set('remoteip', request.headers.get('CF-Connecting-IP') || '');
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
+    const data = await res.json();
+    if (!data.success) return { ok: false, error: 'Security check failed. Please try again.' };
+    return { ok: true };
+  } catch (err) {
+    /* siteverify outage must never block lead capture */
+    return { ok: true, unverified: true };
+  }
 }

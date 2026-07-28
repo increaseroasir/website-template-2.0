@@ -56,6 +56,7 @@ export async function onRequestPost(context) {
   await enrichLeadFromInventory(env, lead);
   const turnstile = await verifyTurnstile(body.turnstile_token || body.turnstileToken, env, request);
   if (!turnstile.ok) return jsonResponse({ ok: false, error: turnstile.error }, 400, env, request);
+  if (turnstile.unverified) lead.securityUnverified = true;
 
   let duplicateMatch = null;
   try { duplicateMatch = await findRecentDuplicate(env, lead.email, lead.phone); } catch (err) { console.error('findRecentDuplicate failed:', err.message || err); }
