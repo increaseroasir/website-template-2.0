@@ -29,7 +29,12 @@
     var success = container.getAttribute('data-lead-success') || 'thank-you';
     var prefix = container.getAttribute('data-field-prefix') || (source.replace(/[^a-z0-9]+/gi, '-') + '-');
     var disclaimer = container.getAttribute('data-disclaimer') || cfg('client.leadDisclaimer', 'By submitting, I consent to receive calls, texts, and emails from this dealer. Consent is not required to purchase.');
-    container.innerHTML = '<p class="inventory-gate-form-error dealer-lead-error" hidden></p><form class="form-grid" data-lead-form data-lead-source="' + source + '" data-lead-success="' + success + '" novalidate>' + honeypot(prefix) + hiddenProductFields(prefix) + (container.getAttribute('data-show-financing') === 'true' ? financingField(prefix, container.getAttribute('data-financing-required') !== 'false') : '') + contactFields(prefix, container.getAttribute('data-show-message') === 'true') + '<div class="cf-turnstile" data-theme="light"></div><button class="btn btn-gold" type="submit">' + submitLabel + '</button><p class="fine-print">' + disclaimer + '</p><p class="fine-print" data-template-result></p></form>';
+    /* Turnstile implicit rendering requires data-sitekey on the widget; without it the
+       widget never issues a token and the server rejects the lead when
+       TURNSTILE_SECRET_KEY is set. Omit the widget entirely when no site key exists. */
+    var siteKey = document.body.getAttribute('data-turnstile-site-key') || cfg('tracking.turnstileSiteKey', '');
+    var turnstileWidget = siteKey ? '<div class="cf-turnstile" data-sitekey="' + siteKey + '" data-theme="light"></div>' : '';
+    container.innerHTML = '<p class="inventory-gate-form-error dealer-lead-error" hidden></p><form class="form-grid" data-lead-form data-lead-source="' + source + '" data-lead-success="' + success + '" novalidate>' + honeypot(prefix) + hiddenProductFields(prefix) + (container.getAttribute('data-show-financing') === 'true' ? financingField(prefix, container.getAttribute('data-financing-required') !== 'false') : '') + contactFields(prefix, container.getAttribute('data-show-message') === 'true') + turnstileWidget + '<button class="btn btn-gold" type="submit">' + submitLabel + '</button><p class="fine-print">' + disclaimer + '</p><p class="fine-print" data-template-result></p></form>';
     container.classList.add('is-ready');
   }
   window.DealerNativeForm = { render: render, renderAll: function () { document.querySelectorAll('[data-native-form]').forEach(render); if (window.DealerLeadForm && typeof window.DealerLeadForm.bindAll === 'function') window.DealerLeadForm.bindAll(); } };

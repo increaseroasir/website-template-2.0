@@ -154,3 +154,10 @@ Funnel code shipped in `69ffe02`; this module makes fulfillment (skill/gate/chec
 |---|---|---|
 | Hardcoded footer copy on 7 pages | **FIXED** | `"{{CLIENT_MARKET}} dealer website template. Inventory, pricing, CRM routing, and tracking are client-configured."` shipped as visible copy on 404, thank-you, contact, financing, admin, active-inventory, active-inventory/SLUG. Replaced with `"Proudly serving {{CLIENT_MARKET}} with in-stock hot tubs, swim spas, and saunas."` (no new token — CLIENT_MARKET is REQUIRED tier; engine fallback syntax cannot nest tokens, verified in `scripts/build-config.mjs`). |
 | Hostile dist re-verified | **PASS** | Same replacement applied hydrated in `clients/hostile-rehearsal/dist`; brand:guard green; prod gate 13 PASS / 0 FAIL / 8 MANUAL. |
+
+## WTV-017 — native-form Turnstile widget missing sitekey (found via prod Lighthouse audit, sun-pool-spa, 2026-07-28)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Injected form widget had no `data-sitekey` | **FIXED** | `assets/native-form.js` injected `<div class="cf-turnstile" data-theme="light">` with no sitekey — widget never issued a token, so when `TURNSTILE_SECRET_KEY` is set the server rejects every lead from the 7 native-form pages ("Please complete the security check"). Now reads `data-turnstile-site-key` body attr or `tracking.turnstileSiteKey` config and omits the widget entirely when no key exists (server skips verification when secret unset — consistent). |
+| Verification | **PASS** | `node --check` clean; brand:guard green; hostile prod gate 13 PASS / 0 FAIL / 8 MANUAL. Live console error on sun-pool-spa inventory page ("Invalid or missing type for parameter sitekey") was the symptom. |
