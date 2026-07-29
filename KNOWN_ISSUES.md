@@ -552,3 +552,16 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix:** `functions/api/readiness.js` reports, per variable, what the runtime actually sees — `present`, `empty` (bound but blank/whitespace), or `missing` (not bound) — and never the value or its length. Gated on `ADMIN_PASSWORD` with a length-independent comparison. `scripts/verify-runtime-secrets.mjs` (`npm run secrets:verify -- https://<host>`) exits non-zero on any required gap and prints the `printf`/redeploy remedy. Added to the launch checklist as the **first** item, ahead of all other verification.
 - **Rule / prevention:** a secret counts as set only when code inside the Function confirms it non-empty. Re-run per deployment host — Pages binds env vars at **deploy time**, so a saved value does not reach a running Function until the next deploy, and a pass on one hash says nothing about the next.
 - **Status:** FIXED in `premium-redesign`. Verified against six cases including a newline-only token (reports `empty`), an unbound variable (`missing`), value non-disclosure, and a missing D1 binding.
+
+---
+
+### [WTV-048] An empty calendar `openHours` does not disable booking — GHL serves a default window
+
+- **Date:** 2026-07-29
+- **Severity:** High (client-facing; offers appointments the store cannot honor)
+- **Symptom / Finding:** Sun Pool's "Showroom Visit" calendar (`vabCEWrNBtZixDOhkIcG`) returned 180 free slots across 10 days, all inside **05:00–13:30 Pacific**. A pool and spa showroom does not open at 5 AM, and no afternoon or evening slot was ever offered.
+- **Root cause:** the calendar has `openHours: {}` and `availabilities: []` — no business hours configured at all. GHL does not treat that as "unavailable"; it falls back to a default window. The location timezone was correct (`America/Los_Angeles`), so this was **not** a timezone bug — the returned window simply corresponds to a default 08:00–17:00 rendered against Pacific. Two failure modes look identical from the booking page: correct hours in the wrong zone, and no hours at all.
+- **Why it survived provisioning:** `GHL_BOOKING_CALENDAR_ID` had never been set in Cloudflare or `tokens.env`, so `/book/` was silently falling back to a plain contact form. Nobody had seen the calendar render, so nobody had seen 5 AM. Supplying the ID is what exposed it.
+- **Fix (client config, not code):** populate `openHours` on the calendar with the store's posted hours in store-local time, then re-check `free-slots`.
+- **Rule / prevention:** launch-checklist item added under booking. Verify `openHours` is populated **and** that the first and last returned slot fall inside business hours — do not infer either from a rendered page. Critically, `npm run secrets:verify` reports the booking row as PASS whenever the ID is merely present, so a green readiness check is **not** evidence the calendar is usable. Readiness answers "is it wired", never "is it configured sensibly".
+- **Status:** ID now set in both Cloudflare environments and validated (correct location, active, 30-min slots). **Hours remain unconfigured — a pre-DNS blocker.**

@@ -292,6 +292,18 @@ native widget bookings. Never assume — verify in Execution Logs.
 
 - [ ] Calendar has at least one **assigned team member** (free slots can show
       without one, but appointment creation fails without it).
+- [ ] **Calendar `openHours` is not empty, and the offered window matches the
+      store's posted hours in store-local time** (WTV-048). An empty
+      `openHours: {}` does NOT disable booking — GHL silently serves a default
+      window, which on Sun Pool's "Showroom Visit" calendar rendered as
+      **05:00–13:30 Pacific**: 5 AM appointments offered, no afternoon or evening
+      slot ever shown. Check it directly rather than by eye:
+      `GET /calendars/<id>` → `openHours` must be populated, and
+      `GET /calendars/<id>/free-slots?startDate=<ms>&endDate=<ms>` must return a
+      first and last slot inside business hours.
+      `secrets:verify` cannot catch this — it confirms `GHL_BOOKING_CALENDAR_ID`
+      is present, not that the hours behind it are sane, so a PASS on the booking
+      row is not evidence the calendar is usable.
 - [ ] Load `/book/` on the live domain — real slots render (not request-mode).
 - [ ] Make **one real test booking** end-to-end from the page.
 - [ ] Appointment appears in GHL at the **correct store-local time** with the
