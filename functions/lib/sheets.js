@@ -15,8 +15,8 @@ function base64UrlEncode(input) {
   return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 async function getGoogleAccessToken(env) {
-  const email = env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const privateKey = (env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+  const email = String(env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '').trim();
+  const privateKey = String(env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '').trim().replace(/\\n/g, '\n');
   if (!email || !privateKey) throw new Error('Google Sheets credentials are not configured.');
   const now = Math.floor(Date.now() / 1000);
   const header = base64UrlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
@@ -34,14 +34,18 @@ function leadRow(lead, ghlStatus, ghlContactId, ghlError) {
 }
 async function sheetsRequest(env, path, options) {
   const token = await getGoogleAccessToken(env);
-  if (!env.GOOGLE_SHEETS_ID) throw new Error('GOOGLE_SHEETS_ID is not configured.');
-  const res = await fetch(SHEETS_BASE + '/' + env.GOOGLE_SHEETS_ID + path, Object.assign({}, options || {}, { headers: Object.assign({ Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, (options && options.headers) || {}) }));
+  const sheetId = String(env.GOOGLE_SHEETS_ID || '').trim();
+  if (!sheetId) throw new Error('GOOGLE_SHEETS_ID is ' + (env.GOOGLE_SHEETS_ID === undefined ? 'not bound to this deployment' : 'bound but empty') + '.');
+  const res = await fetch(SHEETS_BASE + '/' + sheetId + path, Object.assign({}, options || {}, { headers: Object.assign({ Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, (options && options.headers) || {}) }));
   const text = await res.text();
   const data = text ? JSON.parse(text) : {};
   if (!res.ok) throw new Error('Sheets API ' + res.status + ': ' + (data.error && data.error.message ? data.error.message : text));
   return data;
 }
-export function sheetsConfigured(env) { return !!(env.GOOGLE_SHEETS_ID && env.GOOGLE_SERVICE_ACCOUNT_EMAIL && env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY); }
+/* Trim before testing (WTV-050). A whitespace-only secret is truthy, so an
+   untrimmed check reports "configured" and then fails at Google with an opaque
+   auth error instead of a config error — the same defect fixed in ghlConfigured. */
+export function sheetsConfigured(env) { return !!(String(env.GOOGLE_SHEETS_ID || '').trim() && String(env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '').trim() && String(env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '').trim()); }
 /* Anchor table detection at A1 — never an open A:AI span (WTV-046).
    Sheets' append uses the supplied range to SEARCH FOR A TABLE, then writes
    after the last row of whichever table it finds, starting at THAT TABLE's

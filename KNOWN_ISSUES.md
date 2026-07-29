@@ -583,3 +583,15 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
   - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` — **no local copy**; requires minting a new key for the service account in GCP.
   - `META_CAPI_ACCESS_TOKEN`, `META_OFFLINE_WEBHOOK_SECRET` — **not locally recoverable**; require regeneration in Meta and re-issuing the webhook secret to the GHL workflow.
 - **Status:** `ADMIN_PASSWORD` and all three `GHL_*` variables re-set via `wrangler` in both environments. Whether the remaining four secrets survived is answered by `/api/readiness` on the next deployment — which is the first time that question has been answerable at all.
+
+---
+
+### [WTV-050] The trim defect fixed in `ghlConfigured` was still live in Sheets and Meta CAPI
+
+- **Date:** 2026-07-29
+- **Severity:** High (silent; converts a config error into an opaque auth error)
+- **Symptom / Finding:** `sheetsConfigured()` and `metaCapiConfigured()` tested raw values with `!!(env.X && env.Y)`. A whitespace-only secret — precisely what `echo` produces — is **truthy**, so both reported "configured" and the integration then failed at Google or Meta with an authentication error that names nothing useful. Reproduced: with every value set to a single space or newline, both returned `true` while `ghlConfigured()` correctly returned `false`.
+- **Root cause:** WTV-045 was fixed only where it was observed. The same expression existed in two other integrations and was never swept for. Fixing the instance rather than the class left two-thirds of the defect in place — and the remaining two are worse, because a blank Sheets key means **lead data loss** rather than a CRM handoff failure.
+- **Fix:** both helpers now trim before testing, and every value is trimmed at its point of use: the service-account email and private key before JWT signing, `GOOGLE_SHEETS_ID` before URL interpolation, `META_CAPI_ACCESS_TOKEN` in the payload, `META_PIXEL_ID` in the Graph URL. `GOOGLE_SHEETS_ID`'s error now distinguishes *not bound* from *bound but empty*, per TVD-049.
+- **Rule / prevention:** a fix for a config-reading defect is incomplete until every `*Configured()` helper and every direct `env.X` interpolation has been swept. Untrimmed values reaching a URL are especially deceptive — a whitespace pixel ID produces a request to `/ /events`, whose error mentions neither the variable nor the whitespace.
+- **Status:** FIXED. Verified both directions: whitespace-only now returns `false` for all three helpers, real values still return `true`.

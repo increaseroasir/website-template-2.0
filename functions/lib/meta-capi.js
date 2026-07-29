@@ -35,8 +35,9 @@ function normalizePhone(phone) {
   return digits;
 }
 
+/* Trim before testing (WTV-050) — see sheetsConfigured. */
 export function metaCapiConfigured(env) {
-  return !!(env.META_CAPI_ACCESS_TOKEN && env.META_PIXEL_ID);
+  return !!(String(env.META_CAPI_ACCESS_TOKEN || '').trim() && String(env.META_PIXEL_ID || '').trim());
 }
 
 export function defaultValueForEvent(env, eventName) {
@@ -124,11 +125,11 @@ export async function sendMetaEvent(env, request, lead, opts = {}) {
   }
   if (Object.keys(custom_data).length) event.custom_data = custom_data;
 
-  const payload = { data: [event], access_token: env.META_CAPI_ACCESS_TOKEN };
+  const payload = { data: [event], access_token: String(env.META_CAPI_ACCESS_TOKEN || '').trim() };
   const testCode = env.META_TEST_EVENT_CODE || env.TEST_EVENT_CODE;
   if (testCode) payload.test_event_code = testCode;
 
-  const res = await fetch(META_GRAPH + '/' + env.META_PIXEL_ID + '/events', {
+  const res = await fetch(META_GRAPH + '/' + String(env.META_PIXEL_ID || '').trim() + '/events', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
