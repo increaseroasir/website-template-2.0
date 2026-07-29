@@ -59,6 +59,20 @@ workflow until stage names match the snapshot.
 - [ ] **PageSpeed Insights** on staging — `npm run psi:mobile -- <url>`, not
       local Lighthouse (TVD-044): Perf ≥85 mobile / ≥95 desktop, A11y ≥95,
       SEO ≥95, CLS <0.1.
+      NOTE: the script's own hard floor is Perf ≥70 mobile / ≥90 desktop. Where
+      this list and the script disagree, the script is what exits non-zero —
+      raise it with the owner rather than guessing which number gates the launch.
+      Three PSI traps, all handled by the script — do not hand-roll API calls:
+      (a) PSI may return a **cached** analysis for a repeated request, so N calls
+      can be one measurement; the script counts distinct `fetchTime` values and
+      warns. Never cache-bust with a query parameter — that bypasses the
+      Cloudflare edge cache and measures a cold start instead of the site.
+      (b) PSI's runner speed swings (`benchmarkIndex` 135-1294 observed on one
+      URL, moving Perf 67→87). A number within ~10 points of the floor is not a
+      pass; re-run it. Discard the first run against a fresh deploy hash.
+      (c) `lcp-breakdown-insight` phases are relative weights, not a
+      decomposition — they do not sum to LCP. Rank them; never quote them as
+      absolute timings. When comparing two builds, trust **LCP over the score**.
 - [ ] **No image preload in the built artifact (TVD-045 / WTV-042):**
       `rg 'as="image"' dist/` must return **nothing**. The hero is never
       preloaded — the preload takes the top priority slot under slow 4G and
