@@ -729,3 +729,15 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix:** `CARD_STATUS` is exported as `window.DealerCardStatus` so `home.js` reads the same strings rather than keeping a second copy; `syncHidden` lets status beat the visit toggle, since a sold unit has no price to send; and `index.html` gained the two missing hidden inputs.
 - **Rule / prevention:** when a product-status behaviour changes, exercise **all three** card surfaces and **both** lead paths. `npm run verify:cards` does this: it renders the real template against a stubbed inventory, clicks the CTA on the category grid, the inventory grid, and the homepage rail, and asserts the values each form would post.
 - **Status:** FIXED, with an automated assertion.
+
+---
+
+### [WTV-061] `tokens.env` is a bash script, so an unquoted value with a space exports nothing — and the page silently renders the template default
+- **Date:** 2026-07-29
+- **Client:** Sun Pool & Spa Supply (template-wide hazard)
+- **Symptom:** two tokens added to the client file, `SAUNAS_NAV_LABEL="Find Your Match"` and `FOOTER_BLURB`, came back **empty** when the file was sourced. An audit of the whole file found seven such values, including `CLIENT_NAME`, `CLIENT_LEGAL_NAME`, `CLIENT_MARKET`, and `CLIENT_PHONE`.
+- **Root cause:** hydrate loads the file with `set -a && . tokens.env`, so bash — not a config parser — reads it. `CLIENT_NAME=Sun Pool & Spa Supply` is parsed as the assignment `CLIENT_NAME=Sun` scoped to the command `Pool`, with `& Spa Supply` backgrounded. Nothing is exported. `build-config.mjs` then reads `process.env` and finds the key absent.
+- **Why no gate caught it:** nearly every token in the markup is written `{{TOKEN|default}}`. An absent env var is indistinguishable from "client accepted the default", so the placeholder scanner sees no unresolved `{{...}}` and passes. The nav would have kept reading **Saunas** for a dealer that stocks none, and the failure would have surfaced only as a client complaint. The four `CLIENT_*` keys happened to be masked because they are also carried in `client.config.js`, which is why the live site still shows the right business name.
+- **Fix:** all seven values wrapped in double quotes. Added `scripts/check-tokens-env.mjs` (`npm run check:tokens <path>`), which fails on any unquoted value containing shell-significant characters (space, `&`, `|`, `;`, `$`, backtick, glob), on duplicate keys (the last assignment wins, so editing an earlier one does nothing — the same file had 46 of these), and on invalid variable names. It warns on empty values, which is how a silently-defaulted token now becomes visible.
+- **Rule / prevention:** run `npm run check:tokens clients/<name>/tokens.env` before hydrate, and treat a non-zero exit as a build blocker. Quote **every** value in a client tokens file, even single words — the next edit that adds a space will not announce itself.
+- **Status:** FIXED, with an automated check.

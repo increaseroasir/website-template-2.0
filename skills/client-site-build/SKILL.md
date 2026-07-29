@@ -46,6 +46,11 @@ node skills/client-site-build/scripts/indexnow.mjs --init|--submit <domain> --di
 
 Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs` inside dist only (see manus-skills hydrate SKILL for rsync excludes).
 
+Run `npm run check:tokens clients/<name>/tokens.env` first and treat a non-zero
+exit as a blocker. That file is sourced by bash, so an unquoted value containing
+a space or `&` exports nothing; since tokens carry `|default` in the markup, the
+page renders the default and every gate still passes (WTV-061).
+
 `_redirects` is copied verbatim and never token-hydrated, so client rules live in
 `clients/<name>/redirects.extra` and are appended to `dist/_redirects` after the
 copy. That covers legacy 301s from the site being replaced and any nav slot

@@ -26,6 +26,19 @@ Produce `clients/<name>/dist/` — the only place `build-config.mjs` may run.
   disk (build #1 shipped a partial fix this way). Record the SHA in
   WIRING.md build provenance.
 
+## Lint the token file first (blocking)
+
+```bash
+npm run check:tokens clients/<name>/tokens.env
+```
+
+A non-zero exit blocks the build. `tokens.env` is sourced by bash below, not
+parsed, so `CLIENT_NAME=Sun Pool & Spa Supply` exports **nothing** — and because
+almost every token is written `{{TOKEN|default}}`, the page then renders the
+template's default and the placeholder scanner passes. The client's real copy is
+gone with no error anywhere. The linter also catches duplicate keys, where the
+last assignment silently wins over any earlier edit (WTV-061).
+
 ## Build (from repo root)
 
 ```bash
