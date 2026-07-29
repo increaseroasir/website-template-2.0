@@ -183,6 +183,58 @@ function injectMetaPixel() {
 }
 injectMetaPixel();
 
+/* ---- client.config.js + tracking.js inlined into the head (WTV-040).
+   Both shipped as plain <script src> in the head with no defer, so each one
+   cost a full serialized round trip before the browser could paint anything.
+   Lighthouse measured 565ms of render blocking apiece on a 3G-class RTT —
+   together the single largest render-blocking cost on the page, larger than
+   home.css.
+
+   They are inlined rather than deferred because ORDER IS LOAD-BEARING: every
+   end-of-body script reads window.CLIENT_CONFIG, and defer would move these
+   two head scripts to AFTER those body scripts, leaving CLIENT_CONFIG
+   undefined. Inlining keeps the exact execution order the page has today and
+   simply removes the two network fetches, so tracking initializes EARLIER
+   than before — which is the direction TVD-037 requires.
+
+   Both files stay on disk: gate check 1 asserts client.config.js exists at the
+   dist root, and other pages/tools may still request them. ---- */
+function inlineBlockingHeadScripts() {
+  const targets = [
+    { name: 'client.config.js', path: join(root, 'client.config.js'), tag: /<script src="[^"]*client\.config\.js"><\/script>/ },
+    { name: 'tracking.js', path: join(root, 'assets', 'tracking.js'), tag: /<script src="[^"]*assets\/tracking\.js"><\/script>/ }
+  ];
+  for (const t of targets) {
+    let body;
+    try {
+      body = readFileSync(t.path, 'utf8');
+    } catch {
+      console.warn(`Inline skipped: ${t.name} not found — leaving the blocking <script src> in place.`);
+      continue;
+    }
+    /* A literal </script> inside the body would close the wrapper early. Neither
+       file contains one today; this keeps that from becoming a silent XSS-shaped
+       bug if either ever gains a string like "</script>". */
+    const safe = body.replace(/<\/script/gi, '<\\/script');
+    const snippet = `<script data-inlined="${t.name}">\n${safe}\n</script>`;
+    let count = 0;
+    (function inject(dir) {
+      for (const name of readdirSync(dir)) {
+        if (name === 'node_modules' || name === '.wrangler' || name === '.git') continue;
+        const file = join(dir, name);
+        if (statSync(file).isDirectory()) { inject(file); continue; }
+        if (!/\.html$/i.test(name)) continue;
+        const text = readFileSync(file, 'utf8');
+        if (!t.tag.test(text)) continue;
+        writeFileSync(file, text.replace(t.tag, () => snippet));
+        count++;
+      }
+    })(root);
+    console.log(`Inlined ${t.name} into ${count} HTML file(s) (was render-blocking).`);
+  }
+}
+inlineBlockingHeadScripts();
+
 /* ---- SEO artifacts: robots.txt + sitemap.xml, generated into the build root.
    Skipped (with a loud warning) when no usable domain exists — e.g. when this
    script is run against the raw template instead of a hydrated dist/. ---- */

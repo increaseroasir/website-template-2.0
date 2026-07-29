@@ -119,6 +119,19 @@ without evidence, is not done and will be sent back.
       regardless of markup. The script marks SEO `EXEMPT` there. Re-run on the
       canonical domain after DNS cutover and only sign off on SEO then.
       `is-crawlable` failing on `/admin/` and `/404.html` is intentional.
+      **Never gate on a cold deployment hash (WTV-041 / TVD-042):** a fresh
+      Pages hash has an empty edge cache, and the LCP element is the hero
+      image, so the first request for it goes to origin. Measured on one
+      unchanged URL and one machine: cold = performance 89 / LCP 3.72s, warm =
+      99 / LCP 1.71s. The script now warms the edge, runs 3x, and reports the
+      median, so just running it is enough — but do not substitute a hand-run
+      Lighthouse or a single `--no-warm` pass for it, and do not open a
+      template defect off one cold number.
+      **Read the `benchmarkIndex` line before believing a failure.** It prints
+      the runner's CPU speed. Below ~1800 the same site loses several points
+      for reasons that have nothing to do with the site; below ~1000 the score
+      is not comparable at all. A slow runner is never exempted from the
+      threshold — it just tells you whether to fix the site or the machine.
 - [ ] **Launch photography is compressed (TVD-039):**
       `npm run images:optimize <dir> --out <dir>` before writing any image URL
       into `tokens.env`. Targets WebP, max edge 1600px, <=120KB, EXIF stripped.

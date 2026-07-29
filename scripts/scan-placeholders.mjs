@@ -59,8 +59,11 @@ if (mode === 'launch') {
      Clarity, GHL external) fails silently. */
   try { statSync(join(root, 'client.config.js')); }
   catch { failures.push('client.config.js is missing from the dist root — all runtime tracking would silently fail.'); }
-  /* 2. Every HTML page that loads tracking.js must carry the hardcoded pixel
-     (fbevents.js). Catches a skipped injectMetaPixel() (e.g. empty META_PIXEL_ID). */
+  /* 2. Every HTML page that carries tracking must carry the hardcoded pixel
+     (fbevents.js). Catches a skipped injectMetaPixel() (e.g. empty META_PIXEL_ID).
+     "Carries tracking" means either the legacy <script src> form or the inlined
+     form — keying only on the src string would have turned this whole check into
+     a silent no-op the moment WTV-040 inlined it. */
   (function checkPixel(dir) {
     for (const name of readdirSync(dir)) {
       if (ignoredDirs.has(name)) continue;
@@ -68,8 +71,20 @@ if (mode === 'launch') {
       if (statSync(file).isDirectory()) { checkPixel(file); continue; }
       if (!/\.html$/i.test(name)) continue;
       const text = readFileSync(file, 'utf8');
-      if (text.includes('assets/tracking.js') && !text.includes('fbevents.js')) {
-        failures.push(relative(root, file) + ' loads tracking.js but has no hardcoded Meta pixel (fbevents.js) — injectMetaPixel() was skipped.');
+      const rel = relative(root, file);
+      const hasTracking = text.includes('assets/tracking.js') || text.includes('data-inlined="tracking.js"');
+      if (hasTracking && !text.includes('fbevents.js')) {
+        failures.push(rel + ' carries tracking.js but has no hardcoded Meta pixel (fbevents.js) — injectMetaPixel() was skipped.');
+      }
+      /* Either head script left as <script src> is two serialized round trips of
+         render blocking (565ms each on 3G-class RTT) — the single biggest
+         render-blocking cost the page had before WTV-040. Seeing the src form in
+         a built artifact means inlineBlockingHeadScripts() did not run. */
+      if (/<script src="[^"]*client\.config\.js"><\/script>/.test(text)) {
+        failures.push(rel + ' still loads client.config.js as a blocking <script src> — inlineBlockingHeadScripts() did not run (WTV-040).');
+      }
+      if (/<script src="[^"]*assets\/tracking\.js"><\/script>/.test(text)) {
+        failures.push(rel + ' still loads tracking.js as a blocking <script src> — inlineBlockingHeadScripts() did not run (WTV-040).');
       }
     }
   })(root);

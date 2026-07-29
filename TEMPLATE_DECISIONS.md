@@ -296,3 +296,24 @@ This file records why the template is built the way it is. Every architectural d
 - **Reasoning:** Widening a safety rule is only safe when the widened rule is *more* specific than the one it replaces, not less. Counting preloads cannot distinguish a stray third-party font from the LCP hero; checking roles can, and it additionally catches two failure modes the count never could — a font preload that never promotes to a stylesheet, and one with no `<noscript>` fallback, which would serve a completely unstyled page to any visitor with JS disabled.
 - **General rule:** When a gate fails on an artifact that is genuinely correct, the gate is wrong. Fix the rule to state its reason. Never patch the artifact to satisfy a rule, and never downgrade the rule to a warning to get past it.
 - **Applies to:** Both `gate.mjs` copies from this commit forward.
+
+### [TVD-041] Config and tracking are inlined into the head, never deferred
+- **Date:** 2026-07-29
+- **Decision:** `client.config.js` and `assets/tracking.js` are inlined into every HTML page at build time by `inlineBlockingHeadScripts()`. They are never loaded as `<script src>`, and they are never given `defer` or `async`.
+- **Reasoning:** As `<script src>` they cost a full serialized round trip each — Lighthouse measured 565ms apiece, together more render-blocking cost than the stylesheet (WTV-040). `defer` is not an option: every end-of-body script reads `window.CLIENT_CONFIG`, and deferred head scripts run *after* classic end-of-body scripts, so `CLIENT_CONFIG` would be undefined for all of them. Inlining preserves the exact execution order while deleting the network wait, so tracking initializes earlier than it did before. Both files stay on disk because gate check 1 asserts `client.config.js` exists at the dist root.
+- **Enforcement:** `scan-placeholders.mjs --launch` and both `gate.mjs` copies hard-fail a built page that still carries either file as `<script src>`, and the pixel check matches the inlined form as well as the `src` form.
+- **Applies to:** Every page, from this commit forward.
+
+### [TVD-042] A Lighthouse number is not evidence until it is warm, repeated, and attributed to a machine
+- **Date:** 2026-07-29
+- **Decision:** `scripts/lighthouse-check.mjs` primes the CDN edge before scoring, runs three times and reports the median, and prints the runner's `benchmarkIndex`. A single cold run is never a launch gate. `--no-warm` remains for deliberately measuring a cold start.
+- **Reasoning:** On one unchanged URL and one machine, a cold Pages edge scored 89 with a 3.72s LCP and the next two warm runs scored 99 with a 1.7s LCP (WTV-041). Every visitor after the first hits a warm edge, so warm is the representative measurement — and a fresh deployment hash is *guaranteed* cold, which means deploy-then-audit measures Cloudflare's cold start rather than the site. Separately, holding everything fixed and only slowing the CPU walked the score from 99 to 89, so a score with no `benchmarkIndex` beside it cannot distinguish a slow runner from a regression.
+- **This is not score inflation:** warming and median-of-three remove noise in both directions, and neither changes a byte the browser downloads. A slow runner is reported loudly but is **never** exempted from the threshold — the operator is told to check the machine, not given a pass.
+- **Applies to:** Every performance sign-off, staging and production.
+
+### [TVD-043] Performance hypotheses are tested before they are shipped
+- **Date:** 2026-07-29
+- **Decision:** No performance change lands on the strength of it being a well-known best practice. It lands on an A/B measurement against a mirror of the real artifact, with at least three runs per arm.
+- **Reasoning:** Four confident, textbook fixes were tried against Sun Pool's deployed homepage and three of them were harmful or useless (WTV-041): `fetchpriority="high"` on the hero preload cost 0.5s of LCP *and is exactly what Lighthouse's own insight recommends*; inlining the stylesheet cost 4s of LCP; stripping the hero's blur and backdrop-filter decorations changed paint cost by under 3% and would have cost the design; halving the hero's bytes changed nothing because the image is upscaled on mobile, not oversized. Only one of the four — inlining the two blocking head scripts — actually helped, and it was the one nobody had proposed.
+- **Corollary:** Lighthouse opportunities are hypotheses, not instructions. `uses-responsive-images` and `lcp-discovery-insight` both pointed at the wrong thing here.
+- **Applies to:** Every future performance change to the shared template.

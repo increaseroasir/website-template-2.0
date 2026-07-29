@@ -140,11 +140,24 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   }
   for (const p of pages) {
     const text = readFileSync(p, 'utf8');
-    if (text.includes('assets/tracking.js') && !text.includes('fbevents.js')) {
-      problems.push(`${relative(dist, p)}: loads tracking.js but has no hardcoded Meta pixel (fbevents.js) — build-config.mjs injectMetaPixel() was skipped (empty META_PIXEL_ID?)`);
+    const rel = relative(dist, p);
+    /* Match the inlined form too. Keying only on the src string would have made
+       this check a silent no-op the moment WTV-040 inlined tracking.js. */
+    const hasTracking = text.includes('assets/tracking.js') || text.includes('data-inlined="tracking.js"');
+    if (hasTracking && !text.includes('fbevents.js')) {
+      problems.push(`${rel}: carries tracking.js but has no hardcoded Meta pixel (fbevents.js) — build-config.mjs injectMetaPixel() was skipped (empty META_PIXEL_ID?)`);
+    }
+    /* Either head script left as <script src> is a serialized round trip of
+       render blocking (Lighthouse measured 565ms each on 3G-class RTT) and means
+       inlineBlockingHeadScripts() did not run (WTV-040). */
+    if (/<script src="[^"]*client\.config\.js"><\/script>/.test(text)) {
+      problems.push(`${rel}: client.config.js still loads as a blocking <script src> — inlineBlockingHeadScripts() did not run (WTV-040)`);
+    }
+    if (/<script src="[^"]*assets\/tracking\.js"><\/script>/.test(text)) {
+      problems.push(`${rel}: tracking.js still loads as a blocking <script src> — inlineBlockingHeadScripts() did not run (WTV-040)`);
     }
   }
-  add('tracking: client.config.js present + Meta pixel hardcoded in every page', problems.length ? 'FAIL' : 'PASS', problems.length ? cap(problems) : `${pages.length} pages checked`);
+  add('tracking: config+pixel present, head scripts inlined (not render-blocking)', problems.length ? 'FAIL' : 'PASS', problems.length ? cap(problems) : `${pages.length} pages checked`);
 }
 
 /* 3. duplicate ids per page */
