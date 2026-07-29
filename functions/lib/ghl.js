@@ -2,7 +2,11 @@ const GHL_BASE = 'https://services.leadconnectorhq.com';
 const GHL_VERSION = '2021-07-28';
 const CUSTOM_FIELD_CACHE_MS = 5 * 60 * 1000;
 let customFieldCache = {};
-function ghlHeaders(token) { return { Authorization: 'Bearer ' + token, Version: GHL_VERSION, Accept: 'application/json', 'Content-Type': 'application/json' }; }
+/* Trim the token at every point of use. A secret saved with `echo` instead of
+   `printf '%s'` carries a trailing newline, which is truthy — so the config
+   check passes and GHL answers 401, producing an auth mystery instead of a
+   config error. Trimming makes that whole class of mistake harmless (WTV-045). */
+function ghlHeaders(token) { return { Authorization: 'Bearer ' + String(token || '').trim(), Version: GHL_VERSION, Accept: 'application/json', 'Content-Type': 'application/json' }; }
 function uniqueTags(tags) { const seen = {}; return tags.filter(tag => { if (!tag || seen[tag]) return false; seen[tag] = true; return true; }); }
 function normalizeKey(key) { key = String(key || '').trim(); return key.indexOf('contact.') === 0 ? key.slice('contact.'.length) : key; }
 function isMetaAttribution(lead) { const source = String(lead.utmSource || '').toLowerCase(); const medium = String(lead.utmMedium || '').toLowerCase(); return !!(lead.fbclid || lead.fbc || ['facebook','fb','meta','instagram','ig','threads'].includes(source) || ((source.includes('facebook') || source.includes('instagram') || source.includes('meta')) && (!medium || ['paid','cpc','ppc','social'].includes(medium)))); }
@@ -70,10 +74,33 @@ async function searchContact(env, locationId, lead) {
   if (!res.ok) return null;
   return data.contact || (data.contacts && data.contacts[0]) || null;
 }
-export function ghlConfigured(env) { return !!(env.GHL_API_TOKEN && env.GHL_LOCATION_ID); }
+/* Trimmed truthiness, so this agrees with ghlConfigError below: a
+   whitespace-only secret previously read as configured and produced a 401. */
+export function ghlConfigured(env) {
+  return !!(String(env.GHL_API_TOKEN || '').trim() && String(env.GHL_LOCATION_ID || '').trim());
+}
+/* Name the variable that is actually missing, and say whether it is absent or
+   present-but-empty. "GHL not configured" cost a full diagnostic round trip on
+   the Sun Pool launch (WTV-045): both variables existed in the Production Pages
+   environment and were bound to the deployment, so the bare message sent the
+   operator hunting a phantom production misconfiguration when the likely cause
+   was a *preview* invocation, where GHL_API_TOKEN is genuinely absent. A gate
+   message that does not identify its own subject is a message that costs an
+   hour. This string lands in the Lead Vault ghl_error column, so it is readable
+   after the fact without re-running anything. */
+export function ghlConfigError(env) {
+  const missing = [];
+  for (const name of ['GHL_API_TOKEN', 'GHL_LOCATION_ID']) {
+    const value = env[name];
+    if (value === undefined || value === null) missing.push(`${name} (not bound to this deployment)`);
+    else if (String(value).trim() === '') missing.push(`${name} (bound but empty)`);
+  }
+  if (!missing.length) return '';
+  return `GHL not configured: ${missing.join(', ')}. Pages env vars bind at DEPLOY time — if you just saved them, redeploy.`;
+}
 export async function upsertContact(env, lead) {
-  if (!ghlConfigured(env)) return { ok: false, error: 'GHL not configured' };
-  const locationId = env.GHL_LOCATION_ID;
+  if (!ghlConfigured(env)) return { ok: false, error: ghlConfigError(env) };
+  const locationId = String(env.GHL_LOCATION_ID || '').trim();
   try {
     const existing = await searchContact(env, locationId, lead);
     const payload = buildContactPayload(env, lead, locationId, !existing);

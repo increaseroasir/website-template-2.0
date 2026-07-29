@@ -25,7 +25,7 @@ const DAYS_AHEAD = 10;
 const MAX_SLOTS_PER_DAY = 14;
 
 function calHeaders(env) {
-  return { Authorization: 'Bearer ' + env.GHL_API_TOKEN, Version: CALENDAR_VERSION, Accept: 'application/json', 'Content-Type': 'application/json' };
+  return { Authorization: 'Bearer ' + String(env.GHL_API_TOKEN || '').trim(), Version: CALENDAR_VERSION, Accept: 'application/json', 'Content-Type': 'application/json' };
 }
 function bookable(env) { return ghlConfigured(env) && !!env.GHL_BOOKING_CALENDAR_ID; }
 
@@ -147,7 +147,7 @@ export async function onRequestPost(context) {
       headers: calHeaders(env),
       body: JSON.stringify({
         calendarId: env.GHL_BOOKING_CALENDAR_ID,
-        locationId: env.GHL_LOCATION_ID,
+        locationId: String(env.GHL_LOCATION_ID || '').trim(),
         contactId: contact.contactId,
         startTime: slot,
         title: 'Showroom Visit — ' + (lead.firstName || 'Website') + (lead.lastName && lead.lastName !== '.' ? ' ' + lead.lastName : ''),

@@ -496,3 +496,29 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
   5. **A finding that reverses a previous rule must be re-measured on a real deployment before the rule changes.** WTV-042 changed an enforced gate on lab evidence alone. That is the process failure, and it is a worse defect than the wrong number.
 - **Tooling added:** `scripts/psi-ab.mjs` — paired interleaved PSI A/B with retry on PSI's transient 500s, per-pair deltas, distinct-analysis counting, and an explicit overlap verdict. Built because `psi-check.mjs` aborts a whole batch on one transient error and cannot compare two URLs.
 - **Status:** Rule reverted. Template unchanged (neutral). **WTV-041's LCP lever remains OPEN** — the target is FCP 3.01s, not the hero image.
+
+---
+
+### [WTV-045] "GHL not configured" named no variable, so a lead failure could not be diagnosed without a round trip
+
+- **Date:** 2026-07-29
+- **Severity:** Medium (diagnosability; the lead itself was safely captured)
+- **Symptom / Finding:** A marked native-form test wrote correctly to the Lead Vault but recorded `status: FAILED`, `ghl_error: GHL not configured`, and no contact ID. The message named neither variable, so the only available next step was to ask the owner to re-save credentials that were, in fact, already correct.
+- **What inspection actually showed** (Cloudflare Pages API, project `sun-pool-spa`):
+
+  | Environment | `GHL_API_TOKEN` | `GHL_LOCATION_ID` | Bound to deployment? |
+  |---|---|---|---|
+  | Production | present (`secret_text`) | present (`secret_text`) | **yes** — verified on `05e33c99` and on all 6 prior production deployments |
+  | Preview | **absent** | present | absent on all 6 preview deployments |
+
+  Variable names carry no stray whitespace. So Production is configured and bound, and **every preview deployment is missing exactly the variable whose absence produces this error** — which makes a preview-hosted submission the leading explanation, not a production misconfiguration. Secret *values* are not readable through the API, so a bound-but-empty production secret cannot be ruled out by inspection alone.
+- **Root cause of the diagnostic dead end:** `upsertContact()` returned the bare string `'GHL not configured'`, and `functions/api/lead.js` used the same string as its default. One message covered four distinct states — variable not bound, bound but empty, bound but whitespace, and preview-vs-production confusion — and distinguished none of them. That string is what lands in the Lead Vault `ghl_error` column, so it is also the permanent record of the failure.
+- **Second defect found while testing the fix:** `ghlConfigured()` used raw truthiness, so a **whitespace-only or trailing-newline token read as configured**. The request then went out with a malformed `Authorization` header and GHL answered 401 — an auth mystery instead of a config error. This is the same trailing-newline class as the `echo`-vs-`printf '%s'` webhook-secret bug already recorded in this file, and it was one keystroke away from costing another session.
+- **Fix:**
+  - New `ghlConfigError(env)` names each missing variable and distinguishes *not bound to this deployment* from *bound but empty*, and appends the reminder that **Pages environment variables bind at deploy time — saving a variable does not affect deployments already created.**
+  - `ghlConfigured()` now tests trimmed truthiness, so it agrees with `ghlConfigError()` in every state.
+  - The token is trimmed at every point of use (`ghlHeaders` in `lib/ghl.js`, `calHeaders` in `api/booking.js`), and `GHL_LOCATION_ID` likewise, so a secret saved with a trailing newline now **works** rather than 401ing.
+- **Verification:** six-state table asserted directly against the module — both missing, token absent, token empty, token whitespace-only, token with trailing newline, both valid. `ghlConfigured()` and `ghlConfigError()` agree in all six; the trailing-newline case proceeds to the API with a clean header instead of failing auth.
+- **Separate config gap found during the same inspection:** `GHL_BOOKING_CALENDAR_ID` is **empty in both Production and Preview**. `bookable(env)` therefore returns false, so `/book/` never shows live calendar slots and a booking submission falls back to "we will text you shortly to confirm your visit time." This is graceful, not broken — but the booking calendar is not live for this client and nothing surfaced that.
+- **Rule / prevention:** a failure string that will be read later by a human or written to a durable record must name its own subject. "X is not configured" is only acceptable when X is a single variable; where several inputs are involved, name the one that failed and the state it was in.
+- **Status:** FIXED in `premium-redesign`. Requires a redeploy to take effect, as with any Function change.

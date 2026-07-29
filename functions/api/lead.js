@@ -1,7 +1,7 @@
 import { corsHeaders, jsonResponse } from '../lib/cors.js';
 import { validateLeadPayload } from '../lib/validate.js';
 import { appendLeadVault, appendMissedLead, findRecentDuplicate, sheetsConfigured, updateLeadVaultRow } from '../lib/sheets.js';
-import { upsertContact, ghlConfigured } from '../lib/ghl.js';
+import { upsertContact, ghlConfigured, ghlConfigError } from '../lib/ghl.js';
 import { sendFailureAlert } from '../lib/alert.js';
 import { sendLeadEvent } from '../lib/meta-capi.js';
 
@@ -69,7 +69,9 @@ export async function onRequestPost(context) {
     vaultRange = pendingAppend.updates && pendingAppend.updates.updatedRange ? pendingAppend.updates.updatedRange : '';
   } catch (err) { return jsonResponse({ ok: false, error: 'We could not save your request. Please call the store.' }, 500, env, request); }
 
-  let ghlResult = { ok: false, error: 'GHL not configured' };
+  /* Default carries the NAMED missing variable, not a bare "not configured" —
+     this string is what lands in the Lead Vault ghl_error column (WTV-045). */
+  let ghlResult = { ok: false, error: ghlConfigError(env) };
   if (isSentDuplicate && !lead.productName) ghlResult = { ok: false, error: 'Skipped duplicate', retryable: false };
   else if (ghlConfigured(env)) ghlResult = await upsertContact(env, lead);
   const ghlStatus = isSentDuplicate && !lead.productName ? 'DUPLICATE' : (ghlResult.ok ? 'SENT' : 'FAILED');

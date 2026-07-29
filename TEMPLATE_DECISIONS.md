@@ -383,3 +383,14 @@ This file records why the template is built the way it is. Every architectural d
 - **What this decision explicitly does NOT claim:** that the site is fast. It is not. **FCP is 3.01s in every run of every batch**, the render-blocking critical path is untouched, and ~126KiB of GA4/Meta JavaScript goes unused on first paint. WTV-041's lever is open and WTV-044 identifies the target. Lowering the gate buys time to do that work properly; it does not substitute for it.
 - **Revisit trigger:** once the canonical domain has ~4 weeks of real traffic, compare against Chrome UX Report field data rather than lab scores. Field data reflects the visitors actually being sold to, and is the only honest basis for raising this number back up.
 - **Applies to:** Every client launch from this commit forward.
+
+---
+
+### [TVD-049] An error that will be stored is a report, and a report must name its subject
+
+- **Date:** 2026-07-29
+- **Context:** `'GHL not configured'` was written into the Lead Vault's `ghl_error` column on a failed lead. It covered four different root causes and identified none, so diagnosis required inspecting the Cloudflare API, cross-referencing six deployments, and still ended in "ask the owner to re-save credentials that were already correct" (WTV-045).
+- **Decision:** Any error string that is persisted — to the Lead Vault, to a missed-leads sheet, to an alert email — must identify the specific input that failed and the state it was in (absent, empty, malformed), plus the operational fact needed to act on it. Multi-input guards may not return a single generic string. Errors returned only to a browser are exempt: those stay deliberately vague, because a customer must never see infrastructure detail.
+- **Reasoning:** A persisted error is read hours later by someone who cannot reproduce the moment it occurred. At that point the message is the entire evidence base. `GHL not configured` and `GHL_API_TOKEN (not bound to this deployment)` cost the same number of bytes to produce and differ by about an hour of work to consume.
+- **Corollary — credentials are trimmed at the point of use.** A secret saved with `echo` rather than `printf '%s'` carries a trailing newline, which is truthy: config checks pass and the upstream answers 401, converting a config mistake into an auth mystery. Trim on read, and make the config predicate use trimmed truthiness so it cannot disagree with its own error reporter.
+- **Applies to:** `functions/lib/*.js` and `functions/api/*.js`, and any future integration guard.
