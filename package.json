@@ -13,6 +13,7 @@
     "admin:smoke": "node scripts/admin-inventory-smoke.mjs",
     "ghl:fields:check": "node scripts/verify-ghl-fields.mjs",
     "ghl:fields:create": "node scripts/verify-ghl-fields.mjs --create",
+    "secrets:verify": "node scripts/verify-runtime-secrets.mjs",
     "db:init:local": "wrangler d1 execute DB --local --file=functions/db/schema.sql",
     "db:init:remote": "wrangler d1 execute DB --remote --file=functions/db/schema.sql",
     "leads:reimport-missed": "node scripts/reimport-missed-leads.mjs",

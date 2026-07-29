@@ -5,6 +5,34 @@ MANUAL. Work them at workflow step 8, after the mechanical gate passes.
 Copy the full Part B checklist from `FINAL_DIAL_IN_AND_LAUNCH_GATE.md` into
 the client repo as `LAUNCH_GATE.md`; an unchecked box blocks launch (Law 4).
 
+## Runtime secret verification — run FIRST, on every deployment (WTV-047)
+
+This one **is** mechanical, and it goes ahead of everything else because a blank
+secret invalidates every test that follows it.
+
+- [ ] **`ADMIN_PASSWORD='...' npm run secrets:verify -- https://<deployment-host>`
+      returns exit 0** for the exact hash you are about to test or promote.
+
+A secret is **not** verified because the dashboard lists its key. Cloudflare's API
+returns `"value": ""` for every `secret_text` binding — including ones that
+demonstrably work — so a populated secret and a blank one are indistinguishable
+from outside the deployment. `/api/readiness` reports what the Function actually
+sees: `present`, `empty` (bound but blank/whitespace), or `missing` (not bound).
+
+Two rules this exists to enforce:
+
+1. **Never `echo` a secret.** Use `printf '%s' "$VALUE" | npx wrangler pages
+   secret put NAME --project-name <project>`. `echo` appends a newline. Worse, a
+   pipeline like `echo "$TOKEN" | wrangler ...` writes an **empty** secret and
+   exits 0 when `$TOKEN` is unset in that shell — a completely silent success.
+2. **Re-run after every deploy, per host.** Pages binds environment variables at
+   **deploy time**, so saving a value does not reach a running Function until the
+   next deployment, and a pass on one hash says nothing about the next one.
+
+Cost of skipping it: a production lead reached the Lead Vault with
+`ghl_error: GHL not configured` and no CRM contact, while every control-plane
+check reported Production as correctly configured (WTV-045).
+
 ## Meta CAPI + offline funnel (per-client onboarding — before or with staging)
 
 Code ships ready; these pieces are **location-specific** and silent when missing

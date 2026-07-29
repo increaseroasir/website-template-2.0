@@ -394,3 +394,32 @@ This file records why the template is built the way it is. Every architectural d
 - **Reasoning:** A persisted error is read hours later by someone who cannot reproduce the moment it occurred. At that point the message is the entire evidence base. `GHL not configured` and `GHL_API_TOKEN (not bound to this deployment)` cost the same number of bytes to produce and differ by about an hour of work to consume.
 - **Corollary — credentials are trimmed at the point of use.** A secret saved with `echo` rather than `printf '%s'` carries a trailing newline, which is truthy: config checks pass and the upstream answers 401, converting a config mistake into an auth mystery. Trim on read, and make the config predicate use trimmed truthiness so it cannot disagree with its own error reporter.
 - **Applies to:** `functions/lib/*.js` and `functions/api/*.js`, and any future integration guard.
+
+---
+
+### [TVD-050] Configuration is verified where it is consumed, not where it is declared
+
+**Decision:** for any value the site needs at runtime, the authoritative check runs
+**inside the deployment that will use it**. Control-plane inspection — a dashboard
+listing, an API binding list, a saved-variables screen — is treated as evidence that
+a *name* exists, never that a *value* does.
+
+**Why:** Cloudflare returns `"value": ""` for every `secret_text` binding, working or
+not. Any check built on reading the control plane is structurally incapable of
+distinguishing a live secret from a blank one, so it will report success on a broken
+deployment indefinitely. WTV-045 lost a day to exactly this: three parties inspected
+the same metadata, all read it correctly, all reported "configured", and the Function
+had empty strings the entire time. The failure was not carelessness — it was a method
+that could not return the answer being asked of it.
+
+**Implementation:** `/api/readiness` reports `present` / `empty` / `missing` per
+variable from inside the Function, never the value or its length, gated on
+`ADMIN_PASSWORD`. `npm run secrets:verify -- https://<host>` is the first item on the
+launch checklist and is re-run per deployment host, because Pages binds environment
+variables at deploy time.
+
+**Corollary — distinguish "bound but blank" from "not bound".** They have different
+causes and different fixes: `missing` means nobody set it, `empty` means someone set
+it badly (`echo` newline, or an unset shell variable piped into `secret put`, which
+succeeds silently). Collapsing them into one "not configured" message is what made
+WTV-045 undiagnosable without a round trip (see TVD-049).
