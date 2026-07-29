@@ -9,6 +9,7 @@ const IMAGE_TYPES = new Map([
   ['image/gif', '.gif']
 ]);
 const MAX_IMAGE_BYTES = 6 * 1024 * 1024;
+const R2_UNCONFIGURED = 'UNCONFIGURED';
 async function sha256(value) { const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)); return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join(''); }
 function slugify(value) { return String(value || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 90); }
 function parseJson(value, fallback) { try { return value ? JSON.parse(value) : fallback; } catch (err) { return fallback; } }
@@ -35,9 +36,18 @@ function cleanImageUrl(value) {
     return '';
   }
 }
+function r2PublicBase(env) {
+  const explicit = String(env.R2_PUBLIC_BASE_URL || '').trim();
+  if (explicit && explicit !== R2_UNCONFIGURED) return explicit.replace(/\/$/, '');
+  const id = String(env.R2_PUBLIC_BUCKET_ID || '').trim();
+  if (!id || id === R2_UNCONFIGURED) return '';
+  // The dashboard shows the public host as pub-<id>.r2.dev, so a pasted value
+  // usually carries the prefix this line adds. Accept either form.
+  return 'https://pub-' + id.replace(/^pub-/, '') + '.r2.dev';
+}
 function publicUrl(env, key) {
-  const base = env.R2_PUBLIC_BASE_URL || (env.R2_PUBLIC_BUCKET_ID ? 'https://pub-' + env.R2_PUBLIC_BUCKET_ID + '.r2.dev' : '');
-  return base ? base.replace(/\/$/, '') + '/' + key : key;
+  const base = r2PublicBase(env);
+  return base ? base + '/' + key : key;
 }
 function normalizeProduct(row) {
   return Object.assign({}, row, {
@@ -111,7 +121,8 @@ export async function onRequestPost(context) {
   if (!session) return jsonResponse({ ok: false, error: 'Unauthorized.' }, 401, env, request);
 
   if (url.searchParams.get('action') === 'upload') {
-    if (!env.PRODUCT_IMAGES) return jsonResponse({ ok: false, error: 'PRODUCT_IMAGES bucket is not bound.' }, 503, env, request);
+      if (!env.PRODUCT_IMAGES) return jsonResponse({ ok: false, error: 'PRODUCT_IMAGES bucket is not bound.' }, 503, env, request);
+      if (!r2PublicBase(env)) return jsonResponse({ ok: false, error: 'Image hosting is not configured: R2_PUBLIC_BUCKET_ID is ' + (String(env.R2_PUBLIC_BUCKET_ID || '').trim() ? 'the placeholder "' + String(env.R2_PUBLIC_BUCKET_ID).trim() + '"' : 'not set') + '. Enable public access on the bucket, then set R2_PUBLIC_BUCKET_ID to its bucket ID (or R2_PUBLIC_BASE_URL to a custom domain) and redeploy. Upload refused so no unreachable image URL is saved.' }, 503, env, request);
     const form = await request.formData();
     const file = form.get('image');
     if (!file || typeof file.arrayBuffer !== 'function') return jsonResponse({ ok: false, error: 'Image file is required.' }, 400, env, request);

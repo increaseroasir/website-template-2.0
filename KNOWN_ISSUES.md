@@ -661,3 +661,19 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Why it matters:** without this probe the only way to test a CAPI token is to send a real event, which either pollutes production data or requires a `test_event_code` fetched from Events Manager. Neither is available before the first deploy, which is exactly when you need to know.
 - **Rule / prevention:** verify a CAPI token by probe before setting it, never by scope inspection. Recorded in `wiring.md`.
 - **Status:** FIXED, documented. Sun Pool token verified by probe, then set in production and preview.
+
+---
+
+### [WTV-056] The `UNCONFIGURED` placeholder was never checked in code, so it was treated as a real bucket ID
+
+- **Date:** 2026-07-29
+- **Severity:** High (silently writes dead image URLs into D1 as `primary_image`)
+- **Found on:** Sun Pool, while investigating why `R2_PUBLIC_BUCKET_ID` was literally `UNCONFIGURED` in both Pages environments.
+- **The decision that existed:** `TEMPLATE_DECISIONS.md` ruled that `R2_PUBLIC_BUCKET_ID` stays `UNCONFIGURED` until a verified public R2 URL exists, and that "the admin upload endpoint must return a controlled configuration error rather than upload an image and return a non-public key."
+- **What was actually implemented:** nothing. `rg UNCONFIGURED functions/` returned no matches. `publicUrl()` read `env.R2_PUBLIC_BUCKET_ID ? … : ''`, and the string `"UNCONFIGURED"` is truthy, so it produced `https://pub-UNCONFIGURED.r2.dev/products/<key>`. The upload path guarded only `!env.PRODUCT_IMAGES`. With the bucket bound — as it was on Sun Pool in both environments — an admin upload would have returned HTTP 200, a plausible-looking URL, and saved a permanently dead image link. This is the WTV-053 pattern again: a decision recorded in the ledger but never enforced in code.
+- **Second defect in the same line:** the code prepends `pub-` to build `pub-<id>.r2.dev`, but the Cloudflare dashboard displays the public host *including* that prefix. Anyone copying the value they are shown produced `https://pub-pub-<id>.r2.dev`. The fixture at `clients/hostile-rehearsal/tokens.env` contains exactly that mistake (`pub-0000000000000000`).
+- **Fix:** extracted `r2PublicBase(env)`, which trims, treats the `UNCONFIGURED` sentinel and whitespace-only values as unset, strips a leading `pub-` so either form works, and prefers `R2_PUBLIC_BASE_URL` for a custom domain. The upload handler now returns **503** naming the offending value and refusing the upload, so no unreachable URL is ever stored. `launch-check.mjs` warns when the placeholder survives into `wrangler.toml`, because the resolved-token loop cannot see it.
+- **Verified:** 6/6 cases against the real extracted function — placeholder, unset, whitespace-only all refuse; bare ID, `pub-`-prefixed ID, and custom domain all resolve correctly. Bucket public access enabled and proven end to end: object PUT → public `GET` 200 with correct content type → DELETE → 404.
+- **Sun Pool values:** bucket `sun-pool-spa-product-images`, bound as `PRODUCT_IMAGES` in both environments; bucket ID `24055549503540b0b5ff19237b87d146`; public host `https://pub-24055549503540b0b5ff19237b87d146.r2.dev`.
+- **Rule / prevention:** a sentinel that stands in for a real value must be recognized by the code that consumes it, or it is indistinguishable from data. When a ledger decision says an endpoint "must return a controlled error," grep for the sentinel before ticking the row.
+- **Status:** FIXED. Client-side hydration of the real bucket ID is a build step (see `wrangler.toml` token list).

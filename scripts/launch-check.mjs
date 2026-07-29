@@ -99,6 +99,11 @@ if (existsSync('wrangler.toml')) {
   for (const token of requiredWranglerValues) {
     if (hasUnresolvedToken(wrangler, token)) fail('wrangler.toml still has unresolved token: ' + token);
   }
+  // UNCONFIGURED resolves the token, so the loop above passes. It is a legitimate
+  // deliberate state (TVD), but it disables admin image upload, so say so.
+  if (/R2_PUBLIC_BUCKET_ID\s*=\s*"UNCONFIGURED"/.test(wrangler)) {
+    warn('R2_PUBLIC_BUCKET_ID is the UNCONFIGURED placeholder. Admin image uploads will be refused with a 503 until public access is enabled on the R2 bucket and the real bucket ID is set. Launch is possible; adding inventory photos through the admin panel is not.');
+  }
 }
 
 run('node', ['scripts/scan-placeholders.mjs', '--launch']);
