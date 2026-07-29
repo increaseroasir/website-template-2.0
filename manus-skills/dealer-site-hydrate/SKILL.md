@@ -76,7 +76,47 @@ were hand-edited into `dist/` instead:
   still lands on an empty category grid (TVD-052).
 
 Order matters: Pages applies the first matching rule, so put specific paths
-above wildcards. Verify with the post-deploy smoke, not by reading the file.
+above wildcards. A splat also matches its own directory — `/hp/*` matches `/hp/`
+with an empty splat — so a rule for `/hp/` placed *below* `/hp/*` is unreachable.
+Verify with the post-deploy smoke, not by reading the file.
+
+### This file is a client input, not a repo file
+
+`clients/<name>/` is **not** in the template repo. `tokens.env`,
+`client.config.js`, and `redirects.extra` are delivered per client. Checking out a
+SHA and finding no `redirects.extra` means **it was not supplied yet**, not that
+the client has no rules. Ask for it. Never invent historical 301s, and never
+silently skip the step — a skipped legacy 301 is invisible until the client's
+rankings drop weeks later.
+
+### Deriving legacy rules from evidence
+
+Every source path must be confirmed to exist on the site being replaced, and the
+old site is the only authority for what those paths are:
+
+```bash
+OLD=https://<client-domain>
+
+# 1. Paths linked from the legacy homepage — catches whole sections a brief omits.
+curl -s $OLD/ | rg -o 'href="(/[^"#?]*)"' | sed 's/href="//; s/"$//' \
+  | rg -v '\.(css|js|png|jpe?g|webp|svg|ico|woff2?)$' | sort -u
+
+# 2. The old sitemap, if it publishes one.
+curl -s $OLD/sitemap.xml | rg -o '<loc>[^<]*</loc>' | sed 's/<[^>]*>//g'
+
+# 3. Confirm each candidate really resolves before writing a rule for it.
+for p in /about/ /services/ ...; do
+  printf '%s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' $OLD$p)"
+done
+```
+
+Step 1 is not optional. On Sun Pool the brief listed `/hp/`, but the crawl found
+`/hp/hot-tubs/` and `/hp/swim-spas/` — two ranked category pages that a bare
+`/hp/` rule does not match and that would have 404'd after cutover.
+
+Record in the file's header which paths were verified and when. A rule whose
+source 404s on the old site is forward-looking, not a legacy 301, and should say
+so — otherwise the next person reads it as evidence that the path once existed.
 
 ## After build
 
