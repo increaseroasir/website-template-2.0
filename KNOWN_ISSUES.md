@@ -634,4 +634,30 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **What actually happened:** the item was marked complete on the strength of the **secret name being present**. The stated verification — a Test Events `Lead` deduped across browser and server — was recorded in the same document as *still pending*, and was never performed. The value was never written down anywhere, by correct policy (secrets belong in Cloudflare only). The result is that an empty secret and a correctly-set one produced an identical audit trail, and the box got ticked.
 - **Consequence:** server-side CAPI never functioned (WTV-051). Four days later the first authenticated runtime probe reported `META_CAPI_ACCESS_TOKEN` and `META_PIXEL_ID` as **empty** in both environments. Nothing was lost — the value was almost certainly never set. There is nothing to recover; the token must be reissued from Meta Events Manager.
 - **Rule / prevention:** a deliverable whose verification is "pending" is **not** `[x]`. Where a value cannot be recorded, the checkbox must be justified by a **behavioral** proof, not by the presence of a name — `npm run secrets:verify` for the binding, then the stated live test. The same ledger pattern marked `META_OFFLINE_WEBHOOK_SECRET` complete with "GHL handoff still pending"; it was also empty at runtime.
-- **Status:** rule recorded. `META_PIXEL_ID` restored, `META_OFFLINE_WEBHOOK_SECRET` regenerated, `META_CAPI_ACCESS_TOKEN` pending reissue from Meta.
+- **Status:** rule recorded. `META_PIXEL_ID` restored, `META_OFFLINE_WEBHOOK_SECRET` regenerated, `META_CAPI_ACCESS_TOKEN` reissued and set in both environments 2026-07-29 (see WTV-055).
+
+---
+
+### [WTV-054] Under OAuth login, only the first `pages secret put` succeeds — the rest demand an API token that is not actually required
+
+- **Date:** 2026-07-29
+- **Severity:** Medium (costs a cycle and invites the wrong workaround)
+- **Symptom:** `printf '%s' "$V" | wrangler pages secret put META_CAPI_ACCESS_TOKEN --project-name sun-pool-spa` succeeded against **production**. The identical command with `--env preview`, run seconds later in the same shell, failed with: *"In a non-interactive environment, it's necessary to set a CLOUDFLARE_API_TOKEN environment variable for wrangler to work."* `wrangler pages secret list` then failed the same way.
+- **Why the message is misleading:** the OAuth session was fine. `wrangler whoami` listed `pages (write)` and `d1 (write)`, and the stored OAuth bearer authenticated against `GET /accounts/{id}/pages/projects/sun-pool-spa` returning `success: true`. Only wrangler's own Pages code path insisted on an API token. Note also that `GET /user/tokens/verify` returns `Invalid API Token` for a **valid** OAuth bearer — that endpoint validates API tokens only, so it is useless as an OAuth health check and will send you hunting a non-existent auth failure.
+- **Fix:** hand wrangler the stored OAuth bearer as `CLOUDFLARE_API_TOKEN`, read out of `~/Library/Preferences/.wrangler/config/default.toml`. Both the preview `put` and `secret list` then succeed. Recorded in `wiring.md`.
+- **The wrong workaround to avoid:** falling back to a `deployment_configs` PATCH, which is prohibited (WTV-049) because the API masks secret values on read, so a read-modify-write blanks every secret it echoes back.
+- **Verification after the fix:** all 13 required bindings present in **both** environments, D1 `DB` bound in both, and no pre-existing variable disturbed.
+- **Status:** FIXED, documented.
+
+---
+
+### [WTV-055] A valid Meta CAPI token looks read-only under `debug_token` — scopes are not the test
+
+- **Date:** 2026-07-29
+- **Severity:** Medium (a correct credential looks broken; a broken one looks correct)
+- **What happened:** the reissued Sun Pool CAPI token returned `(#100) Missing Permission` on a plain read of the pixel object (`GET /v21.0/4074640486011315`), and `debug_token` showed `type: SYSTEM_USER`, app *Conversions API Application*, with exactly one scope: `read_ads_dataset_quality`. Both readings suggest a read-only credential that cannot send conversions. Both are wrong.
+- **What actually determines validity:** the pixel ID must appear in the token's `granular_scopes[].target_ids`, and the token must authenticate against the events edge. Reading pixel *metadata* is a different permission from writing *events* and is not needed by the template.
+- **Non-destructive proof:** `POST /v21.0/<PIXEL_ID>/events` with `data=[]`. A response of `(#100) param data must be non-empty` is a **pass** — the request got past auth into payload validation, and no event was recorded, so it is safe against a live production pixel. An `OAuthException` about permissions or validity is a fail.
+- **Why it matters:** without this probe the only way to test a CAPI token is to send a real event, which either pollutes production data or requires a `test_event_code` fetched from Events Manager. Neither is available before the first deploy, which is exactly when you need to know.
+- **Rule / prevention:** verify a CAPI token by probe before setting it, never by scope inspection. Recorded in `wiring.md`.
+- **Status:** FIXED, documented. Sun Pool token verified by probe, then set in production and preview.

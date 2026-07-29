@@ -78,7 +78,7 @@ is what turned a 30-second fix into a lost day on Sun Pool (WTV-045).
 | `GHL_LOCATION_ID` | The sub-account URL: `app.gohighlevel.com/v2/location/<ID>/…`, or the agency Supabase `clients` registry (`ghlLocationId`) | Yes |
 | `GHL_BOOKING_CALENDAR_ID` | Calendars → the booking calendar → its ID | Yes |
 | `META_PIXEL_ID` | The client's `tokens.env` — it is already there for the build-time pixel | Yes |
-| `META_CAPI_ACCESS_TOKEN` | Meta Events Manager → Data Sources → the pixel → Settings → Conversions API → generate | **No** — set and behaviorally verify in the same session |
+| `META_CAPI_ACCESS_TOKEN` | The agency Supabase `clients` registry (`metaCapiAccessToken`) first. If absent: Meta Events Manager → Data Sources → the pixel → Settings → Conversions API → generate — **owner action**, then record it in the registry | Only if recorded — Meta never re-displays it |
 | `META_OFFLINE_WEBHOOK_SECRET` | Generate: `openssl rand -hex 32`. Must be pasted into the GHL workflow's Bearer header in the **same** change | Regenerable, but lives in two places |
 | `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET` | Generate. Both are required; a missing session secret breaks admin login even with a valid password | Yes |
 | `GOOGLE_SHEETS_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Agency Lead Vault sheet + service account | Yes |
@@ -90,9 +90,12 @@ fails as a 401 after deploy, costing a full cycle): `contacts.readonly`,
 `calendars/events.write`. Tags and opportunities need no scope — the site writes
 tags onto the contact and GHL workflows trigger from them.
 
-**Record what you retrieved.** Write `ghlLocationId` and `ghlPrivateToken` back to
-the agency Supabase `clients` row for that client. A value recovered but not
-recorded gets hunted again on the next build.
+**Record what you retrieved.** Write `ghlLocationId`, `ghlPrivateToken`,
+`ghlBookingCalendarId`, `metaPixelId`, and `metaCapiAccessToken` back to the agency
+Supabase `clients` row for that client. A value recovered but not recorded gets
+hunted again on the next build. The two that Meta and GHL will not re-display —
+the CAPI token and a deleted PIT — are the two that cost an owner round trip, so
+they are the two that most need recording.
 
 ## Setting and proving a secret
 
@@ -106,6 +109,15 @@ printf '%s' "$VALUE" | npx wrangler pages secret put NAME --project-name <projec
 - `--env preview` is accepted even though it is absent from `--help` in wrangler 4.x.
 - Run from a directory **without** an unhydrated `wrangler.toml`; the template's
   config contains `{{CLOUDFLARE_PAGES_PROJECT}}` and fails validation first.
+- **Under OAuth login, only the first `pages secret put` works.** The `--env preview`
+  variant and `pages secret list` then fail with *"it's necessary to set a
+  CLOUDFLARE_API_TOKEN environment variable"* — a misleading message, because the
+  same OAuth session authenticates fine against the Pages REST API. Hand wrangler
+  the stored OAuth bearer explicitly and both succeed (WTV-054):
+
+  ```
+  export CLOUDFLARE_API_TOKEN=$(python3 -c "import re;print(re.search(r'oauth_token\s*=\s*\"([^\"]+)\"',open('$HOME/Library/Preferences/.wrangler/config/default.toml').read()).group(1))")
+  ```
 - **Never set secrets via a `deployment_configs` PATCH** (WTV-049).
 - Secrets bind at **deploy time**. Deploy, then
   `ADMIN_PASSWORD='…' npm run secrets:verify -- https://<host>` per host.
@@ -114,6 +126,25 @@ A secret is set when `secrets:verify` reports it `present` — never because its
 name appears in a dashboard, and never because a checklist row was ticked
 (WTV-053). `empty` and `missing` are different findings: `empty` means someone set
 it badly, `missing` means nobody set it.
+
+### Prove a CAPI token before you deploy it
+
+An empty `data` array authenticates without recording an event, so this is safe to
+run against a live pixel:
+
+```
+curl -s -X POST "https://graph.facebook.com/v21.0/<PIXEL_ID>/events" \
+  -d "access_token=$TOKEN" --data-urlencode 'data=[]'
+```
+
+`(#100) param data must be non-empty` means the token authenticated — that is a
+**pass**. An `OAuthException` naming permissions or an invalid token is a fail.
+
+Do not judge a CAPI token by `debug_token` scopes. A valid Events Manager token
+reports `SYSTEM_USER` on the "Conversions API Application" with the single scope
+`read_ads_dataset_quality`, which reads like a read-only credential and is not
+(WTV-055). What matters is that the pixel ID appears in the token's
+`granular_scopes[].target_ids`, and that the probe above passes.
 
 ## Order of operations
 
