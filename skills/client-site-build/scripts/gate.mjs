@@ -221,23 +221,55 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('images: every img has alt + width/height', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'all imgs dimensioned');
 }
 
-/* 6. preload — owner ruling: AT MOST one per page; if present it must
-   reference that page's LCP hero (its href appears again in the page as the
-   hero's src/style); zero preloads is a PASS on pages with no hero. */
+/* 6. preload — owner ruling (06fa070), reconciled in WTV-038. The ruling's
+   purpose is to stop stray preloads competing with the hero for early
+   bandwidth, not to cap the count for its own sake, so it is now enforced by
+   ROLE rather than by number: at most one as="image" preload, which must
+   reference that page's LCP hero, and at most one as="style" preload, which
+   must be the non-blocking font stylesheet AND must ship both an onload
+   promotion and a <noscript> fallback. Any other preload is still rejected.
+   This is stricter than the old count in one respect: a font preload that
+   never promotes, or that would leave CSS unloaded with JS disabled, now
+   fails, and the blunt count could never have caught either. */
 {
   const bad = [];
   for (const p of pages) {
     const text = readFileSync(p, 'utf8');
-    const links = [...text.matchAll(/<link[^>]*rel="preload"[^>]*>/g)];
-    if (links.length > 1) { bad.push(`${relative(dist, p)}: ${links.length} preloads (at most 1 allowed)`); continue; }
-    if (links.length === 1) {
-      const href = (links[0][0].match(/\shref="([^"]+)"/) || [])[1];
-      if (!href) { bad.push(`${relative(dist, p)}: preload has no href`); continue; }
-      const rest = text.replace(links[0][0], '');
-      if (!rest.includes(href)) bad.push(`${relative(dist, p)}: preload href "${href.slice(0, 60)}" not referenced by the page (stale hero preload)`);
+    const rel = relative(dist, p);
+    const tags = [...text.matchAll(/<link[^>]*rel="preload"[^>]*>/g)].map((m) => m[0]);
+    const image = [];
+    const style = [];
+    const other = [];
+    for (const tag of tags) {
+      const as = (tag.match(/\sas="([^"]+)"/) || [])[1] || '';
+      if (as === 'image') image.push(tag);
+      else if (as === 'style') style.push(tag);
+      else other.push(tag);
+    }
+    if (other.length) bad.push(`${rel}: ${other.length} preload(s) that are neither as="image" nor as="style" — only the LCP hero and the font stylesheet may be preloaded`);
+    if (image.length > 1) bad.push(`${rel}: ${image.length} image preloads (at most 1 — the LCP hero)`);
+    if (style.length > 1) bad.push(`${rel}: ${style.length} stylesheet preloads (at most 1 — the font stylesheet)`);
+
+    if (image.length === 1) {
+      const href = (image[0].match(/\shref="([^"]+)"/) || [])[1];
+      if (!href) bad.push(`${rel}: image preload has no href`);
+      else if (!text.replace(image[0], '').includes(href)) {
+        bad.push(`${rel}: image preload "${href.slice(0, 60)}" is not referenced by the page (stale hero preload)`);
+      }
+    }
+    if (style.length === 1) {
+      const href = (style[0].match(/\shref="([^"]+)"/) || [])[1];
+      if (!href) bad.push(`${rel}: stylesheet preload has no href`);
+      else {
+        if (!/fonts\.googleapis\.com/.test(href)) bad.push(`${rel}: stylesheet preload "${href.slice(0, 60)}" is not the font stylesheet`);
+        if (!/\sonload=/.test(style[0])) bad.push(`${rel}: font preload never promotes to a stylesheet (no onload) — the fonts would never apply`);
+        if (!text.includes('<noscript><link rel="stylesheet" href="' + href + '">')) {
+          bad.push(`${rel}: font preload has no matching <noscript> fallback — CSS would never load with JS disabled`);
+        }
+      }
     }
   }
-  add('preload: ≤1 per page, and it must reference the LCP hero', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
+  add('preload: <=1 LCP-hero image + <=1 font stylesheet (onload + noscript)', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
 }
 
 /* 7. robots vs env */
