@@ -96,11 +96,11 @@
     <div class="cat-hero-seq">
       <p class="cat-brand" data-config="client.name">{{CLIENT_NAME}}<span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></p>
       <span class="cat-eyebrow">{{SWIM_SPAS_EYEBROW|Swim spas}}</span>
-      <h1>{{SWIM_SPAS_HERO_HEADLINE}}</h1>
-      <p class="cat-sub">{{SWIM_SPAS_HERO_SUBHEAD}}</p>
+      <h1>{{SWIM_SPAS_HERO_HEADLINE|Swim, train, and soak — all in one unit}}</h1>
+      <p class="cat-sub">{{SWIM_SPAS_HERO_SUBHEAD|A pool you can swim in every month of the year, in a fraction of the space — come test the current in person.}}</p>
       <div class="cat-hero-ctas" id="catHeroCtas">
-        <a class="cat-btn cat-btn-gold" href="#category-products" data-pricing-source="swim-spas_hero_primary">{{CATEGORY_PRIMARY_CTA}}</a>
-        <a class="cat-btn cat-btn-ghost" href="/book/" data-pricing-source="swim-spas_hero_secondary">{{CATEGORY_SECONDARY_CTA}}</a>
+        <a class="cat-btn cat-btn-gold" href="#category-products" data-pricing-source="swim-spas_hero_primary">{{CATEGORY_PRIMARY_CTA|Browse in-stock units}}</a>
+        <a class="cat-btn cat-btn-ghost" href="/book/" data-pricing-source="swim-spas_hero_secondary">{{CATEGORY_SECONDARY_CTA|Book a showroom visit}}</a>
       </div>
     </div>
   </div>
@@ -116,18 +116,18 @@
     <div class="cat-benefit-grid">
       <article class="cat-benefit">
         <span class="cat-benefit-n">01</span>
-        <h3>{{SWIM_SPAS_BENEFIT_1_TITLE}}</h3>
-        <p>{{SWIM_SPAS_BENEFIT_1_COPY}}</p>
+        <h3>{{SWIM_SPAS_BENEFIT_1_TITLE|Swim at home year-round}}</h3>
+        <p>{{SWIM_SPAS_BENEFIT_1_COPY|An adjustable current lets you swim in place any month of the year — no lane lines, no schedule.}}</p>
       </article>
       <article class="cat-benefit">
         <span class="cat-benefit-n">02</span>
-        <h3>{{SWIM_SPAS_BENEFIT_2_TITLE}}</h3>
-        <p>{{SWIM_SPAS_BENEFIT_2_COPY}}</p>
+        <h3>{{SWIM_SPAS_BENEFIT_2_TITLE|Fitness and recovery in one}}</h3>
+        <p>{{SWIM_SPAS_BENEFIT_2_COPY|Train against the current, then recover in the heated seats — two routines, one footprint.}}</p>
       </article>
       <article class="cat-benefit">
         <span class="cat-benefit-n">03</span>
-        <h3>{{SWIM_SPAS_BENEFIT_3_TITLE}}</h3>
-        <p>{{SWIM_SPAS_BENEFIT_3_COPY}}</p>
+        <h3>{{SWIM_SPAS_BENEFIT_3_TITLE|Fits where pools can't}}</h3>
+        <p>{{SWIM_SPAS_BENEFIT_3_COPY|Get real swimming at home without excavation, fencing, or a full pool budget.}}</p>
       </article>
     </div>
   </div>
@@ -137,8 +137,8 @@
   <div class="wrap cat-reveal">
     <div class="cat-inventory-head">
       <span class="cat-eyebrow">{{SWIM_SPAS_GRID_KICKER|Available now}}</span>
-      <h2>{{SWIM_SPAS_GRID_HEADLINE}}</h2>
-      <p>{{SWIM_SPAS_GRID_COPY}}</p>
+      <h2>{{SWIM_SPAS_GRID_HEADLINE|In-stock swim spas}}</h2>
+      <p>{{SWIM_SPAS_GRID_COPY|On our floor now. Ask for the out-the-door price on any unit.}}</p>
     </div>
     <div class="cat-results-bar">
       <p><strong id="catResultCount">0</strong> <span id="catResultLabel" data-singular="swim spa shown" data-plural="swim spas shown">swim spas shown</span></p>
@@ -148,22 +148,22 @@
       data-inventory-source="/api/inventory?category=swim-spa"
       data-card-style="inventory"
       data-inventory-empty="No swim spas are published yet."></div>
-    <p class="cat-pay-disclaimer">{{FINANCING_DISCLAIMER}}</p>
+    <p class="cat-pay-disclaimer">{{FINANCING_DISCLAIMER|Subject to credit approval. Terms and availability vary — ask in store for current offers.}}</p>
   </div>
 </section>
 
 <section class="ht-help-section">
   <h2>{{SWIM_SPAS_HELP_HEADLINE|Need help sizing a swim spa?}}</h2>
   <p>{{SWIM_SPAS_HELP_COPY|Share your yard space, swim goals, and budget — we’ll text options that are actually in stock.}}</p>
-  <button type="button" class="ht-help-cta" data-open-lead data-product="{{SWIM_SPAS_CATEGORY_INTEREST}}" data-pricing-source="swim-spas_help_cta">{{SWIM_SPAS_HELP_CTA|Get My Local Price}} <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>
+  <button type="button" class="ht-help-cta" data-open-lead data-product="{{SWIM_SPAS_CATEGORY_INTEREST|Swim Spa}}" data-pricing-source="swim-spas_help_cta">{{SWIM_SPAS_HELP_CTA|Get My Local Price}} <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>
 </section>
-<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER}}</p>
+<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER|Inventory moves fast — availability and pricing can change without notice. Ask us to confirm today's status on any unit.}}</p>
 
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-col footer-brand">
       <img src="{{CLIENT_LOGO_FOOTER_URL}}" alt="{{CLIENT_NAME}}" width="160" height="40" class="footer-logo" decoding="async" data-config-src="client.logoFooterUrl" onerror="this.remove()">
-      <p class="footer-blurb">{{FOOTER_BLURB}}</p>
+      <p class="footer-blurb">{{FOOTER_BLURB|A local showroom with real units on the floor, out-the-door pricing, and a team that's here after the sale.}}</p>
       <div class="footer-social">
         <a href="{{CLIENT_FACEBOOK_URL|#}}" target="_blank" rel="noopener" aria-label="Facebook">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>

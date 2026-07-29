@@ -20,7 +20,7 @@
 <script src="../../client.config.js"></script>
 <script src="../../assets/tracking.js"></script>
 </head>
-<body data-template-page data-product-slug="{{PRODUCT_SLUG}}" data-lead-source="product-page" data-lead-campaign="{{CAMPAIGN_NAME|Product Page}}">
+<body data-template-page data-product-slug="{{PRODUCT_SLUG|-}}" data-lead-source="product-page" data-lead-campaign="{{CAMPAIGN_NAME|Product Page}}">
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href="../../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
@@ -52,7 +52,7 @@
         <a class="btn btn-ghost" href="../../financing.html">Check Financing Options</a>
       </div>
     </div>
-    <div class="pdp-hero-media"><div class="media-frame"><img data-pdp-image src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT|In-stock inventory unit}}" width="1200" height="1200" decoding="async" fetchpriority="high" onerror="this.style.opacity='0'" onload="this.style.opacity='1'"></div></div>
+    <div class="pdp-hero-media"><div class="media-frame"><img data-pdp-image src="{{PRODUCT_PRIMARY_IMAGE|#}}" alt="{{PRODUCT_IMAGE_ALT|In-stock inventory unit}}" width="1200" height="1200" decoding="async" fetchpriority="high" onerror="this.style.opacity='0'" onload="this.style.opacity='1'"></div></div>
   </div>
 </section>
 
@@ -91,14 +91,14 @@
         <p class="pdp-form-lead">Get your written out-the-door price &mdash; unit, taxes, delivery, and startup &mdash; plus payment options and availability. We&rsquo;ll text it back fast.</p>
         <p class="pdp-selected">Selected unit: <b data-pdp-selected>{{PRODUCT_NAME|This unit}}</b></p>
         <form class="form-grid" data-template-form data-lead-success="inline" action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
-          <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
-          <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME}}">
+          <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST|Spa}}">
+          <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME|inventory}}">
           <input name="full_name" autocomplete="name" placeholder="Full name" required>
           <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
           <input name="email" autocomplete="email" placeholder="Email">
           <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
           <button class="btn btn-gold" type="submit">Get Today&rsquo;s Price</button>
-          <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
+          <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about your request. Message and data rates may apply. Opt out anytime — no spam, ever.}}</p>
           <p class="fine-print" data-template-result></p>
         </form>
         <!-- Booking invite: revealed by lead-form.js after a successful submit -->
@@ -149,14 +149,14 @@
   <button class="btn btn-outline" data-close-lead type="button">Close</button>
   <h3>Get today's local price</h3>
   <form class="form-grid" data-template-form action="{{LEAD_ENDPOINT|/api/lead}}" method="post">
-    <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST}}">
-    <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME}}">
+    <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST|Spa}}">
+    <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME|inventory}}">
     <input name="full_name" autocomplete="name" placeholder="Full name" required>
     <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
     <input name="email" autocomplete="email" placeholder="Email">
     <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
     <button class="btn btn-gold" type="submit">Send My Price</button>
-    <p class="fine-print">{{LEAD_FORM_DISCLAIMER}}</p>
+    <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about your request. Message and data rates may apply. Opt out anytime — no spam, ever.}}</p>
     <p class="fine-print" data-template-result></p>
   </form>
 </aside>

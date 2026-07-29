@@ -92,9 +92,9 @@
   <div class="steam steam-2" aria-hidden="true"></div>
   <div class="hero-grid">
     <div class="hero-seq">
-      <span class="eyebrow">{{HOME_EYEBROW}}</span>
-      <h1>{{HOME_HERO_HEADLINE}} <span class="deg">{{HOME_HERO_HEADLINE_ACCENT}}</span></h1>
-      <p class="sub"><b>{{HOME_HERO_PROOF_LINE}}</b> {{HOME_HERO_SUBHEAD}}</p>
+      <span class="eyebrow">{{HOME_EYEBROW|See it. Feel it. Soak in it.}}</span>
+      <h1>{{HOME_HERO_HEADLINE|Your backyard's best seat}} <span class="deg">{{HOME_HERO_HEADLINE_ACCENT|starts here.}}</span></h1>
+      <p class="sub"><b>{{HOME_HERO_PROOF_LINE|Real units on the floor.}}</b> {{HOME_HERO_SUBHEAD|Walk in, try them in person, and leave with a real out-the-door price — no guessing, no runaround.}}</p>
 <!-- IF:OFFER_NAME -->
       <div class="offer-chip">
         <span class="dot" aria-hidden="true"></span>
@@ -109,8 +109,8 @@
     </div>
 
     <div class="lead-card" id="lead">
-      <p class="lead-head">{{HOME_LEAD_HEADLINE}}</p>
-      <p class="lead-sub">{{HOME_LEAD_SUBHEAD}}</p>
+      <p class="lead-head">{{HOME_LEAD_HEADLINE|Get today's local price}}</p>
+      <p class="lead-sub">{{HOME_LEAD_SUBHEAD|Tell us what you're looking for and we'll text you current pricing and availability.}}</p>
       <div class="fdots" aria-hidden="true"><i class="on" id="d1"></i><i id="d2"></i><i id="d3"></i></div>
       <form id="leadForm" class="form-grid" data-lead-form data-template-form data-lead-source="homepage" data-lead-success="inline" data-lead-api="{{LEAD_ENDPOINT|/api/lead}}" novalidate>
         <input class="hidden-field" tabindex="-1" autocomplete="off" name="website_url" value="">
@@ -127,11 +127,11 @@
         <div class="fstep on" data-step="1">
           <div class="field">
             <label for="zip">Your zip code</label>
-            <input type="text" id="zip" name="zip_display" inputmode="numeric" maxlength="5" placeholder="{{HOME_ZIP_PLACEHOLDER}}" autocomplete="postal-code">
+            <input type="text" id="zip" name="zip_display" inputmode="numeric" maxlength="5" placeholder="{{HOME_ZIP_PLACEHOLDER|ZIP code}}" autocomplete="postal-code">
           </div>
-          <p class="form-err" id="zipErr">{{HOME_ZIP_ERROR}}</p>
+          <p class="form-err" id="zipErr">{{HOME_ZIP_ERROR|Enter a valid 5-digit ZIP code.}}</p>
           <button type="button" class="btn btn-gold" onclick="homeStepNext(1)">Check my area →</button>
-          <div class="next-strip"><b>What happens next:</b> {{HOME_LEAD_NEXT_COPY}}</div>
+          <div class="next-strip"><b>What happens next:</b> {{HOME_LEAD_NEXT_COPY|We text you current pricing and availability, then you decide if a showroom visit makes sense. No pressure, no spam.}}</div>
         </div>
 
         <div class="fstep" data-step="2">
@@ -176,7 +176,7 @@
           <p class="form-err" id="cErr">Add your name, mobile number, email, and consent to continue.</p>
           <div class="tcpa">
             <input type="checkbox" id="tcpa" name="consent_display" required>
-            <label for="tcpa">{{LEAD_FORM_DISCLAIMER}}</label>
+            <label for="tcpa">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about your request. Message and data rates may apply. Opt out anytime — no spam, ever.}}</label>
           </div>
           <button type="submit" class="btn btn-gold">{{HOME_LEAD_SUBMIT_LABEL|Get my local price}}</button>
           <button type="button" class="back-link" onclick="homeStepBack(2)">← Back</button>
@@ -184,8 +184,8 @@
         </div>
       </form>
       <div class="lead-success" id="leadDone">
-        <h3>{{HOME_LEAD_SUCCESS_HEADLINE}}</h3>
-        <p>{{HOME_LEAD_SUCCESS_COPY}}</p>
+        <h3>{{HOME_LEAD_SUCCESS_HEADLINE|Got it — check your phone}}</h3>
+        <p>{{HOME_LEAD_SUCCESS_COPY|We received your request and will text you shortly with pricing and availability.}}</p>
       </div>
     </div>
   </div>
@@ -237,38 +237,38 @@
 <section class="section" id="inventory">
   <div class="wrap reveal">
     <span class="eyebrow">{{FEATURED_INVENTORY_KICKER|In stock · no waiting}}</span>
-    <h2>{{FEATURED_INVENTORY_HEADLINE}}</h2>
+    <h2>{{FEATURED_INVENTORY_HEADLINE|In stock and ready to deliver}}</h2>
 <!-- IF:FLOOR_COUNT_LABEL -->
     <p class="floor"><span class="live" aria-hidden="true"></span><span><b data-floor-count>{{FLOOR_COUNT|0}}</b> {{FLOOR_COUNT_LABEL}}</span></p>
 <!-- /IF:FLOOR_COUNT_LABEL -->
-    <p class="section-sub">{{FEATURED_INVENTORY_COPY}}</p>
+    <p class="section-sub">{{FEATURED_INVENTORY_COPY|Every unit below is physically on our floor. Ask for an out-the-door price on any of them.}}</p>
   </div>
   <div class="wrap" style="overflow:hidden">
     <div class="rail cols-4" id="prodRail" data-inventory-source="/api/inventory?featured=1" data-card-style="home">
       <article class="pcard" data-product-card data-source="D1_PRODUCTS">
-        <div class="pimg"><span class="badge">{{PRODUCT_PROMO_LABEL}}</span><img src="{{PRODUCT_PRIMARY_IMAGE}}" alt="{{PRODUCT_IMAGE_ALT}}" width="1200" height="900" loading="lazy"></div>
+        <div class="pimg"><span class="badge">{{PRODUCT_PROMO_LABEL|In stock}}</span><img src="{{PRODUCT_PRIMARY_IMAGE|#}}" alt="{{PRODUCT_IMAGE_ALT|Product photo}}" width="1200" height="900" loading="lazy"></div>
         <div class="pbody">
-          <h3>{{PRODUCT_NAME}}</h3>
-          <p class="spec">{{PRODUCT_FACT_1}} · {{PRODUCT_FACT_2}} · {{PRODUCT_FACT_3}}</p>
-          <p class="why">{{PRODUCT_CARD_SUMMARY}}</p>
-          <div class="price-block"><span class="from">From</span><span class="num">{{PRODUCT_PRICE}}</span><div class="mo">{{PRODUCT_MONTHLY_PAYMENT}}</div></div>
-          <button class="btn btn-gold" type="button" data-home-prefill="{{PRODUCT_NAME}}" data-product="{{PRODUCT_NAME}}" data-pricing-source="home_inventory_card">{{PRODUCT_PRIMARY_CTA}}</button>
+          <h3>{{PRODUCT_NAME|—}}</h3>
+          <p class="spec">{{PRODUCT_FACT_1|—}} · {{PRODUCT_FACT_2|—}} · {{PRODUCT_FACT_3|—}}</p>
+          <p class="why">{{PRODUCT_CARD_SUMMARY|—}}</p>
+          <div class="price-block"><span class="from">From</span><span class="num">{{PRODUCT_PRICE|0}}</span><div class="mo">{{PRODUCT_MONTHLY_PAYMENT|0}}</div></div>
+          <button class="btn btn-gold" type="button" data-home-prefill="{{PRODUCT_NAME|—}}" data-product="{{PRODUCT_NAME|—}}" data-pricing-source="home_inventory_card">{{PRODUCT_PRIMARY_CTA|See details}}</button>
         </div>
       </article>
     </div>
     <div class="rail-dots" data-for="prodRail" aria-hidden="true"></div>
-    <p class="fine">{{FINANCING_DISCLAIMER}}</p>
+    <p class="fine">{{FINANCING_DISCLAIMER|Subject to credit approval. Terms and availability vary — ask in store for current offers.}}</p>
   </div>
 </section>
 
 <section class="section section-tight-top" id="categories">
   <div class="wrap reveal">
     <span class="eyebrow">{{CATEGORIES_KICKER|Find your fit}}</span>
-    <h2>{{CATEGORIES_HEADLINE}}</h2>
+    <h2>{{CATEGORIES_HEADLINE|What are you shopping for?}}</h2>
     <div class="cats">
-      <a class="cat" style="background-image:url('{{HOT_TUBS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/hot-tubs/"><div class="in"><b>Hot Tubs</b><span>{{HOT_TUB_CATEGORY_SUMMARY}}</span></div></a>
-      <a class="cat" style="background-image:url('{{SWIM_SPAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/swim-spas/"><div class="in"><b>Swim Spas</b><span>{{SWIM_SPA_CATEGORY_SUMMARY}}</span></div></a>
-      <a class="cat" style="background-image:url('{{SAUNAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/saunas/"><div class="in"><b>Saunas</b><span>{{SAUNA_CATEGORY_SUMMARY}}</span></div></a>
+      <a class="cat" style="background-image:url('{{HOT_TUBS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/hot-tubs/"><div class="in"><b>Hot Tubs</b><span>{{HOT_TUB_CATEGORY_SUMMARY|Relax, recover, and unwind year-round}}</span></div></a>
+      <a class="cat" style="background-image:url('{{SWIM_SPAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/swim-spas/"><div class="in"><b>Swim Spas</b><span>{{SWIM_SPA_CATEGORY_SUMMARY|Swim, train, and soak in one unit}}</span></div></a>
+      <a class="cat" style="background-image:url('{{SAUNAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/saunas/"><div class="in"><b>Saunas</b><span>{{SAUNA_CATEGORY_SUMMARY|Heat therapy for recovery and sleep}}</span></div></a>
 <!-- IF:MASSAGE_CATEGORY_SUMMARY -->
       <a class="cat" style="background-image:linear-gradient(160deg,#16469B,#081D45)" href="/inventory.html"><div class="in"><b>Massage Chairs</b><span>{{MASSAGE_CATEGORY_SUMMARY}}</span></div></a>
 <!-- /IF:MASSAGE_CATEGORY_SUMMARY -->
@@ -279,7 +279,7 @@
 <section class="section section-sand">
   <div class="wrap reveal">
     <span class="eyebrow">{{REVIEWS_KICKER|Reviews}}</span>
-    <h2>{{REVIEWS_HEADLINE}}</h2>
+    <h2>{{REVIEWS_HEADLINE|What your neighbors say}}</h2>
   </div>
   <div class="wrap" style="overflow:hidden">
     <div class="rail cols-3" id="revRail">
@@ -295,30 +295,30 @@
 <section class="section">
   <div class="wrap reveal">
     <span class="eyebrow">{{PROOF_SECTION_KICKER|Why buy local}}</span>
-    <h2>{{PROOF_SECTION_HEADLINE}}</h2>
-    <p class="section-sub">{{PROOF_SECTION_COPY}}</p>
+    <h2>{{PROOF_SECTION_HEADLINE|Buying local actually pays off}}</h2>
+    <p class="section-sub">{{PROOF_SECTION_COPY|Here's how a local showroom compares with ordering a spa from a big-box store or a website.}}</p>
     <div class="cmp">
       <div class="cmp-head" aria-hidden="true"><div></div><div>{{CLIENT_NAME}}</div><div>Everyone else</div></div>
-      <div class="cmp-row"><div class="q">{{COMPARE_1_Q}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_1_US}}</div><div class="cmp-cell them">{{COMPARE_1_THEM}}</div></div></div>
-      <div class="cmp-row"><div class="q">{{COMPARE_2_Q}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_2_US}}</div><div class="cmp-cell them">{{COMPARE_2_THEM}}</div></div></div>
-      <div class="cmp-row"><div class="q">{{COMPARE_3_Q}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_3_US}}</div><div class="cmp-cell them">{{COMPARE_3_THEM}}</div></div></div>
-      <div class="cmp-row"><div class="q">{{COMPARE_4_Q}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_4_US}}</div><div class="cmp-cell them">{{COMPARE_4_THEM}}</div></div></div>
+      <div class="cmp-row"><div class="q">{{COMPARE_1_Q|Try before you buy}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_1_US|Real units on the floor to see and touch}}</div><div class="cmp-cell them">{{COMPARE_1_THEM|Photos and specs on a screen}}</div></div></div>
+      <div class="cmp-row"><div class="q">{{COMPARE_2_Q|Pricing}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_2_US|Out-the-door price in writing}}</div><div class="cmp-cell them">{{COMPARE_2_THEM|Freight, crane, and setup surprises later}}</div></div></div>
+      <div class="cmp-row"><div class="q">{{COMPARE_3_Q|Delivery & setup}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_3_US|Local crew that knows your area}}</div><div class="cmp-cell them">{{COMPARE_3_THEM|Curbside drop-off — the rest is on you}}</div></div></div>
+      <div class="cmp-row"><div class="q">{{COMPARE_4_Q|After the sale}}</div><div class="cmp-pair"><div class="cmp-cell us">{{COMPARE_4_US|A local team that answers the phone}}</div><div class="cmp-cell them">{{COMPARE_4_THEM|A 1-800 number and a ticket queue}}</div></div></div>
     </div>
   </div>
 </section>
 
 <section class="section section-night on-dark">
   <div class="wrap reveal promise-grid">
-    <div class="shield" role="img" aria-label="{{PROMISE_BADGE_LABEL}}"><b>{{PROMISE_BADGE_VALUE}}</b><span>{{PROMISE_BADGE_LABEL}}</span></div>
+    <div class="shield" role="img" aria-label="{{PROMISE_BADGE_LABEL|Local promise}}"><b>{{PROMISE_BADGE_VALUE|100%}}</b><span>{{PROMISE_BADGE_LABEL|Local promise}}</span></div>
     <div>
-      <span class="eyebrow">{{PROMISE_KICKER}}</span>
-      <h2>{{PROMISE_HEADLINE}}</h2>
-      <p style="max-width:640px;color:#C9D5EE">{{PROMISE_COPY}}</p>
+      <span class="eyebrow">{{PROMISE_KICKER|Our promise}}</span>
+      <h2>{{PROMISE_HEADLINE|Straight answers, no pressure}}</h2>
+      <p style="max-width:640px;color:#C9D5EE">{{PROMISE_COPY|We'd rather earn a neighbor than push a sale. Come in with questions and leave with real numbers — what you do next is up to you.}}</p>
       <ul class="pillars">
-        <li>{{PROMISE_POINT_1}}</li>
-        <li>{{PROMISE_POINT_2}}</li>
-        <li>{{PROMISE_POINT_3}}</li>
-        <li>{{PROMISE_POINT_4}}</li>
+        <li>{{PROMISE_POINT_1|Out-the-door pricing in writing}}</li>
+        <li>{{PROMISE_POINT_2|No pressure, no hard sell}}</li>
+        <li>{{PROMISE_POINT_3|Local delivery and setup guidance}}</li>
+        <li>{{PROMISE_POINT_4|Real people after the sale}}</li>
       </ul>
     </div>
   </div>
@@ -327,23 +327,23 @@
 <section class="financing-band on-dark" id="financing">
   <div class="wrap reveal">
     <span class="eyebrow" style="justify-content:center">{{FINANCING_KICKER|Easy financing}}</span>
-    <h2>{{FINANCING_HEADLINE}}</h2>
-    <p class="section-sub mx-auto max-w-md" style="color:#CFDCF4;margin:0 auto 28px">{{FINANCING_COPY}}</p>
-    <a class="btn btn-gold" href="/financing.html" data-pricing-source="home_financing_cta">{{FINANCING_CTA_LABEL}}</a>
-    <p class="fine mx-auto" style="color:#9FB4DC;max-width:640px">{{FINANCING_DISCLAIMER}}</p>
+    <h2>{{FINANCING_HEADLINE|See Your Financing Options}}</h2>
+    <p class="section-sub mx-auto max-w-md" style="color:#CFDCF4;margin:0 auto 28px">{{FINANCING_COPY|Flexible monthly options can make the right spa fit your budget. Check your options in a couple of minutes — asking won't affect your credit.}}</p>
+    <a class="btn btn-gold" href="/financing.html" data-pricing-source="home_financing_cta">{{FINANCING_CTA_LABEL|Check my options}}</a>
+    <p class="fine mx-auto" style="color:#9FB4DC;max-width:640px">{{FINANCING_DISCLAIMER|Subject to credit approval. Terms and availability vary — ask in store for current offers.}}</p>
   </div>
 </section>
 
 <section class="section" id="visit">
   <div class="wrap reveal">
     <span class="eyebrow">{{VISIT_KICKER|Visit the showroom}}</span>
-    <h2>{{VISIT_HEADLINE}}</h2>
+    <h2>{{VISIT_HEADLINE|Worth the drive}}</h2>
     <div class="visit-grid">
       <div class="vcard">
-        <div class="vimg"><img src="{{VISIT_IMAGE_1}}" alt="{{VISIT_IMAGE_1_ALT}}" width="1200" height="900" loading="lazy" decoding="async" onerror="this.remove()"></div>
+        <div class="vimg"><img src="{{VISIT_IMAGE_1}}" alt="{{VISIT_IMAGE_1_ALT|Showroom floor with display models}}" width="1200" height="900" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="vbody">
-          <h3>{{VISIT_CARD_1_TITLE}}</h3>
-          <p>{{VISIT_CARD_1_COPY}}</p>
+          <h3>{{VISIT_CARD_1_TITLE|See them filled and running}}</h3>
+          <p>{{VISIT_CARD_1_COPY|Photos don't tell you how a shell fits your body or how strong the jets are. Ten minutes in the showroom answers what hours of research can't.}}</p>
           <p class="meta"><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><span data-config="client.hours">{{CLIENT_HOURS}}</span></p>
           <div class="row">
             <a class="btn btn-gold" href="/book/" data-pricing-source="visit_book">{{PRIMARY_CTA_LABEL|Book my visit}}</a>
@@ -352,10 +352,10 @@
         </div>
       </div>
       <div class="vcard">
-        <div class="vimg"><img src="{{VISIT_IMAGE_2}}" alt="{{VISIT_IMAGE_2_ALT}}" width="1200" height="900" loading="lazy" decoding="async" onerror="this.remove()"></div>
+        <div class="vimg"><img src="{{VISIT_IMAGE_2}}" alt="{{VISIT_IMAGE_2_ALT|Customers touring the showroom}}" width="1200" height="900" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="vbody">
-          <h3>{{VISIT_CARD_2_TITLE}}</h3>
-          <p>{{VISIT_CARD_2_COPY}}</p>
+          <h3>{{VISIT_CARD_2_TITLE|Talk to people who own them}}</h3>
+          <p>{{VISIT_CARD_2_COPY|Our team uses what we sell. Ask about maintenance, water care, and real running costs — you'll get straight answers, not a script.}}</p>
           <p class="meta">Call or text: <span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></p>
           <div class="row">
             <a class="btn btn-gold" data-config-href="client.smsHref" href="sms:{{CLIENT_PHONE_E164}}">Text us now</a>
@@ -370,11 +370,11 @@
 <section class="section">
   <div class="wrap reveal">
     <span class="eyebrow">{{HOW_IT_WORKS_KICKER|How it works}}</span>
-    <h2>{{HOW_IT_WORKS_HEADLINE}}</h2>
+    <h2>{{HOW_IT_WORKS_HEADLINE|From first visit to first soak}}</h2>
     <div class="steps">
-      <div class="step"><b class="n">01</b><h3>{{STEP_1_TITLE}}</h3><p>{{STEP_1_COPY}}</p></div>
-      <div class="step"><b class="n">02</b><h3>{{STEP_2_TITLE}}</h3><p>{{STEP_2_COPY}}</p></div>
-      <div class="step"><b class="n">03</b><h3>{{STEP_3_TITLE}}</h3><p>{{STEP_3_COPY}}</p></div>
+      <div class="step"><b class="n">01</b><h3>{{STEP_1_TITLE|Come see them in person}}</h3><p>{{STEP_1_COPY|Walk the floor, ask questions, and compare models side by side with someone who knows them.}}</p></div>
+      <div class="step"><b class="n">02</b><h3>{{STEP_2_TITLE|Get your out-the-door price}}</h3><p>{{STEP_2_COPY|One number in writing — unit, delivery, and setup — so you can decide with zero guesswork.}}</p></div>
+      <div class="step"><b class="n">03</b><h3>{{STEP_3_TITLE|We handle the rest}}</h3><p>{{STEP_3_COPY|Delivery, placement, and startup guidance, plus a local team you can actually call afterward.}}</p></div>
     </div>
     <div class="text-center" style="margin-top:32px"><a class="btn btn-gold" href="/book/" data-pricing-source="how_it_works_cta">{{PRIMARY_CTA_LABEL|Start with step 1}}</a></div>
   </div>
@@ -383,12 +383,12 @@
 <section class="section section-tight-top">
   <div class="wrap reveal">
     <span class="eyebrow" style="display:flex;justify-content:center">{{FAQ_KICKER|Got questions?}}</span>
-    <h2 class="text-center">{{FAQ_HEADLINE}}</h2>
+    <h2 class="text-center">{{FAQ_HEADLINE|Good questions to ask}}</h2>
     <div style="max-width:800px;margin:24px auto 0">
-      <div class="faq open"><button aria-expanded="true">{{FAQ_1_Q}}</button><div class="ans"><div><p>{{FAQ_1_A}}</p></div></div></div>
-      <div class="faq"><button aria-expanded="false">{{FAQ_2_Q}}</button><div class="ans"><div><p>{{FAQ_2_A}}</p></div></div></div>
-      <div class="faq"><button aria-expanded="false">{{FAQ_3_Q}}</button><div class="ans"><div><p>{{FAQ_3_A}}</p></div></div></div>
-      <div class="faq"><button aria-expanded="false">{{FAQ_4_Q}}</button><div class="ans"><div><p>{{FAQ_4_A}}</p></div></div></div>
+      <div class="faq open"><button aria-expanded="true">{{FAQ_1_Q|How much does a hot tub actually cost?}}</button><div class="ans"><div><p>{{FAQ_1_A|It depends on size, seating, and insulation — that's why we quote a single out-the-door number that includes delivery and setup, not a teaser price.}}</p></div></div></div>
+      <div class="faq"><button aria-expanded="false">{{FAQ_2_Q|What does delivery involve?}}</button><div class="ans"><div><p>{{FAQ_2_A|We'll help you confirm access, placement, and the pad or surface before scheduling, so delivery day has no surprises.}}</p></div></div></div>
+      <div class="faq"><button aria-expanded="false">{{FAQ_3_Q|What do I need to run one at home?}}</button><div class="ans"><div><p>{{FAQ_3_A|Most spas need a level surface and a dedicated electrical circuit — we'll walk you through exactly what your model needs before you buy.}}</p></div></div></div>
+      <div class="faq"><button aria-expanded="false">{{FAQ_4_Q|Can I finance it?}}</button><div class="ans"><div><p>{{FAQ_4_A|In many cases yes — ask in store and we'll walk you through the current financing options and what they'd look like monthly.}}</p></div></div></div>
     </div>
   </div>
 </section>
@@ -429,8 +429,8 @@
 <!-- IF:OFFER_NAME -->
     <span class="eyebrow" style="justify-content:center;color:var(--gold-soft)">{{OFFER_ENDS_LABEL}}</span>
 <!-- /IF:OFFER_NAME -->
-    <h2>{{FINAL_CTA_HEADLINE}}</h2>
-    <p class="section-sub mx-auto max-w-md" style="color:#C9D5EE;margin:0 auto">{{FINAL_CTA_COPY}}</p>
+    <h2>{{FINAL_CTA_HEADLINE|Ready when you are}}</h2>
+    <p class="section-sub mx-auto max-w-md" style="color:#C9D5EE;margin:0 auto">{{FINAL_CTA_COPY|Come walk the floor, or start with a quick text — either way you'll get real local pricing without the runaround.}}</p>
 <!-- IF:OFFER_NAME -->
     <div class="count">
       <div><b id="cD">–</b><span>Days</span></div>
@@ -452,7 +452,7 @@
     <div>
       <b style="font-family:var(--display);font-size:1.22rem;font-weight:800;color:#fff" data-config="client.name">{{CLIENT_NAME}}</b>
       <span style="display:block;margin-top:4px;font-family:var(--mono);font-size:.52rem;letter-spacing:.34em;text-transform:uppercase;color:#8FA6D2" data-config="client.tagline">{{CLIENT_TAGLINE}}</span>
-      <p style="margin-top:16px;font-size:.87rem;line-height:1.6">{{FOOTER_BLURB}}</p>
+      <p style="margin-top:16px;font-size:.87rem;line-height:1.6">{{FOOTER_BLURB|A local showroom with real units on the floor, out-the-door pricing, and a team that's here after the sale.}}</p>
     </div>
     <div>
       <h4>Quick links</h4>
@@ -466,8 +466,8 @@
     </div>
     <div>
       <h4>Service area</h4>
-      <div class="areas"><span>{{SERVICE_AREA_COPY}}</span></div>
-      <p style="margin-top:16px;font-size:.8rem">{{FOOTER_PROMISE_LINE}}</p>
+      <div class="areas"><span>{{SERVICE_AREA_COPY|Proudly serving our local area — ask us if we deliver to you.}}</span></div>
+      <p style="margin-top:16px;font-size:.8rem">{{FOOTER_PROMISE_LINE|Come see us — we're worth the drive.}}</p>
     </div>
   </div>
   <div class="footer-bottom">

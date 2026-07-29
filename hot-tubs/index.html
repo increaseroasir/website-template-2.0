@@ -96,11 +96,11 @@
     <div class="cat-hero-seq">
       <p class="cat-brand" data-config="client.name">{{CLIENT_NAME}}<span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></p>
       <span class="cat-eyebrow">{{HOT_TUBS_EYEBROW|Hot tubs}}</span>
-      <h1>{{HOT_TUBS_HERO_HEADLINE}}</h1>
-      <p class="cat-sub">{{HOT_TUBS_HERO_SUBHEAD}}</p>
+      <h1>{{HOT_TUBS_HERO_HEADLINE|Hot tubs built for every night of the year}}</h1>
+      <p class="cat-sub">{{HOT_TUBS_HERO_SUBHEAD|From compact two-seaters to full lounge layouts — see them running, feel the jets, and get a real out-the-door price.}}</p>
       <div class="cat-hero-ctas" id="catHeroCtas">
-        <a class="cat-btn cat-btn-gold" href="#category-products" data-pricing-source="hot-tubs_hero_primary">{{CATEGORY_PRIMARY_CTA}}</a>
-        <a class="cat-btn cat-btn-ghost" href="/book/" data-pricing-source="hot-tubs_hero_secondary">{{CATEGORY_SECONDARY_CTA}}</a>
+        <a class="cat-btn cat-btn-gold" href="#category-products" data-pricing-source="hot-tubs_hero_primary">{{CATEGORY_PRIMARY_CTA|Browse in-stock units}}</a>
+        <a class="cat-btn cat-btn-ghost" href="/book/" data-pricing-source="hot-tubs_hero_secondary">{{CATEGORY_SECONDARY_CTA|Book a showroom visit}}</a>
       </div>
     </div>
   </div>
@@ -116,18 +116,18 @@
     <div class="cat-benefit-grid">
       <article class="cat-benefit">
         <span class="cat-benefit-n">01</span>
-        <h3>{{HOT_TUBS_BENEFIT_1_TITLE}}</h3>
-        <p>{{HOT_TUBS_BENEFIT_1_COPY}}</p>
+        <h3>{{HOT_TUBS_BENEFIT_1_TITLE|Recovery & stress relief}}</h3>
+        <p>{{HOT_TUBS_BENEFIT_1_COPY|Daily soaks ease sore muscles and help you sleep — the reason most owners say they wish they'd bought sooner.}}</p>
       </article>
       <article class="cat-benefit">
         <span class="cat-benefit-n">02</span>
-        <h3>{{HOT_TUBS_BENEFIT_2_TITLE}}</h3>
-        <p>{{HOT_TUBS_BENEFIT_2_COPY}}</p>
+        <h3>{{HOT_TUBS_BENEFIT_2_TITLE|Built for year-round use}}</h3>
+        <p>{{HOT_TUBS_BENEFIT_2_COPY|Well-insulated shells and covers keep running costs reasonable in every season, not just summer.}}</p>
       </article>
       <article class="cat-benefit">
         <span class="cat-benefit-n">03</span>
-        <h3>{{HOT_TUBS_BENEFIT_3_TITLE}}</h3>
-        <p>{{HOT_TUBS_BENEFIT_3_COPY}}</p>
+        <h3>{{HOT_TUBS_BENEFIT_3_TITLE|Room for the whole family}}</h3>
+        <p>{{HOT_TUBS_BENEFIT_3_COPY|Seating layouts from intimate two-seaters to party-sized shells — we'll help you match one to your space.}}</p>
       </article>
     </div>
   </div>
@@ -137,8 +137,8 @@
   <div class="wrap cat-reveal">
     <div class="cat-inventory-head">
       <span class="cat-eyebrow">{{HOT_TUBS_GRID_KICKER|Available now}}</span>
-      <h2>{{HOT_TUBS_GRID_HEADLINE}}</h2>
-      <p>{{HOT_TUBS_GRID_COPY}}</p>
+      <h2>{{HOT_TUBS_GRID_HEADLINE|In-stock hot tubs}}</h2>
+      <p>{{HOT_TUBS_GRID_COPY|On our floor now. Ask for the out-the-door price on any unit.}}</p>
     </div>
     <div class="cat-results-bar">
       <p><strong id="catResultCount">0</strong> <span id="catResultLabel" data-singular="hot tub shown" data-plural="hot tubs shown">hot tubs shown</span></p>
@@ -148,22 +148,22 @@
       data-inventory-source="/api/inventory?category=hot-tub"
       data-card-style="inventory"
       data-inventory-empty="No hot tubs are published yet."></div>
-    <p class="cat-pay-disclaimer">{{FINANCING_DISCLAIMER}}</p>
+    <p class="cat-pay-disclaimer">{{FINANCING_DISCLAIMER|Subject to credit approval. Terms and availability vary — ask in store for current offers.}}</p>
   </div>
 </section>
 
 <section class="ht-help-section">
   <h2>{{HOT_TUBS_HELP_HEADLINE|Not sure which hot tub fits?}}</h2>
   <p>{{HOT_TUBS_HELP_COPY|Tell us how you’ll use it — seating, jets, and budget — and we’ll text today’s local price and availability.}}</p>
-  <button type="button" class="ht-help-cta" data-open-lead data-product="{{HOT_TUBS_CATEGORY_INTEREST}}" data-pricing-source="hot-tubs_help_cta">{{HOT_TUBS_HELP_CTA|Get My Local Price}} <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>
+  <button type="button" class="ht-help-cta" data-open-lead data-product="{{HOT_TUBS_CATEGORY_INTEREST|Hot Tub}}" data-pricing-source="hot-tubs_help_cta">{{HOT_TUBS_HELP_CTA|Get My Local Price}} <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>
 </section>
-<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER}}</p>
+<p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER|Inventory moves fast — availability and pricing can change without notice. Ask us to confirm today's status on any unit.}}</p>
 
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-col footer-brand">
       <img src="{{CLIENT_LOGO_FOOTER_URL}}" alt="{{CLIENT_NAME}}" width="160" height="40" class="footer-logo" decoding="async" data-config-src="client.logoFooterUrl" onerror="this.remove()">
-      <p class="footer-blurb">{{FOOTER_BLURB}}</p>
+      <p class="footer-blurb">{{FOOTER_BLURB|A local showroom with real units on the floor, out-the-door pricing, and a team that's here after the sale.}}</p>
       <div class="footer-social">
         <a href="{{CLIENT_FACEBOOK_URL|#}}" target="_blank" rel="noopener" aria-label="Facebook">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
