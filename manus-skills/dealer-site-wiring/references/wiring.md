@@ -67,11 +67,61 @@ Execution Logs.
 - `productlead` — leads from a product detail page.
 - `Campaign - <campaign>` / `Intent - <form_intent>` — every lead.
 
+## Where each credential comes from — source it yourself before escalating
+
+Most of these are self-serve. Escalating to the owner for a value you can retrieve
+is what turned a 30-second fix into a lost day on Sun Pool (WTV-045).
+
+| Variable | Where to get it | Recoverable later? |
+|---|---|---|
+| `GHL_API_TOKEN` | Client sub-account → Settings → **Private Integrations** → open the integration → copy the token. A PIT is **not** write-once; it can be re-copied any time. If none exists, create one with the scopes below. | Yes |
+| `GHL_LOCATION_ID` | The sub-account URL: `app.gohighlevel.com/v2/location/<ID>/…`, or the agency Supabase `clients` registry (`ghlLocationId`) | Yes |
+| `GHL_BOOKING_CALENDAR_ID` | Calendars → the booking calendar → its ID | Yes |
+| `META_PIXEL_ID` | The client's `tokens.env` — it is already there for the build-time pixel | Yes |
+| `META_CAPI_ACCESS_TOKEN` | Meta Events Manager → Data Sources → the pixel → Settings → Conversions API → generate | **No** — set and behaviorally verify in the same session |
+| `META_OFFLINE_WEBHOOK_SECRET` | Generate: `openssl rand -hex 32`. Must be pasted into the GHL workflow's Bearer header in the **same** change | Regenerable, but lives in two places |
+| `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET` | Generate. Both are required; a missing session secret breaks admin login even with a valid password | Yes |
+| `GOOGLE_SHEETS_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Agency Lead Vault sheet + service account | Yes |
+| `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` | Agency service-account JSON | **No** — mint a new key in GCP if lost |
+
+**Private-integration scopes the template actually needs** (a wrong selection
+fails as a 401 after deploy, costing a full cycle): `contacts.readonly`,
+`contacts.write`, `locations/customFields.readonly`, `calendars.readonly`,
+`calendars/events.write`. Tags and opportunities need no scope — the site writes
+tags onto the contact and GHL workflows trigger from them.
+
+**Record what you retrieved.** Write `ghlLocationId` and `ghlPrivateToken` back to
+the agency Supabase `clients` row for that client. A value recovered but not
+recorded gets hunted again on the next build.
+
+## Setting and proving a secret
+
+```
+printf '%s' "$VALUE" | npx wrangler pages secret put NAME --project-name <project>
+printf '%s' "$VALUE" | npx wrangler pages secret put NAME --project-name <project> --env preview
+```
+
+- **Never `echo`** — it appends a newline. Worse, `echo "$TOKEN" | wrangler …`
+  writes an **empty** secret and exits 0 when `$TOKEN` is unset in that shell.
+- `--env preview` is accepted even though it is absent from `--help` in wrangler 4.x.
+- Run from a directory **without** an unhydrated `wrangler.toml`; the template's
+  config contains `{{CLOUDFLARE_PAGES_PROJECT}}` and fails validation first.
+- **Never set secrets via a `deployment_configs` PATCH** (WTV-049).
+- Secrets bind at **deploy time**. Deploy, then
+  `ADMIN_PASSWORD='…' npm run secrets:verify -- https://<host>` per host.
+
+A secret is set when `secrets:verify` reports it `present` — never because its
+name appears in a dashboard, and never because a checklist row was ticked
+(WTV-053). `empty` and `missing` are different findings: `empty` means someone set
+it badly, `missing` means nobody set it.
+
 ## Order of operations
 
 1. Fill browser IDs in `clients/<name>/client.config.js` from intake.  
-2. Set Cloudflare secrets (GHL token, Meta CAPI, Meta offline webhook) and
-   the `GHL_BASE_TAGS=new-lead` env var (both environments).  
+2. Source every credential (see "Where each credential comes from") and set
+   Cloudflare secrets plus the `GHL_BASE_TAGS=new-lead` env var in **both**
+   environments. Deploy, then prove them with `npm run secrets:verify` per host
+   before verifying anything else — a blank secret invalidates every test after it.  
 3. Ensure snapshot has the 6 Meta contact fields + stage webhook, and its
    intake workflow triggers on `new-lead`.  
 4. `new-client.mjs --validate` → build → `gate.mjs`.  
