@@ -232,3 +232,9 @@ This file records why the template is built the way it is. Every architectural d
 - **Reasoning:** Facts must come from the client; copy is our craft. A default is template canon, not invented client claims — overriding it per client is an upgrade, not a requirement. This shrinks intake to what only the owner can provide.
 - **Applies to:** All builds from `premium-redesign` HEAD after this commit. Intake validators should hard-require only the 60 fact tokens; prefilled tokens are override-optional.
 - **Amendment to TVD-030:** `HOME_RESPONSE_PROMISE` moved from the optional-section mechanism to a prefilled default ("quick replies during store hours") — the hero line always ships. Remaining optional sections: `OFFER_NAME`, `GUIDE_HEADLINE`, `FLOOR_COUNT_LABEL`, `MASSAGE_CATEGORY_SUMMARY`.
+
+### [TVD-032] Trust defaults for stats; review quotes band hides without real reviews
+- **Date:** 2026-07-28
+- **Context:** `STAT_1–4` and `REVIEW_1–3` were required client facts, blocking builds for clients with no stats or reviews on hand.
+- **Decision:** Two different treatments, matching the legal line. (1) **Stats band gets puffery defaults** — `5★ / Highly rated service`, `100% / Out-the-door pricing`, `0 / Pressure on our floor`, `1 / Visit is all it takes`. These are subjective trust badges, not verifiable factual claims, and are safe for any client. (2) **The review-quotes band becomes an optional section** (control: `REVIEW_1_TEXT`, members: all `REVIEW_*` + `REVIEWS_TOTAL_LINE`) — it hides entirely at build when no real reviews are supplied. Fabricated named customer quotes are never permitted: they are FTC-actionable fake testimonials and a Google Business Profile risk, unlike badge puffery.
+- **Applies to:** All builds from `premium-redesign` HEAD after this commit. Required no-default token count drops to 39.

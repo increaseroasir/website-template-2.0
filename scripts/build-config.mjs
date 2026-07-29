@@ -108,7 +108,8 @@ const optionalSections = {
   OFFER_NAME: /\{\{OFFER_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
   GUIDE_HEADLINE: /\{\{GUIDE_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
   FLOOR_COUNT_LABEL: /\{\{FLOOR_COUNT(?:_LABEL)?(?:\|[^}]*)?\}\}/g,
-  MASSAGE_CATEGORY_SUMMARY: /\{\{MASSAGE_CATEGORY_SUMMARY(?:\|[^}]*)?\}\}/g
+  MASSAGE_CATEGORY_SUMMARY: /\{\{MASSAGE_CATEGORY_SUMMARY(?:\|[^}]*)?\}\}/g,
+  REVIEW_1_TEXT: /\{\{(?:REVIEW_[0-9]_[A-Z0-9_]+|REVIEWS_TOTAL_LINE)(?:\|[^}]*)?\}\}/g
 };
 function applyOptionalSections(text) {
   text = text.replace(/[ \t]*<!-- IF:([A-Z0-9_]+) -->([\s\S]*?)<!-- \/IF:\1 -->[ \t]*\r?\n?/g,

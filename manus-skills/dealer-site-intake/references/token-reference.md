@@ -270,19 +270,19 @@ facts, see content-rules.md).
 | `PROOF_SECTION_KICKER` | index.html | text | mono label | Why buy local | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `REVIEWS_HEADLINE` | index.html | text | headline | What your neighbors say | no | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `REVIEWS_KICKER` | index.html | text | mono label | Reviews | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
-| `REVIEWS_TOTAL_LINE` | index.html | text | text | — | YES | — |
-| `REVIEW_1_INITIAL` | index.html | text | text | — | YES | — |
-| `REVIEW_1_META` | index.html | text | text | — | YES | — |
-| `REVIEW_1_NAME` | index.html | text | text | — | YES | — |
-| `REVIEW_1_TEXT` | index.html | text | text | — | YES | — |
-| `REVIEW_2_INITIAL` | index.html | text | text | — | YES | — |
-| `REVIEW_2_META` | index.html | text | text | — | YES | — |
-| `REVIEW_2_NAME` | index.html | text | text | — | YES | — |
-| `REVIEW_2_TEXT` | index.html | text | text | — | YES | — |
-| `REVIEW_3_INITIAL` | index.html | text | text | — | YES | — |
-| `REVIEW_3_META` | index.html | text | text | — | YES | — |
-| `REVIEW_3_NAME` | index.html | text | text | — | YES | — |
-| `REVIEW_3_TEXT` | index.html | text | text | — | YES | — |
+| `REVIEWS_TOTAL_LINE` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_1_INITIAL` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_1_META` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_1_NAME` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_1_TEXT` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_2_INITIAL` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_2_META` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_2_NAME` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_2_TEXT` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_3_INITIAL` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_3_META` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_3_NAME` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
+| `REVIEW_3_TEXT` | index.html | text | text | — | optional-section (REVIEW_1_TEXT) | — |
 | `ROBOTS_DIRECTIVE` | active-inventory/SLUG/, active-inventory/, admin/, contact.html, financing.html, hot-tubs/, index.html, inventory.html, saunas/, swim-spas/, thank-you.html | meta | text | index,follow | no | — |
 | `SAUNAS_ANNOUNCEMENT` | saunas/ | text | text | Infrared &amp; traditional saunas · i… | no | — |
 | `SAUNAS_BENEFITS_COPY` | saunas/ | text | body copy | Compare infrared and traditional opti… | no | ≤300 chars per block |
@@ -316,14 +316,14 @@ facts, see content-rules.md).
 | `SAUNA_CATEGORY_SUMMARY` | index.html | text | text | Heat therapy for recovery and sleep | no | — |
 | `SECONDARY_CTA_LABEL` | index.html | text | button label | Get today's local price | no | ≤22 chars (btn is white-space:nowrap — long labels overflow) |
 | `SERVICE_AREA_COPY` | contact.html, index.html | text | body copy | Proudly serving our local area — ask us if we deliver to ... | no | ≤300 chars per block |
-| `STAT_1_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
-| `STAT_1_VALUE` | index.html | text | numeric/stat | — | YES | digits + optional prefix/suffix ($, +, ★); count-up parses it |
-| `STAT_2_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
-| `STAT_2_VALUE` | index.html | text | numeric/stat | — | YES | digits + optional prefix/suffix ($, +, ★); count-up parses it |
-| `STAT_3_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
-| `STAT_3_VALUE` | index.html | text | numeric/stat | — | YES | digits + optional prefix/suffix ($, +, ★); count-up parses it |
-| `STAT_4_LABEL` | index.html | text | mono label | — | YES | ≤28 chars (mono .68rem, tracking .26em eats width) |
-| `STAT_4_VALUE` | index.html | text | numeric/stat | — | YES | digits + optional prefix/suffix ($, +, ★); count-up parses it |
+| `STAT_1_LABEL` | index.html | text | mono label | Highly rated service | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
+| `STAT_1_VALUE` | index.html | text | numeric/stat | 5★ | no | digits + optional prefix/suffix ($, +, ★); count-up parses it |
+| `STAT_2_LABEL` | index.html | text | mono label | Out-the-door pricing | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
+| `STAT_2_VALUE` | index.html | text | numeric/stat | 100% | no | digits + optional prefix/suffix ($, +, ★); count-up parses it |
+| `STAT_3_LABEL` | index.html | text | mono label | Pressure on our floor | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
+| `STAT_3_VALUE` | index.html | text | numeric/stat | 0 | no | digits + optional prefix/suffix ($, +, ★); count-up parses it |
+| `STAT_4_LABEL` | index.html | text | mono label | Visit is all it takes | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
+| `STAT_4_VALUE` | index.html | text | numeric/stat | 1 | no | digits + optional prefix/suffix ($, +, ★); count-up parses it |
 | `STEP_1_COPY` | index.html | text | body copy | Walk the floor, ask questions, and compare models side by... | no | ≤300 chars per block |
 | `STEP_1_TITLE` | index.html | text | headline | Come see them in person | no | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `STEP_2_COPY` | index.html | text | body copy | One number in writing — unit, delivery, and setup — so yo... | no | ≤300 chars per block |

@@ -194,10 +194,10 @@
 <div class="stats-band" role="region" aria-label="Track record">
   <div class="gold-hairline" aria-hidden="true"></div>
   <div class="stats-grid reveal">
-    <div class="stat"><b>{{STAT_1_VALUE}}</b><span>{{STAT_1_LABEL}}</span></div>
-    <div class="stat"><b>{{STAT_2_VALUE}}</b><span>{{STAT_2_LABEL}}</span></div>
-    <div class="stat"><b>{{STAT_3_VALUE}}</b><span>{{STAT_3_LABEL}}</span></div>
-    <div class="stat"><b>{{STAT_4_VALUE}}</b><span>{{STAT_4_LABEL}}</span></div>
+    <div class="stat"><b>{{STAT_1_VALUE|5★}}</b><span>{{STAT_1_LABEL|Highly rated service}}</span></div>
+    <div class="stat"><b>{{STAT_2_VALUE|100%}}</b><span>{{STAT_2_LABEL|Out-the-door pricing}}</span></div>
+    <div class="stat"><b>{{STAT_3_VALUE|0}}</b><span>{{STAT_3_LABEL|Pressure on our floor}}</span></div>
+    <div class="stat"><b>{{STAT_4_VALUE|1}}</b><span>{{STAT_4_LABEL|Visit is all it takes}}</span></div>
   </div>
 </div>
 
@@ -276,6 +276,7 @@
   </div>
 </section>
 
+<!-- IF:REVIEW_1_TEXT -->
 <section class="section section-sand">
   <div class="wrap reveal">
     <span class="eyebrow">{{REVIEWS_KICKER|Reviews}}</span>
@@ -291,6 +292,7 @@
   </div>
   <p class="rev-total">{{REVIEWS_TOTAL_LINE}}</p>
 </section>
+<!-- /IF:REVIEW_1_TEXT -->
 
 <section class="section">
   <div class="wrap reveal">
