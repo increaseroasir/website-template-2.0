@@ -101,8 +101,17 @@ without evidence, is not done and will be sent back.
       while the rest of the site looks perfect (WTV-034). Gate check 15b now
       hard-fails this, but run the live check anyway — the gate reads the
       artifact, this reads what Pages actually served.
-      Note: Product JSON-LD is runtime-injected by `assets/product-page.js`, so
-      no HTTP fetch can see it. Confirm schema with the Rich Results Test.
+      The script now also **renders the page in headless Chrome** and asserts
+      the displayed product name and the emitted Product JSON-LD match the live
+      D1 record — HTTP checks alone cannot see a page that returns 200 and then
+      renders "Product unavailable" (WTV-035). Set `CHROME_PATH` if the browser
+      is not auto-detected; do not pass `--no-render` for a launch.
+- [ ] **Built artifact has no pinned product slug:**
+      `rg 'data-product-slug' dist/active-inventory/SLUG/index.html` must return
+      nothing. One shell serves every product URL, so a hydrated slug pins all
+      units to one record. `PRODUCT_SLUG` was deleted from the token system in
+      WTV-035 — if it reappears in a `tokens.env`, delete it. Gate check 15c
+      also hard-fails this.
 - [ ] **Deploy with `wrangler pages deploy` only — never raw API calls.** Raw
       API deploys can register the file manifest without uploading the blobs:
       routing "works" (308s on .html paths) while every asset returns an empty

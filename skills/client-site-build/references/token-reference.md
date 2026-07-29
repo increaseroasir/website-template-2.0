@@ -253,7 +253,7 @@ facts, see content-rules.md).
 | `PRODUCT_PROMO_LABEL` | active-inventory/, index.html | text | mono label | In stock | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `PRODUCT_SECONDARY_CTA` | active-inventory/SLUG/ | text | button label | — | YES | ≤22 chars (btn is white-space:nowrap — long labels overflow) |
 | `PRODUCT_SEO_TITLE` | active-inventory/SLUG/ | text | headline | — | YES | ≤48 chars (wraps to 3 lines at 390px past that) |
-| `PRODUCT_SLUG` | active-inventory/SLUG/ | attribute | text | - | no | — |
+| ~~`PRODUCT_SLUG`~~ | active-inventory/SLUG/ | **REMOVED — do not set** | — | — | — | Deleted in WTV-035. The product shell is served for every `/active-inventory/<slug>/` URL, so any hydrated value pinned all units to one slug and rendered "Product unavailable". `product-page.js` derives the slug from the URL. |
 | `PRODUCT_STATUS` | admin/ | text | text | available | no | — |
 | `PRODUCT_STATUS_LABEL` | active-inventory/ | text | mono label | Available | no | ≤28 chars (mono .68rem, tracking .26em eats width) |
 | `PROMISE_BADGE_LABEL` | index.html | attribute, text | mono label | Local promise | no | ≤28 chars (mono .68rem, tracking .26em eats width) |

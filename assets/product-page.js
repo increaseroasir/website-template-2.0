@@ -3,11 +3,17 @@
     return String(value || '').replace(/\{\{[^}]+\}\}/g, '').trim();
   }
 
+  /* URL first, always. This shell is served for every product URL through the
+     _redirects 200-proxy, so the pathname is the only source that differs per
+     unit; a build-time data-product-slug pinned every unit to one slug and
+     rendered "Product unavailable" everywhere (WTV-035). The body attribute
+     survives only as a fallback for a genuine one-slug-per-directory page,
+     and is ignored whenever the URL carries a real slug. */
   function slugForPage() {
-    var fromBody = clean(document.body.getAttribute('data-product-slug'));
-    if (fromBody) return fromBody;
     var match = location.pathname.match(/\/active-inventory\/([^/]+)/);
-    return match ? decodeURIComponent(match[1]) : '';
+    var fromPath = match ? decodeURIComponent(match[1]) : '';
+    if (fromPath && fromPath.toUpperCase() !== 'SLUG') return fromPath;
+    return clean(document.body.getAttribute('data-product-slug'));
   }
 
   function money(value) {

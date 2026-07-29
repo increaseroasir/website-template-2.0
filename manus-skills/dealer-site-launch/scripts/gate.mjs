@@ -428,6 +428,30 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
     problems.length ? cap(problems) : 'all 200-proxy destinations are directory paths');
 }
 
+/* 15c. the dynamic product shell must not pin a slug. It is served for EVERY
+   /active-inventory/<slug>/ URL, so a hydrated data-product-slug makes every
+   unit request that one slug: D1 returns nothing and the page renders "Product
+   unavailable" behind a perfect 200 and a valid shell (WTV-035). Every HTTP
+   check passes; only a JS-rendering check or this static check catches it. */
+{
+  const shellPath = join(dist, 'active-inventory', 'SLUG', 'index.html');
+  let status = 'PASS';
+  let detail = 'no build-time slug — renderer derives it from the URL';
+  if (!existsSync(shellPath)) {
+    status = 'FAIL';
+    detail = 'active-inventory/SLUG/index.html missing from artifact — every product URL would 404';
+  } else {
+    const shell = readFileSync(shellPath, 'utf8');
+    const match = /<body[^>]*\sdata-product-slug=["']([^"']*)["']/i.exec(shell);
+    const value = (match?.[1] || '').replace(/\{\{[^}]+\}\}/g, '').trim();
+    if (value) {
+      status = 'FAIL';
+      detail = `shell pins data-product-slug="${value}" — all units would request that slug and render "Product unavailable"; remove the attribute (PRODUCT_SLUG token was deleted in WTV-035)`;
+    }
+  }
+  add('product shell: no hardcoded data-product-slug (renders per-URL)', status, detail);
+}
+
 /* 16. no captcha anywhere (TVD-025): Turnstile was removed from the template
    after broken widgets silently rejected 100% of live leads twice (build #1).
    Any reference in the artifact means a stale pre-removal template. */

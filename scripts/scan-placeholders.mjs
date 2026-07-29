@@ -89,6 +89,19 @@ if (mode === 'launch') {
       }
     });
   } catch { /* no _redirects: routing checks below/elsewhere cover absence */ }
+  /* 4. The dynamic product shell must not carry a hardcoded data-product-slug.
+     It is served for EVERY /active-inventory/<slug>/ URL, so any hydrated value
+     pins all units to one record: the renderer requests that slug, D1 returns
+     nothing, and the page prints "Product unavailable" while still returning a
+     perfect 200 with a valid shell (WTV-035). HTTP checks cannot see this. */
+  try {
+    const shell = readFileSync(join(root, 'active-inventory', 'SLUG', 'index.html'), 'utf8');
+    const match = /<body[^>]*\sdata-product-slug=["']([^"']*)["']/i.exec(shell);
+    const value = (match?.[1] || '').replace(/\{\{[^}]+\}\}/g, '').trim();
+    if (value) {
+      failures.push(`active-inventory/SLUG/index.html pins data-product-slug="${value}" — the shell serves every product URL, so all units would request that one slug and render "Product unavailable". Remove the attribute; product-page.js derives the slug from the URL.`);
+    }
+  } catch { /* shell absent: other checks cover a missing product page */ }
   if (failures.length) {
     console.error('Structural gate checks failed:');
     for (const failure of failures) console.error('- ' + failure);

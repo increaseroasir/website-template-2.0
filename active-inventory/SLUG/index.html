@@ -20,7 +20,11 @@
 <script src="../../client.config.js"></script>
 <script src="../../assets/tracking.js"></script>
 </head>
-<body data-template-page data-product-slug="{{PRODUCT_SLUG|-}}" data-lead-source="product-page" data-lead-campaign="{{CAMPAIGN_NAME|Product Page}}">
+<!-- No data-product-slug here, deliberately: this one shell is served for EVERY
+     /active-inventory/<slug>/ URL via the _redirects 200-proxy, so a build-time
+     slug would pin all units to whichever value was hydrated (WTV-035).
+     product-page.js derives the slug from the URL. -->
+<body data-template-page data-lead-source="product-page" data-lead-campaign="{{CAMPAIGN_NAME|Product Page}}">
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href="../../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
@@ -31,7 +35,7 @@
     <button class="mobile-menu" aria-label="Open menu">☰</button>
   </div>
 </header>
-<main data-product-source="/api/inventory?slug={PRODUCT_SLUG}">
+<main data-product-source="/api/inventory?slug=<url-slug>">
 
 <!-- Slim strip: back link + urgency line (Paradise-style top banner) -->
 <div class="pdp-strip"><div class="wrap pdp-strip-inner">
