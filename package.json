@@ -21,9 +21,11 @@
     "deploy": "npm run brand:guard && npm run build:config && npm run launch:check && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch main",
     "preview:deploy": "npm run brand:guard && npm run build:config && npm run placeholder:check && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch preview",
     "lh:mobile": "node scripts/lighthouse-check.mjs",
-    "lh:desktop": "node scripts/lighthouse-check.mjs --desktop"
+    "lh:desktop": "node scripts/lighthouse-check.mjs --desktop",
+    "images:optimize": "node scripts/optimize-images.mjs"
   },
   "devDependencies": {
+    "sharp": "^0.35.3",
     "wrangler": "latest"
   }
 }

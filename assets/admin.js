@@ -4,6 +4,43 @@
   if (!app) return;
 
   let products = [];
+
+  const kb = (bytes) => Math.round(bytes / 1024) + 'KB';
+
+  /* Re-encode an upload in the browser before it ever reaches R2.
+     1600px is wider than any slot the template renders, and WebP at 0.82 is
+     visually lossless at that size. Re-encoding also strips EXIF, which
+     removes the GPS coordinates phones attach to photos.
+     Animated GIFs are passed through untouched — a canvas would flatten them
+     to a single frame. Anything that fails or gets larger is passed through
+     too: a slightly heavy image beats a broken upload. */
+  async function shrinkImage(file) {
+    if (!file || typeof file.arrayBuffer !== 'function') return file;
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+    if (typeof createImageBitmap !== 'function') return file;
+
+    const bitmap = await createImageBitmap(file).catch(() => null);
+    if (!bitmap) return file;
+
+    const MAX_EDGE = 1600;
+    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+    if (scale === 1 && file.size <= 200 * 1024) { bitmap.close(); return file; }
+
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) { bitmap.close(); return file; }
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.82));
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], String(file.name || 'image').replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' });
+  }
+
   const demoMode = new URLSearchParams(location.search).get('demo') === '1' && /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(location.hostname);
   const demoProducts = [
     {
@@ -291,6 +328,16 @@
       const submit = event.currentTarget.querySelector('[type="submit"]');
       try {
         submit.disabled = true;
+        /* Staff photograph units on a phone, so without this a 4MB original
+           lands in R2 untouched and is then served to every visitor forever —
+           silently undoing the mobile performance budget one upload at a time
+           (WTV-037). The server cap is 6MB, which is far too generous to help. */
+        const picked = data.get('image');
+        const shrunk = await shrinkImage(picked);
+        if (shrunk !== picked) {
+          data.set('image', shrunk);
+          result.textContent = 'Optimizing ' + kb(picked.size) + ' \u2192 ' + kb(shrunk.size) + '\u2026';
+        }
         let payload;
         if (demoMode) {
           payload = { ok: true, url: 'https://example.com/demo-product-image.webp' };
@@ -302,7 +349,8 @@
         event.currentTarget.uploaded_url.value = payload.url;
         const imageField = document.querySelector('[data-product-form] [name="primary_image"]');
         if (imageField && !imageField.value) imageField.value = payload.url;
-        result.textContent = 'Uploaded.';
+        const sent = data.get('image');
+        result.textContent = 'Uploaded' + (sent && sent.size ? ' (' + kb(sent.size) + ').' : '.');
       } catch (error) {
         result.textContent = error.message;
       } finally {

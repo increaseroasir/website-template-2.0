@@ -119,6 +119,12 @@ without evidence, is not done and will be sent back.
       regardless of markup. The script marks SEO `EXEMPT` there. Re-run on the
       canonical domain after DNS cutover and only sign off on SEO then.
       `is-crawlable` failing on `/admin/` and `/404.html` is intentional.
+- [ ] **Launch photography is compressed (TVD-039):**
+      `npm run images:optimize <dir> --out <dir>` before writing any image URL
+      into `tokens.env`. Targets WebP, max edge 1600px, <=120KB, EXIF stripped.
+      Hero and showroom images are client-supplied tokens the build never sees,
+      so nothing else will catch an oversized file. Product photos uploaded via
+      `/admin` are shrunk automatically in the browser and need no action.
 - [ ] **Client photography is compressed before launch (WTV-037):**
       Hero and showroom images are client-supplied tokens, not template assets,
       and oversized uploads are the single largest mobile-performance cost. Each
