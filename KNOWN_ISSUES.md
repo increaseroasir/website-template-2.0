@@ -565,3 +565,21 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix (client config, not code):** populate `openHours` on the calendar with the store's posted hours in store-local time, then re-check `free-slots`.
 - **Rule / prevention:** launch-checklist item added under booking. Verify `openHours` is populated **and** that the first and last returned slot fall inside business hours — do not infer either from a rendered page. Critically, `npm run secrets:verify` reports the booking row as PASS whenever the ID is merely present, so a green readiness check is **not** evidence the calendar is usable. Readiness answers "is it wired", never "is it configured sensibly".
 - **Status:** ID now set in both Cloudflare environments and validated (correct location, active, 30-min slots). **Hours remain unconfigured — a pre-DNS blocker.**
+
+---
+
+### [WTV-049] Set Pages secrets with `wrangler pages secret put`, never a `deployment_configs` PATCH
+
+- **Date:** 2026-07-29
+- **Severity:** High (suspected collateral blanking of unrelated secrets)
+- **Symptom / Finding:** After two `PATCH /pages/projects/{project}` calls that set only the three `GHL_*` variables, the next deployment reported `ADMIN_PASSWORD` as **empty at runtime** via `/api/readiness`. The PATCH was verified not to drop any variable *name* — Production held 23 before and after — but names are all the API exposes.
+- **Uncertainty, stated plainly:** it is **not proven** that the PATCH blanked `ADMIN_PASSWORD`. Nobody had ever exercised admin login on this project, so it may have been empty from initial provisioning — the same way `GHL_API_TOKEN` was. What is certain: `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` is also `secret_text` and *was* working (a lead reached the Lead Vault, impossible with an empty key), so secrets on this project were not uniformly blank, and the PATCH is the only intervening change. Treat the mechanism as unresolved and the practice as unsafe.
+- **Why the risk is structural:** the API returns `"value": ""` for every `secret_text` binding on read. Any workflow that reads `deployment_configs`, modifies it, and writes it back is round-tripping masked values, and cannot verify it preserved what it did not intend to touch. A PATCH that supplies only two keys *should* merge — but the failure mode is invisible either way, which is reason enough not to rely on it.
+- **Rule:** use `printf '%s' "$VALUE" | npx wrangler pages secret put NAME --project-name <project>` for Production and add `--env preview` for Preview. Note `--env preview` is accepted by `pages secret put` even though it is absent from `--help` in wrangler 4.x. Run it from a directory **without** an unhydrated `wrangler.toml`; the template's config contains `{{CLOUDFLARE_PAGES_PROJECT}}` and fails validation before the command runs.
+- **Recovery inventory (what is restorable without a third party) —** worth knowing *before* a secret is lost, not after:
+  - `GHL_API_TOKEN`, `GHL_LOCATION_ID`, `GHL_BOOKING_CALENDAR_ID` — recoverable from the client's GHL sub-account (Private Integrations exposes a copy control; a PIT is not write-once).
+  - `META_PIXEL_ID` — recoverable from the client artifact's `tokens.env`.
+  - `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET` — freely regenerable.
+  - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` — **no local copy**; requires minting a new key for the service account in GCP.
+  - `META_CAPI_ACCESS_TOKEN`, `META_OFFLINE_WEBHOOK_SECRET` — **not locally recoverable**; require regeneration in Meta and re-issuing the webhook secret to the GHL workflow.
+- **Status:** `ADMIN_PASSWORD` and all three `GHL_*` variables re-set via `wrangler` in both environments. Whether the remaining four secrets survived is answered by `/api/readiness` on the next deployment — which is the first time that question has been answerable at all.
