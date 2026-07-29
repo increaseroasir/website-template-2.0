@@ -262,6 +262,22 @@ without evidence, is not done and will be sent back.
 - [ ] **At least one product marked `featured=1` per category** (or the
       homepage featured grid intentionally empty and flagged).
 
+## DNS cutover
+
+Follow `references/dns-cutover.md`. It is a **two-day** procedure: the `www` TTL is
+dropped 24 hours before the record changes, or a portion of the client's traffic
+keeps reaching the old site for a full day while leads land in two places.
+
+- [ ] Step 0 observations (`NS`, apex, `www`, TTL, `MX`, SPF) recorded in `WIRING.md`
+      **before** any change, so a rollback has values to restore.
+- [ ] `CLIENT_WEBSITE_URL` is the canonical host (`www` unless Cloudflare is
+      authoritative for the zone) and the site has been **rebuilt** through it.
+      Canonicals naming a host that 301s elsewhere makes every page a redirect.
+- [ ] After cutover: `www` returns **200** and the apex returns **301** with the
+      path preserved. A `301` on both is a redirect loop and the site is down.
+- [ ] `MX` records identical to Step 0. Breaking a dealer's email is worse than
+      breaking their website.
+
 ## Post-launch (within 1 hour of DNS)
 
 - [ ] **Test lead from a phone on cellular** (not office wifi, not a

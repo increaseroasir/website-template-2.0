@@ -31,6 +31,7 @@ Gate checks leftovers, fingerprints, links, robots/sitemap, GSC meta, JSON-LD, G
 
 - `references/launch-checklist.md` — Part B human items + booking + Meta offline onboarding + search indexing + day-7  
 - `references/provisioning-checklist.md` — CF Pages / D1 / R2 / secrets  
+- `references/dns-cutover.md` — **read before touching any DNS record**: apex/CNAME constraint, TTL schedule, not breaking client email, loop check, rollback  
 - `references/handoff-template.md` — client + agency handoff  
 - Fingerprints: `scripts/template-fingerprints.json` (pending entries skipped)
 
@@ -43,7 +44,7 @@ Gate checks leftovers, fingerprints, links, robots/sitemap, GSC meta, JSON-LD, G
 - [ ] launch-checklist.md every box (or N/A with reason)
 - [ ] HUMAN CHECKPOINT 2 before DNS
 - [ ] Prod build + gate --env prod
-- [ ] DNS / deploy
+- [ ] DNS / deploy  → follow references/dns-cutover.md (TTL drop is 24h AHEAD of the switch)
 - [ ] indexnow --init then --submit <domain> (never on staging)
 - [ ] GSC verify + sitemap + Request Indexing (checklist)
 - [ ] Day-7: indexed count vs sitemap; log in WIRING.md

@@ -86,6 +86,10 @@ the next hydrate.
 9. Prod gate → DNS; IndexNow/GSC per checklist; deploy = `wrangler pages
    deploy` from the dist root; smoke-curl `/api/inventory` (JSON, not HTML)
    + `/api/lead` (not 503) and paste output in the report  
+   DNS follows `dealer-site-launch/references/dns-cutover.md` — a two-day
+   procedure, since the TTL drop precedes the record change by 24h. `www` is
+   canonical unless Cloudflare owns the zone, and the client's `MX` records are
+   never touched.  
 10. Post-launch cellular test lead + day-7 crawl log  
 
 ## Gotchas
