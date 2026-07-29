@@ -97,6 +97,29 @@ function replaceTokens(text) {
   });
 }
 
+/* Optional sections (TVD-030): an <!-- IF:TOKEN -->…<!-- /IF:TOKEN --> block
+   ships only when TOKEN has a usable value; otherwise the whole block is
+   removed so neither placeholders nor an empty shell reach the dist. Member
+   tokens of a hidden group that live outside the block (e.g. the body's
+   data-offer-ends attribute) are blanked afterwards. A member token left
+   unfilled while its control IS set still fails scan-placeholders — partial
+   sections are not allowed. */
+const optionalSections = {
+  OFFER_NAME: /\{\{OFFER_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
+  GUIDE_HEADLINE: /\{\{GUIDE_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
+  FLOOR_COUNT_LABEL: /\{\{FLOOR_COUNT(?:_LABEL)?(?:\|[^}]*)?\}\}/g,
+  HOME_RESPONSE_PROMISE: /\{\{HOME_RESPONSE_PROMISE(?:\|[^}]*)?\}\}/g,
+  MASSAGE_CATEGORY_SUMMARY: /\{\{MASSAGE_CATEGORY_SUMMARY(?:\|[^}]*)?\}\}/g
+};
+function applyOptionalSections(text) {
+  text = text.replace(/[ \t]*<!-- IF:([A-Z0-9_]+) -->([\s\S]*?)<!-- \/IF:\1 -->[ \t]*\r?\n?/g,
+    (match, token, body) => (token in tokenMap ? body : ''));
+  for (const [control, members] of Object.entries(optionalSections)) {
+    if (!(control in tokenMap)) text = text.replace(members, '');
+  }
+  return text;
+}
+
 function walk(dir) {
   for (const name of readdirSync(dir)) {
     if (name === 'node_modules' || name === '.wrangler' || name === '.git') continue;
@@ -104,6 +127,7 @@ function walk(dir) {
     if (statSync(file).isDirectory()) walk(file);
     else if (/\.(html|css|js|toml)$/i.test(name)) {
       let text = readFileSync(file, 'utf8');
+      if (/\.html$/i.test(name)) text = applyOptionalSections(text);
       text = replaceTokens(text);
       /* Empty GSC token → omit the verification meta entirely (same
          empty-hydration philosophy as empty logo/map values). */

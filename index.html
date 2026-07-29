@@ -23,6 +23,7 @@
 </head>
 <body class="home-page" data-template-page data-lead-source="homepage" data-lead-campaign="{{HOME_CAMPAIGN|homepage}}" data-offer-ends="{{OFFER_ENDS_AT}}" data-thank-you-url="/thank-you.html" data-meta-view-content="{{CLIENT_NAME}} Homepage" data-meta-view-category="homepage">
 
+<!-- IF:OFFER_NAME -->
 <div class="marquee" role="region" aria-label="Current offer">
   <div class="gold-hairline" aria-hidden="true"></div>
   <a class="marquee-link" href="#offer">
@@ -33,6 +34,7 @@
   </a>
   <div class="gold-hairline" aria-hidden="true"></div>
 </div>
+<!-- /IF:OFFER_NAME -->
 
 <header class="site-top">
   <div class="site-top-inner">
@@ -70,7 +72,9 @@
     <a href="/saunas/">Saunas <span>→</span></a>
     <a href="/inventory.html">Inventory <span>→</span></a>
     <a href="/financing.html">Financing <span>→</span></a>
+<!-- IF:OFFER_NAME -->
     <a href="#offer">{{OFFER_NAME}} <span>→</span></a>
+<!-- /IF:OFFER_NAME -->
     <a href="/contact.html">Visit Us <span>→</span></a>
   </nav>
   <div class="drawer-actions">
@@ -91,15 +95,17 @@
       <span class="eyebrow">{{HOME_EYEBROW}}</span>
       <h1>{{HOME_HERO_HEADLINE}} <span class="deg">{{HOME_HERO_HEADLINE_ACCENT}}</span></h1>
       <p class="sub"><b>{{HOME_HERO_PROOF_LINE}}</b> {{HOME_HERO_SUBHEAD}}</p>
+<!-- IF:OFFER_NAME -->
       <div class="offer-chip">
         <span class="dot" aria-hidden="true"></span>
         <p><b>{{OFFER_NAME}}:</b> {{OFFER_HEADLINE}} — <b>{{OFFER_ENDS_LABEL}}</b></p>
       </div>
+<!-- /IF:OFFER_NAME -->
       <div class="hero-ctas">
         <a class="btn btn-gold" href="/book/" data-pricing-source="hero_primary_cta">{{PRIMARY_CTA_LABEL|Book my showroom visit}}</a>
         <a class="btn btn-ghost" href="#inventory" data-pricing-source="hero_secondary_cta">{{SECONDARY_CTA_LABEL|Get today's local price}}</a>
       </div>
-      <p class="speed">Call or text <a data-config-href="client.smsHref" href="sms:{{CLIENT_PHONE_E164}}"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></a> — {{HOME_RESPONSE_PROMISE}}</p>
+      <p class="speed">Call or text <a data-config-href="client.smsHref" href="sms:{{CLIENT_PHONE_E164}}"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></a><!-- IF:HOME_RESPONSE_PROMISE --> — {{HOME_RESPONSE_PROMISE}}<!-- /IF:HOME_RESPONSE_PROMISE --></p>
     </div>
 
     <div class="lead-card" id="lead">
@@ -195,6 +201,7 @@
   </div>
 </div>
 
+<!-- IF:OFFER_NAME -->
 <section class="section section-sand" id="offer">
   <div class="wrap">
     <div class="fair-card reveal">
@@ -225,12 +232,15 @@
     </div>
   </div>
 </section>
+<!-- /IF:OFFER_NAME -->
 
 <section class="section" id="inventory">
   <div class="wrap reveal">
     <span class="eyebrow">{{FEATURED_INVENTORY_KICKER|In stock · no waiting}}</span>
     <h2>{{FEATURED_INVENTORY_HEADLINE}}</h2>
+<!-- IF:FLOOR_COUNT_LABEL -->
     <p class="floor"><span class="live" aria-hidden="true"></span><span><b data-floor-count>{{FLOOR_COUNT|0}}</b> {{FLOOR_COUNT_LABEL}}</span></p>
+<!-- /IF:FLOOR_COUNT_LABEL -->
     <p class="section-sub">{{FEATURED_INVENTORY_COPY}}</p>
   </div>
   <div class="wrap" style="overflow:hidden">
@@ -259,7 +269,9 @@
       <a class="cat" style="background-image:url('{{HOT_TUBS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/hot-tubs/"><div class="in"><b>Hot Tubs</b><span>{{HOT_TUB_CATEGORY_SUMMARY}}</span></div></a>
       <a class="cat" style="background-image:url('{{SWIM_SPAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/swim-spas/"><div class="in"><b>Swim Spas</b><span>{{SWIM_SPA_CATEGORY_SUMMARY}}</span></div></a>
       <a class="cat" style="background-image:url('{{SAUNAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/saunas/"><div class="in"><b>Saunas</b><span>{{SAUNA_CATEGORY_SUMMARY}}</span></div></a>
+<!-- IF:MASSAGE_CATEGORY_SUMMARY -->
       <a class="cat" style="background-image:linear-gradient(160deg,#16469B,#081D45)" href="/inventory.html"><div class="in"><b>Massage Chairs</b><span>{{MASSAGE_CATEGORY_SUMMARY}}</span></div></a>
+<!-- /IF:MASSAGE_CATEGORY_SUMMARY -->
     </div>
   </div>
 </section>
@@ -381,6 +393,7 @@
   </div>
 </section>
 
+<!-- IF:GUIDE_HEADLINE -->
 <section class="section section-sand">
   <div class="wrap reveal">
     <div class="guide-card">
@@ -408,19 +421,24 @@
     </div>
   </div>
 </section>
+<!-- /IF:GUIDE_HEADLINE -->
 
 <section class="final-cta on-dark">
   <div class="gold-hairline" aria-hidden="true"></div>
   <div class="wrap reveal">
+<!-- IF:OFFER_NAME -->
     <span class="eyebrow" style="justify-content:center;color:var(--gold-soft)">{{OFFER_ENDS_LABEL}}</span>
+<!-- /IF:OFFER_NAME -->
     <h2>{{FINAL_CTA_HEADLINE}}</h2>
     <p class="section-sub mx-auto max-w-md" style="color:#C9D5EE;margin:0 auto">{{FINAL_CTA_COPY}}</p>
+<!-- IF:OFFER_NAME -->
     <div class="count">
       <div><b id="cD">–</b><span>Days</span></div>
       <div><b id="cH">–</b><span>Hours</span></div>
       <div><b id="cM">–</b><span>Min</span></div>
       <div><b id="cS">–</b><span>Sec</span></div>
     </div>
+<!-- /IF:OFFER_NAME -->
     <div class="final-actions">
       <a class="btn btn-gold" href="#lead" data-pricing-source="final_cta_price">{{SECONDARY_CTA_LABEL|Get today's local price}}</a>
       <a class="btn btn-ghost" data-config-href="client.smsHref" href="sms:{{CLIENT_PHONE_E164}}">Text <span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></a>
@@ -438,7 +456,7 @@
     </div>
     <div>
       <h4>Quick links</h4>
-      <p><a href="/inventory.html">Inventory</a><br><a href="/financing.html">Financing</a><br><a href="#offer">{{OFFER_NAME}}</a><br><a href="/contact.html">Visit</a><br><a href="#lead">Get local pricing</a></p>
+      <p><a href="/inventory.html">Inventory</a><br><a href="/financing.html">Financing</a><br><!-- IF:OFFER_NAME --><a href="#offer">{{OFFER_NAME}}</a><br><!-- /IF:OFFER_NAME --><a href="/contact.html">Visit</a><br><a href="#lead">Get local pricing</a></p>
     </div>
     <div>
       <h4>Visit</h4>
