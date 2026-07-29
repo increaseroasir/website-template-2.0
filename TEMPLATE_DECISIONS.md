@@ -334,7 +334,7 @@ This file records why the template is built the way it is. Every architectural d
 - **Reasoning:** The variable that broke adjudication was the hardware, not the method. Warming, median-of-three, and printing `benchmarkIndex` (TVD-042) all remain required and all remain insufficient on their own, because two correctly-executed measurements on different hardware still produce two irreconcilable numbers. Removing the machine from the equation is the only thing that makes a score arguable on its merits. PSI's emulated mid-tier phone is also the closer proxy for the visitor we are actually selling to.
 - **Applies to:** Every performance sign-off from this commit forward. TVD-042 is not superseded — it is now a precondition rather than the standard.
 
-### [TVD-045] The LCP hero is never preloaded
+### [TVD-045] The LCP hero is never preloaded — **RETRACTED 2026-07-29, see TVD-047**
 - **Date:** 2026-07-29
 - **Context:** Preloading the LCP image is standard advice, it was baked into the template, and both Lighthouse's and PSI's `lcp-discovery-insight` audits actively ask for it. WTV-042 A/B'd it in a mirrored Cloudflare Pages lab (`ir-perf-lab`) scored on PSI mobile, 5-7 runs per arm, median reported, against a baseline validated by matching the operator's independently reported 61-64.
 - **Decision:** No page carries `<link rel="preload" as="image">`. Not for the hero, not for anything. The hero `<img>` stays in the initial HTML with `fetchpriority="high"` on the tag itself, which is where the priority hint belongs.
@@ -342,7 +342,7 @@ This file records why the template is built the way it is. Every architectural d
 - **Reasoning:** Under emulated slow 4G the image preload takes the highest-priority slot and delays render-blocking `assets/home.css`, and the hero cannot paint until that CSS is parsed — so the preload delays the very resource the image depends on. It buys nothing in return: the `<img>` is in the initial HTML, so the preload scanner already finds it, and `fetchpriority="high"` on the tag already supplies the priority. On the hot-tubs category page the same removal measured neutral (82 / 3.83s with, 83 / 3.79s without), and it was removed there and on `saunas/` and `swim-spas/` anyway — neutral-to-positive everywhere, and one unconditional rule is enforceable in a gate where "homepage only" is not.
 - **Corollary — `imagesizes` with viewport units is also banned:** `imagesizes="100vw"` on a preload paired with `sizes="100vw"` on the `<img>` double-downloaded at 2842×1598 DPR 1 — the preload took the 800w at 138ms and the `<img>` then took the 1600w at 222ms, 28KB plus 89KB. The preload scanner resolves viewport units before the real layout viewport is known and can pick a different candidate than the layout engine. This holds independently of the preload ruling.
 - **Enforcement:** `scripts/scan-placeholders.mjs` and both `gate.mjs` copies hard-fail any `as="image"` preload. This is the second revision of the preload rule — see TVD-040, which previously *required* exactly one image preload referencing the LCP hero.
-- **Applies to:** Every page, every build, from this commit forward. When a future audit recommends preloading the LCP image, this entry is the answer.
+- **Applies to:** ~~Every page, every build.~~ **RETRACTED.** The 2.3s figure this rule rests on was measured on a mirror without Pages Functions and did not replicate on the live site (+0.01s, overlapping ranges — WTV-044). Superseded by TVD-047. The `imagesizes` corollary above survives and is still enforced.
 
 ---
 
@@ -354,3 +354,19 @@ This file records why the template is built the way it is. Every architectural d
 - **Reasoning:** The bug was in the scanner, not the comment, and it was one bug shared by eight checks rather than eight bugs. Fixing it at the helper closes the whole class — including the cases nobody had hit yet, like a comment mentioning `href=` tripping the link check, or a commented-out preload tripping the WTV-042 rule. Comments are blanked character-for-character rather than deleted so that reported line numbers stay true; a gate that names the wrong line costs more time than one that stays silent.
 - **Corollary:** every scanner change ships with a **positive** test as well as a negative one. Suppressing a false positive by making a check blind is a worse defect than the false positive, and is invisible without a test that proves the real fault still fails.
 - **Applies to:** `scripts/scan-placeholders.mjs`, both `gate.mjs` copies, and any future markup scanner.
+
+
+---
+
+### [TVD-047] The image preload is neutral, so the rule is a cap and not a ban — and a lab without the backend is not evidence
+
+- **Date:** 2026-07-29
+- **Context:** This rule has now changed three times in one day. It required exactly one image preload (TVD-040), then forbade image preloads entirely (TVD-045, on WTV-042's lab measurement), and now caps them at one. The thrash is the point of this entry: two of those three changes were made on evidence that could not support them.
+- **Decision:** At most **one** `as="image"` preload per page. Zero is fine. One is fine. Two or more fails, because several image preloads flood the top of the priority queue. `imagesizes` with viewport units remains banned outright. The template itself ships **zero** image preloads — not because they are harmful, but because removing them measured neutral and there is no reason to add markup that buys nothing.
+- **Reasoning:** A paired, interleaved A/B of two real deployments differing only by this tag, 13 PSI runs per arm, measured +0.01s LCP and 0 points, with overlapping ranges and both builds scoring an identical 86 / 3.35s on fast runners. A rule may only be as strong as its evidence: a neutral result licenses a cap against pathological cases, and licenses nothing more.
+- **Process rule this establishes, which matters more than the preload:**
+  1. **A performance lab must serve its own backend.** WTV-042's mirror had no Pages Functions, so it never fetched inventory and its main thread was idle — and main-thread contention was the whole mechanism under test. The lab measured a different critical path than the one being optimized, and produced a confident 2.3s number for an effect that is zero.
+  2. **Changing an enforced gate rule requires evidence from a real deployment**, not a lab. Lab work is for generating hypotheses.
+  3. **Interleaved pairing is void when the measurement tool caches.** Verify distinct `fetchTime` counts before trusting a paired design (see TVD-044).
+  4. **Prefer A/B-ing two live deploys.** `scripts/psi-ab.mjs` exists for exactly this and reports per-pair signs plus an overlap verdict, so "inconclusive" is a first-class outcome rather than something to be rounded into a win.
+- **Applies to:** Every page and every build from this commit forward, and to any future performance claim about this template.

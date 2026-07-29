@@ -159,15 +159,32 @@ if (mode === 'launch') {
       if (/<a[^>]*class=["']logo(?:-mark)?["'][^>]*aria-label=/i.test(markup)) {
         failures.push(`${rel}: the logo link overrides its accessible name with aria-label — the visible tagline is then missing from that name (label-content-name-mismatch). Remove the aria-label and let the link text speak.`);
       }
-      /* 6. No image preloads (WTV-042). This is the check most likely to be
-         "helpfully" undone, because preloading the LCP hero is textbook advice
-         and PSI's own lcp-discovery-insight audit asks for it. It measured 2.3s
-         WORSE on LCP: the preload takes the top priority slot and delays the
-         render-blocking CSS the hero needs in order to paint. Pinned at source
-         so the tag cannot come back through a well-intentioned edit. */
-      for (const tag of markup.match(/<link[^>]*rel=["']preload["'][^>]*>/gi) || []) {
-        if (/\sas=["']image["']/i.test(tag)) {
-          failures.push(`${rel}: preloads an image — forbidden (WTV-042). Preloading the hero measured 2.3s worse on LCP because it starves the render-blocking CSS the hero needs to paint. Delete the tag; fetchpriority="high" on the <img> already supplies the priority.`);
+      /* 6. At most ONE image preload per page.
+         History matters here, because this rule has flip-flopped and the next
+         agent deserves the truth. WTV-042 forbade `as="image"` outright on the
+         strength of a 2.3s LCP win measured against a mirrored copy of a client
+         homepage. That result DID NOT REPLICATE on the real deployment: a paired,
+         interleaved PSI A/B of the two live builds (13 runs per arm) put the
+         delta at +0.01s with the ranges overlapping, and on fast runners both
+         builds scored an identical 86 / LCP 3.35s. The mirror lacked Pages
+         Functions, so it never fetched inventory and its main thread was idle —
+         which is exactly the contention the preload competes with. See WTV-044.
+         So the tag is neither required nor forbidden: it is NEUTRAL, and the only
+         thing worth enforcing is that a page does not preload several images and
+         flood the priority queue. */
+      const imagePreloads = (markup.match(/<link[^>]*rel=["']preload["'][^>]*>/gi) || [])
+        .filter((tag) => /\sas=["']image["']/i.test(tag));
+      if (imagePreloads.length > 1) {
+        failures.push(`${rel}: ${imagePreloads.length} image preloads — at most one is allowed. Several image preloads flood the top of the priority queue and starve render-blocking CSS. Keep the LCP hero at most; everything else loads on discovery.`);
+      }
+      /* `imagesizes` with viewport units stays banned, and that finding DID hold
+         up — measured directly in Chrome, not inferred from a score: the preload
+         scanner resolves viewport units before the real layout viewport exists,
+         so it can pick a different srcset candidate than the layout engine and
+         download the image twice (28KB + 89KB at 2842x1598 DPR 1). */
+      for (const tag of imagePreloads) {
+        if (/\simagesizes=["'][^"']*v(w|h)/i.test(tag)) {
+          failures.push(`${rel}: image preload uses imagesizes with viewport units — this double-downloads the hero on wide viewports (measured: 800w via the preload AND 1600w via the <img>). Drop imagesizes, or drop the preload.`);
         }
       }
     }

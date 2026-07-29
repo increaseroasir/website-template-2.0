@@ -75,13 +75,13 @@ workflow until stage names match the snapshot.
       (c) `lcp-breakdown-insight` phases are relative weights, not a
       decomposition — they do not sum to LCP. Rank them; never quote them as
       absolute timings. When comparing two builds, trust **LCP over the score**.
-- [ ] **No image preload in the built artifact (TVD-045 / WTV-042):**
-      `rg 'as="image"' dist/` must return **nothing**. The hero is never
-      preloaded — the preload takes the top priority slot under slow 4G and
-      delays the render-blocking stylesheet the hero needs to paint, costing
-      ~2.3s of LCP on the homepage. The `<img>` carries `fetchpriority="high"`
-      instead. The gate hard-fails this, but check it by eye too: an audit tool
-      will keep recommending the preload, and it is wrong.
+- [ ] **At most one image preload, never with viewport-unit `imagesizes`
+      (TVD-047 / WTV-044):** `rg -c 'as="image"' dist/index.html` must be 0 or 1.
+      The template ships 0. NOTE: WTV-042 previously banned this outright on a
+      2.3s LCP measurement — that was measured on a mirror without Pages
+      Functions and did **not** replicate on a real deployment (+0.01s,
+      overlapping ranges). If an audit tool recommends preloading the hero, it
+      is neither wrong nor useful here; leave the markup alone.
 - [ ] **Favicon set, sitemap generated + referenced, SSL green, www/non-www
       redirect chosen and enforced, 404 page live.**
 

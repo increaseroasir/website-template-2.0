@@ -29,10 +29,11 @@ CHECKS (static)
   duplicate-ids   no repeated id= within a page (post-hydration, pre-injection)
   links           internal hrefs resolve; #anchors exist on that page
   images          every <img> has alt + width/height
-  preload         NO <link rel="preload" as="image"> anywhere — preloading the
-                  LCP hero measured 2.3s worse on LCP (WTV-042). At most one
-                  as="style", which must be the fonts stylesheet and must carry
-                  an onload promotion plus a <noscript> fallback
+  preload         at most one as="image" (neutral on a real deployment per
+                  WTV-044 — WTV-042's ban was measured on a mirror and did not
+                  replicate); never with imagesizes in viewport units. At most
+                  one as="style", which must be the fonts stylesheet and must
+                  carry an onload promotion plus a <noscript> fallback
   robots          robots meta matches --env
   phones          tel:/sms: hrefs are E164 and match the built config
   robots.txt      exists; staging = "Disallow: /", prod = allow + Sitemap line
@@ -247,18 +248,26 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('images: every img has alt + width/height', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'all imgs dimensioned');
 }
 
-/* 6. preload — owner ruling (06fa070), reconciled in WTV-038, revised again in
-   WTV-042. Still enforced by ROLE rather than by count, but the image role is
-   now FORBIDDEN outright rather than capped at one.
+/* 6. preload — owner ruling (06fa070), reconciled in WTV-038, revised in
+   WTV-042, and REVISED BACK in WTV-044. Enforced by ROLE, image role capped at
+   one rather than forbidden.
 
-   Preloading the LCP hero measured 2.3s WORSE on LCP than not preloading it
-   (PSI mobile, mirror of a real deployment, 6 batches: 5.47-5.73s with the
-   preload, 3.19-3.39s without, no overlap). Under emulated slow 4G the image
-   preload claims the top priority slot and delays render-blocking home.css —
-   which the hero cannot paint without — so the preload delays the very
-   resource the image depends on, and buys nothing, because the <img> sits in
-   the initial HTML where the preload scanner finds it anyway and
-   fetchpriority="high" on the tag supplies the priority.
+   The full history, because this rule has flip-flopped twice and a future agent
+   will otherwise re-derive it from scratch:
+
+   WTV-042 forbade as="image" outright, on a measured 2.3s LCP win (PSI mobile,
+   preload arms 5.47-5.73s, no-preload arms 3.19-3.39s, no overlap). That was
+   measured against a MIRROR of a client homepage, and it did not replicate on
+   the real deployment. A paired, interleaved A/B of the two live builds — same
+   site, differing only by this tag, 13 PSI runs per arm — measured the delta at
+   +0.01s with overlapping ranges, and on fast runners the two builds were
+   indistinguishable (both 86 / LCP 3.35s). The mirror had no Pages Functions, so
+   it never fetched inventory and its main thread was idle; that missing
+   contention is precisely what the preload competes against. See WTV-044.
+
+   So: the image preload is NEUTRAL on a real deployment. Not required, not
+   forbidden. What is still worth enforcing is that a page does not preload
+   SEVERAL images and flood the priority queue.
 
    The as="style" font rule is unchanged: it must be the font stylesheet and it
    must ship both an onload promotion and a <noscript> fallback. */
@@ -269,10 +278,11 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
     const rel = relative(dist, p);
     const tags = [...text.matchAll(/<link[^>]*rel="preload"[^>]*>/g)].map((m) => m[0]);
     const style = [];
+    const image = [];
     for (const tag of tags) {
       const as = (tag.match(/\sas="([^"]+)"/) || [])[1] || '';
       if (as === 'image') {
-        bad.push(`${rel}: preloads an image — forbidden (WTV-042). Measured 2.3s WORSE on LCP: the preload starves the render-blocking CSS the hero needs to paint. Delete the tag and keep fetchpriority="high" on the <img>.`);
+        image.push(tag);
       } else if (as === 'style') {
         style.push(tag);
       } else {
@@ -280,6 +290,16 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
       }
     }
     if (style.length > 1) bad.push(`${rel}: ${style.length} stylesheet preloads (at most 1 — the font stylesheet)`);
+    if (image.length > 1) bad.push(`${rel}: ${image.length} image preloads (at most 1 — several flood the priority queue and starve render-blocking CSS)`);
+    /* imagesizes with viewport units DID hold up under scrutiny — measured in
+       Chrome directly, not inferred from a score. The preload scanner resolves
+       viewport units before the layout viewport exists, so it can choose a
+       different srcset candidate than the layout engine and fetch twice. */
+    for (const tag of image) {
+      if (/\simagesizes="[^"]*v(w|h)/i.test(tag)) {
+        bad.push(`${rel}: image preload uses imagesizes with viewport units — double-downloads the hero on wide viewports (800w via preload AND 1600w via the <img>, 28KB + 89KB at 2842x1598). Drop imagesizes, or drop the preload.`);
+      }
+    }
 
     if (style.length === 1) {
       const href = (style[0].match(/\shref="([^"]+)"/) || [])[1];
@@ -293,7 +313,7 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
       }
     }
   }
-  add('preload: font stylesheet only — no image preloads (WTV-042)', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
+  add('preload: <=1 image + <=1 font stylesheet, no viewport-unit imagesizes (WTV-044)', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
 }
 
 /* 7. robots vs env */

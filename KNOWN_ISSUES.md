@@ -407,6 +407,15 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Status:** FIXED — cause found and removed in WTV-042. The measurement tooling was fixed here; the site defect this entry originally dismissed was real and is fixed there.
 
 ### [WTV-042] The hero `<link rel="preload" as="image">` was costing 2.3s of LCP — the preload was the defect
+
+> **RETRACTED 2026-07-29, same day. The conclusion below is WRONG for a real
+> deployment.** It was measured against a *mirror* of a client homepage, and it
+> did not replicate on the live site: a paired, interleaved A/B of the two real
+> builds put the effect at +0.01s with overlapping ranges. The mechanism
+> described below is real physics, but its magnitude on a mirror was an artifact
+> of the mirror. **Read [WTV-044] instead.** The entry is kept in full, not
+> deleted, because the reasoning is instructive and because a retraction that
+> hides its own evidence teaches nothing.
 - **Date:** 2026-07-29
 - **Client:** sun-pool-spa (shared template)
 - **Symptom / Finding:** PSI mobile scored the homepage 66 with LCP 5.7s, of which 2,012ms sat in "Element render delay" (WTV-041). The hero image's bytes were fully arrived by roughly 3.5s and the element still did not paint until 5.7s. The phase name pointed at paint cost, animation, or an opacity gate. It was none of those.
@@ -435,7 +444,7 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix:** `<link rel="preload" as="image">` removed from `index.html`, `hot-tubs/index.html`, `saunas/index.html`, and `swim-spas/index.html`. It was removed from all four rather than the homepage alone because it is neutral-to-positive everywhere and one consistent rule is enforceable in a gate where "homepage only" is not.
 - **Verification:** Measured, not reasoned. Six arms in the table above, each 5-7 PSI mobile runs with the median reported, against a byte-faithful mirror whose baseline independently agrees with the operator's number on the real site. The split is clean on the variable under test: every preload-present arm landed at LCP 5.47-5.73s, every preload-absent arm at 3.19-3.39s, with no overlap, across batches whose `benchmarkIndex` varied from 135 to 1246.
 - **Rule / prevention:** gate checks now **forbid** `as="image"` preloads outright, in `scripts/scan-placeholders.mjs` and both `gate.mjs` copies. This reverses the previous rule, which required exactly one `as="image"` preload referencing the LCP hero — see TVD-040, second revision, and TVD-045.
-- **Status:** FIXED in `premium-redesign`. Closes the open lever in WTV-041.
+- **Status:** ~~FIXED~~ **RETRACTED — see [WTV-044].** The preload removal shipped and is performance-neutral, so it was not reverted; the *gate rule* that forbade image preloads was reversed, and the open lever in WTV-041 is NOT closed. The real bottleneck is FCP, constant at 3.01s across every run of both arms.
 
 ---
 
@@ -456,3 +465,34 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Rule / prevention:** any new check that scans raw HTML must read through `inertRanges()` (gate) or the `markup` twin (scan-placeholders), never the raw string. The template's explanatory comments deliberately name tags — that is good documentation and must not be made unsafe by a scanner.
 - **Also fixed here, defensively:** `scan-placeholders.mjs` now ignores `clients/`. The scan normally runs from inside a hydrated site where that directory does not exist, so this is inert on the real path; it only stops a template-root run from auditing `clients/hostile-rehearsal/dist`, the frozen certification artifact that predates five shipped fixes (WTV-039). Running the scan at the template root still fails by design — the raw template has unhydrated tokens and un-inlined scripts.
 - **Status:** FIXED in `premium-redesign`.
+
+
+---
+
+### [WTV-044] The 2.3s preload win did not exist — a mirror without a backend is not a valid performance proxy
+
+- **Date:** 2026-07-29
+- **Severity:** High (a wrong conclusion was encoded as an enforced gate rule and shipped)
+- **Symptom / Finding:** WTV-042 concluded, from six measured arms, that removing the hero image preload cut mobile LCP by ~2.3s, and both gates were changed to **forbid** `as="image"` preloads. Measured against the actual client deployment, the effect is **absent**.
+- **The measurement that settles it — a paired, interleaved A/B of two REAL builds** that differ only by this tag (`2fd7180` with the preload, `39b7ad6` without; the intervening commits were documentation and build-time scanners with no runtime effect):
+
+  | Arm | n | Median LCP | Median performance | LCP range |
+  |---|---:|---:|---:|---|
+  | with preload | 13 | 3.38s / 4.83s per batch | 77-86 | 3.34-5.78s |
+  | without preload | 13 | 3.39s / 6.12s per batch | 69-86 | 3.39-6.73s |
+
+  Batch 2, the cleaner of the two, put the paired delta at **+0.01s LCP and 0 points**, ranges overlapping. On fast runners (`benchmarkIndex` ≥950) the two builds were **indistinguishable: both 86, both LCP 3.35s**.
+- **Root cause of the false finding:** the WTV-042 lab was a static mirror of a client homepage. Mirroring copied the HTML and same-origin subresources but **not the Pages Functions**, so the mirror never called `/api/inventory`, never rendered inventory cards, and ran a far quieter main thread. The preload's cost in WTV-042 was measured in an environment with no contention to compete against — and contention is the entire mechanism. A proxy that omits the backend does not merely measure *less*, it measures a **different** critical path.
+- **Why the first live batch also misled, briefly:** batch 1 appeared to confirm a 1.29s preload advantage, but the preload arm had drawn systematically faster runners (`benchmarkIndex` median 1018 vs 775). PSI's silent analysis caching (see TVD-044) collapsed 6 interleaved pairs into 3 distinct analyses per arm, which pinned each arm to whichever runner served its cached result and defeated the interleaving. Only on the runner-comparable pairs did the delta shrink to +0.19-0.46s, and batch 2 then put it at zero.
+- **What is actually slow, and it is not the preload:** **FCP is 3.01s in every single run of both arms** — 13 runs each, four separate batches, both builds. LCP resource load duration is 39-78ms, so the hero image itself is not the bottleneck; the page simply does not paint for three seconds. `unused-javascript` (GA4 + Meta, ~126KiB, ~600ms) is the only opportunity PSI will quantify. The open lever from WTV-041 remains open.
+- **The score straddles the gate on runner assignment alone.** Same bytes, same URL, 13 runs: median **69** overall, but **86** on runners indexing ≥950 (n=5) and **68** on slower ones (n=8). The launch floor is 70. This is not a site that "fails"; it is a site sitting exactly on a threshold whose measurement noise is wider than the threshold's precision.
+- **Fix:** the preload removal was **not reverted** — it is neutral, so reverting would churn a client deployment for nothing. What was reverted is the **rule**: `scripts/scan-placeholders.mjs` and both `gate.mjs` copies now permit **at most one** `as="image"` preload instead of forbidding it. Zero preloads and one preload both PASS; two FAIL; one carrying `imagesizes` in viewport units FAILs.
+- **What survived from WTV-042:** the `imagesizes`-with-viewport-units double-download. That was measured directly in Chrome by observing two network requests, not inferred from a score, and it reproduces. It stays banned.
+- **Rule / prevention — this is the durable lesson, and it is not about preloads:**
+  1. **A performance lab must include the backend.** If the artifact under test does not serve its own API, its main thread is not the one you are optimizing. Mirror to a scratch project *with* Functions, or A/B two real deployments.
+  2. **Prefer A/B-ing two real deployments over any lab.** It is slower to set up and it is the only design that cannot be invalidated by a missing dependency.
+  3. **Interleaving does not cancel runner drift when results are cached.** Check distinct `fetchTime` count; if it is below the pair count, the pairing is broken and the batch is not evidence.
+  4. **Report the paired sign, not just two medians.** "0/6 pairs favoured B" and "+0.01s median" are different claims, and the second batch showed how far apart they can land.
+  5. **A finding that reverses a previous rule must be re-measured on a real deployment before the rule changes.** WTV-042 changed an enforced gate on lab evidence alone. That is the process failure, and it is a worse defect than the wrong number.
+- **Tooling added:** `scripts/psi-ab.mjs` — paired interleaved PSI A/B with retry on PSI's transient 500s, per-pair deltas, distinct-analysis counting, and an explicit overlap verdict. Built because `psi-check.mjs` aborts a whole batch on one transient error and cannot compare two URLs.
+- **Status:** Rule reverted. Template unchanged (neutral). **WTV-041's LCP lever remains OPEN** — the target is FCP 3.01s, not the hero image.
