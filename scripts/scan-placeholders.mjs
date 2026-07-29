@@ -102,6 +102,31 @@ if (mode === 'launch') {
       failures.push(`active-inventory/SLUG/index.html pins data-product-slug="${value}" — the shell serves every product URL, so all units would request that one slug and render "Product unavailable". Remove the attribute; product-page.js derives the slug from the URL.`);
     }
   } catch { /* shell absent: other checks cover a missing product page */ }
+  /* 5. Accessibility regressions that Lighthouse caught but no build step did
+     (WTV-036). Both are one-attribute mistakes that are invisible in review
+     and cost real points, so they are pinned here rather than trusted to
+     a manual audit. */
+  (function checkA11y(dir) {
+    for (const name of readdirSync(dir)) {
+      if (ignoredDirs.has(name)) continue;
+      const file = join(dir, name);
+      if (statSync(file).isDirectory()) { checkA11y(file); continue; }
+      if (!/\.html$/i.test(name)) continue;
+      const html = readFileSync(file, 'utf8');
+      const rel = relative(root, file);
+      /* A closed drawer that is only translated off-screen keeps its links
+         keyboard-focusable and in the accessibility tree. */
+      const drawer = /<div[^>]*id=["']drawer["'][^>]*>/i.exec(html);
+      if (drawer && !/\binert\b/.test(drawer[0])) {
+        failures.push(`${rel}: #drawer ships without the \`inert\` attribute — the closed drawer stays focusable and screen readers tab into a hidden menu. Add \`inert\` to the markup; home.js toggles it thereafter.`);
+      }
+      /* The logo's visible text is name + tagline, so an aria-label of
+         "<name> home" drops the tagline and fails label-content-name-mismatch. */
+      if (/<a[^>]*class=["']logo(?:-mark)?["'][^>]*aria-label=/i.test(html)) {
+        failures.push(`${rel}: the logo link overrides its accessible name with aria-label — the visible tagline is then missing from that name (label-content-name-mismatch). Remove the aria-label and let the link text speak.`);
+      }
+    }
+  })(root);
   if (failures.length) {
     console.error('Structural gate checks failed:');
     for (const failure of failures) console.error('- ' + failure);

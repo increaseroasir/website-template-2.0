@@ -399,7 +399,7 @@ body.category-page .announcement-bar {
   color: transparent;
   margin-bottom: 14px;
 }
-.cat-benefit h3 {
+.cat-benefit h3, .cat-benefit .h3{
   font-family: var(--display);
   font-weight: 800;
   font-size: 1.22rem;

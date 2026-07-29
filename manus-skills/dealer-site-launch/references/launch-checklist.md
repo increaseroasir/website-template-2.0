@@ -106,6 +106,25 @@ without evidence, is not done and will be sent back.
       D1 record — HTTP checks alone cannot see a page that returns 200 and then
       renders "Product unavailable" (WTV-035). Set `CHROME_PATH` if the browser
       is not auto-detected; do not pass `--no-render` for a launch.
+
+- [ ] **Lighthouse, scripted — not hand-run (WTV-036 / TVD-038):**
+      `npm run lh:mobile -- https://<domain>` and `npm run lh:desktop -- https://<domain>`.
+      Thresholds: accessibility >= 95, mobile performance >= 70, desktop >= 90,
+      SEO >= 90. The template scores **accessibility 100 on all 13 pages** at
+      the certified SHA, so anything below 95 is a regression introduced by
+      client content or config — not a template baseline. The script prints the
+      specific failing audits.
+      **SEO on a `*.pages.dev` hash is meaningless:** Cloudflare sends
+      `X-Robots-Tag: noindex` on every Pages hostname, which costs ~34 points
+      regardless of markup. The script marks SEO `EXEMPT` there. Re-run on the
+      canonical domain after DNS cutover and only sign off on SEO then.
+      `is-crawlable` failing on `/admin/` and `/404.html` is intentional.
+- [ ] **Client photography is compressed before launch (WTV-037):**
+      Hero and showroom images are client-supplied tokens, not template assets,
+      and oversized uploads are the single largest mobile-performance cost. Each
+      should be WebP, no wider than 1600px, and ideally <=120KB. No template
+      change can fix a 167KB hero. Do **not** "fix" performance by deferring
+      GA4, the Meta pixel, or Clarity — see TVD-037; that trade is refused.
 - [ ] **Built artifact has no pinned product slug:**
       `rg 'data-product-slug' dist/active-inventory/SLUG/index.html` must return
       nothing. One shell serves every product URL, so a hydrated slug pins all

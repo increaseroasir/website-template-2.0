@@ -452,6 +452,29 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('product shell: no hardcoded data-product-slug (renders per-URL)', status, detail);
 }
 
+/* 15d. accessibility regressions that cost real Lighthouse points and are
+   invisible in review (WTV-036). A drawer hidden only by transform keeps its
+   links keyboard-focusable inside an aria-hidden subtree; a logo aria-label of
+   "<name> home" drops the visible tagline from the accessible name. */
+{
+  const problems = [];
+  for (const f of textFiles) {
+    if (!/\.html$/i.test(f)) continue;
+    const html = readFileSync(f, 'utf8');
+    const rel = f.slice(dist.length + 1);
+    const drawer = /<div[^>]*id=["']drawer["'][^>]*>/i.exec(html);
+    if (drawer && !/\binert\b/.test(drawer[0])) {
+      problems.push(`${rel}: #drawer missing \`inert\` (closed drawer stays focusable)`);
+    }
+    if (/<a[^>]*class=["']logo(?:-mark)?["'][^>]*aria-label=/i.test(html)) {
+      problems.push(`${rel}: logo link overrides its accessible name with aria-label`);
+    }
+  }
+  add('accessibility: inert drawer + logo accessible name',
+    problems.length ? 'FAIL' : 'PASS',
+    problems.length ? cap(problems) : 'closed drawer is inert; logo name comes from its text');
+}
+
 /* 16. no captcha anywhere (TVD-025): Turnstile was removed from the template
    after broken widgets silently rejected 100% of live leads twice (build #1).
    Any reference in the artifact means a stale pre-removal template. */

@@ -13,18 +13,29 @@
   /* ---------- Drawer ---------- */
   var burger = qs('#burger');
   var drawer = qs('#drawer');
+  /* The closed drawer is only moved off-screen (translateX(102%)), so without
+     `inert` its links stay keyboard-focusable and remain in the accessibility
+     tree — a screen-reader user tabs into an invisible menu (WTV-036).
+     `inert` removes focus AND a11y-tree membership in one attribute; the
+     aria-hidden mirror is kept for older engines. */
   function setDrawer(open) {
     if (!drawer || !burger) return;
     drawer.classList.toggle('open', open);
     drawer.setAttribute('aria-hidden', String(!open));
+    drawer.toggleAttribute('inert', !open);
     burger.setAttribute('aria-expanded', String(open));
     document.body.style.overflow = open ? 'hidden' : '';
   }
   if (burger && drawer) {
+    setDrawer(false); /* initialize closed: markup ships without `inert` */
     burger.addEventListener('click', function () { setDrawer(!drawer.classList.contains('open')); });
     var closeBtn = qs('#drawerClose');
     if (closeBtn) closeBtn.addEventListener('click', function () { setDrawer(false); });
     qsa('a', drawer).forEach(function (a) { a.addEventListener('click', function () { setDrawer(false); }); });
+    /* Escape closes and returns focus to the trigger. */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) { setDrawer(false); burger.focus(); }
+    });
   }
 
   /* ---------- Countdown ---------- */

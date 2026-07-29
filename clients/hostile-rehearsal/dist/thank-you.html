@@ -13,7 +13,9 @@
 <meta name="description" content="Sample copy for thank you meta description, written plainly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript></noscript>
 <link rel="stylesheet" href="assets/theme.css">
 <link rel="stylesheet" href="assets/premium-pages.css">
 <script src="client.config.js"></script>
@@ -22,7 +24,7 @@
 <body class="page-thankyou" data-template-page>
 <header class="site-header">
   <div class="header-inner">
-    <a class="logo" href="/" aria-label="Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville home"><b data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</b><span data-config="client.tagline">East Tennessee's backyard, done right</span></a>
+    <a class="logo" href="/"><b data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</b><span data-config="client.tagline">East Tennessee's backyard, done right</span></a>
     <nav class="nav" aria-label="Primary">
       <a href="/hot-tubs/">Hot Tubs</a><a href="/swim-spas/">Swim Spas</a><a href="/saunas/">Saunas</a><a href="/inventory.html">Inventory</a><a href="/financing.html">Financing</a><a href="/contact.html">Contact</a>
     </nav>
@@ -32,10 +34,10 @@
 </header>
 <main><section class="hero"><div class="hero-inner"><div><h1>Thank You Headline</h1><p>Sample copy for thank you subhead, written plainly.</p><div class="hero-actions"><a class="btn btn-gold" href="/inventory.html">Back To Inventory</a><a class="btn btn-outline" data-config-href="client.primaryPhoneHref" href="tel:+18655550142">Call Now</a></div></div><div class="hero-card"><h3>Next Steps Title</h3><p>Sample copy for next steps copy, written plainly.</p></div></div></section></main><footer class="site-footer">
   <div class="wrap footer-grid">
-    <div><h4 data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</h4><p>Proudly serving Greater Knoxville with in-stock hot tubs, swim spas, and saunas.</p></div>
-    <div><h4>Shop</h4><p><a href="/hot-tubs/">Hot Tubs</a><br><a href="/swim-spas/">Swim Spas</a><br><a href="/saunas/">Saunas</a></p></div>
-    <div><h4>Company</h4><p><a href="/financing.html">Financing</a><br><a href="/contact.html">Contact</a><br><a href="/admin/">Admin</a></p></div>
-    <div><h4>Contact</h4><p><span data-config="client.address">4217 Chapman Hwy, Knoxville, TN 37920</span><br><a data-config-href="client.primaryPhoneHref" href="tel:+18655550142" data-config="client.primaryPhone">865-555-0142</a></p></div>
+    <div><h2 class="footer-h" data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</h2><p>Proudly serving Greater Knoxville with in-stock hot tubs, swim spas, and saunas.</p></div>
+    <div><h2 class="footer-h">Shop</h2><p><a href="/hot-tubs/">Hot Tubs</a><br><a href="/swim-spas/">Swim Spas</a><br><a href="/saunas/">Saunas</a></p></div>
+    <div><h2 class="footer-h">Company</h2><p><a href="/financing.html">Financing</a><br><a href="/contact.html">Contact</a><br><a href="/admin/">Admin</a></p></div>
+    <div><h2 class="footer-h">Contact</h2><p><span data-config="client.address">4217 Chapman Hwy, Knoxville, TN 37920</span><br><a data-config-href="client.primaryPhoneHref" href="tel:+18655550142" data-config="client.primaryPhone">865-555-0142</a></p></div>
   </div>
 </footer>
 <script src="/assets/template.js"></script>

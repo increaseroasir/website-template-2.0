@@ -15,8 +15,10 @@
 <script>document.documentElement.className='js'</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript>
 <link rel="preload" as="image" href="{{HOME_HERO_IMAGE}}">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="/assets/home.css">
 <script src="/client.config.js"></script>
 <script src="/assets/tracking.js"></script>
@@ -38,7 +40,7 @@
 
 <header class="site-top">
   <div class="site-top-inner">
-    <a class="logo-mark" href="/" aria-label="{{CLIENT_NAME}} home">
+    <a class="logo-mark" href="/">
       <b data-config="client.name">{{CLIENT_NAME}}</b>
       <span data-config="client.tagline">{{CLIENT_TAGLINE}}</span>
     </a>
@@ -61,7 +63,7 @@
   </div>
 </header>
 
-<div class="drawer" id="drawer" aria-hidden="true">
+<div class="drawer" id="drawer" aria-hidden="true" inert>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
     <b style="font-family:var(--display);font-size:1.18rem;font-weight:800" data-config="client.name">{{CLIENT_NAME}}</b>
     <button id="drawerClose" aria-label="Close menu" style="height:48px;width:48px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
@@ -85,6 +87,7 @@
   <p style="margin-top:16px;text-align:center;font-size:.82rem;color:#AFC4E8"><span data-config="client.address">{{CLIENT_ADDRESS}}</span> · <span data-config="client.hours">{{CLIENT_HOURS}}</span></p>
 </div>
 
+<main id="main">
 <section class="hero on-dark">
   <img class="hero-img" src="{{HOME_HERO_IMAGE}}" alt="" width="1600" height="1000" decoding="async" fetchpriority="high" aria-hidden="true" onerror="this.remove()">
   <div class="hero-bg" aria-hidden="true"></div>
@@ -113,7 +116,7 @@
       <p class="lead-sub">{{HOME_LEAD_SUBHEAD|Tell us what you're looking for and we'll text you current pricing and availability.}}</p>
       <div class="fdots" aria-hidden="true"><i class="on" id="d1"></i><i id="d2"></i><i id="d3"></i></div>
       <form id="leadForm" class="form-grid" data-lead-form data-template-form data-lead-source="homepage" data-lead-success="inline" data-lead-api="{{LEAD_ENDPOINT|/api/lead}}" novalidate>
-        <input class="hidden-field" tabindex="-1" autocomplete="off" name="website_url" value="">
+        <input class="hidden-field" tabindex="-1" autocomplete="off" aria-hidden="true" name="website_url" value="">
         <input type="hidden" name="product_name" value="">
         <input type="hidden" name="product_interest" value="">
         <input type="hidden" name="message" value="">
@@ -406,7 +409,7 @@
       </div>
       <div>
         <form class="guide-form" data-lead-form data-template-form data-lead-source="pricing-guide" data-lead-success="inline" data-lead-api="{{LEAD_ENDPOINT|/api/lead}}">
-          <input class="hidden-field" tabindex="-1" autocomplete="off" name="website_url" value="">
+          <input class="hidden-field" tabindex="-1" autocomplete="off" aria-hidden="true" name="website_url" value="">
           <input type="hidden" name="product_name" value="Pricing Guide">
           <input type="hidden" name="product_interest" value="Pricing Guide">
           <input type="hidden" name="form_intent" value="Send price and availability">
@@ -449,6 +452,8 @@
   <div class="gold-hairline" aria-hidden="true"></div>
 </section>
 
+</main>
+
 <footer class="site-footer">
   <div class="footer-grid">
     <div>
@@ -457,17 +462,17 @@
       <p style="margin-top:16px;font-size:.87rem;line-height:1.6">{{FOOTER_BLURB|A local showroom with real units on the floor, out-the-door pricing, and a team that's here after the sale.}}</p>
     </div>
     <div>
-      <h4>Quick links</h4>
+      <h2 class="footer-h">Quick links</h2>
       <p><a href="/inventory.html">Inventory</a><br><a href="/financing.html">Financing</a><br><!-- IF:OFFER_NAME --><a href="#offer">{{OFFER_NAME}}</a><br><!-- /IF:OFFER_NAME --><a href="/contact.html">Visit</a><br><a href="#lead">Get local pricing</a></p>
     </div>
     <div>
-      <h4>Visit</h4>
+      <h2 class="footer-h">Visit</h2>
       <p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br>
       <a class="phone-link" style="font-family:var(--display);font-size:1.16rem;font-weight:700;color:var(--gold)" data-config-href="client.primaryPhoneHref" data-call-source="footer_phone" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a><br>
       <span data-config="client.hours">{{CLIENT_HOURS}}</span></p>
     </div>
     <div>
-      <h4>Service area</h4>
+      <h2 class="footer-h">Service area</h2>
       <div class="areas"><span>{{SERVICE_AREA_COPY|Proudly serving our local area — ask us if we deliver to you.}}</span></div>
       <p style="margin-top:16px;font-size:.8rem">{{FOOTER_PROMISE_LINE|Come see us — we're worth the drive.}}</p>
     </div>

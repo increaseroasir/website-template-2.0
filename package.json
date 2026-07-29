@@ -19,7 +19,9 @@
     "ga4:funnel": "node scripts/ga4-funnel-report.mjs",
     "fulfillment:check": "node scripts/check-fulfillment-artifacts.mjs",
     "deploy": "npm run brand:guard && npm run build:config && npm run launch:check && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch main",
-    "preview:deploy": "npm run brand:guard && npm run build:config && npm run placeholder:check && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch preview"
+    "preview:deploy": "npm run brand:guard && npm run build:config && npm run placeholder:check && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch preview",
+    "lh:mobile": "node scripts/lighthouse-check.mjs",
+    "lh:desktop": "node scripts/lighthouse-check.mjs --desktop"
   },
   "devDependencies": {
     "wrangler": "latest"

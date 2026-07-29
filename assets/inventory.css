@@ -28,7 +28,7 @@
       --brand-red: #D7261E;
       --navy-royal:var(--brand-blue,#16469B); --navy-mid:#0F327A; --navy-deep:var(--brand-blue-deep,#0B2559);
       --navy-night:var(--brand-blue-night,#06183D); --navy-abyss:#030C20;
-      --gold:var(--brand-gold,#FFB81C); --gold-soft:#FFCB57; --gold-deep:var(--brand-gold-deep,#E8A400); --gold-dark:#B98200;
+      --gold:var(--brand-gold,#FFB81C); --gold-soft:#FFCB57; --gold-deep:var(--brand-gold-deep,#E8A400); --gold-dark:#8F6400;
       --red:var(--brand-red,#D7261E); --sand:#F8F4EC; --ink:#141927; --ink-soft:#4A5268;
       --line:rgba(11,37,89,.12);
       --ease-out:cubic-bezier(.22,.68,0,1);
@@ -520,7 +520,7 @@
       border-top:1px dashed rgba(11,37,89,.18);
     }
     .inventory-advanced-filters.open { display:grid; }
-    .filter-group h3 {
+    .filter-group h3, .filter-group .h3{
       font-family:'Spline Sans Mono', monospace;
       font-size:.62rem; font-weight:600;
       color:var(--gold-dark);
@@ -878,7 +878,7 @@
       box-shadow:0 20px 44px -24px rgba(0,0,0,.6);
     }
     .footer-map iframe { width:100%; height:210px; border:0; display:block; }
-    .footer-col h4 {
+    .footer-col h4, .footer-col .footer-h {
       font-family:'Spline Sans Mono', monospace;
       font-size:.64rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase;
       color:var(--gold-soft); margin:0 0 14px;

@@ -14,8 +14,10 @@
   <meta name="description" content="{{CATEGORY_META_DESCRIPTION}}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript>
   <link rel="preload" as="image" href="{{SAUNAS_HERO_IMAGE}}">
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="/assets/inventory.css">
   <link rel="stylesheet" href="/assets/category.css">
   <script src="/client.config.js"></script>
@@ -87,6 +89,7 @@
   <a href="{{CLIENT_MAP_URL}}" class="btn-coupon" target="_blank" rel="noopener">Get Directions</a>
 </div>
 
+<main id="main">
 <section class="cat-hero">
   <img class="cat-hero-img" src="{{SAUNAS_HERO_IMAGE}}" alt="" width="1600" height="1000" decoding="async" fetchpriority="high" aria-hidden="true" onerror="this.remove()">
   <div class="cat-hero-bg" aria-hidden="true"></div>
@@ -159,6 +162,8 @@
 </section>
 <p class="ht-final-disclaimer">{{INVENTORY_DISCLAIMER|Inventory moves fast — availability and pricing can change without notice. Ask us to confirm today's status on any unit.}}</p>
 
+</main>
+
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-col footer-brand">
@@ -174,7 +179,7 @@
       </div>
     </div>
     <div class="footer-col footer-links">
-      <h4>Quick Links</h4>
+      <h2 class="footer-h">Quick Links</h2>
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/inventory.html">Inventory</a></li>
@@ -183,7 +188,7 @@
       </ul>
     </div>
     <div class="footer-col footer-showroom">
-      <h4>Visit Our Showroom</h4>
+      <h2 class="footer-h">Visit Our Showroom</h2>
       <p>{{CLIENT_ADDRESS_HTML}}</p>
       <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap footer-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="footer_phone">
         <span class="phone-badge-pill">

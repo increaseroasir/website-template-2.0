@@ -14,7 +14,9 @@
 <meta name="description" content="{{PRODUCT_META_DESCRIPTION|Request today's local price, financing options, and availability on this in-stock unit.}}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript>
+
 <link rel="stylesheet" href="../../assets/theme.css">
 <link rel="stylesheet" href="../../assets/premium-pages.css">
 <script src="../../client.config.js"></script>
@@ -27,7 +29,7 @@
 <body data-template-page data-lead-source="product-page" data-lead-campaign="{{CAMPAIGN_NAME|Product Page}}">
 <header class="site-header">
   <div class="header-inner">
-    <a class="logo" href="../../" aria-label="{{CLIENT_NAME}} home"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
+    <a class="logo" href="../../"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
     <nav class="nav" aria-label="Primary">
       <a href="../../hot-tubs/">Hot Tubs</a><a href="../../swim-spas/">Swim Spas</a><a href="../../saunas/">Saunas</a><a href="../../inventory.html">Inventory</a><a href="../../financing.html">Financing</a><a href="../../contact.html">Contact</a>
     </nav>
@@ -100,7 +102,7 @@
           <input name="full_name" autocomplete="name" placeholder="Full name" required>
           <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
           <input name="email" autocomplete="email" placeholder="Email">
-          <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
+          <select name="form_intent" aria-label="What can we help with?"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
           <button class="btn btn-gold" type="submit">Get Today&rsquo;s Price</button>
           <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about your request. Message and data rates may apply. Opt out anytime — no spam, ever.}}</p>
           <p class="fine-print" data-template-result></p>
@@ -158,7 +160,7 @@
     <input name="full_name" autocomplete="name" placeholder="Full name" required>
     <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
     <input name="email" autocomplete="email" placeholder="Email">
-    <select name="form_intent"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
+    <select name="form_intent" aria-label="What can we help with?"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>
     <button class="btn btn-gold" type="submit">Send My Price</button>
     <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about your request. Message and data rates may apply. Opt out anytime — no spam, ever.}}</p>
     <p class="fine-print" data-template-result></p>
@@ -175,10 +177,10 @@
 </main>
 <footer class="site-footer">
   <div class="wrap footer-grid">
-    <div><h4 data-config="client.name">{{CLIENT_NAME}}</h4><p>Proudly serving {{CLIENT_MARKET}} with in-stock hot tubs, swim spas, and saunas.</p></div>
-    <div><h4>Shop</h4><p><a href="../../hot-tubs/">Hot Tubs</a><br><a href="../../swim-spas/">Swim Spas</a><br><a href="../../saunas/">Saunas</a></p></div>
-    <div><h4>Company</h4><p><a href="../../financing.html">Financing</a><br><a href="../../contact.html">Contact</a><br><a href="../../admin/">Admin</a></p></div>
-    <div><h4>Contact</h4><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
+    <div><h2 class="footer-h" data-config="client.name">{{CLIENT_NAME}}</h2><p>Proudly serving {{CLIENT_MARKET}} with in-stock hot tubs, swim spas, and saunas.</p></div>
+    <div><h2 class="footer-h">Shop</h2><p><a href="../../hot-tubs/">Hot Tubs</a><br><a href="../../swim-spas/">Swim Spas</a><br><a href="../../saunas/">Saunas</a></p></div>
+    <div><h2 class="footer-h">Company</h2><p><a href="../../financing.html">Financing</a><br><a href="../../contact.html">Contact</a><br><a href="../../admin/">Admin</a></p></div>
+    <div><h2 class="footer-h">Contact</h2><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
   </div>
 </footer>
 <script src="../../assets/template.js"></script>

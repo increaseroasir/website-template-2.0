@@ -9,9 +9,11 @@
     var hamburger = document.getElementById('navHamburger');
     var menu = document.getElementById('navMobileMenu');
     if (!hamburger || !menu) return;
+    menu.toggleAttribute('inert', !menu.classList.contains('open'));
     hamburger.addEventListener('click', function () {
       var open = !menu.classList.contains('open');
       menu.classList.toggle('open', open);
+      menu.toggleAttribute('inert', !open);
       hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
       document.body.style.overflow = open ? 'hidden' : '';
     });

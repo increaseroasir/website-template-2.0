@@ -15,7 +15,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="https://example-smoky-mountain-spas.com/hero-smoky-mountains.webp">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript></noscript>
 <link rel="stylesheet" href="/assets/home.css">
 <script src="/client.config.js"></script>
 <script src="/assets/tracking.js"></script>
@@ -35,7 +37,7 @@
 
 <header class="site-top">
   <div class="site-top-inner">
-    <a class="logo-mark" href="/" aria-label="Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville home">
+    <a class="logo-mark" href="/">
       <b data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</b>
       <span data-config="client.tagline">East Tennessee's backyard, done right</span>
     </a>
@@ -58,7 +60,7 @@
   </div>
 </header>
 
-<div class="drawer" id="drawer" aria-hidden="true">
+<div class="drawer" id="drawer" aria-hidden="true" inert>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
     <b style="font-family:var(--display);font-size:1.18rem;font-weight:800" data-config="client.name">Smoky Mountain Hot Tub & Swim Spa Superstore of Greater Knoxville</b>
     <button id="drawerClose" aria-label="Close menu" style="height:48px;width:48px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
@@ -106,7 +108,7 @@
       <p class="lead-sub">Sample copy for home lead subhead, written plainly.</p>
       <div class="fdots" aria-hidden="true"><i class="on" id="d1"></i><i id="d2"></i><i id="d3"></i></div>
       <form id="leadForm" class="form-grid" data-lead-form data-template-form data-lead-source="homepage" data-lead-success="inline" data-lead-api="/api/lead" novalidate>
-        <input class="hidden-field" tabindex="-1" autocomplete="off" name="website_url" value="">
+        <input class="hidden-field" tabindex="-1" autocomplete="off" aria-hidden="true" name="website_url" value="">
         <input type="hidden" name="product_name" value="">
         <input type="hidden" name="product_interest" value="">
         <input type="hidden" name="message" value="">
@@ -391,7 +393,7 @@
       </div>
       <div>
         <form class="guide-form" data-lead-form data-template-form data-lead-source="pricing-guide" data-lead-success="inline" data-lead-api="/api/lead">
-          <input class="hidden-field" tabindex="-1" autocomplete="off" name="website_url" value="">
+          <input class="hidden-field" tabindex="-1" autocomplete="off" aria-hidden="true" name="website_url" value="">
           <input type="hidden" name="product_name" value="Pricing Guide">
           <input type="hidden" name="product_interest" value="Pricing Guide">
           <input type="hidden" name="form_intent" value="Send price and availability">
@@ -437,17 +439,17 @@
       <p style="margin-top:16px;font-size:.87rem;line-height:1.6">Sample copy for footer blurb, written plainly.</p>
     </div>
     <div>
-      <h4>Quick links</h4>
+      <h2 class="footer-h">Quick links</h2>
       <p><a href="/inventory.html">Inventory</a><br><a href="/financing.html">Financing</a><br><a href="#offer">Evergreen Value Event</a><br><a href="/contact.html">Visit</a><br><a href="#lead">Get local pricing</a></p>
     </div>
     <div>
-      <h4>Visit</h4>
+      <h2 class="footer-h">Visit</h2>
       <p><span data-config="client.address">4217 Chapman Hwy, Knoxville, TN 37920</span><br>
       <a class="phone-link" style="font-family:var(--display);font-size:1.16rem;font-weight:700;color:var(--gold)" data-config-href="client.primaryPhoneHref" data-call-source="footer_phone" href="tel:+18655550142" data-config="client.primaryPhone">865-555-0142</a><br>
       <span data-config="client.hours">Mon–Sat 9–6, Sun closed</span></p>
     </div>
     <div>
-      <h4>Service area</h4>
+      <h2 class="footer-h">Service area</h2>
       <div class="areas"><span>Sample copy for service area copy, written plainly.</span></div>
       <p style="margin-top:16px;font-size:.8rem">Sample copy for footer promise line, written plainly.</p>
     </div>

@@ -131,7 +131,7 @@
       '<div class="availability-bar">' + escapeHtml(product.status || 'available').toUpperCase() + '</div>',
       '<div class="product-image"><img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(product.inventory_name || 'Inventory product') + '" loading="lazy"><span class="sale-badge">' + escapeHtml(product.promo_label || 'Available') + '</span></div>',
       '<div class="product-body">',
-      '<h3>' + escapeHtml(product.inventory_name || 'Inventory Product') + '</h3>',
+      '<h2 class="h3">' + escapeHtml(product.inventory_name || 'Inventory Product') + '</h2>',
       '<div class="facts">' + facts.slice(0, 3).map(fact => '<span>' + escapeHtml(fact) + '</span>').join('') + '</div>',
       '<p>' + escapeHtml(product.delivery_promise || 'Ask for current local availability and delivery timing.') + '</p>',
       /* No price on record → never print "$0"; sell the 30-second price request instead */
@@ -158,7 +158,7 @@
       '<div class="pimg"><span class="badge">' + escapeHtml(badge) + '</span>',
       '<img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(name) + '" loading="lazy" decoding="async"></div>',
       '<div class="pbody">',
-      '<h3>' + escapeHtml(name) + '</h3>',
+      '<h2 class="h3">' + escapeHtml(name) + '</h2>',
       '<p class="spec">' + escapeHtml(facts.slice(0, 3).join(' · ') || 'Ask for specs') + '</p>',
       '<p class="why">' + escapeHtml(product.delivery_promise || product.card_summary || 'In stock — ask for today\'s local price.') + '</p>',
       /* No price on record → ask-treatment instead of "From $0" */
@@ -257,11 +257,11 @@
         }
         if (!products.length) {
           if (style === 'home') {
-            grid.innerHTML = '<div class="pcard"><div class="pbody"><h3>No public inventory yet</h3><p class="why">Add products in /admin to publish inventory on this page.</p></div></div>';
+            grid.innerHTML = '<div class="pcard"><div class="pbody"><h2 class="h3">No public inventory yet</h2><p class="why">Add products in /admin to publish inventory on this page.</p></div></div>';
           } else if (style === 'inventory') {
             grid.innerHTML = '<p class="inv-no-results visible">' + escapeHtml(emptyCopy) + '</p>';
           } else {
-            grid.innerHTML = '<div class="panel"><h3>No public inventory yet</h3><p>Add products in /admin to publish inventory on this page.</p></div>';
+            grid.innerHTML = '<div class="panel"><h2 class="h3">No public inventory yet</h2><p>Add products in /admin to publish inventory on this page.</p></div>';
           }
           return;
         }
@@ -274,11 +274,11 @@
         document.dispatchEvent(new CustomEvent('dealer:inventory-hydrated', { detail: { grid: grid, count: products.length, style: style } }));
       } catch (error) {
         if (style === 'home') {
-          grid.innerHTML = '<div class="pcard"><div class="pbody"><h3>Inventory unavailable</h3><p class="why">Please call or text the store for current availability.</p></div></div>';
+          grid.innerHTML = '<div class="pcard"><div class="pbody"><h2 class="h3">Inventory unavailable</h2><p class="why">Please call or text the store for current availability.</p></div></div>';
         } else if (style === 'inventory') {
           grid.innerHTML = '<p class="inv-no-results visible">Inventory unavailable. Please call or text the store.</p>';
         } else {
-          grid.innerHTML = '<div class="panel"><h3>Inventory unavailable</h3><p>Please call or text the store for current availability.</p></div>';
+          grid.innerHTML = '<div class="panel"><h2 class="h3">Inventory unavailable</h2><p>Please call or text the store for current availability.</p></div>';
         }
         console.error('Inventory render failed:', error);
       }
