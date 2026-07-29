@@ -620,3 +620,18 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Remaining finding:** with all seven days written and confirmed saved, `free-slots` still returns **no Saturday or Sunday availability** — those dates are absent from the response entirely, while weekdays correctly return 09:30–16:30 (15 × 30-min slots ending at 17:00). GHL **intersects** calendar `openHours` with the assigned team member's own user-level availability, and the sole assigned member (`Kat .`, `N0xndrm7hfKvcFRhAURc`) evidently has no weekend availability. Calendar hours alone therefore do not determine what a customer is offered.
 - **Rule / prevention:** after setting `openHours`, verify `free-slots` returns availability on **every** day the client publishes — do not assume the write took effect behaviorally. A mismatch points at the assigned user's availability, not the calendar. Add the user-availability check to booking verification.
 - **Status:** weekday hours CORRECT and verified behaviorally. Weekend availability requires a change to the assigned user's availability in GHL — owner action.
+
+---
+
+### [WTV-053] A launch item was checked off because the secret's NAME existed — and the test that would have caught it was deferred, then never run
+
+- **Date:** 2026-07-29
+- **Severity:** Process blocker (the mechanism behind WTV-045, WTV-047 and WTV-051)
+- **Evidence, from the client's own wiring ledger dated 2026-07-25:**
+  - Row 11: `META_CAPI_ACCESS_TOKEN (CF secret) | Secret name confirmed in Preview + Production; value not recorded | Test Events: browser + server Lead DEDUPED as one event`
+  - Deliverables table: `[x] Meta CAPI access token (Cloudflare secret) — live Test Events still pending`
+  - Runtime target note: "Both Preview and Production now expose the required secret names … **values were neither retrieved nor recorded**."
+- **What actually happened:** the item was marked complete on the strength of the **secret name being present**. The stated verification — a Test Events `Lead` deduped across browser and server — was recorded in the same document as *still pending*, and was never performed. The value was never written down anywhere, by correct policy (secrets belong in Cloudflare only). The result is that an empty secret and a correctly-set one produced an identical audit trail, and the box got ticked.
+- **Consequence:** server-side CAPI never functioned (WTV-051). Four days later the first authenticated runtime probe reported `META_CAPI_ACCESS_TOKEN` and `META_PIXEL_ID` as **empty** in both environments. Nothing was lost — the value was almost certainly never set. There is nothing to recover; the token must be reissued from Meta Events Manager.
+- **Rule / prevention:** a deliverable whose verification is "pending" is **not** `[x]`. Where a value cannot be recorded, the checkbox must be justified by a **behavioral** proof, not by the presence of a name — `npm run secrets:verify` for the binding, then the stated live test. The same ledger pattern marked `META_OFFLINE_WEBHOOK_SECRET` complete with "GHL handoff still pending"; it was also empty at runtime.
+- **Status:** rule recorded. `META_PIXEL_ID` restored, `META_OFFLINE_WEBHOOK_SECRET` regenerated, `META_CAPI_ACCESS_TOKEN` pending reissue from Meta.
