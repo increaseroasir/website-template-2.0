@@ -18,6 +18,10 @@ function tagsForLead(env, lead) {
   /* Financing funnel leads get a stable tag so GHL workflows can route them
      (snapshot workflows trigger on "financing-request"). */
   if (String(lead.leadSource || lead.source || '').toLowerCase().includes('financing')) tags.push('financing-request');
+  /* Match-quiz leads arrive pre-qualified (seating, priority, timeline are in the
+     message), so they get their own routing tag rather than sharing the generic
+     website-lead path. */
+  if (String(lead.leadSource || lead.source || '').toLowerCase().includes('quiz')) tags.push('quiz-request');
   if (lead.modelInterestTag) tags.push(lead.modelInterestTag);
   if (lead.inventoryStatusTag) tags.push(lead.inventoryStatusTag);
   if (Array.isArray(lead.productGhlTags)) tags = tags.concat(lead.productGhlTags);

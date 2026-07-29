@@ -10,8 +10,8 @@
 <meta name="theme-color" content="#030C20">
 <meta name="robots" content="{{ROBOTS_DIRECTIVE|index,follow}}">
 <meta name="google-site-verification" content="{{GSC_VERIFICATION}}">
-<title>{{FINANCING_SEO_TITLE}}</title>
-<meta name="description" content="{{FINANCING_META_DESCRIPTION}}">
+<title>{{QUIZ_SEO_TITLE|Find Your Hot Tub Match | Take the 60-Second Quiz}}</title>
+<meta name="description" content="{{QUIZ_META_DESCRIPTION|Answer three quick questions and we'll shortlist the in-stock hot tubs that fit your household, your patio, and your budget.}}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -22,9 +22,11 @@
 <script src="/client.config.js"></script>
 <script src="/assets/tracking.js"></script>
 </head>
-<body class="financing-lock" data-template-page data-lead-source="financing-survey" data-lead-campaign="{{CAMPAIGN_NAME|Financing Survey}}" data-thank-you-url="/book/">
-<!-- Locked full-screen funnel: no nav, no footer, no page scroll. The only
-     exits are finishing the survey (→ /book/) or the phone number. -->
+<body class="financing-lock" data-template-page data-lead-source="hot-tub-quiz" data-lead-campaign="{{CAMPAIGN_NAME|Hot Tub Match Quiz}}" data-thank-you-url="/hot-tubs/">
+<!-- Locked full-screen funnel, same shell as financing.html: no nav, no footer,
+     no page scroll. The only exits are the phone number and finishing the quiz,
+     whose success redirect lands on the hot tub list so the answers are still
+     fresh when they start browsing. -->
 <div class="fin-scene">
   <header class="fin-topbar">
     <span class="fin-brand" data-config="client.name">{{CLIENT_NAME}}</span>
@@ -32,35 +34,38 @@
   </header>
 
   <main class="fin-main">
-      <div class="financing-survey-card" data-survey data-survey-label="Financing survey" data-survey-fallback="Financing Request" data-survey-primary-field="product">
+      <!-- No data-survey-primary-field: none of these answers is a product, so the
+           lead's product name stays the fixed fallback and the answers travel in
+           the summary message instead. -->
+      <div class="financing-survey-card" data-survey data-survey-label="Hot tub match quiz" data-survey-fallback="Hot Tub Match">
         <div class="financing-survey-progress" aria-hidden="true"><span data-survey-progress></span></div>
-        <p class="kicker">Financing Check</p>
-        <h1>{{FINANCING_HEADLINE|See Your Financing Options}}</h1>
+        <p class="kicker">{{QUIZ_KICKER|Hot Tub Match}}</p>
+        <h1>{{QUIZ_HEADLINE|Find the hot tub that actually fits}}</h1>
         <p class="lead" data-survey-subhead>Answer 3 quick questions. Takes under a minute.</p>
 
-        <div data-survey-step="1" data-survey-field="product" data-survey-field-label="Product">
-          <h2 class="financing-q">What are you shopping for?</h2>
+        <div data-survey-step="1" data-survey-field="seating" data-survey-field-label="Seating">
+          <h2 class="financing-q">How many people will be in it most nights?</h2>
           <div class="financing-answers">
-            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Hot Tub">Hot Tub</button>
-            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Swim Spa">Swim Spa</button>
-            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Sauna">Sauna</button>
-            <button type="button" class="financing-answer" data-survey-answer data-field="product" data-value="Not sure yet">Not sure yet</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="seating" data-value="Just 2 of us">Just 2 of us</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="seating" data-value="3–4 people">3–4 people</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="seating" data-value="5–6 people">5–6 people</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="seating" data-value="7 or more">7 or more</button>
           </div>
         </div>
 
-        <div data-survey-step="2" data-survey-field="payment" data-survey-field-label="Target payment" hidden>
-          <h2 class="financing-q">What monthly payment are you aiming for?</h2>
+        <div data-survey-step="2" data-survey-field="priority" data-survey-field-label="Priority">
+          <h2 class="financing-q">What matters most to you?</h2>
           <div class="financing-answers">
-            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="Under $100/mo">Under $100/mo</button>
-            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="$100–$200/mo">$100–$200/mo</button>
-            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="$200+/mo">$200+/mo</button>
-            <button type="button" class="financing-answer" data-survey-answer data-field="payment" data-value="Not sure">Not sure</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="priority" data-value="Deep massage and jets">Deep massage and jets</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="priority" data-value="A lounger to stretch out">A lounger to stretch out</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="priority" data-value="Room for the whole family">Room for the whole family</button>
+            <button type="button" class="financing-answer" data-survey-answer data-field="priority" data-value="Low running cost">Low running cost</button>
           </div>
           <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
         </div>
 
-        <div data-survey-step="3" data-survey-field="timeline" data-survey-field-label="Timeline" hidden>
-          <h2 class="financing-q">When do you want to move forward?</h2>
+        <div data-survey-step="3" data-survey-field="timeline" data-survey-field-label="Timeline">
+          <h2 class="financing-q">When would you want it delivered?</h2>
           <div class="financing-answers">
             <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="As soon as possible">As soon as possible</button>
             <button type="button" class="financing-answer" data-survey-answer data-field="timeline" data-value="This month">This month</button>
@@ -71,37 +76,37 @@
         </div>
 
         <div data-survey-step="4" hidden>
-          <h2 class="financing-q">Where should we send your financing options?</h2>
-          <p class="financing-note">Someone from our team will call or text soon to discuss financing options.</p>
-          <!-- Success redirects to data-thank-you-url (/book/) so the financing
-               lead flows straight into booking a showroom visit. -->
+          <h2 class="financing-q">Where should we send your matches?</h2>
+          <p class="financing-note">We'll text you the in-stock units that fit, with today's local pricing.</p>
+          <!-- Success redirects to data-thank-you-url (/hot-tubs/) so the visitor
+               lands on the list they were just qualified for. -->
           <form class="form-grid" data-template-form action="/api/lead" method="post">
-            <input type="hidden" name="product_name" value="Financing Request" data-survey-product>
-            <input type="hidden" name="product_interest" value="Financing Request" data-survey-product-interest>
-            <input type="hidden" name="financing_interest" value="" data-survey-payment>
-            <input type="hidden" name="form_intent" value="Check financing">
-            <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME|Financing Survey}}">
-            <input type="hidden" name="lead_source" value="financing-survey">
+            <input type="hidden" name="product_name" value="Hot Tub Match" data-survey-product>
+            <input type="hidden" name="product_interest" value="Hot Tub Match" data-survey-product-interest>
+            <input type="hidden" name="product_category" value="hot-tub">
+            <input type="hidden" name="form_intent" value="Hot Tub Match">
+            <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME|Hot Tub Match Quiz}}">
+            <input type="hidden" name="lead_source" value="hot-tub-quiz">
             <input type="hidden" name="message" value="" data-survey-message>
             <input name="website_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
             <input name="full_name" autocomplete="name" placeholder="Full name" required>
             <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
             <input name="email" type="email" autocomplete="email" placeholder="Email (optional)">
-            <button class="btn btn-gold" type="submit">Get My Financing Options</button>
-            <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about financing options. Message/data rates may apply.}}</p>
+            <button class="btn btn-gold" type="submit">Show My Matches</button>
+            <p class="fine-print">{{LEAD_FORM_DISCLAIMER|By submitting, you agree we may call or text you about your request. Message/data rates may apply.}}</p>
             <p class="fine-print" data-template-result></p>
           </form>
           <button type="button" class="btn btn-outline financing-back" data-survey-back>Back</button>
         </div>
 
-        <!-- Fallback only (success normally redirects to /book/ before this shows) -->
+        <!-- Fallback only (success normally redirects to /hot-tubs/ before this shows) -->
         <div data-survey-step="done" hidden>
           <div class="financing-done">
-            <p class="kicker">Request Received</p>
+            <p class="kicker">Matches On The Way</p>
             <h2>You're all set.</h2>
-            <p>Someone will call or text you soon to discuss our financing options.</p>
+            <p>We'll text you the in-stock units that fit what you described.</p>
             <div class="financing-done-actions">
-              <a class="btn btn-gold" href="/book/">Book My Visit</a>
+              <a class="btn btn-gold" href="/hot-tubs/">See The Hot Tubs</a>
               <a class="btn btn-outline" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}">Call Us Now</a>
             </div>
           </div>

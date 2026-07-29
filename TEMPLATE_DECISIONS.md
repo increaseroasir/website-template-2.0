@@ -423,3 +423,26 @@ causes and different fixes: `missing` means nobody set it, `empty` means someone
 it badly (`echo` newline, or an unset shell variable piped into `secret put`, which
 succeeds silently). Collapsing them into one "not configured" message is what made
 WTV-045 undiagnosable without a round trip (see TVD-049).
+
+---
+
+### [TVD-051] Card status treatment: a listed unit that cannot be bought must not ask to be bought
+
+- **Date:** 2026-07-29
+- **Context:** Sold and pending units stay in `/api/inventory` on purpose — the URL keeps its search equity and a sold unit is honest social proof that the floor moves. But the three card renderers read only name, photo, facts, price, and `promo_label`, so a sold unit kept its scarcity badge ("1 Left"), advertised a monthly payment, and offered "See Local Price & Availability" for a unit nobody can deliver. The product page had handled this correctly since TVD-027; the cards that link to it had not.
+- **Decision:** status is a first-class card input. `assets/template.js` holds one `CARD_STATUS` map that swaps three things — badge, summary line, CTA — and all three renderers read it. A sold card also replaces its price box with "No Longer Available / Sold", because a payment figure on an unbuyable unit is the same false claim as a fabricated price. Pending keeps pricing, since a backup buyer needs it.
+- **Why one map and not three:** the labels must match `ActiveInventoryAvailabilityStatus` in `product-data.js`. A card promising "Join Restock List" that opens a page saying "Get Out-the-Door Price" reads as a broken site, and two copies of the same strings drift apart on the first edit.
+- **CRM side:** `fillLeadPanel` previously stamped `form_intent = 'Send price and availability'` on every card lead regardless of status, so a restock-list submission arrived indistinguishable from a price request. Intent now comes from the same map, matching what the product page already sent.
+- **Visual rule:** sold and pending get a graphite badge instead of gold, a 55% desaturated photo, and an outline CTA. The live units keep the gold treatment, so visual priority tracks what is actually purchasable. Defined per stylesheet (`home.css`, `inventory.css`, `premium-pages.css`) because the card classes are per-page and there is no shared card stylesheet.
+
+---
+
+### [TVD-052] The sauna nav slot is tokenized, and the match quiz is a reusable funnel page
+
+- **Date:** 2026-07-29
+- **Context:** Sun Pool sells hot tubs and one swim spa but no saunas, while the template hard-coded a Saunas nav link, footer link, and homepage category tile in 25 places across 12 files. A dealer without sauna stock therefore shipped a nav item leading to an empty grid — and hard-coding Sun Pool's choice into the shared template would have broken every dealer who does stock saunas.
+- **Decision:** two tokens, `{{SAUNAS_URL|/saunas/}}` and `{{SAUNAS_NAV_LABEL|Saunas}}`, cover every reference. Defaults reproduce today's behaviour exactly, so this is a no-op for sauna dealers; a dealer without saunas repoints the slot with two token values and no template fork. Relative-depth defaults (`../saunas/`, `../../saunas/`) are preserved per file, and `.nav-links a` already applies `text-transform:uppercase`, so a mixed-case token value still renders correctly in the category nav. Precedent for a path-valued default inside an attribute is `{{LEAD_ENDPOINT|/api/lead}}`.
+- **The quiz is a page, not a page edit:** `/quiz/` is a new locked full-screen funnel — same shell, styles, and progress affordance as `financing.html` — that asks seating, priority, and timeline, then redirects to `/hot-tubs/` so the visitor lands on the list they were just qualified for. It is reusable by any client rather than a Sun-Pool-specific rewrite of `saunas/index.html`, which would have deleted a working category page from the shared template.
+- **Engine generalized, not copied:** `financing-survey.js` hard-coded three field names, a four-step count, and the string "Financing survey". It became `assets/survey.js`, which reads step count, field names, per-field summary labels, and the funnel label from the markup. Verified byte-identical financing output after the refactor (`product_name`, `financing_interest`, and the `Financing survey | Product: … | Target payment: … | Timeline: …` message all unchanged). A second copy of the engine would have been the cheaper edit and the more expensive maintenance.
+- **CRM routing:** a `lead_source` containing `quiz` stamps `quiz-request`, mirroring the `financing` → `financing-request` rule from TVD-026. Quiz leads also carry `Intent - Hot Tub Match` and the three answers in the message body, so a rep opens the contact already knowing the household size, the priority, and the timeline.
+- **Client wiring note:** repointing the slot leaves `/saunas/` built but unlinked. A client using the quiz needs a `/saunas/ → /quiz/ 301` in `_redirects`, or the old URL keeps serving an empty category page to anyone who has it indexed.
