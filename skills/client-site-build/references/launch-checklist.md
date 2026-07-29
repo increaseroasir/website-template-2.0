@@ -91,6 +91,18 @@ without evidence, is not done and will be sent back.
       homepage). Build #1 dropped both files on every deploy: all product
       URLs and 404s silently served the homepage with a 200, killing product
       pages and Product schema while everything looked fine.
+- [ ] **Product route returns 200, proven mechanically:**
+      `node scripts/verify-product-route.mjs https://<domain>`. It pulls a real
+      slug from the live `/api/inventory` (never constructs one — WTV-031) and
+      asserts the slug URL serves the shell with 200, the non-slash form 301s to
+      it, and the `/active-inventory/` listing is not shadowed. A `_redirects`
+      200-proxy destination must never end in `.html`: Pages 308-normalizes the
+      extension away and does not chain redirects, so every product URL 404s
+      while the rest of the site looks perfect (WTV-034). Gate check 15b now
+      hard-fails this, but run the live check anyway — the gate reads the
+      artifact, this reads what Pages actually served.
+      Note: Product JSON-LD is runtime-injected by `assets/product-page.js`, so
+      no HTTP fetch can see it. Confirm schema with the Rich Results Test.
 - [ ] **Deploy with `wrangler pages deploy` only — never raw API calls.** Raw
       API deploys can register the file manifest without uploading the blobs:
       routing "works" (308s on .html paths) while every asset returns an empty

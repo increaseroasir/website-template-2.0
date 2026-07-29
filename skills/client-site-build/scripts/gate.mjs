@@ -406,6 +406,28 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
       : 'both present — smoke-test after deploy: /hot-tubs.html must 301, a nonsense path must 404, /active-inventory/<real-slug>/ must serve the product template');
 }
 
+/* 15b. no 200-proxy may target a .html file. Pages 308-normalizes extensions
+   (/a/index.html → /a/) and never chains redirects, so a .html destination
+   resolves to a redirect rather than an asset and the entire route 404s while
+   the rest of the site looks perfect. This killed every product URL in WTV-034. */
+{
+  const problems = [];
+  const file = join(dist, '_redirects');
+  if (existsSync(file)) {
+    readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
+      const clean = line.trim();
+      if (!clean || clean.startsWith('#')) return;
+      const [from, to, status] = clean.split(/\s+/);
+      if (status === '200' && /\.html$/i.test(to || '')) {
+        problems.push(`line ${i + 1}: "${from}" → "${to}" 200 — destination must be the directory form (".../SLUG/"), not a .html path`);
+      }
+    });
+  }
+  add('routing: no 200-proxy targets a .html path (Pages normalizes + never chains)',
+    problems.length ? 'FAIL' : 'PASS',
+    problems.length ? cap(problems) : 'all 200-proxy destinations are directory paths');
+}
+
 /* 16. no captcha anywhere (TVD-025): Turnstile was removed from the template
    after broken widgets silently rejected 100% of live leads twice (build #1).
    Any reference in the artifact means a stale pre-removal template. */

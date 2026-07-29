@@ -73,6 +73,22 @@ if (mode === 'launch') {
       }
     }
   })(root);
+  /* 3. No 200-proxy in _redirects may target a .html file. Cloudflare Pages
+     308-normalizes extensions away (/a/index.html → /a/) and does NOT chain
+     redirects, so such a destination resolves to a redirect instead of an asset
+     and the whole route 404s — silently, while the rest of the site looks fine.
+     This is exactly how every product URL died in WTV-034. */
+  try {
+    const lines = readFileSync(join(root, '_redirects'), 'utf8').split('\n');
+    lines.forEach((line, i) => {
+      const clean = line.trim();
+      if (!clean || clean.startsWith('#')) return;
+      const [from, to, status] = clean.split(/\s+/);
+      if (status === '200' && /\.html$/i.test(to || '')) {
+        failures.push(`_redirects line ${i + 1} proxies "${from}" to "${to}" — a 200 destination must not end in .html (Pages 308-normalizes it and never chains, so the route 404s). Use the directory form instead.`);
+      }
+    });
+  } catch { /* no _redirects: routing checks below/elsewhere cover absence */ }
   if (failures.length) {
     console.error('Structural gate checks failed:');
     for (const failure of failures) console.error('- ' + failure);
