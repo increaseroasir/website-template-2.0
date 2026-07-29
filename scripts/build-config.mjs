@@ -158,7 +158,11 @@ function injectMetaPixel() {
     `fbq('init', '${pixelId}');`,
     "fbq('track', 'PageView');",
     '</script>',
-    `<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"></noscript>`,
+    /* alt="" + aria-hidden: Meta's stock snippet ships no alt, which fails the
+       launch gate's image-accessibility check on every page. The beacon is a
+       1x1 tracking pixel with no informational content, so an empty alt is the
+       correct treatment (screen readers skip it) and Meta ignores both attrs. */
+    `<noscript><img height="1" width="1" alt="" aria-hidden="true" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"></noscript>`,
     ''
   ].join('\n');
   const configTag = /<script src="[^"]*client\.config\.js"><\/script>/;
