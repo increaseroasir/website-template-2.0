@@ -607,3 +607,16 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Related finding:** `ADMIN_SESSION_SECRET` was **never declared** in either environment — not blanked, never created. Admin login could not have worked on this project at any point. This also exonerates an earlier suspicion (WTV-049) that a `deployment_configs` PATCH had blanked `ADMIN_PASSWORD`: the admin pair was simply never provisioned, and every Sheets secret survived that PATCH intact and reads `present`.
 - **Rule / prevention:** a browser-side tracking check is **not** evidence of server-side configuration when the two read from different sources. Verify CAPI at the runtime layer — `secrets:verify` for presence, then Test Events for a `Lead` marked *Browser + Server deduped*. A visible pixel proves the build; only a server event proves the deployment.
 - **Status:** `META_PIXEL_ID` restored from the client `tokens.env` (`4074640486011315`) and `ADMIN_SESSION_SECRET` generated, both set in Production and Preview. `META_CAPI_ACCESS_TOKEN` requires reissue from Meta Events Manager — no local copy exists. `META_OFFLINE_WEBHOOK_SECRET` is regenerable but must be re-issued to the GHL workflow's Bearer header in the same change.
+
+---
+
+### [WTV-052] Calendar `openHours` is necessary but not sufficient — the assigned user's availability also gates slots
+
+- **Date:** 2026-07-29
+- **Severity:** Medium (weekend bookings silently unavailable while the site advertises weekend hours)
+- **Context:** resolving WTV-048 by writing real hours onto Sun Pool's "Showroom Visit" calendar.
+- **API shape (undocumented trap):** `PUT /calendars/{id}` rejects a multi-day `daysOfTheWeek` array. `{"daysOfTheWeek":[1,2,3,4,5], ...}` returns `422 "openHours.0.must be a valid day of week"`, which misleadingly implies a bad day value. Each entry must carry **exactly one** day, so a full week is seven entries. Days are `0`=Sunday through `6`=Saturday.
+- **Source of truth for the values:** hours were taken from the client's `CLIENT_HOURS` token (`Mon-Fri: 9:30 a.m. – 5 p.m., Sat: 9 a.m. – 5 p.m., Sun: 10 a.m. – 2 p.m.`) so the booking widget cannot contradict the hours printed on the site. Never enter calendar hours independently of that token.
+- **Remaining finding:** with all seven days written and confirmed saved, `free-slots` still returns **no Saturday or Sunday availability** — those dates are absent from the response entirely, while weekdays correctly return 09:30–16:30 (15 × 30-min slots ending at 17:00). GHL **intersects** calendar `openHours` with the assigned team member's own user-level availability, and the sole assigned member (`Kat .`, `N0xndrm7hfKvcFRhAURc`) evidently has no weekend availability. Calendar hours alone therefore do not determine what a customer is offered.
+- **Rule / prevention:** after setting `openHours`, verify `free-slots` returns availability on **every** day the client publishes — do not assume the write took effect behaviorally. A mismatch points at the assigned user's availability, not the calendar. Add the user-availability check to booking verification.
+- **Status:** weekday hours CORRECT and verified behaviorally. Weekend availability requires a change to the assigned user's availability in GHL — owner action.
