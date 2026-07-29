@@ -370,3 +370,16 @@ This file records why the template is built the way it is. Every architectural d
   3. **Interleaved pairing is void when the measurement tool caches.** Verify distinct `fetchTime` counts before trusting a paired design (see TVD-044).
   4. **Prefer A/B-ing two live deploys.** `scripts/psi-ab.mjs` exists for exactly this and reports per-pair signs plus an overlap verdict, so "inconclusive" is a first-class outcome rather than something to be rounded into a win.
 - **Applies to:** Every page and every build from this commit forward, and to any future performance claim about this template.
+
+---
+
+### [TVD-048] The mobile performance floor is 65, because the instrument's spread is wider than the margin it was policing
+
+- **Date:** 2026-07-29
+- **Owner ruling.**
+- **Context:** Sun Pool measured a median mobile performance of **69** against a **70** floor across 13 PSI runs — and the *same bytes at the same URL* scored **86** on runners indexing ≥950 (n=5) and **68** on slower ones (n=8). The launch had been held for two days on a one-point deficit inside a ±9-point measurement. Separately, the checklist had been demanding ≥85 while the scripts enforced 70, so the effective gate was a number no real client site clears once its own photography, GA4 and Meta are loaded.
+- **Decision:** The mobile floor is **65**. Desktop stays 90, accessibility 95, SEO 90 (exempt on `*.pages.dev`). Enforced identically by `scripts/psi-check.mjs`, `scripts/lighthouse-check.mjs`, both `gate.mjs` manual rows, both launch checklists, and the two standalone launch documents — one number, six places, verified by grep.
+- **Reasoning:** A threshold finer than the tool's noise floor does not measure quality, it measures which machine Google assigned. Holding a launch on that is a coin-flip dressed as a standard. 65 sits below the observed slow-runner median (68), so a genuinely-degraded build still fails while runner roulette no longer blocks a shipping site. This is a business trade, stated plainly: a lead-generation site earns nothing while it is being re-measured, and the underlying page renders its LCP in ~3.35s on a normal runner.
+- **What this decision explicitly does NOT claim:** that the site is fast. It is not. **FCP is 3.01s in every run of every batch**, the render-blocking critical path is untouched, and ~126KiB of GA4/Meta JavaScript goes unused on first paint. WTV-041's lever is open and WTV-044 identifies the target. Lowering the gate buys time to do that work properly; it does not substitute for it.
+- **Revisit trigger:** once the canonical domain has ~4 weeks of real traffic, compare against Chrome UX Report field data rather than lab scores. Field data reflects the visitors actually being sold to, and is the only honest basis for raising this number back up.
+- **Applies to:** Every client launch from this commit forward.

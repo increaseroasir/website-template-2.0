@@ -57,7 +57,7 @@ workflow until stage names match the snapshot.
       iPhone, at 390 and 1440. Glass blur, gradient text, clip-path shield,
       rails, date/select inputs.
 - [ ] **PageSpeed Insights** on staging — `npm run psi:mobile -- <url>`, not
-      local Lighthouse (TVD-044): **Perf ≥70 mobile / ≥90 desktop, A11y ≥95,
+      local Lighthouse (TVD-044): **Perf ≥65 mobile / ≥90 desktop, A11y ≥95,
       SEO ≥90, CLS <0.1.** These are the numbers the script exits non-zero on,
       and they are the only launch gate — owner ruling, 2026-07-29. This list
       previously asked for 85 mobile / 95 SEO, which no real client site clears

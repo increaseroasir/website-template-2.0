@@ -85,7 +85,7 @@ if (!apiKey) {
 
 const THRESHOLDS = desktop
   ? { performance: 90, accessibility: 95, seo: 90 }
-  : { performance: 70, accessibility: 95, seo: 90 };
+  : { performance: 65, accessibility: 95, seo: 90 };
 
 const isPagesPreview = /\.pages\.dev$/i.test(new URL(url).hostname);
 

@@ -60,7 +60,7 @@ if (!url) {
    points: the desktop profile has never been the binding constraint. */
 const THRESHOLDS = desktop
   ? { performance: 90, accessibility: 95, seo: 90 }
-  : { performance: 70, accessibility: 95, seo: 90 };
+  : { performance: 65, accessibility: 95, seo: 90 };
 
 const origin = new URL(url).origin;
 const isPagesPreview = /\.pages\.dev$/i.test(new URL(url).hostname);
