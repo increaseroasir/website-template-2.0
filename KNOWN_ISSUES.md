@@ -741,3 +741,15 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix:** all seven values wrapped in double quotes. Added `scripts/check-tokens-env.mjs` (`npm run check:tokens <path>`), which fails on any unquoted value containing shell-significant characters (space, `&`, `|`, `;`, `$`, backtick, glob), on duplicate keys (the last assignment wins, so editing an earlier one does nothing — the same file had 46 of these), and on invalid variable names. It warns on empty values, which is how a silently-defaulted token now becomes visible.
 - **Rule / prevention:** run `npm run check:tokens clients/<name>/tokens.env` before hydrate, and treat a non-zero exit as a build blocker. Quote **every** value in a client tokens file, even single words — the next edit that adds a space will not announce itself.
 - **Status:** FIXED, with an automated check.
+
+---
+
+### [WTV-062] "Use the delivered token file, do not regenerate" was the wrong instruction, because the delivered file was the incomplete one
+- **Date:** 2026-07-29
+- **Client:** Sun Pool & Spa Supply
+- **Symptom:** the builder's `tokens.env` (217 assignments) and the owner-held copy (191) disagreed. The owner-held file was declared authoritative and the builder was told not to regenerate. That file is missing five hard-required tokens — `HOT_TUBS_CATEGORY_IMAGE`, `SWIM_SPAS_CATEGORY_IMAGE`, `SAUNAS_CATEGORY_IMAGE`, `VISIT_IMAGE_1`, `VISIT_IMAGE_2` — none of which carry a `|default` or sit inside an `IF` block. Hydrating from it emits literal `{{...}}` into `index.html` and `scan-placeholders` fails the gate.
+- **Root cause:** two forks of a client input existed, and "which is newer" was inferred from which one had been edited most recently rather than from which one satisfies the template. Editing a file does not make it complete.
+- **Why the counts were misread:** the builder reported "217 tokens" using the linter's own output format, so the numbers *were* comparable and the fork was real. What was not checked is the direction: a smaller file is more likely deficient than authoritative.
+- **Fix:** determine sufficiency from the template, never from file age or edit history. Enumerate `{{TOKEN}}` occurrences that have **no** `|default`, subtract the keys `build-config.mjs` supplies from `client.config.js` (48 of them), subtract members of `optionalSections` groups whose control token is absent, and subtract anything appearing only inside `<!-- IF:TOKEN -->`. What remains is the true required set — 66 tokens here, of which 5 were unsupplied. A naive scan over-reported this as 55 missing, which is how the wrong conclusion looked plausible.
+- **Rule / prevention:** when two copies of a client input disagree, reconcile by **applying the newer file's value changes onto the more complete base**, not by picking one wholesale. `npm run check:tokens` proves a file is well-formed; it does not prove the file is sufficient. Those are different claims, and only the second one gates a build.
+- **Status:** FIXED (procedure corrected; delta handed to the builder to apply onto its complete base).
