@@ -4,7 +4,10 @@ Part A of `FINAL_DIAL_IN_AND_LAUNCH_GATE.md`, run July 23, 2026.
 Verdict: **CERTIFIED — every row PASS or MANUAL, zero FAILs open.**
 
 Evidence sources: `skills/client-site-build/scripts/gate.mjs` run against the
-hostile-client build (`clients/hostile-rehearsal/dist/`, exit 0), a hooked
+hostile-client build (`clients/hostile-rehearsal/dist/`, exit 0 **as of this
+run only** — that artifact is frozen evidence and now fails 7 gate rows because
+it predates TVD-025 / WTV-034 / WTV-035 / WTV-040 / WTV-042; see
+`clients/hostile-rehearsal/STALE-DO-NOT-GATE.md` before gating it), a hooked
 Chromium session (console collector installed pre-load on every page), code
 audits of `assets/*.css`, and the 24-screenshot archive in
 `clients/hostile-rehearsal/screenshots/`.

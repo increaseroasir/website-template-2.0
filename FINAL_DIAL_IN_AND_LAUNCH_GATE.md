@@ -129,7 +129,7 @@ value, and verified firing live)
 
 ### B5. QA gates (hydrated build)
 - [ ] SITE_MASTER_SPEC Part 6 four-gate pipeline passes on every page
-- [ ] Lighthouse: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1
+- [ ] Lighthouse: Perf ≥70 mobile / ≥90 desktop, A11y ≥95, SEO ≥90, CLS <0.1 (PSI, TVD-044)
 - [ ] Safari + Chrome + one real Android or iPhone, 390 and 1440
 - [ ] Zero console errors sitewide
 

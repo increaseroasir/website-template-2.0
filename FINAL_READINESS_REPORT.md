@@ -48,7 +48,7 @@ Also logged in `SKILL_PACK_REPORT.md`.
 ## 5. MANUAL list for Alex (everything a script can't do)
 
 1. **Cross-browser device pass** (A2): Safari macOS + iOS simulator and one real Android/iPhone at 390/1440 — glass blur, gradient text, shield hexagon, gate behavior over the iOS toolbar, rail snap, input chrome.
-2. **Lighthouse** on a deployed build: Perf ≥85 mobile / ≥95 desktop, A11y ≥95, SEO ≥95, CLS <0.1.
+2. **Lighthouse** on a deployed build: Perf ≥70 mobile / ≥90 desktop, A11y ≥95, SEO ≥90, CLS <0.1 (PSI, TVD-044).
 3. **Per-client launch gate (Part B)** — every new build: the 8-ID live wiring verification (GA4 Realtime, Pixel test events, Clarity, GHL webhook + chat inbox routing, Closebot, Turnstile submit, phone/SMS routing), one real test lead from a phone on cellular, gate unlock end-to-end, OG/share-preview validation, DNS/SSL/redirect checks.
 4. **AVIF/HEIC uploads**: `check-assets.mjs` parses PNG/JPEG/WebP headers only — dims for other formats need a manual look.
 

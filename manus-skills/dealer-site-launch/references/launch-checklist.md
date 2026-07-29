@@ -57,11 +57,13 @@ workflow until stage names match the snapshot.
       iPhone, at 390 and 1440. Glass blur, gradient text, clip-path shield,
       rails, date/select inputs.
 - [ ] **PageSpeed Insights** on staging — `npm run psi:mobile -- <url>`, not
-      local Lighthouse (TVD-044): Perf ≥85 mobile / ≥95 desktop, A11y ≥95,
-      SEO ≥95, CLS <0.1.
-      NOTE: the script's own hard floor is Perf ≥70 mobile / ≥90 desktop. Where
-      this list and the script disagree, the script is what exits non-zero —
-      raise it with the owner rather than guessing which number gates the launch.
+      local Lighthouse (TVD-044): **Perf ≥70 mobile / ≥90 desktop, A11y ≥95,
+      SEO ≥90, CLS <0.1.** These are the numbers the script exits non-zero on,
+      and they are the only launch gate — owner ruling, 2026-07-29. This list
+      previously asked for 85 mobile / 95 SEO, which no real client site clears
+      once its own photography, GA4 and Meta are loaded; the higher figures held
+      launches hostage to a score the template cannot control. Aim higher, gate
+      on these.
       Three PSI traps, all handled by the script — do not hand-roll API calls:
       (a) PSI may return a **cached** analysis for a repeated request, so N calls
       can be one measurement; the script counts distinct `fetchTime` values and
