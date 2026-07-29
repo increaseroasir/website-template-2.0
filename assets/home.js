@@ -199,7 +199,14 @@
     set('product_name', product);
     set('product_interest', product);
     set('message', message);
-    set('form_intent', state.visitType === 'showroom' ? 'Schedule a visit' : 'Send price and availability');
+    /* A sold or pending card must not hand the CRM a price request. Status wins
+       over the visit toggle, since there is no price left to send. */
+    var cardState = (window.DealerCardStatus || {})[state.inventoryStatus || ''];
+    set('inventory_status', state.inventoryStatus || '');
+    set('inventory_status_tag', cardState ? cardState.tag : '');
+    set('form_intent', cardState
+      ? cardState.intent
+      : (state.visitType === 'showroom' ? 'Schedule a visit' : 'Send price and availability'));
     set('campaign', document.body.getAttribute('data-lead-campaign') || 'homepage');
     set('lead_source', document.body.getAttribute('data-lead-source') || 'homepage');
   }
@@ -277,6 +284,8 @@
     var btn = e.target.closest('[data-home-prefill]');
     if (!btn) return;
     e.preventDefault();
+    var card = btn.closest('[data-inventory-status]');
+    state.inventoryStatus = card ? card.getAttribute('data-inventory-status') : '';
     homePrefill(btn.getAttribute('data-home-prefill') || btn.getAttribute('data-product') || '');
   });
 

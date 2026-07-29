@@ -46,6 +46,13 @@ node skills/client-site-build/scripts/indexnow.mjs --init|--submit <domain> --di
 
 Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs` inside dist only (see manus-skills hydrate SKILL for rsync excludes).
 
+`_redirects` is copied verbatim and never token-hydrated, so client rules live in
+`clients/<name>/redirects.extra` and are appended to `dist/_redirects` after the
+copy. That covers legacy 301s from the site being replaced and any nav slot
+repointed away from its default page, which otherwise leaves the original URL
+built but unlinked (TVD-052). Hand-editing `dist/_redirects` loses the rules on
+the next hydrate.
+
 ## Load on demand
 
 | File | When |

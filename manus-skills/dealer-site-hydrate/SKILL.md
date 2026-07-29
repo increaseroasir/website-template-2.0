@@ -42,6 +42,29 @@ rm -rf scripts
 
 `build-config.mjs` rewrites files **where it runs** — only inside `dist/`.
 
+## Client redirects
+
+`_redirects` is copied verbatim and is **not** token-hydrated, so a client rule
+cannot live in the shared template. If `clients/<name>/redirects.extra` exists,
+append it after the copy:
+
+```bash
+[ -f clients/<name>/redirects.extra ] && \
+  cat clients/<name>/redirects.extra >> clients/<name>/dist/_redirects
+```
+
+That file holds two kinds of rule, and both are lost on the next hydrate if they
+were hand-edited into `dist/` instead:
+
+- **Legacy 301s** for URLs indexed on the site being replaced. Without them a
+  cutover throws away the ranking of every old page.
+- **Repointed nav slots.** A client using `{{SAUNAS_URL}}` for something other
+  than saunas leaves `/saunas/` built but unlinked, so anyone holding that URL
+  still lands on an empty category grid (TVD-052).
+
+Order matters: Pages applies the first matching rule, so put specific paths
+above wildcards. Verify with the post-deploy smoke, not by reading the file.
+
 ## After build
 
 1. Confirm `dist/functions/api/` exists (lead, inventory, meta-offline,

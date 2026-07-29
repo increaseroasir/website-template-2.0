@@ -691,3 +691,41 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix:** the seven rows were dumped to JSON, then deleted and replaced with the client's nine real units (8 hot tubs, 1 swim spa), loaded from the intake workbook with photos in R2. Every real unit has `price = 0` deliberately — Sun Pool publishes monthly payments only — which is exactly the ask-treatment path TVD-027 defines, and is the tell that the deleted rows were fake: no real row had a published price.
 - **Rule / prevention:** D1 product rows are launch artifacts and need a gate like any other. Before a client site is called live, every `available` product must trace to a row in the client's intake, and any product carrying a `price`, `monthly_payment`, or `quantity` that does not appear in intake is a FAIL, not a warning. Until that check exists, the launch checklist item is manual: dump `SELECT slug, price, monthly_payment, quantity FROM products` and diff it against the intake workbook by hand.
 - **Status:** FIXED on Sun Pool. The automated D1-versus-intake gate is NOT yet written — this is the third instance of the WTV-053 pattern where the rule exists only in prose.
+
+---
+
+### [WTV-058] A D1 status change is live instantly; the code that renders it needs a rebuild — flipping data first put a false "Available" badge on a sold unit
+
+- **Date:** 2026-07-29
+- **Client:** Sun Pool & Spa Supply
+- **Symptom:** a unit was marked `status='sold'` in remote D1 to demonstrate the new sold-card treatment. The card treatment had been committed but not yet hydrated and deployed, so within seconds production was serving the sold unit with a **gold "Available" badge** and a "See Local Price & Availability" button.
+- **Why "Available" specifically:** the deployed card renderer read `product.promo_label || 'Available'` with no status branch. Marking the unit sold correctly cleared `promo_label`, so the fallback fired — the honest data change is what produced the dishonest label. The variant that omits the fallback was worse in a quieter way: the inventory card showed `categoryLabel(category)`, i.e. a plain "Hot Tub" badge, so a sold unit looked like ordinary live stock.
+- **Root cause:** the two halves of a product-status feature ship through different pipelines at different speeds. Rows in D1 are read live by `/api/inventory` and take effect on the next page load, with no build, no gate, and no deploy. The renderer that interprets those rows ships as a template change that must be hydrated, gated, and deployed. Changing data before code deploys leaves a window where the site renders new states with old logic, and the failure mode is a false factual claim rather than a visible break.
+- **Fix:** the row was reverted to `available` / `quantity=1` / `promo_label='1 Left'` within the same session, before the status change was announced as done. The flip is recorded in the client NOTES.md as a post-deploy step, to be applied only after the status-aware build is live and verified.
+- **Rule / prevention:** **code first, data second.** When a change spans both, deploy and verify the renderer, then change the rows. Before any D1 write that introduces a value the current build has never rendered, check what the deployed asset actually does with it — `curl <host>/assets/template.js | rg CARD_STATUS` is the whole test, and it takes one command. This is the same class of gap as WTV-057: D1 is the one surface that reaches production without passing a gate.
+- **Status:** FIXED (reverted). The ordering rule is prose only; no gate enforces it, and no check compares D1 status values against the states the deployed build can render.
+
+---
+
+### [WTV-059] `setHidden` blanked `form_intent` because it is a visible `<select>` on two pages, not a hidden input
+
+- **Date:** 2026-07-29
+- **Symptom:** clicking a sold unit's "Join Restock List" on `/active-inventory/` submitted an **empty** `form_intent`. The adjacent `inventory_status_tag` wrote correctly, which is what made it confusing — both come from the same status lookup, one line apart.
+- **Root cause:** `form_intent` is a hidden input on the homepage, financing page, and quiz, but on `/active-inventory/` and the product detail page it is a **user-facing `<select>`** offering exactly three choices: *Send price and availability*, *Check financing*, *Schedule a visit*. Assigning a `<select>.value` that matches no `<option>` is not an error — the DOM sets `value` to `''` and moves on. `setHidden` in `template.js` assigned blindly, so any intent outside those three silently became nothing.
+- **Why it hid for so long:** the only value ever passed was `'Send price and availability'`, which happens to be option one. The bug was latent from the day the select was added and only surfaced when TVD-051 introduced status-specific intents. `product-page.js` had already hit and fixed this for its own `setHidden`; `template.js` never got the same treatment, so the fix existed in the codebase while the bug stayed live one file away.
+- **Blast radius:** any card lead on the active-inventory grid for a sold or pending unit reached the CRM with no intent, so restock signups were indistinguishable from price requests in exactly the case the routing was built for.
+- **Fix:** `setHidden` in `assets/template.js` now appends the value as a real `<option>` when the target is a `<select>` and the assignment did not take — matching `product-page.js`. The dropdown then shows what the visitor actually clicked instead of a stale default.
+- **Rule / prevention:** a helper named for hidden fields must not assume its target is hidden. Before adding a name to a `setHidden` call list, check `rg -o '<(select|input)[^>]*name="<field>"' --glob '*.html'` — the template mixes hidden and visible controls under the same names on purpose, because some of them are genuinely user choices. `npm run verify:cards` asserts the posted value, not just the rendered card.
+- **Status:** FIXED, with an automated assertion.
+
+---
+
+### [WTV-060] The homepage prefill path has its own hidden fields, so the card status fix missed it entirely
+
+- **Date:** 2026-07-29
+- **Symptom:** a sold homepage card correctly read "Join Restock List", and clicking it submitted `form_intent = Send price and availability`.
+- **Root cause:** homepage cards use `data-home-prefill`, not `data-open-lead`. They never reach `fillLeadPanel`; they scroll to the homepage's own multi-step form, and `home.js` rewrites `form_intent` from the visit-type toggle on every step change. Any intent written earlier is overwritten by design. The homepage form also had no `inventory_status` or `inventory_status_tag` inputs at all, so those values had nowhere to land.
+- **Why it was missed:** the card treatment was verified on the category grid, where it worked. Three renderers draw product cards and two lead paths consume them, so "verified on one page" and "verified" are different claims.
+- **Fix:** `CARD_STATUS` is exported as `window.DealerCardStatus` so `home.js` reads the same strings rather than keeping a second copy; `syncHidden` lets status beat the visit toggle, since a sold unit has no price to send; and `index.html` gained the two missing hidden inputs.
+- **Rule / prevention:** when a product-status behaviour changes, exercise **all three** card surfaces and **both** lead paths. `npm run verify:cards` does this: it renders the real template against a stubbed inventory, clicks the CTA on the category grid, the inventory grid, and the homepage rail, and asserts the values each form would post.
+- **Status:** FIXED, with an automated assertion.

@@ -664,8 +664,18 @@ body.financing-lock{height:100vh;height:100dvh;overflow:hidden}
 .legal-wrap a{color:var(--gold);text-underline-offset:3px}
 .legal-wrap a:hover{color:var(--gold-soft)}
 
-/* ---- Sold / pending default product card (active-inventory grid). ---- */
+/* ---- Sold / pending default product card (active-inventory grid). ----
+   Only sold loses its colour: a pending unit still wants a backup buyer, so
+   greying it out would suppress the inquiry the CTA is asking for. */
 [data-inventory-status="sold"] .sale-badge,
 [data-inventory-status="pending"] .sale-badge{
   background:linear-gradient(180deg,#2A3244,#141927);color:#fff;box-shadow:none}
 [data-inventory-status="sold"] .product-image img{filter:grayscale(.55) brightness(.93)}
+/* This card is the only one with two buttons, so the muted CTA goes navy rather
+   than outline: it drops the red "buy" signal but stays the primary action next
+   to View Details. An outline here would sit on white with no contrast and read
+   as the weaker of the two. */
+[data-inventory-status="sold"] .product-actions .btn-red,
+[data-inventory-status="pending"] .product-actions .btn-red{
+  background:linear-gradient(180deg,var(--navy-royal),var(--navy-deep));
+  color:#fff;box-shadow:0 12px 26px -14px rgba(11,37,89,.55)}

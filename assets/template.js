@@ -61,6 +61,14 @@
       form.appendChild(field);
     }
     field.value = value || '';
+    /* Some of these names are visible controls on some pages — `form_intent` is a
+       three-option <select> on the inventory grid. Assigning a value the <select>
+       has no <option> for silently sets it to '', so the CRM received nothing.
+       Add it as a real option, matching product-page.js. */
+    if (field.tagName === 'SELECT' && value && field.value !== value) {
+      field.appendChild(new Option(value, value, true, true));
+      field.value = value;
+    }
   }
 
   /* A sold or pending unit stays listed — it keeps earning search traffic and
@@ -72,18 +80,34 @@
       badge: 'Pending Sale',
       cta: 'Ask About Similar Models',
       note: 'Pending sale \u2014 ask about this one or similar in-stock models.',
-      intent: 'Backup Availability Request'
+      intent: 'Backup Availability Request',
+      tag: 'Inventory Status - Pending'
     },
     sold: {
       badge: 'Sold',
       cta: 'Join Restock List',
       note: 'This exact unit sold \u2014 join the restock list and we\u2019ll text you when the next one lands.',
-      intent: 'Next Available Unit Request'
+      intent: 'Next Available Unit Request',
+      tag: 'Inventory Status - Sold'
     }
   };
 
   function cardStatus(product) {
     return CARD_STATUS[String((product && product.status) || '').toLowerCase()] || null;
+  }
+
+  /* home.js prefills the homepage form from a card click and owns its own hidden
+     fields, so it needs the same status copy rather than a second copy of it. */
+  window.DealerCardStatus = CARD_STATUS;
+
+  /* Derive the CRM status tag from live status rather than trusting the stored
+     ghl_tags string. A unit flipped to sold in the admin keeps its original
+     "Inventory Status - Available" tag in D1, which would route a restock
+     signup to the CRM as an in-stock price request. Available units have no
+     CARD_STATUS entry and fall through to ghl_tags, which is correct for them. */
+  function statusTag(product) {
+    const state = cardStatus(product);
+    return state ? state.tag : '';
   }
 
   function fillLeadPanel(product) {
@@ -99,7 +123,7 @@
       setHidden(form, 'product_image_url', product.primary_image || '');
       setHidden(form, 'inventory_status', product.status || '');
       setHidden(form, 'available_quantity', String(product.quantity || ''));
-      setHidden(form, 'inventory_status_tag', (product.ghl_tags || []).find(tag => /^Inventory Status -/.test(tag)) || '');
+      setHidden(form, 'inventory_status_tag', statusTag(product) || (product.ghl_tags || []).find(tag => /^Inventory Status -/.test(tag)) || '');
       setHidden(form, 'lead_source', product.lead_source || document.body.getAttribute('data-lead-source') || '');
       setHidden(form, 'campaign', product.campaign || document.body.getAttribute('data-lead-campaign') || '');
       setHidden(form, 'model_interest_tag', 'Model Interest - ' + (product.inventory_name || 'Inventory'));
@@ -160,8 +184,12 @@
       '<h2 class="h3">' + escapeHtml(product.inventory_name || 'Inventory Product') + '</h2>',
       '<div class="facts">' + facts.slice(0, 3).map(fact => '<span>' + escapeHtml(fact) + '</span>').join('') + '</div>',
       '<p>' + escapeHtml(state ? state.note : (product.delivery_promise || 'Ask for current local availability and delivery timing.')) + '</p>',
-      /* No price on record → never print "$0"; sell the 30-second price request instead */
-      (Number(product.price || 0) > 0
+      /* A sold unit must not advertise a payment it cannot honour. Pending keeps
+         pricing — a backup buyer needs it. No price on record → never print "$0";
+         sell the 30-second price request instead. */
+      (product.status === 'sold'
+        ? '<div class="price price--ask"><span>Availability</span><b>No Longer Available</b><span>Sold \u2014 ask about the next one</span></div>'
+        : Number(product.price || 0) > 0
         ? '<div class="price"><span>From</span><b>' + money(product.price) + '</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : 'Ask for payment options') + '</span></div>'
         : '<div class="price price--ask"><span>Today&apos;s local price</span><b>Text-back pricing</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : '30-second request \u2014 no obligation') + '</span></div>'),
       '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + escapeAttr(product.inventory_name) + '">' + escapeHtml(state ? state.cta : 'Get Today\u2019s Price') + '</button><a class="btn btn-outline" href="' + escapeAttr(productUrl(product)) + '">View Details</a></div>',
