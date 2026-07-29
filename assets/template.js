@@ -63,6 +63,29 @@
     field.value = value || '';
   }
 
+  /* A sold or pending unit stays listed — it keeps earning search traffic and
+     shows the floor actually moves — but it must not wear a scarcity badge or
+     ask for a price we cannot honour. Labels mirror the map in product-data.js
+     so a card never contradicts the product page it links to. */
+  const CARD_STATUS = {
+    pending: {
+      badge: 'Pending Sale',
+      cta: 'Ask About Similar Models',
+      note: 'Pending sale \u2014 ask about this one or similar in-stock models.',
+      intent: 'Backup Availability Request'
+    },
+    sold: {
+      badge: 'Sold',
+      cta: 'Join Restock List',
+      note: 'This exact unit sold \u2014 join the restock list and we\u2019ll text you when the next one lands.',
+      intent: 'Next Available Unit Request'
+    }
+  };
+
+  function cardStatus(product) {
+    return CARD_STATUS[String((product && product.status) || '').toLowerCase()] || null;
+  }
+
   function fillLeadPanel(product) {
     const panel = document.querySelector('[data-lead-panel]');
     if (!panel) return;
@@ -80,7 +103,8 @@
       setHidden(form, 'lead_source', product.lead_source || document.body.getAttribute('data-lead-source') || '');
       setHidden(form, 'campaign', product.campaign || document.body.getAttribute('data-lead-campaign') || '');
       setHidden(form, 'model_interest_tag', 'Model Interest - ' + (product.inventory_name || 'Inventory'));
-      setHidden(form, 'form_intent', 'Send price and availability');
+      const state = cardStatus(product);
+      setHidden(form, 'form_intent', state ? state.intent : 'Send price and availability');
     });
     if (window.DealerLeadForm && typeof window.DealerLeadForm.bindAll === 'function') window.DealerLeadForm.bindAll();
   }
@@ -124,21 +148,23 @@
 
   function renderCard(product) {
     const facts = Array.isArray(product.quick_facts) ? product.quick_facts : [];
+    const state = cardStatus(product);
     const article = document.createElement('article');
     article.className = 'product-card';
     article.setAttribute('data-product-card', '');
+    if (state) article.setAttribute('data-inventory-status', product.status);
     article.innerHTML = [
       '<div class="availability-bar">' + escapeHtml(product.status || 'available').toUpperCase() + '</div>',
-      '<div class="product-image"><img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(product.inventory_name || 'Inventory product') + '" loading="lazy"><span class="sale-badge">' + escapeHtml(product.promo_label || 'Available') + '</span></div>',
+      '<div class="product-image"><img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(product.inventory_name || 'Inventory product') + '" loading="lazy"><span class="sale-badge">' + escapeHtml(state ? state.badge : (product.promo_label || 'Available')) + '</span></div>',
       '<div class="product-body">',
       '<h2 class="h3">' + escapeHtml(product.inventory_name || 'Inventory Product') + '</h2>',
       '<div class="facts">' + facts.slice(0, 3).map(fact => '<span>' + escapeHtml(fact) + '</span>').join('') + '</div>',
-      '<p>' + escapeHtml(product.delivery_promise || 'Ask for current local availability and delivery timing.') + '</p>',
+      '<p>' + escapeHtml(state ? state.note : (product.delivery_promise || 'Ask for current local availability and delivery timing.')) + '</p>',
       /* No price on record → never print "$0"; sell the 30-second price request instead */
       (Number(product.price || 0) > 0
         ? '<div class="price"><span>From</span><b>' + money(product.price) + '</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : 'Ask for payment options') + '</span></div>'
         : '<div class="price price--ask"><span>Today&apos;s local price</span><b>Text-back pricing</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : '30-second request \u2014 no obligation') + '</span></div>'),
-      '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + escapeAttr(product.inventory_name) + '">Get Today&apos;s Price</button><a class="btn btn-outline" href="' + escapeAttr(productUrl(product)) + '">View Details</a></div>',
+      '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + escapeAttr(product.inventory_name) + '">' + escapeHtml(state ? state.cta : 'Get Today\u2019s Price') + '</button><a class="btn btn-outline" href="' + escapeAttr(productUrl(product)) + '">View Details</a></div>',
       '</div>'
     ].join('');
     const leadButton = article.querySelector('[data-open-lead]');
@@ -150,24 +176,26 @@
     const facts = Array.isArray(product.quick_facts) ? product.quick_facts : [];
     const name = product.inventory_name || 'Inventory Product';
     const qty = Number(product.quantity || 0);
-    const badge = product.promo_label || (qty > 0 ? qty + ' available' : (product.status || 'Available'));
+    const state = cardStatus(product);
+    const badge = state ? state.badge : (product.promo_label || (qty > 0 ? qty + ' available' : (product.status || 'Available')));
     const article = document.createElement('article');
     article.className = 'pcard';
     article.setAttribute('data-product-card', '');
+    if (state) article.setAttribute('data-inventory-status', product.status);
     article.innerHTML = [
       '<div class="pimg"><span class="badge">' + escapeHtml(badge) + '</span>',
       '<img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(name) + '" loading="lazy" decoding="async"></div>',
       '<div class="pbody">',
       '<h2 class="h3">' + escapeHtml(name) + '</h2>',
       '<p class="spec">' + escapeHtml(facts.slice(0, 3).join(' · ') || 'Ask for specs') + '</p>',
-      '<p class="why">' + escapeHtml(product.delivery_promise || product.card_summary || 'In stock — ask for today\'s local price.') + '</p>',
+      '<p class="why">' + escapeHtml(state ? state.note : (product.delivery_promise || product.card_summary || 'In stock — ask for today\'s local price.')) + '</p>',
       /* No price on record → ask-treatment instead of "From $0" */
       '<div class="price-block">' + (Number(product.price || 0) > 0
         ? '<span class="from">From</span><span class="num">' + money(product.price) + '</span>'
         : '<span class="from">Today\u2019s local price</span><span class="num num-ask">Ask \u2014 we\u2019ll text it back</span>'),
       (product.monthly_payment ? '<div class="mo">or as low as ' + money(product.monthly_payment) + '/mo*</div>' : ''),
       '</div>',
-      '<button class="btn btn-gold" type="button" data-home-prefill="' + escapeAttr(name) + '" data-product="' + escapeAttr(name) + '" data-pricing-source="home_inventory_card">Get today\'s local price</button>',
+      '<button class="btn btn-gold" type="button" data-home-prefill="' + escapeAttr(name) + '" data-product="' + escapeAttr(name) + '" data-pricing-source="home_inventory_card">' + escapeHtml(state ? state.cta : 'Get today\'s local price') + '</button>',
       '</div>'
     ].join('');
     return article;
@@ -199,7 +227,8 @@
   function renderInvCard(product) {
     const facts = Array.isArray(product.quick_facts) ? product.quick_facts : [];
     const name = product.inventory_name || 'Inventory Product';
-    const badge = product.promo_label || categoryLabel(product.category);
+    const state = cardStatus(product);
+    const badge = state ? state.badge : (product.promo_label || categoryLabel(product.category));
     const monthly = Number(product.monthly_payment || 0);
     const price = Number(product.price || 0);
     const seats = seatBucket(product);
@@ -211,11 +240,16 @@
     card.setAttribute('data-seats', seats);
     card.setAttribute('data-monthly', String(monthly || 9999));
     card.setAttribute('data-price', String(price || 0));
+    if (state) card.setAttribute('data-inventory-status', product.status);
     const pills = (facts.slice(0, 3).length ? facts.slice(0, 3) : [categoryLabel(product.category), 'In stock', 'Local delivery']).map((fact, index) => {
       const kind = index === 0 ? 'people' : (index === 1 ? 'spark' : 'brand');
       return '<div class="inv-pill">' + pillSvg(kind) + '<span>' + escapeHtml(fact) + '</span></div>';
     }).join('');
-    const priceBox = price > 0
+    /* A sold unit must not advertise a payment it cannot honour, so its price box
+       states the position instead. Pending keeps pricing — a backup buyer needs it. */
+    const priceBox = (state && product.status === 'sold')
+      ? '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">No Longer Available</p></div><p class="inv-card-monthly inv-card-monthly--ask">Sold</p></div>'
+      : price > 0
       ? '<div class="inv-price-box"><div class="inv-price-left"><p class="inv-card-price">' + money(price) + '</p>' + (monthly ? '<p class="inv-financing-label">Financing as low as</p>' : '') + '</div>' + (monthly ? '<p class="inv-card-monthly">' + money(monthly) + '/mo</p>' : '') + '</div>'
       : (monthly
         ? '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">Financing As Low As</p></div><p class="inv-card-monthly">' + money(monthly) + '/mo</p></div>'
@@ -230,7 +264,7 @@
       '<div class="inv-card-pills">' + pills + '</div>',
       priceBox,
       '</div>',
-      '<button type="button" class="inv-card-cta" data-open-lead data-product="' + escapeAttr(name) + '" data-pricing-source="inventory_card">See Local Price &amp; Availability <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>',
+      '<button type="button" class="inv-card-cta" data-open-lead data-product="' + escapeAttr(name) + '" data-pricing-source="inventory_card">' + escapeHtml(state ? state.cta : 'See Local Price & Availability') + ' <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>',
       '</div>'
     ].join('');
     const leadButton = card.querySelector('[data-open-lead]');

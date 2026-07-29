@@ -982,3 +982,20 @@
    hydrates to src="" (build-config), an unprovided one keeps its raw token —
    both are hidden so cards and headers stay clean. */
 img[src=""],iframe[src=""],img[src*="{{"],iframe[src*="{{"]{display:none}
+
+/* ---- Sold / pending inventory. The unit stays on the page for search traffic
+   and social proof, so the treatment reads "no longer available" rather than
+   hiding it: graphite badge instead of gold, image pulled back, CTA demoted to
+   outline so the live units keep visual priority. ---- */
+[data-inventory-status="sold"] .product-tag,
+[data-inventory-status="pending"] .product-tag{
+  background:linear-gradient(180deg,#2A3244,#141927);color:#fff;
+  box-shadow:0 8px 18px -8px rgba(0,0,0,.5)}
+[data-inventory-status="sold"] .inv-card-img img{filter:grayscale(.55) brightness(.93)}
+[data-inventory-status="sold"] .inv-card-cta,
+[data-inventory-status="pending"] .inv-card-cta{
+  background:transparent;color:var(--navy-deep,#0B2559);
+  border:1px solid var(--line,#D8DAE0);box-shadow:none}
+[data-inventory-status="sold"] .inv-card-cta:hover,
+[data-inventory-status="pending"] .inv-card-cta:hover{
+  background:var(--navy-deep,#0B2559);color:#fff}

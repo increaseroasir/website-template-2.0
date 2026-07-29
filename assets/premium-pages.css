@@ -663,3 +663,9 @@ body.financing-lock{height:100vh;height:100dvh;overflow:hidden}
 .legal-wrap p{margin:0 0 14px;line-height:1.72;color:var(--ink-soft)}
 .legal-wrap a{color:var(--gold);text-underline-offset:3px}
 .legal-wrap a:hover{color:var(--gold-soft)}
+
+/* ---- Sold / pending default product card (active-inventory grid). ---- */
+[data-inventory-status="sold"] .sale-badge,
+[data-inventory-status="pending"] .sale-badge{
+  background:linear-gradient(180deg,#2A3244,#141927);color:#fff;box-shadow:none}
+[data-inventory-status="sold"] .product-image img{filter:grayscale(.55) brightness(.93)}

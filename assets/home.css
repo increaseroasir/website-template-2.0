@@ -382,3 +382,16 @@ body.offer-static .fair-side .lbl{display:none}
    hydrates to src="" (build-config), an unprovided one keeps its raw token —
    both are hidden so cards and headers stay clean. */
 img[src=""],iframe[src=""],img[src*="{{"],iframe[src*="{{"]{display:none}
+
+/* ---- Sold / pending unit in the homepage rail: graphite badge, muted photo,
+   outline CTA, so a sold unit reads as proof the floor moves without competing
+   with the units that are still buyable. ---- */
+.pcard[data-inventory-status="sold"] .badge,
+.pcard[data-inventory-status="pending"] .badge{
+  background:linear-gradient(180deg,#2A3244,#141927);color:#fff;
+  box-shadow:0 8px 18px -8px rgba(0,0,0,.5)}
+.pcard[data-inventory-status="sold"] .pimg img{filter:grayscale(.55) brightness(.93)}
+.pcard[data-inventory-status="sold"] .btn-gold,
+.pcard[data-inventory-status="pending"] .btn-gold{
+  background:transparent;color:var(--navy-night,#030C20);
+  border:1px solid rgba(3,12,32,.18);box-shadow:none}
