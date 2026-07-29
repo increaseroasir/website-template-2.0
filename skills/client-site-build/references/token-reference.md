@@ -144,7 +144,7 @@ facts, see content-rules.md).
 | `HOME_LEAD_SUCCESS_COPY` | index.html | text | body copy | We received your request and will text you shortly with p... | no | ≤300 chars per block |
 | `HOME_LEAD_SUCCESS_HEADLINE` | index.html | text | headline | Got it — check your phone | no | ≤48 chars (wraps to 3 lines at 390px past that) |
 | `HOME_META_DESCRIPTION` | index.html | meta | body copy | — | YES | ≤300 chars per block |
-| `HOME_RESPONSE_PROMISE` | index.html | text | text | — | optional-section (HOME_RESPONSE_PROMISE) | — |
+| `HOME_RESPONSE_PROMISE` | index.html | text | text | quick replies during store hours | no | — |
 | `HOME_ZIP_ERROR` | index.html | text | text | Enter a valid 5-digit ZIP code. | no | — |
 | `HOME_ZIP_PLACEHOLDER` | index.html | attribute | text | ZIP code | no | — |
 | `HOT_TUBS_ANNOUNCEMENT` | hot-tubs/ | text | text | In-stock hot tubs · local delivery av… | no | — |

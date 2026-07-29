@@ -108,7 +108,6 @@ const optionalSections = {
   OFFER_NAME: /\{\{OFFER_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
   GUIDE_HEADLINE: /\{\{GUIDE_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
   FLOOR_COUNT_LABEL: /\{\{FLOOR_COUNT(?:_LABEL)?(?:\|[^}]*)?\}\}/g,
-  HOME_RESPONSE_PROMISE: /\{\{HOME_RESPONSE_PROMISE(?:\|[^}]*)?\}\}/g,
   MASSAGE_CATEGORY_SUMMARY: /\{\{MASSAGE_CATEGORY_SUMMARY(?:\|[^}]*)?\}\}/g
 };
 function applyOptionalSections(text) {
