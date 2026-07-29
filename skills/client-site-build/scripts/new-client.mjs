@@ -308,6 +308,28 @@ for (const [k, v] of Object.entries(configTokenMap)) {
 if (explicitEmpty.length) warnings.push(`Explicitly empty cosmetic value(s) — hydrate to "" and the element is hidden/evergreen; confirm intended at HUMAN CHECKPOINT 1: ${explicitEmpty.join(', ')}`);
 
 const tokenRe = /\{\{([A-Z0-9_]+)(?:\|([^}]*))?\}\}/g;
+/* TVD-030 optional sections — MUST mirror build-config.mjs exactly.
+   <!-- IF:TOKEN -->…<!-- /IF:TOKEN --> blocks are removed by the build when
+   the control token is unset, so member tokens inside them are NOT required.
+   We strip unset blocks before scanning (their members vanish) and keep set
+   blocks (members scan normally, so a partially populated section still
+   hard-fails). Member tokens living outside a block (e.g. the body's
+   data-offer-ends attribute) are blanked when their control is unset. */
+const optionalSections = {
+  OFFER_NAME: /\{\{OFFER_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
+  GUIDE_HEADLINE: /\{\{GUIDE_[A-Z0-9_]+(?:\|[^}]*)?\}\}/g,
+  FLOOR_COUNT_LABEL: /\{\{FLOOR_COUNT(?:_LABEL)?(?:\|[^}]*)?\}\}/g,
+  MASSAGE_CATEGORY_SUMMARY: /\{\{MASSAGE_CATEGORY_SUMMARY(?:\|[^}]*)?\}\}/g,
+  REVIEW_1_TEXT: /\{\{(?:REVIEW_[0-9]_[A-Z0-9_]+|REVIEWS_TOTAL_LINE)(?:\|[^}]*)?\}\}/g
+};
+function applyOptionalSections(text) {
+  text = text.replace(/[ \t]*<!-- IF:([A-Z0-9_]+) -->([\s\S]*?)<!-- \/IF:\1 -->[ \t]*\r?\n?/g,
+    (match, token, body) => (covered.has(token) ? body : ''));
+  for (const [control, members] of Object.entries(optionalSections)) {
+    if (!covered.has(control)) text = text.replace(members, '');
+  }
+  return text;
+}
 const seen = new Map(); // token -> hasDefault
 (function walk(dir) {
   for (const entry of readdirSync(dir)) {
@@ -315,7 +337,7 @@ const seen = new Map(); // token -> hasDefault
     const f = join(dir, entry);
     if (statSync(f).isDirectory()) walk(f);
     else if (/\.html$/i.test(entry)) {
-      const text = readFileSync(f, 'utf8');
+      const text = applyOptionalSections(readFileSync(f, 'utf8'));
       let m;
       while ((m = tokenRe.exec(text))) {
         const prev = seen.get(m[1]);
