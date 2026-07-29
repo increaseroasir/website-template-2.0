@@ -97,6 +97,16 @@ without evidence, is not done and will be sent back.
       500. If wrangler errors, paste the error — do not fall back to the API.
 - [ ] **`curl` the deployment before reporting it:** `/` and `/assets/theme.css`
       return 200.
+- [ ] **Product images actually render — a 200 is not proof.** `primary_image`
+      values must start with `/` or `https:`; relative paths fall back to the
+      navy placeholder silently (WTV-032):
+      `curl -s https://<domain>/api/inventory | grep -o '"primary_image":"[^"]*"'`
+      Then open one product page and confirm a real photo, not the placeholder.
+- [ ] **Product-page / Product-schema test uses a slug enumerated from D1**, never
+      one constructed from manufacturer knowledge (WTV-031):
+      `wrangler d1 execute <db> --remote --command "SELECT slug,status,featured FROM products"`
+      (run outside the repo — its `wrangler.toml` is tokenized). Prefer
+      `featured=1` + `status=available` so the homepage grid is covered too.
 - [ ] **`GET /api/inventory?featured=1` returns 200 JSON.** A 500 (worker 1101)
       on a project that predates this build usually means D1 schema drift —
       diff live `sqlite_master` against `functions/db/schema.sql` and apply

@@ -267,3 +267,31 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Symptom / Finding:** `scripts/build-config.mjs` `injectMetaPixel()` emitted Meta's stock `<noscript>` beacon verbatim: `<img height="1" width="1" style="display:none" src="…/tr?id=…">`. Meta's published snippet carries no `alt` attribute, so once the pixel became hardcoded at build time (TVD-028) every emitted HTML page contained an image with no `alt` — the mechanical launch gate's image-accessibility check failed all pages. Client content and config were clean; the failure was 100% template-side and reproduced on any client.
 - **Fix / Rule:** The beacon now emits `alt="" aria-hidden="true"`. An empty `alt` is the correct treatment for a 1x1 tracking pixel (no informational content, screen readers skip it); Meta ignores both attributes, so pixel delivery, the `noscript=1` parameter, and the `fbevents.js` gate check are unaffected. **Rule:** any markup this template *generates* must satisfy the same gates as markup it *ships* — third-party snippets are not exempt. When pasting vendor snippets into a build step, audit them against the gate checks before shipping.
 - **Status:** FIXED in `premium-redesign` (see commit below).
+
+### [WTV-030] Token semantics changed in `build-config.mjs` without mirroring into the validators — build and gate disagreed
+- **Date:** 2026-07-29
+- **Client:** sun-pool-spa (blocked pre-hydration; defect was template-side)
+- **Symptom / Finding:** TVD-030 added `<!-- IF:TOKEN -->` optional-section removal to `scripts/build-config.mjs`, but `new-client.mjs` in both skill packs still used the raw-token scanner. The build would correctly delete the unset offer/guide/floor-count/massage sections, while the certification validator still hard-failed their member tokens as "missing." The builder was left with a contradiction it could only resolve by bypassing the gate — which it correctly refused to do.
+- **Fix / Rule:** Validators now call an `applyOptionalSections()` that mirrors `build-config.mjs` exactly. **Standing rule: token-resolution semantics live in four places that must change together —** `scripts/build-config.mjs` (the build), `scripts/scan-placeholders.mjs` (the structural gate), `manus-skills/dealer-site-intake/scripts/new-client.mjs` and `skills/client-site-build/scripts/new-client.mjs` (certification), plus the `token-reference.md` registry in both packs. Changing one without the others produces a build that passes and a gate that fails, or worse, the reverse.
+- **Status:** FIXED in `0e1a5af`. Rule now enforced by review checklist, not yet mechanically.
+
+### [WTV-031] Builder invented a product slug from manufacturer knowledge instead of querying live D1
+- **Date:** 2026-07-29
+- **Client:** sun-pool-spa
+- **Symptom / Finding:** The required live Product-schema proof needs a real product URL. Lacking the inventory list, the builder constructed `hydropool-self-cleaning-879` from the brand seen in client copy plus a model number from Hydropool's real catalog, then requested a data migration to insert it. The 879 is a genuine manufacturer model but is **not** Sun Pool stock — it appears in zero approved client files. Actual stock is the Self-Cleaning **495** and **570**. The builder did correctly refuse to invent the record's price/specs.
+- **Fix / Rule:** **Never construct a product slug.** Before any product-page, Product-schema, or routing test, enumerate real slugs from the bound database and pick from the result: `wrangler d1 execute <db> --remote --command "SELECT slug, status, featured, price FROM products"` (run from a directory without a tokenized `wrangler.toml`, or the config parse fails). Prefer a `featured=1`, `status=available` row so the same test also exercises the homepage grid. A plausible-looking slug from brand knowledge is a fabricated dealer product — worse than a failed check.
+- **Status:** FIXED (process rule). Encoded in `references/images.md` + launch checklist.
+
+### [WTV-032] Relative `primary_image` paths in D1 silently render the placeholder — no error anywhere
+- **Date:** 2026-07-29
+- **Client:** sun-pool-spa (all 7 products affected)
+- **Symptom / Finding:** Every product card and product hero rendered the built-in navy "Inventory Photo" placeholder. Cause: `safeImageUrl()` in `assets/template.js` accepts only `/`-rooted paths, `data:image/`, or `https:` URLs — anything else (including `../lifestyle-swim-spa.png`) fails `new URL()` and falls back to the placeholder **silently, by design**. Sun Pool's rows held four such relative paths (pointing at template demo filenames that did not exist in the artifact) and three NULLs. Gates pass, API returns 200, nothing logs — the site simply looks unfinished.
+- **Fix / Rule:** `primary_image` must be an absolute path (`/assets/PRODUCT_<slug>.webp`) or an `https:` URL. Relative paths and bare filenames are invalid. After any inventory load, verify rendering rather than trusting a 200: `curl -s https://<domain>/api/inventory | grep -o '"primary_image":"[^"]*"'` and confirm every value starts with `/` or `https:`. Never "repair" a phantom path into an absolute one without confirming the file exists in the artifact — that converts a silent placeholder into a hard 404.
+- **Status:** FIXED (rule + verification step). Mechanical gate check is an open follow-up.
+
+### [WTV-033] R2 public delivery URL unconfigured — admin image uploads fail closed; static assets are the launch path
+- **Date:** 2026-07-29
+- **Client:** sun-pool-spa
+- **Symptom / Finding:** The `sun-pool-spa-product-images` R2 binding exists but has no verified public delivery URL, so admin panel image uploads fail closed (correct behavior — better than writing unreachable URLs into D1). This blocks the obvious route for getting product photos onto the site.
+- **Fix / Rule:** **Do not block launch on R2.** Ship product photos as static files inside the client artifact (`assets/PRODUCT_<slug>.webp`) and point `primary_image` at the absolute path. Static assets are edge-cached and faster than R2-through-a-custom-domain anyway. Configure the R2 custom domain post-launch, as a client self-service convenience for adding future units.
+- **Status:** Rule adopted. R2 custom domain remains a 48-hour item per client.

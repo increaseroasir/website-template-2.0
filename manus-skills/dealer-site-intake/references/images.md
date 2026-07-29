@@ -84,3 +84,55 @@ Ambiguity note: `HEROHOTTUBS/HEROSWIMSPAS/HEROSAUNAS` are matched BEFORE
 5. **Every mapping + every flag** (unmatched files, missing must-haves,
    upscales, spares) goes in the Checkpoint 1 table — the owner sees exactly
    which photo landed where before the build proceeds.
+
+## D1 product photos (runtime images — different rules than token images)
+
+Product images are **not** tokens. They live in the D1 `products.primary_image`
+column and are injected at runtime by `assets/template.js`, so the build and the
+gates cannot see them. Everything below is therefore verified against the live
+API, not the artifact.
+
+- **Absolute paths only.** `safeImageUrl()` accepts `/`-rooted paths,
+  `data:image/`, and `https:` URLs. Anything else — `../photo.png`,
+  `photo.png` — fails `new URL()` and falls back to the built-in navy
+  "Inventory Photo" placeholder **silently**. No error, no log, 200 response.
+  This is the single easiest way to ship a site that looks unfinished while
+  every gate passes (WTV-032).
+- **Delivery path at launch: static assets, not R2.** Put files in the client
+  artifact at `assets/PRODUCT_<slug>.webp` and set `primary_image` to
+  `/assets/PRODUCT_<slug>.webp`. R2 needs a verified public custom domain
+  before uploads work at all, and it is slower than edge-cached static assets.
+  Configure R2 post-launch for client self-service (WTV-033).
+- **Naming binds to the slug**, not the model name:
+  `PRODUCT_hydropool-self-cleaning-495.webp`.
+- **Optimization:** WebP quality ~80, ≤1600px long edge, 4:3 crop preferred
+  (cards are 4:3 wells, the detail hero is 1.25:1). Target ≤120KB, hard cap
+  200KB. Strip EXIF/GPS. Convert HEIC/PNG/JPEG sources.
+- **Match by model, never by vibe.** One photo per unit, matched to the actual
+  model. If a photo cannot be confidently tied to a specific unit, leave that
+  row NULL and flag it — the placeholder reads as "photo coming," whereas a
+  different unit's photo is a misrepresentation on a dealer site. Never
+  substitute a category or hero photo for a specific product.
+- **Enumerate slugs from the database before touching product data or running
+  any product-page test.** Never construct a slug from manufacturer knowledge;
+  plausible model numbers that the dealer does not stock are fabricated
+  inventory (WTV-031):
+  ```
+  wrangler d1 execute <db-name> --remote \
+    --command "SELECT slug, status, featured, price, primary_image FROM products"
+  ```
+  Run it from a directory **without** a tokenized `wrangler.toml` (the repo's
+  copy contains `{{CLOUDFLARE_PAGES_PROJECT}}` and fails config parsing).
+  Prefer a `featured=1`, `status=available` row for schema tests so the same
+  check also exercises the homepage grid.
+- **Verify rendering, not the status code:**
+  ```
+  curl -s https://<domain>/api/inventory | grep -o '"primary_image":"[^"]*"'
+  ```
+  Every value must start with `/` or `https:`. Then load one product page and
+  confirm a real photo, not the placeholder.
+- **Category enum is fixed at three:** `hot-tub`, `swim-spa`, `sauna`
+  (`functions/api/admin.js` `CATEGORIES`). Photos arriving in any other
+  category folder (e.g. "Cold Plunge") have nowhere to go — adding a category
+  is a template decision with a new category page, homepage card, enum value,
+  and filter. Never map an unsupported category onto an existing one.
