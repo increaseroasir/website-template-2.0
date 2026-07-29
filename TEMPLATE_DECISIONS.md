@@ -343,3 +343,14 @@ This file records why the template is built the way it is. Every architectural d
 - **Corollary — `imagesizes` with viewport units is also banned:** `imagesizes="100vw"` on a preload paired with `sizes="100vw"` on the `<img>` double-downloaded at 2842×1598 DPR 1 — the preload took the 800w at 138ms and the `<img>` then took the 1600w at 222ms, 28KB plus 89KB. The preload scanner resolves viewport units before the real layout viewport is known and can pick a different candidate than the layout engine. This holds independently of the preload ruling.
 - **Enforcement:** `scripts/scan-placeholders.mjs` and both `gate.mjs` copies hard-fail any `as="image"` preload. This is the second revision of the preload rule — see TVD-040, which previously *required* exactly one image preload referencing the LCP hero.
 - **Applies to:** Every page, every build, from this commit forward. When a future audit recommends preloading the LCP image, this entry is the answer.
+
+---
+
+### [TVD-046] Comments are not markup — every raw-HTML check reads through an inert-range filter
+
+- **Date:** 2026-07-29
+- **Context:** A comment explaining *why the hero is not preloaded* had to name the tag it was talking about, and naming it failed the image gate (WTV-043). The template's comments are load-bearing documentation — WTV-042's comment exists specifically to stop a future agent re-adding a harmful preload — so the answer could not be "stop writing comments that mention tags", and escaping to `&lt;img&gt;` would have fixed one line while leaving the scanner wrong.
+- **Decision:** Checks that scan raw HTML must exclude regions that never become DOM: `<script>` bodies **and** HTML comments. In `gate.mjs` this is `inertRanges()`, which all five markup checks share. In `scan-placeholders.mjs` it is a comment-blanked `markup` twin of the file. New checks use one of those two; none may read the raw string.
+- **Reasoning:** The bug was in the scanner, not the comment, and it was one bug shared by eight checks rather than eight bugs. Fixing it at the helper closes the whole class — including the cases nobody had hit yet, like a comment mentioning `href=` tripping the link check, or a commented-out preload tripping the WTV-042 rule. Comments are blanked character-for-character rather than deleted so that reported line numbers stay true; a gate that names the wrong line costs more time than one that stays silent.
+- **Corollary:** every scanner change ships with a **positive** test as well as a negative one. Suppressing a false positive by making a check blind is a worse defect than the false positive, and is invisible without a test that proves the real fault still fails.
+- **Applies to:** `scripts/scan-placeholders.mjs`, both `gate.mjs` copies, and any future markup scanner.

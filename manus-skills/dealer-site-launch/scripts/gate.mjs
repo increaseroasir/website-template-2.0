@@ -91,11 +91,23 @@ const pages = [], textFiles = [];
 const checks = [];
 function add(check, status, evidence) { checks.push({ check, status, evidence }); }
 function lineOf(text, idx) { return text.slice(0, idx).split('\n').length; }
-/* Markup-only scans must ignore <script> bodies (JS template strings contain
-   href=/id= fragments that aren't real DOM at load). */
-function scriptRanges(text) {
+/* Markup-only scans must ignore regions that look like DOM but never become it:
+
+   - <script> bodies, because JS template strings contain href=/id= fragments
+     that aren't real DOM at load.
+   - HTML comments, because an explanatory comment is allowed to NAME a tag.
+     A comment reading "the <img> carries fetchpriority" was reported as a real
+     <img> missing alt and width/height, failing the gate on a correct artifact.
+     Prose about markup is not markup. This bit every check below that scans raw
+     HTML — a comment mentioning href= or id= would have tripped links/anchors
+     the same way — so it is fixed once, here, rather than per check.
+
+   Line numbers are unaffected: nothing is stripped, the offsets are recorded
+   and skipped, so `lineOf` still points at the true source line. */
+function inertRanges(text) {
   const ranges = [];
   for (const m of text.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi)) ranges.push([m.index, m.index + m[0].length]);
+  for (const m of text.matchAll(/<!--[\s\S]*?-->/g)) ranges.push([m.index, m.index + m[0].length]);
   return ranges;
 }
 function inRanges(ranges, idx) { return ranges.some(([a, b]) => idx >= a && idx < b); }
@@ -166,7 +178,7 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   const dupes = [];
   for (const p of pages) {
     const text = readFileSync(p, 'utf8');
-    const ranges = scriptRanges(text);
+    const ranges = inertRanges(text);
     const idsSeen = new Map();
     for (const m of text.matchAll(/\sid="([^"]+)"/g)) {
       if (inRanges(ranges, m.index)) continue;
@@ -184,13 +196,13 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   const pageIds = new Map();
   for (const p of pages) {
     const text = readFileSync(p, 'utf8');
-    const ranges = scriptRanges(text);
+    const ranges = inertRanges(text);
     pageIds.set(relative(dist, p), new Set([...text.matchAll(/\sid="([^"]+)"/g)].filter(m => !inRanges(ranges, m.index)).map(m => m[1])));
   }
   for (const p of pages) {
     const rel = relative(dist, p);
     const text = readFileSync(p, 'utf8');
-    const ranges = scriptRanges(text);
+    const ranges = inertRanges(text);
     for (const m of text.matchAll(/\shref="([^"]+)"/g)) {
       if (inRanges(ranges, m.index)) continue;
       const href = m[1];
@@ -223,7 +235,7 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   const bad = [];
   for (const p of pages) {
     const text = readFileSync(p, 'utf8');
-    const ranges = scriptRanges(text);
+    const ranges = inertRanges(text);
     for (const m of text.matchAll(/<img\b[^>]*>/g)) {
       if (inRanges(ranges, m.index)) continue;
       const tag = m[0];
@@ -319,7 +331,7 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
         const bad = [];
         for (const p of pages) {
           const text = readFileSync(p, 'utf8');
-          const ranges = scriptRanges(text);
+          const ranges = inertRanges(text);
           for (const m of text.matchAll(/\shref="(tel|sms):([^"]+)"/g)) {
             if (inRanges(ranges, m.index)) continue;
             if (m[2] !== e164) bad.push(`${relative(dist, p)}:${lineOf(text, m.index)} ${m[1]}:${m[2]} ≠ config ${e164}`);

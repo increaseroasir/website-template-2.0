@@ -5,7 +5,17 @@ const root = process.cwd();
 const mode = process.argv.includes('--launch') ? 'launch' : 'template';
 const tokenPattern = /\{\{[^}]+\}\}/g;
 
-const ignoredDirs = new Set(['.git', '.wrangler', 'node_modules']);
+/* `clients/` is excluded defensively. This scan normally runs from INSIDE a
+   hydrated site (npm run placeholder:check, via preview:deploy), where no
+   clients/ directory exists — so this changes nothing on the real path. It
+   matters only when someone runs the scan at the template root, where it would
+   otherwise audit clients/hostile-rehearsal/dist: frozen certification evidence
+   that predates five shipped fixes and reports failures belonging to a build
+   nobody is shipping (WTV-039, and the STALE-DO-NOT-GATE.md beside it).
+   Per-client artifacts are gated by gate.mjs --dist, aimed at one build
+   deliberately. Note that running this scan at the template root still fails by
+   design — the raw template has unhydrated tokens and un-inlined scripts. */
+const ignoredDirs = new Set(['.git', '.wrangler', 'node_modules', 'clients']);
 const launchAllowedFiles = new Set([
   'client.fulfillment.schema.json',
   'tracking.manifest.json',
@@ -129,15 +139,24 @@ if (mode === 'launch') {
       if (!/\.html$/i.test(name)) continue;
       const html = readFileSync(file, 'utf8');
       const rel = relative(root, file);
+      /* Every check below scans raw HTML, so it must not read a COMMENT as
+         markup. An explanatory comment is allowed to name a tag, and one
+         reading "the <img> carries fetchpriority" was reported as a real <img>
+         missing alt — failing the gate on a correct artifact. The same hazard
+         applies to each rule here: a commented-out <link rel="preload"> or a
+         commented #drawer would fire too.
+         Blanked rather than deleted, character-for-character, so offsets and
+         line numbers stay true for anything that reports a position. */
+      const markup = html.replace(/<!--[\s\S]*?-->/g, (m) => ' '.repeat(m.length));
       /* A closed drawer that is only translated off-screen keeps its links
          keyboard-focusable and in the accessibility tree. */
-      const drawer = /<div[^>]*id=["']drawer["'][^>]*>/i.exec(html);
+      const drawer = /<div[^>]*id=["']drawer["'][^>]*>/i.exec(markup);
       if (drawer && !/\binert\b/.test(drawer[0])) {
         failures.push(`${rel}: #drawer ships without the \`inert\` attribute — the closed drawer stays focusable and screen readers tab into a hidden menu. Add \`inert\` to the markup; home.js toggles it thereafter.`);
       }
       /* The logo's visible text is name + tagline, so an aria-label of
          "<name> home" drops the tagline and fails label-content-name-mismatch. */
-      if (/<a[^>]*class=["']logo(?:-mark)?["'][^>]*aria-label=/i.test(html)) {
+      if (/<a[^>]*class=["']logo(?:-mark)?["'][^>]*aria-label=/i.test(markup)) {
         failures.push(`${rel}: the logo link overrides its accessible name with aria-label — the visible tagline is then missing from that name (label-content-name-mismatch). Remove the aria-label and let the link text speak.`);
       }
       /* 6. No image preloads (WTV-042). This is the check most likely to be
@@ -146,7 +165,7 @@ if (mode === 'launch') {
          WORSE on LCP: the preload takes the top priority slot and delays the
          render-blocking CSS the hero needs in order to paint. Pinned at source
          so the tag cannot come back through a well-intentioned edit. */
-      for (const tag of html.match(/<link[^>]*rel=["']preload["'][^>]*>/gi) || []) {
+      for (const tag of markup.match(/<link[^>]*rel=["']preload["'][^>]*>/gi) || []) {
         if (/\sas=["']image["']/i.test(tag)) {
           failures.push(`${rel}: preloads an image — forbidden (WTV-042). Preloading the hero measured 2.3s worse on LCP because it starves the render-blocking CSS the hero needs to paint. Delete the tag; fetchpriority="high" on the <img> already supplies the priority.`);
         }

@@ -436,3 +436,23 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Verification:** Measured, not reasoned. Six arms in the table above, each 5-7 PSI mobile runs with the median reported, against a byte-faithful mirror whose baseline independently agrees with the operator's number on the real site. The split is clean on the variable under test: every preload-present arm landed at LCP 5.47-5.73s, every preload-absent arm at 3.19-3.39s, with no overlap, across batches whose `benchmarkIndex` varied from 135 to 1246.
 - **Rule / prevention:** gate checks now **forbid** `as="image"` preloads outright, in `scripts/scan-placeholders.mjs` and both `gate.mjs` copies. This reverses the previous rule, which required exactly one `as="image"` preload referencing the LCP hero — see TVD-040, second revision, and TVD-045.
 - **Status:** FIXED in `premium-redesign`. Closes the open lever in WTV-041.
+
+---
+
+### [WTV-043] The gate read an HTML *comment* as markup — a comment naming `<img>` failed the image check on a correct artifact
+
+- **Date:** 2026-07-29
+- **Severity:** Blocker (false positive — blocked a deployment that was correct)
+- **Symptom / Finding:** The comment added in WTV-042 explaining why the hero is not preloaded contains the literal text `<img>`, in the sentence "the `<img>` is in the initial HTML, so the preload scanner finds it anyway". The image gate matched it as a real element and reported `index.html:24 img missing alt` and `img missing width/height` on every hydrated artifact. Both gates failed; no defect existed.
+- **Root cause:** Five checks in `gate.mjs` scan raw HTML with regexes and share one exclusion helper, `scriptRanges()`, which skipped `<script>` bodies but not comments. Three checks in `scan-placeholders.mjs` read the raw string with no exclusion at all. **Prose about markup is not markup**, and nothing encoded that. The latent blast radius was wider than the one symptom: a comment mentioning `href=` or `id=` would have tripped the links and duplicate-id checks the same way, and a commented-out `<link rel="preload" as="image">` would have failed the brand-new WTV-042 rule.
+- **Fix:** Fixed in the helpers, once, rather than per check.
+  - `gate.mjs` (both copies): `scriptRanges()` → **`inertRanges()`**, which now records comment ranges alongside script bodies. All five call sites updated. Nothing is stripped — offsets are recorded and skipped — so `lineOf()` still reports true source lines.
+  - `scan-placeholders.mjs`: the per-file HTML string gains a `markup` twin with comments blanked **character-for-character** (`' '.repeat(m.length)`), preserving every offset and line number. The drawer, logo-label and image-preload checks read `markup`.
+- **Why blanking, not deleting:** deleting comments shifts every subsequent offset, which would silently corrupt the line numbers these checks report. Verified: the positive test below reports `index.html:506`, the true line.
+- **Verification — both directions, because a scanner that stops false-positiving by going blind is worse than the bug:**
+  - **Negative:** artifact containing the WTV-042 comment → `images` row **PASS**.
+  - **Positive:** same artifact plus one real `<img src="/assets/x.png">` → **FAIL**, `index.html:506 img missing alt` + `img missing width/height`. Correct line number.
+  - **Positive, other scanner:** a page carrying one real `as="image"` preload *and* one commented-out preload → exactly **one** failure reported, for the real tag. Before the fix this would have been two.
+- **Rule / prevention:** any new check that scans raw HTML must read through `inertRanges()` (gate) or the `markup` twin (scan-placeholders), never the raw string. The template's explanatory comments deliberately name tags — that is good documentation and must not be made unsafe by a scanner.
+- **Also fixed here, defensively:** `scan-placeholders.mjs` now ignores `clients/`. The scan normally runs from inside a hydrated site where that directory does not exist, so this is inert on the real path; it only stops a template-root run from auditing `clients/hostile-rehearsal/dist`, the frozen certification artifact that predates five shipped fixes (WTV-039). Running the scan at the template root still fails by design — the raw template has unhydrated tokens and un-inlined scripts.
+- **Status:** FIXED in `premium-redesign`.
