@@ -29,14 +29,14 @@ live-verify.
 | # | Item | Where it lives | LIVE verification |
 |---|---|---|---|
 | 11 | `META_CAPI_ACCESS_TOKEN` | Cloudflare Pages **secret** (never GHL, never git) | With Pixel + CAPI configured: submit a test lead → Events Manager **Test Events** shows browser + server `Lead` arriving **DEDUPED as one event** (same `event_id`). Optional: set `META_TEST_EVENT_CODE` or `TEST_EVENT_CODE` while testing. |
-| 12 | `META_OFFLINE_WEBHOOK_SECRET` | Cloudflare Pages **secret**; Bearer on `POST /api/meta-offline` | Unauthorized request → 401; valid Bearer + known `event_name` → 200 + `ok:true` |
+| 12 | `META_OFFLINE_WEBHOOK_SECRET` | Cloudflare Pages **secret**; Bearer on `POST /api/meta-offline`. **Set with `printf '%s' "$SECRET" \| wrangler pages secret put …` — never `echo`** (trailing newline corrupts the Bearer compare → silent 401s). | Unauthorized request → 401; valid Bearer + known `event_name` → 200 + `ok:true` |
 | 13a | GHL custom field keys (6) | Snapshot / location custom fields | After a form lead (with Pixel cookies): contact has `fbp`, `fbc`, `meta_event_id`, `event_source_url`, `external_id`, `store_pixel_id` populated when data exists. Missing keys = silent skip (attribution loss). |
-| 13b | Opportunity Stage Changed → `/api/meta-offline` | GHL Automation webhook | One simulated stage change (e.g. Qualified) with merge fields → Events Manager shows server `QualifiedLead` (`action_source=system_generated`). Unknown stage names must return **2xx skipped** (not retry loops). |
+| 13b | Opportunity Stage Changed → `/api/meta-offline` | GHL Automation webhook | One simulated stage change (e.g. Qualified) with merge fields → Events Manager shows server `QualifiedLead` (`action_source=system_generated`). Unknown stage names must return **2xx skipped** (not retry loops). GHL resolves empty merge fields to the literal string `"null"` — the Worker strips it on `fbp`/`fbc`, so `fbc_received: "null"` in diagnostics is normal, not a bug. |
 
 ### Meta live-verification block (do in order)
 
 1. **Lead dedupe:** Events Manager Test Events — browser + server `Lead` = **one** event.  
-2. **Schedule:** complete a real `/book/` booking (calendar configured) — server `Schedule` + Pixel `Schedule` share `event_id` when booked.  
+2. **Schedule:** complete a real `/book/` booking (calendar configured) — Test Events must show `Schedule` as **Browser + Server deduped into one event**: the Worker sends `action_source: website` with the shared `event_id`, the Pixel sends `value: 300` matching `META_VALUE_SCHEDULE`. Phone/manual bookings arrive separately as `system_generated` via the GHL stage workflow.  
 3. **Offline:** fire one simulated stage webhook → `QualifiedLead` (or Showed) server-side.  
 4. **Events Manager:** map `QualifiedLead` and `Showed` as **custom conversions** (see `docs/GHL_META_OFFLINE_WORKFLOW.md`).
 

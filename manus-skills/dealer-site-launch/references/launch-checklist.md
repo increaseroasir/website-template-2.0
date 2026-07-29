@@ -16,6 +16,17 @@ workflow until stage names match the snapshot.
       `store_pixel_id`.
 - [ ] **Three Cloudflare secrets**: `META_PIXEL_ID`, `META_CAPI_ACCESS_TOKEN`,
       `META_OFFLINE_WEBHOOK_SECRET` (CAPI token never in GHL).
+      **Set secrets with `printf '%s' "$VALUE" | wrangler pages secret put NAME`
+      — never `echo`**: echo appends a trailing newline that corrupts the
+      Bearer comparison and produces silent 401s on `/api/meta-offline`.
+- [ ] **Pixel is hardcoded at build**: `build-config.mjs` `injectMetaPixel()`
+      writes the full pixel snippet into every HTML page (independent of
+      `client.config.js` at runtime; `data-cfasync="false"` defeats Rocket
+      Loader). The gate hard-fails if `client.config.js` is missing from the
+      dist root or any page loads `tracking.js` without `fbevents.js`.
+      Spot-check live: view-source shows `fbq('init', <pixel id>)`, and Meta
+      Pixel Helper shows exactly **one** PageView (tracking.js skips its
+      fallback when `fbq` exists — two PageViews = a stale tracking.js).
 - [ ] **GHL workflow** — Opportunity Stage Changed → `POST /api/meta-offline`
       with Bearer secret + merge fields (see `docs/GHL_META_OFFLINE_WORKFLOW.md`).
 - [ ] **Stage-name alignment** — Qualified / Booked / Showed / Won (or snapshot
@@ -25,7 +36,10 @@ workflow until stage names match the snapshot.
       as custom conversions (undocumented fifth step; also in
       `docs/GHL_META_OFFLINE_WORKFLOW.md`).
 - [ ] **Live verify**: Test Events browser+server Lead **DEDUPED**; Schedule on
-      a real `/book/` booking; one simulated stage → server `QualifiedLead`.
+      a real `/book/` booking shows **Browser + Server deduped as one event**
+      (Worker sends `action_source: website` with the shared `event_id`;
+      browser carries `value: 300` matching `META_VALUE_SCHEDULE`); one
+      simulated stage → server `QualifiedLead`.
 
 ## Pre-launch (staging URL)
 
