@@ -17,7 +17,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript>
-<link rel="preload" as="image" href="{{HOME_HERO_IMAGE}}">
+<!-- Do NOT preload the hero image here. It looks like the textbook LCP fix and
+     it measures as the opposite: on a mid-tier phone the preload takes the
+     highest priority slot and starves render-blocking home.css, which the hero
+     cannot paint without. Measured on PageSpeed Insights, six batches, same
+     artifact: LCP 5.5-5.7s with the preload, 3.2-3.4s without it (WTV-042).
+     The <img> is in the initial HTML, so the preload scanner finds it anyway
+     and fetchpriority="high" on the tag buys the priority without the cost. -->
 
 <link rel="stylesheet" href="/assets/home.css">
 <script src="/client.config.js"></script>

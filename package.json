@@ -22,6 +22,8 @@
     "preview:deploy": "npm run brand:guard && npm run build:config && npm run placeholder:check && wrangler pages deploy . --project-name {{CLOUDFLARE_PAGES_PROJECT}} --branch preview",
     "lh:mobile": "node scripts/lighthouse-check.mjs",
     "lh:desktop": "node scripts/lighthouse-check.mjs --desktop",
+    "psi:mobile": "node scripts/psi-check.mjs",
+    "psi:desktop": "node scripts/psi-check.mjs --desktop",
     "images:optimize": "node scripts/optimize-images.mjs"
   },
   "devDependencies": {

@@ -56,8 +56,16 @@ workflow until stage names match the snapshot.
 - [ ] **Cross-browser/device**: Safari + Chrome + one real Android or
       iPhone, at 390 and 1440. Glass blur, gradient text, clip-path shield,
       rails, date/select inputs.
-- [ ] **Lighthouse** on staging: Perf ≥85 mobile / ≥95 desktop, A11y ≥95,
+- [ ] **PageSpeed Insights** on staging — `npm run psi:mobile -- <url>`, not
+      local Lighthouse (TVD-044): Perf ≥85 mobile / ≥95 desktop, A11y ≥95,
       SEO ≥95, CLS <0.1.
+- [ ] **No image preload in the built artifact (TVD-045 / WTV-042):**
+      `rg 'as="image"' dist/` must return **nothing**. The hero is never
+      preloaded — the preload takes the top priority slot under slow 4G and
+      delays the render-blocking stylesheet the hero needs to paint, costing
+      ~2.3s of LCP on the homepage. The `<img>` carries `fetchpriority="high"`
+      instead. The gate hard-fails this, but check it by eye too: an audit tool
+      will keep recommending the preload, and it is wrong.
 - [ ] **Favicon set, sitemap generated + referenced, SSL green, www/non-www
       redirect chosen and enforced, 404 page live.**
 
@@ -107,10 +115,26 @@ without evidence, is not done and will be sent back.
       renders "Product unavailable" (WTV-035). Set `CHROME_PATH` if the browser
       is not auto-detected; do not pass `--no-render` for a launch.
 
+- [ ] **PageSpeed Insights is the number of record for performance (TVD-044):**
+      `npm run psi:mobile -- https://<domain>` and
+      `npm run psi:desktop -- https://<domain>`. PSI is the same machine for
+      everyone, so the operator and the template author cannot disagree about
+      the number. **Do not quote a local Lighthouse performance score as a
+      pass** — two parties measuring the same bytes correctly produced 62 and
+      99 because their runners differed (WTV-041). Local `lh:mobile` is kept
+      only as a fast directional tool for A/B work, and any local A/B result
+      must be confirmed on PSI before it is written down as a finding.
+      **Discard the first run against a fresh deploy hash** — the edge cache is
+      empty and you are scoring Cloudflare's cold start, not the site.
+      **When comparing two arms, rank on LCP, not the composite score.** PSI's
+      runner `benchmarkIndex` ranged 135 to 1246 across batches in WTV-042 and
+      is not monotonic with the score — one baseline batch scored 68 at bench
+      1010 and 72 at bench 474. LCP separated the same arms cleanly: 5.47-5.73s
+      with the hero preload, 3.19-3.39s without, no overlap.
 - [ ] **Lighthouse, scripted — not hand-run (WTV-036 / TVD-038):**
       `npm run lh:mobile -- https://<domain>` and `npm run lh:desktop -- https://<domain>`.
-      Thresholds: accessibility >= 95, mobile performance >= 70, desktop >= 90,
-      SEO >= 90. The template scores **accessibility 100 on all 13 pages** at
+      Thresholds: accessibility >= 95, desktop >= 90, SEO >= 90 — **performance
+      is signed off on PSI, not here.** The template scores **accessibility 100 on all 13 pages** at
       the certified SHA, so anything below 95 is a regression introduced by
       client content or config — not a template baseline. The script prints the
       specific failing audits.

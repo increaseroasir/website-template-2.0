@@ -16,8 +16,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"></noscript>
-  <link rel="preload" as="image" href="{{HOT_TUBS_HERO_IMAGE}}">
-  
+  <!-- No hero image preload: it starves the render-blocking CSS the hero needs
+       in order to paint, and measured 2.3s WORSE on LCP. See WTV-042. -->
+
   <link rel="stylesheet" href="/assets/inventory.css">
   <link rel="stylesheet" href="/assets/category.css">
   <script src="/client.config.js"></script>

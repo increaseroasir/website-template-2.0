@@ -140,6 +140,17 @@ if (mode === 'launch') {
       if (/<a[^>]*class=["']logo(?:-mark)?["'][^>]*aria-label=/i.test(html)) {
         failures.push(`${rel}: the logo link overrides its accessible name with aria-label — the visible tagline is then missing from that name (label-content-name-mismatch). Remove the aria-label and let the link text speak.`);
       }
+      /* 6. No image preloads (WTV-042). This is the check most likely to be
+         "helpfully" undone, because preloading the LCP hero is textbook advice
+         and PSI's own lcp-discovery-insight audit asks for it. It measured 2.3s
+         WORSE on LCP: the preload takes the top priority slot and delays the
+         render-blocking CSS the hero needs in order to paint. Pinned at source
+         so the tag cannot come back through a well-intentioned edit. */
+      for (const tag of html.match(/<link[^>]*rel=["']preload["'][^>]*>/gi) || []) {
+        if (/\sas=["']image["']/i.test(tag)) {
+          failures.push(`${rel}: preloads an image — forbidden (WTV-042). Preloading the hero measured 2.3s worse on LCP because it starves the render-blocking CSS the hero needs to paint. Delete the tag; fetchpriority="high" on the <img> already supplies the priority.`);
+        }
+      }
     }
   })(root);
   if (failures.length) {

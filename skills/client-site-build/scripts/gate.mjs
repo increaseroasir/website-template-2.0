@@ -29,9 +29,10 @@ CHECKS (static)
   duplicate-ids   no repeated id= within a page (post-hydration, pre-injection)
   links           internal hrefs resolve; #anchors exist on that page
   images          every <img> has alt + width/height
-  preload         at most one <link rel="preload"> per page; if present its
-                  href must be referenced by the page (the LCP hero); zero
-                  preloads is a PASS on pages with no hero
+  preload         NO <link rel="preload" as="image"> anywhere — preloading the
+                  LCP hero measured 2.3s worse on LCP (WTV-042). At most one
+                  as="style", which must be the fonts stylesheet and must carry
+                  an onload promotion plus a <noscript> fallback
   robots          robots meta matches --env
   phones          tel:/sms: hrefs are E164 and match the built config
   robots.txt      exists; staging = "Disallow: /", prod = allow + Sitemap line
@@ -234,42 +235,40 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
   add('images: every img has alt + width/height', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad) : 'all imgs dimensioned');
 }
 
-/* 6. preload — owner ruling (06fa070), reconciled in WTV-038. The ruling's
-   purpose is to stop stray preloads competing with the hero for early
-   bandwidth, not to cap the count for its own sake, so it is now enforced by
-   ROLE rather than by number: at most one as="image" preload, which must
-   reference that page's LCP hero, and at most one as="style" preload, which
-   must be the non-blocking font stylesheet AND must ship both an onload
-   promotion and a <noscript> fallback. Any other preload is still rejected.
-   This is stricter than the old count in one respect: a font preload that
-   never promotes, or that would leave CSS unloaded with JS disabled, now
-   fails, and the blunt count could never have caught either. */
+/* 6. preload — owner ruling (06fa070), reconciled in WTV-038, revised again in
+   WTV-042. Still enforced by ROLE rather than by count, but the image role is
+   now FORBIDDEN outright rather than capped at one.
+
+   Preloading the LCP hero measured 2.3s WORSE on LCP than not preloading it
+   (PSI mobile, mirror of a real deployment, 6 batches: 5.47-5.73s with the
+   preload, 3.19-3.39s without, no overlap). Under emulated slow 4G the image
+   preload claims the top priority slot and delays render-blocking home.css —
+   which the hero cannot paint without — so the preload delays the very
+   resource the image depends on, and buys nothing, because the <img> sits in
+   the initial HTML where the preload scanner finds it anyway and
+   fetchpriority="high" on the tag supplies the priority.
+
+   The as="style" font rule is unchanged: it must be the font stylesheet and it
+   must ship both an onload promotion and a <noscript> fallback. */
 {
   const bad = [];
   for (const p of pages) {
     const text = readFileSync(p, 'utf8');
     const rel = relative(dist, p);
     const tags = [...text.matchAll(/<link[^>]*rel="preload"[^>]*>/g)].map((m) => m[0]);
-    const image = [];
     const style = [];
-    const other = [];
     for (const tag of tags) {
       const as = (tag.match(/\sas="([^"]+)"/) || [])[1] || '';
-      if (as === 'image') image.push(tag);
-      else if (as === 'style') style.push(tag);
-      else other.push(tag);
-    }
-    if (other.length) bad.push(`${rel}: ${other.length} preload(s) that are neither as="image" nor as="style" — only the LCP hero and the font stylesheet may be preloaded`);
-    if (image.length > 1) bad.push(`${rel}: ${image.length} image preloads (at most 1 — the LCP hero)`);
-    if (style.length > 1) bad.push(`${rel}: ${style.length} stylesheet preloads (at most 1 — the font stylesheet)`);
-
-    if (image.length === 1) {
-      const href = (image[0].match(/\shref="([^"]+)"/) || [])[1];
-      if (!href) bad.push(`${rel}: image preload has no href`);
-      else if (!text.replace(image[0], '').includes(href)) {
-        bad.push(`${rel}: image preload "${href.slice(0, 60)}" is not referenced by the page (stale hero preload)`);
+      if (as === 'image') {
+        bad.push(`${rel}: preloads an image — forbidden (WTV-042). Measured 2.3s WORSE on LCP: the preload starves the render-blocking CSS the hero needs to paint. Delete the tag and keep fetchpriority="high" on the <img>.`);
+      } else if (as === 'style') {
+        style.push(tag);
+      } else {
+        bad.push(`${rel}: preload with as="${as || '(missing)'}" — only the font stylesheet may be preloaded`);
       }
     }
+    if (style.length > 1) bad.push(`${rel}: ${style.length} stylesheet preloads (at most 1 — the font stylesheet)`);
+
     if (style.length === 1) {
       const href = (style[0].match(/\shref="([^"]+)"/) || [])[1];
       if (!href) bad.push(`${rel}: stylesheet preload has no href`);
@@ -282,7 +281,7 @@ function cap(arr, n = 8) { return arr.length > n && !verbose ? arr.slice(0, n).c
       }
     }
   }
-  add('preload: <=1 LCP-hero image + <=1 font stylesheet (onload + noscript)', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
+  add('preload: font stylesheet only — no image preloads (WTV-042)', bad.length ? 'FAIL' : 'PASS', bad.length ? cap(bad, 12) : `${pages.length} pages`);
 }
 
 /* 7. robots vs env */
