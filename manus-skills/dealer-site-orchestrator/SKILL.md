@@ -28,6 +28,13 @@ You are the router for dealer website fulfillment. **Do not do all work in this 
 5. **Rush reduces scope, never quality gates.** A rush build still runs full
    `--validate` (REQUIRED tier), `gate.mjs`, and the post-launch cellular test
    lead. It does not skip validation, gate FAIL rows, or live lead proof.
+6. **The fetched commit is the only skill source.** At the start of every build,
+   read `manus-skills/` out of the certified SHA you just fetched — never from an
+   uploaded zip, a local workspace copy, or memory of a previous build. Process
+   fixes ship as commits exactly like code fixes, and a stale pack silently
+   reintroduces a failure that was already solved and paid for. If a document you
+   are reading references a section your copy does not contain, your pack is
+   stale: re-fetch before continuing.
 
 ## Compose these skills (in order)
 

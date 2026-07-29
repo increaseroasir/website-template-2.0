@@ -26,6 +26,11 @@ install `manus-skills/*` instead — behavior matches.
 3. Palette is the product (navy + gold).  
 4. Fail loudly — gate FAIL or unchecked REQUIRED intake blocks launch.  
 5. **Rush reduces scope, never skips validate, gate, or post-launch test lead.**
+6. **The fetched commit is the only skill source.** Read these skills out of the
+   certified SHA you fetched — never an uploaded zip, a local workspace copy, or
+   memory of a previous build. Process fixes ship as commits just like code
+   fixes, and a stale pack silently reintroduces a solved failure. If a document
+   references a section your copy lacks, your pack is stale — re-fetch.
 
 ## Scripts
 
