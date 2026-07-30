@@ -447,3 +447,13 @@ WTV-045 undiagnosable without a round trip (see TVD-049).
 - **Engine generalized, not copied:** `financing-survey.js` hard-coded three field names, a four-step count, and the string "Financing survey". It became `assets/survey.js`, which reads step count, field names, per-field summary labels, and the funnel label from the markup. Verified byte-identical financing output after the refactor (`product_name`, `financing_interest`, and the `Financing survey | Product: … | Target payment: … | Timeline: …` message all unchanged). A second copy of the engine would have been the cheaper edit and the more expensive maintenance.
 - **CRM routing:** a `lead_source` containing `quiz` stamps `quiz-request`, mirroring the `financing` → `financing-request` rule from TVD-026. Quiz leads also carry `Intent - Hot Tub Match` and the three answers in the message body, so a rep opens the contact already knowing the household size, the priority, and the timeline.
 - **Client wiring note:** repointing the slot leaves `/saunas/` built but unlinked. A client using the quiz needs a `/saunas/ → /quiz/ 301` in `_redirects`, or the old URL keeps serving an empty category page to anyone who has it indexed.
+
+### [TVD-053] Nav and footer are shared partials via `@include`
+
+- **Date:** 2026-07-29
+- **Context:** The same nav/footer chrome was copied across category pages and again across contact-style pages. Structural fixes (sauna slot, footer blurb class, sticky CTA attrs) had to be reapplied file-by-file and silently drifted.
+- **Decision:** `scripts/build-config.mjs` expands `<!-- @include name.html … -->` from `components/` **before** token replace (same resolver shape as the senior dealer template: `active="…"`, `{{@active:slug}}`, `{{@param}}`). Canonical partials:
+  - `components/site-nav.html` + `components/site-footer.html` — premium category chrome
+  - `components/site-header.html` + `components/site-footer-grid.html` — contact/admin-style chrome
+- **Reasoning:** One edit to a partial is the only way a footer/nav fix cannot recur across seven files. Pages keep their visual system (premium vs simple); we did not force one chrome onto every route. Hydrate deletes `components/` from `dist/` after expand so raw partials never ship.
+- **Applies to:** All builds; edit partials, not per-page copies

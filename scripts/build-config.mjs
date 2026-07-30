@@ -1,8 +1,39 @@
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
 
 const root = new URL('..', import.meta.url).pathname;
+const COMPONENTS = join(root, 'components');
+
+/* Shared partials (TVD-053): pages pull markup via
+     <!-- @include site-nav.html active="hot-tubs" -->
+   Inside a component:
+     {{@param}}        → the param's value ('' if not passed)
+     {{@active:slug}}  → ' class="nav-active"' when active === slug, else ''
+   Port of the senior-template include resolver; runs before token replace. */
+const INCLUDE_RE = /<!--\s*@include\s+(\S+?)(?:\s+([^>]*?))?\s*-->/g;
+function resolveIncludes(content, depth = 0) {
+  if (depth > 5) {
+    console.error('ERROR: include depth > 5 (circular include?)');
+    process.exit(1);
+  }
+  return content.replace(INCLUDE_RE, (_, name, paramStr) => {
+    const compPath = join(COMPONENTS, name);
+    if (!existsSync(compPath)) {
+      console.error(`ERROR: unknown component "${name}"`);
+      process.exit(1);
+    }
+    let comp = readFileSync(compPath, 'utf8').trimEnd();
+    const params = {};
+    if (paramStr) {
+      for (const m of paramStr.matchAll(/([a-zA-Z_][\w-]*)="([^"]*)"/g)) params[m[1]] = m[2];
+    }
+    comp = comp.replace(/ ?\{\{@active:([\w-]+)\}\}/g, (__, slug) =>
+      slug === params.active ? ' class="nav-active"' : '');
+    comp = comp.replace(/\{\{@([a-zA-Z_][\w-]*)\}\}/g, (__, key) => params[key] ?? '');
+    return resolveIncludes(comp, depth + 1);
+  });
+}
 const configPath = join(root, 'client.config.js');
 const config = readFileSync(configPath, 'utf8');
 const unresolved = [...config.matchAll(/\{\{([A-Z0-9_|.-]+)\}\}/g)].map(m => m[1]);
@@ -122,12 +153,15 @@ function applyOptionalSections(text) {
 
 function walk(dir) {
   for (const name of readdirSync(dir)) {
-    if (name === 'node_modules' || name === '.wrangler' || name === '.git') continue;
+    if (name === 'node_modules' || name === '.wrangler' || name === '.git' || name === 'components' || name === 'clients') continue;
     const file = join(dir, name);
     if (statSync(file).isDirectory()) walk(file);
     else if (/\.(html|css|js|toml)$/i.test(name)) {
       let text = readFileSync(file, 'utf8');
-      if (/\.html$/i.test(name)) text = applyOptionalSections(text);
+      if (/\.html$/i.test(name)) {
+        text = resolveIncludes(text);
+        text = applyOptionalSections(text);
+      }
       text = replaceTokens(text);
       /* Empty GSC token → omit the verification meta entirely (same
          empty-hydration philosophy as empty logo/map values). */

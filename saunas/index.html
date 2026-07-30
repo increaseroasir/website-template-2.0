@@ -36,59 +36,7 @@
   {{SAUNAS_ANNOUNCEMENT|Infrared &amp; traditional saunas · in stock}}
 </div>
 
-<nav class="navbar">
-  <a href="/" class="nav-logo" aria-label="{{CLIENT_NAME}} home">
-    <img src="{{CLIENT_LOGO_URL}}" alt="{{CLIENT_NAME}}" width="160" height="40" decoding="async" data-config-src="client.logoUrl" onerror="this.style.display='none'; this.nextElementSibling && (this.nextElementSibling.hidden=false)">
-    <b class="nav-logo-text" data-config="client.name" hidden>{{CLIENT_NAME}}</b>
-  </a>
-  <a id="navStickyCta" href="tel:{{CLIENT_PHONE_E164}}" class="nav-call-cta phone-link"
-     data-config-href="client.primaryPhoneHref"
-     data-call-source="header_call"
-     data-call-href="tel:{{CLIENT_PHONE_E164}}"
-     data-map-href="{{CLIENT_MAP_URL}}"
-     data-call-label="Call Us 24/7"
-     data-map-label="Get Directions"
-     aria-label="Call {{CLIENT_NAME}} 24/7">
-    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-    <span data-nav-sticky-label>Call Us 24/7</span>
-  </a>
-  <div class="nav-links">
-    <a href="/hot-tubs/">HOT TUBS</a>
-    <a href="/swim-spas/">SWIM SPAS</a>
-    <a href="{{SAUNAS_URL|/saunas/}}" class="nav-active">{{SAUNAS_NAV_LABEL|Saunas}}</a>
-    <a href="/financing.html">FINANCING</a>
-    <a href="/contact.html">VISIT US</a>
-  </div>
-  <div class="nav-actions">
-    <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap nav-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="header_phone">
-      <span class="phone-badge-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        24/7
-      </span>
-      <span class="phone-badge-number"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></span>
-    </a>
-    <a href="/inventory.html" class="btn-coupon">Shop Inventory</a>
-  </div>
-  <button class="nav-hamburger" id="navHamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMobileMenu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-<div class="nav-mobile-menu" id="navMobileMenu">
-  <a href="/hot-tubs/">HOT TUBS</a>
-  <a href="/swim-spas/">SWIM SPAS</a>
-  <a href="{{SAUNAS_URL|/saunas/}}" class="nav-active">{{SAUNAS_NAV_LABEL|Saunas}}</a>
-  <a href="/inventory.html">INVENTORY</a>
-  <a href="/financing.html">FINANCING</a>
-  <a href="/contact.html">VISIT US</a>
-  <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap mobile-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="mobile_menu_phone">
-    <span class="phone-badge-pill">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      24/7
-    </span>
-    <span class="phone-badge-number"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></span>
-  </a>
-  <a href="{{CLIENT_MAP_URL}}" class="btn-coupon" target="_blank" rel="noopener">Get Directions</a>
-</div>
+<!-- @include site-nav.html active="saunas" -->
 
 <main id="main">
 <section class="cat-hero">
@@ -165,48 +113,7 @@
 
 </main>
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-col footer-brand">
-      <img src="{{CLIENT_LOGO_FOOTER_URL}}" alt="{{CLIENT_NAME}}" width="160" height="40" class="footer-logo" decoding="async" data-config-src="client.logoFooterUrl" onerror="this.remove()">
-      <p class="footer-blurb">{{FOOTER_BLURB|A local showroom with real units on the floor, out-the-door pricing, and a team that's here after the sale.}}</p>
-      <div class="footer-social">
-        <a href="{{CLIENT_FACEBOOK_URL|#}}" target="_blank" rel="noopener" aria-label="Facebook">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-        </a>
-      </div>
-      <div class="footer-map">
-        <iframe src="{{CLIENT_MAP_EMBED_URL}}" title="Map to {{CLIENT_NAME}}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-    </div>
-    <div class="footer-col footer-links">
-      <h2 class="footer-h">Quick Links</h2>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/inventory.html">Inventory</a></li>
-        <li><a href="/financing.html">Financing</a></li>
-        <li><a href="/contact.html">Contact Us</a></li>
-      </ul>
-    </div>
-    <div class="footer-col footer-showroom">
-      <h2 class="footer-h">Visit Our Showroom</h2>
-      <p>{{CLIENT_ADDRESS_HTML}}</p>
-      <a href="tel:{{CLIENT_PHONE_E164}}" class="phone-badge-wrap footer-phone-badge phone-link" data-config-href="client.primaryPhoneHref" data-call-source="footer_phone">
-        <span class="phone-badge-pill">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          24/7
-        </span>
-        <span class="phone-badge-number"><span data-config="client.primaryPhone">{{CLIENT_PHONE}}</span></span>
-      </a>
-      <p class="footer-hours">{{CLIENT_HOURS_HTML}}</p>
-      <a href="mailto:{{CLIENT_EMAIL}}" class="footer-email" data-config="client.email">{{CLIENT_EMAIL}}</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>&copy; <span data-current-year></span> <span data-config="client.legalName">{{CLIENT_LEGAL_NAME}}</span>. All rights reserved.</span>
-    <span><a href="/privacy-policy/">Privacy Policy</a> · {{CLIENT_MARKET}} dealer website</span>
-  </div>
-</footer>
+<!-- @include site-footer.html -->
 
 <nav class="cat-mbar" id="catMbar" aria-label="Quick contact" aria-hidden="true">
   <a class="call phone-link" data-config-href="client.primaryPhoneHref" data-call-source="mobile_bar_call" href="tel:{{CLIENT_PHONE_E164}}">Call</a>

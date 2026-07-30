@@ -49,7 +49,14 @@ Hydrate: copy template → `clients/<name>/dist/`, run `scripts/build-config.mjs
 Run `npm run check:tokens clients/<name>/tokens.env` first and treat a non-zero
 exit as a blocker. That file is sourced by bash, so an unquoted value containing
 a space or `&` exports nothing; since tokens carry `|default` in the markup, the
-page renders the default and every gate still passes (WTV-061).
+page renders the default and every gate still passes (WTV-061). The same command
+also fails when any hard-required token is missing (no `|default`, not
+IF-guarded, not supplied by `client.config.js`) — those would ship as literal
+`{{TOKEN}}` (WTV-062).
+
+Client inputs may be committed under `clients/<name>/` (`tokens.env`,
+`client.config.js`, `redirects.extra`) so one checkout SHA is enough to hydrate.
+Cloudflare runtime secrets stay in Pages env only — never in git.
 
 `_redirects` is copied verbatim and never token-hydrated, so client rules live in
 `clients/<name>/redirects.extra` and are appended to `dist/_redirects` after the

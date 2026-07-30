@@ -1,0 +1,10 @@
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="/"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="/hot-tubs/"{{@active:hot-tubs}}>Hot Tubs</a><a href="/swim-spas/"{{@active:swim-spas}}>Swim Spas</a><a href="{{SAUNAS_URL|/saunas/}}"{{@active:saunas}}>{{SAUNAS_NAV_LABEL|Saunas}}</a><a href="/inventory.html"{{@active:inventory}}>Inventory</a><a href="/financing.html"{{@active:financing}}>Financing</a><a href="/contact.html"{{@active:contact}}>Contact</a>
+    </nav>
+    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a><a class="btn btn-gold" href="/inventory.html">Shop Inventory</a></div>
+    <button class="mobile-menu" aria-label="Open menu">☰</button>
+  </div>
+</header>

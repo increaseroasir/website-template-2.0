@@ -23,16 +23,7 @@
 <script src="/assets/tracking.js"></script>
 </head>
 <body class="page-legal" data-template-page>
-<header class="site-header">
-  <div class="header-inner">
-    <a class="logo" href="/"><b data-config="client.name">{{CLIENT_NAME}}</b><span data-config="client.tagline">{{CLIENT_TAGLINE}}</span></a>
-    <nav class="nav" aria-label="Primary">
-      <a href="/hot-tubs/">Hot Tubs</a><a href="/swim-spas/">Swim Spas</a><a href="{{SAUNAS_URL|/saunas/}}">{{SAUNAS_NAV_LABEL|Saunas}}</a><a href="/inventory.html">Inventory</a><a href="/financing.html">Financing</a><a href="/contact.html">Contact</a>
-    </nav>
-    <div class="header-actions"><a class="phone-link" data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}"><b data-config="client.primaryPhone">{{CLIENT_PHONE}}</b><span>Call or text</span></a><a class="btn btn-gold" href="/inventory.html">Shop Inventory</a></div>
-    <button class="mobile-menu" aria-label="Open menu">☰</button>
-  </div>
-</header>
+<!-- @include site-header.html -->
 
 <main class="legal-page">
   <div class="legal-wrap">
@@ -114,14 +105,7 @@
   </div>
 </main>
 
-<footer class="site-footer">
-  <div class="wrap footer-grid">
-    <div><h2 class="footer-h" data-config="client.name">{{CLIENT_NAME}}</h2><p>{{FOOTER_BLURB|A local showroom with real units on the floor, out-the-door pricing, and a team that's here after the sale.}}</p></div>
-    <div><h2 class="footer-h">Shop</h2><p><a href="/hot-tubs/">Hot Tubs</a><br><a href="/swim-spas/">Swim Spas</a><br><a href="{{SAUNAS_URL|/saunas/}}">{{SAUNAS_NAV_LABEL|Saunas}}</a></p></div>
-    <div><h2 class="footer-h">Company</h2><p><a href="/financing.html">Financing</a><br><a href="/contact.html">Contact</a><br><a href="/privacy-policy/">Privacy</a><br><a href="/admin/">Admin</a></p></div>
-    <div><h2 class="footer-h">Contact</h2><p><span data-config="client.address">{{CLIENT_ADDRESS}}</span><br><a data-config-href="client.primaryPhoneHref" href="tel:{{CLIENT_PHONE_E164}}" data-config="client.primaryPhone">{{CLIENT_PHONE}}</a></p></div>
-  </div>
-</footer>
+<!-- @include site-footer-grid.html -->
 <script src="/assets/template.js"></script>
 </body>
 </html>

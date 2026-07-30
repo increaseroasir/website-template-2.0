@@ -1,0 +1,42 @@
+# Sun Pool & Spa Supply — client redirect rules
+# Appended to dist/_redirects during hydrate. Never hand-edit dist/_redirects;
+# it is overwritten on every build.
+#
+# Every source path below was confirmed to return 200 on the live SiteGround site
+# on 2026-07-29 (curl -o /dev/null -w '%{http_code}'). None are guessed. The /hp/
+# subpaths were found by crawling the legacy homepage nav, not assumed.
+
+# Sun Pool carries no saunas, so SAUNAS_URL points the nav at the match quiz.
+# The category page is still built, so anyone holding the old URL would land on
+# an empty grid without this rule (TVD-052). /saunas/ 404s on the legacy site, so
+# this rule is forward-looking only, not a legacy 301.
+/saunas/ /quiz/ 301
+/saunas /quiz/ 301
+
+# Legacy category pages. Titled "Hot Tubs" and "Hydropool Swim Spas" on the old
+# site and linked from its homepage nav, so these carry real ranking. They must
+# precede the /hp/ rules below: _redirects matches top-down, and a bare /hp/ rule
+# does NOT match /hp/hot-tubs/ — Cloudflare matches exact paths unless splatted.
+/hp/hot-tubs/ /hot-tubs/ 301
+/hp/hot-tubs /hot-tubs/ 301
+/hp/swim-spas/ /swim-spas/ 301
+/hp/swim-spas /swim-spas/ 301
+
+# The /hp/ index itself was the old landing page, so it goes to the homepage. This
+# must stay ABOVE the splat: /hp/* also matches /hp/ with an empty splat, and
+# _redirects takes the first match, which would otherwise send it to inventory.
+/hp/ / 301
+/hp / 301
+
+# Anything else under the legacy /hp/ tree goes to the inventory grid, which is
+# the closest equivalent of what that section was for.
+/hp/* /active-inventory/ 301
+
+# Remaining legacy URLs, all confirmed 200 on the old site. /privacy-policy/
+# needs no rule — the new site serves that exact path directly.
+/about/ /#visit 301
+/about /#visit 301
+/spa-service/ /contact.html 301
+/spa-service /contact.html 301
+/san-diego-county-ca/ / 301
+/san-diego-county-ca / 301

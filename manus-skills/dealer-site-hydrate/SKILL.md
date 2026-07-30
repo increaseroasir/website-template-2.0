@@ -37,7 +37,10 @@ parsed, so `CLIENT_NAME=Sun Pool & Spa Supply` exports **nothing** — and becau
 almost every token is written `{{TOKEN|default}}`, the page then renders the
 template's default and the placeholder scanner passes. The client's real copy is
 gone with no error anywhere. The linter also catches duplicate keys, where the
-last assignment silently wins over any earlier edit (WTV-061).
+last assignment silently wins over any earlier edit (WTV-061), and fails when
+any **hard-required** token (no `|default`, not IF-guarded, not filled by
+`client.config.js` / `tokenMapFromConfig`) is missing — those would ship as
+literal `{{TOKEN}}` (WTV-062).
 
 ## Build (from repo root)
 
@@ -50,8 +53,12 @@ rsync -a --exclude .git --exclude node_modules --exclude skills \
   ./ clients/<name>/dist/
 cp clients/<name>/client.config.js clients/<name>/dist/client.config.js
 cd clients/<name>/dist && set -a && . ../tokens.env && set +a && node scripts/build-config.mjs
-rm -rf scripts
+rm -rf scripts components
 ```
+
+`components/` holds shared `@include` partials. `build-config.mjs` expands
+them into each page before token replace; remove the directory after so dist
+does not ship raw partials.
 
 `build-config.mjs` rewrites files **where it runs** — only inside `dist/`.
 
@@ -80,14 +87,18 @@ above wildcards. A splat also matches its own directory — `/hp/*` matches `/hp
 with an empty splat — so a rule for `/hp/` placed *below* `/hp/*` is unreachable.
 Verify with the post-deploy smoke, not by reading the file.
 
-### This file is a client input, not a repo file
+### Client inputs live with the client folder
 
-`clients/<name>/` is **not** in the template repo. `tokens.env`,
-`client.config.js`, and `redirects.extra` are delivered per client. Checking out a
-SHA and finding no `redirects.extra` means **it was not supplied yet**, not that
-the client has no rules. Ask for it. Never invent historical 301s, and never
-silently skip the step — a skipped legacy 301 is invisible until the client's
-rankings drop weeks later.
+Canonical client inputs may be committed under `clients/<name>/` in this repo
+(`tokens.env`, `client.config.js`, `redirects.extra`) so one SHA has everything
+hydrate needs. Example: `clients/sun-pool-spa/`.
+
+**Cloudflare runtime secrets stay in Pages only** (`GHL_*`, `META_CAPI_*`,
+`ADMIN_*`, Sheets private key). Never put those values in `tokens.env`.
+
+If `redirects.extra` is missing for a client that is replacing an indexed site,
+ask for it — never invent historical 301s, and never silently skip the append
+step. A skipped legacy 301 is invisible until rankings drop weeks later.
 
 ### Deriving legacy rules from evidence
 
