@@ -12,6 +12,22 @@
 <meta name="google-site-verification" content="{{GSC_VERIFICATION}}">
 <title>{{CLIENT_NAME}} | {{CLIENT_MARKET}} Hot Tubs, Swim Spas &amp; Saunas</title>
 <meta name="description" content="{{HOME_META_DESCRIPTION}}">
+<link rel="canonical" href="{{CLIENT_WEBSITE_URL}}/">
+<!-- Social scrapers (Facebook, iMessage, Slack) do not execute JavaScript, so
+     these have to be static in the HTML — they cannot be built at runtime the
+     way seo-schema.js builds JSON-LD. CLIENT_WEBSITE_URL must have no trailing
+     slash or the URLs below double up. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{CLIENT_NAME}}">
+<meta property="og:title" content="{{CLIENT_NAME}} | {{CLIENT_MARKET}} Hot Tubs, Swim Spas &amp; Saunas">
+<meta property="og:description" content="{{HOME_META_DESCRIPTION}}">
+<meta property="og:url" content="{{CLIENT_WEBSITE_URL}}/">
+<meta property="og:image" content="{{OG_IMAGE_URL}}">
+<meta property="og:image:alt" content="{{CLIENT_NAME}} showroom">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{CLIENT_NAME}} | {{CLIENT_MARKET}} Hot Tubs, Swim Spas &amp; Saunas">
+<meta name="twitter:description" content="{{HOME_META_DESCRIPTION}}">
+<meta name="twitter:image" content="{{OG_IMAGE_URL}}">
 <script>document.documentElement.className='js'</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,6 +47,8 @@
 </head>
 <body class="home-page" data-template-page data-lead-source="homepage" data-lead-campaign="{{HOME_CAMPAIGN|homepage}}" data-offer-ends="{{OFFER_ENDS_AT}}" data-thank-you-url="/thank-you.html" data-meta-view-content="{{CLIENT_NAME}} Homepage" data-meta-view-category="homepage">
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
 <!-- IF:OFFER_NAME -->
 <div class="marquee" role="region" aria-label="Current offer">
   <div class="gold-hairline" aria-hidden="true"></div>
@@ -46,7 +64,7 @@
 
 <header class="site-top">
   <div class="site-top-inner">
-    <a class="logo-mark" href="/">
+    <a class="logo-mark" href="/" aria-current="page">
       <b data-config="client.name">{{CLIENT_NAME}}</b>
       <span data-config="client.tagline">{{CLIENT_TAGLINE}}</span>
     </a>
@@ -107,7 +125,7 @@
 <!-- IF:OFFER_NAME -->
       <div class="offer-chip">
         <span class="dot" aria-hidden="true"></span>
-        <p><b>{{OFFER_NAME}}:</b> {{OFFER_HEADLINE}} — <b>{{OFFER_ENDS_LABEL}}</b></p>
+        <p><b>{{OFFER_NAME}}:</b> {{OFFER_HEADLINE}} <b class="chip-ends">{{OFFER_ENDS_LABEL}}</b></p>
       </div>
 <!-- /IF:OFFER_NAME -->
       <div class="hero-ctas">
@@ -227,7 +245,7 @@
           <li>{{OFFER_BULLET_4}}</li>
         </ul>
         <div class="fair-btns">
-          <a class="btn btn-red" data-config-href="client.mapUrl" href="{{CLIENT_MAP_URL}}" target="_blank" rel="noopener">{{OFFER_PRIMARY_CTA}}</a>
+          <a class="btn btn-gold offer-inventory-cta" href="/inventory.html">Shop Available Inventory</a>
           <a class="btn btn-ghost-blue" href="#lead" data-pricing-source="offer_secondary_cta">{{OFFER_SECONDARY_CTA}}</a>
         </div>
       </div>
@@ -262,8 +280,11 @@
           <h3>{{PRODUCT_NAME|—}}</h3>
           <p class="spec">{{PRODUCT_FACT_1|—}} · {{PRODUCT_FACT_2|—}} · {{PRODUCT_FACT_3|—}}</p>
           <p class="why">{{PRODUCT_CARD_SUMMARY|—}}</p>
-          <div class="price-block"><span class="from">From</span><span class="num">{{PRODUCT_PRICE|0}}</span><div class="mo">{{PRODUCT_MONTHLY_PAYMENT|0}}</div></div>
-          <button class="btn btn-gold" type="button" data-home-prefill="{{PRODUCT_NAME|—}}" data-product="{{PRODUCT_NAME|—}}" data-pricing-source="home_inventory_card">{{PRODUCT_PRIMARY_CTA|See details}}</button>
+          <div class="price-block"><div class="mo mo-hero">As low as {{PRODUCT_MONTHLY_PAYMENT|0}}/mo*</div><div class="cash-secondary"><span class="from">Cash price</span><span class="num num-cash">{{PRODUCT_PRICE|0}}</span></div></div>
+          <div class="card-cta-stack">
+            <button class="btn btn-gold" type="button" data-home-prefill="{{PRODUCT_NAME|—}}" data-product="{{PRODUCT_NAME|—}}" data-pricing-source="home_inventory_card">{{PRODUCT_PRIMARY_CTA|See details}}</button>
+            <a class="btn btn-financing" href="/financing.html">Apply for Financing</a>
+          </div>
         </div>
       </article>
     </div>
@@ -277,11 +298,11 @@
     <span class="eyebrow">{{CATEGORIES_KICKER|Find your fit}}</span>
     <h2>{{CATEGORIES_HEADLINE|What are you shopping for?}}</h2>
     <div class="cats">
-      <a class="cat" style="background-image:url('{{HOT_TUBS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/hot-tubs/"><div class="in"><b>Hot Tubs</b><span>{{HOT_TUB_CATEGORY_SUMMARY|Relax, recover, and unwind year-round}}</span></div></a>
-      <a class="cat" style="background-image:url('{{SWIM_SPAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="/swim-spas/"><div class="in"><b>Swim Spas</b><span>{{SWIM_SPA_CATEGORY_SUMMARY|Swim, train, and soak in one unit}}</span></div></a>
-      <a class="cat" style="background-image:url('{{SAUNAS_CATEGORY_IMAGE}}'),linear-gradient(160deg,#16469B,#081D45)" href="{{SAUNAS_URL|/saunas/}}"><div class="in"><b>{{SAUNAS_NAV_LABEL|Saunas}}</b><span>{{SAUNA_CATEGORY_SUMMARY|Heat therapy for recovery and sleep}}</span></div></a>
+      <a class="cat" href="/hot-tubs/"><img class="cat-img" src="{{HOT_TUBS_CATEGORY_IMAGE}}" alt="" aria-hidden="true" width="1000" height="1250" loading="lazy" decoding="async" onerror="this.remove()"><div class="in"><b>Hot Tubs</b><span>{{HOT_TUB_CATEGORY_SUMMARY|Relax, recover, and unwind year-round}}</span></div></a>
+      <a class="cat" href="/swim-spas/"><img class="cat-img" src="{{SWIM_SPAS_CATEGORY_IMAGE}}" alt="" aria-hidden="true" width="1000" height="1250" loading="lazy" decoding="async" onerror="this.remove()"><div class="in"><b>Swim Spas</b><span>{{SWIM_SPA_CATEGORY_SUMMARY|Swim, train, and soak in one unit}}</span></div></a>
+      <a class="cat" href="{{SAUNAS_URL|/saunas/}}"><img class="cat-img" src="{{SAUNAS_CATEGORY_IMAGE}}" alt="" aria-hidden="true" width="1000" height="1250" loading="lazy" decoding="async" onerror="this.remove()"><div class="in"><b>{{SAUNAS_NAV_LABEL|Saunas}}</b><span>{{SAUNA_CATEGORY_SUMMARY|Heat therapy for recovery and sleep}}</span></div></a>
 <!-- IF:MASSAGE_CATEGORY_SUMMARY -->
-      <a class="cat" style="background-image:linear-gradient(160deg,#16469B,#081D45)" href="/inventory.html"><div class="in"><b>Massage Chairs</b><span>{{MASSAGE_CATEGORY_SUMMARY}}</span></div></a>
+      <a class="cat" href="/inventory.html"><div class="in"><b>Massage Chairs</b><span>{{MASSAGE_CATEGORY_SUMMARY}}</span></div></a>
 <!-- /IF:MASSAGE_CATEGORY_SUMMARY -->
     </div>
   </div>

@@ -1,0 +1,33 @@
+# Cloudflare Pages response headers.
+#
+# Cache tiers are set by how often each asset type actually changes, because
+# NOTHING here is content-hashed — filenames stay stable across deploys, so
+# `immutable` would strand browsers on stale code. If asset fingerprinting is
+# added later, /assets/* can move to `max-age=31536000, immutable`.
+#
+# HTML is deliberately left on Pages' default (revalidate every request): the
+# homepage now carries inlined client.config.js, tracking.js, and home.css, so a
+# cached HTML document would also pin stale config and CSS.
+
+/assets/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff
+
+# Client photography is uploaded once per launch and effectively never edited in
+# place, so it gets a longer window than the JS. Still not `immutable` — a client
+# swapping a photo under the same filename should recover within the day.
+/assets/*.webp
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/assets/*.jpg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/assets/*.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/assets/*.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

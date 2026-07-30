@@ -657,9 +657,28 @@
     /* No price AND no monthly on record: ask copy replaces the gold figure.
        Doubled class beats the per-breakpoint .inv-card-monthly size overrides. */
     .inv-card-monthly.inv-card-monthly--ask { font-size:17px; line-height:1.25; text-align:right; }
+    .inv-card-actions { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
     .inv-card-cta {
-      width:100%; min-height:56px; margin-top:4px;
+      width:100%; min-height:56px; margin-top:0;
       font-size:.92rem; letter-spacing:.01em;
+    }
+    .inv-card-financing {
+      display:flex; align-items:center; justify-content:center;
+      width:100%; min-height:52px; border-radius:12px;
+      font-family:'Bricolage Grotesque', sans-serif; font-weight:800; font-size:.88rem;
+      letter-spacing:.01em; text-decoration:none; color:#fff;
+      background:linear-gradient(180deg,var(--navy-royal),var(--navy-deep));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 12px 26px -12px rgba(6,24,61,.55);
+      transition:transform .25s ease, box-shadow .25s ease;
+    }
+    .inv-card-financing:hover {
+      color:#fff; text-decoration:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 16px 34px -12px rgba(6,24,61,.7);
+      transform:translateY(-1px);
+    }
+    .inv-card-price--secondary {
+      font-size:.78rem !important; font-weight:600 !important;
+      color:var(--ink-soft) !important; margin-top:2px !important;
     }
     .inv-card-cta-arrow { color:inherit; font-size:18px; line-height:1; font-weight:800; position:relative; z-index:2; }
     .inv-no-results {

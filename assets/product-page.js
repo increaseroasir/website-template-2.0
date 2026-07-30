@@ -125,17 +125,30 @@
     }
 
     var hasPrice = Number(product.price || 0) > 0;
-    setText('[data-pdp-price-label]', hasPrice ? 'Current Price' : 'Today\u2019s Local Price');
+    var hasMonthly = Number(product.monthly_payment || 0) > 0;
     var priceEl = document.querySelector('[data-pdp-price]');
-    if (priceEl) {
-      /* No price on record → never print "$0"; drive the price request instead */
-      priceEl.textContent = hasPrice ? money(product.price) : 'Ask \u2014 we\u2019ll text it back';
-      priceEl.classList.toggle('pdp-price--ask', !hasPrice);
-    }
     var monthlyEl = document.querySelector('[data-pdp-monthly]');
-    if (monthlyEl && product.monthly_payment) {
-      monthlyEl.textContent = 'or as low as ' + money(product.monthly_payment) + '/mo with approved credit';
-      monthlyEl.hidden = false;
+    if (hasMonthly) {
+      /* Monthly leads; cash (if any) is the secondary line below. */
+      setText('[data-pdp-price-label]', 'As low as');
+      if (priceEl) {
+        priceEl.textContent = money(product.monthly_payment) + '/mo*';
+        priceEl.classList.remove('pdp-price--ask');
+      }
+      if (monthlyEl) {
+        monthlyEl.textContent = hasPrice
+          ? 'Cash price ' + money(product.price)
+          : 'with approved credit';
+        monthlyEl.hidden = false;
+      }
+    } else {
+      setText('[data-pdp-price-label]', hasPrice ? 'Current Price' : 'Today\u2019s Local Price');
+      if (priceEl) {
+        /* No price on record → never print "$0"; drive the price request instead */
+        priceEl.textContent = hasPrice ? money(product.price) : 'Ask \u2014 we\u2019ll text it back';
+        priceEl.classList.toggle('pdp-price--ask', !hasPrice);
+      }
+      if (monthlyEl) monthlyEl.hidden = true;
     }
     var status = product.inventoryStatus || product.status || 'available';
     var availabilityEl = document.querySelector('[data-pdp-availability]');
@@ -179,6 +192,10 @@
     if (availability.formButton) {
       document.querySelectorAll('[data-pdp-cta]').forEach(function (cta) { cta.textContent = availability.formButton; });
     }
+    /* Sold units do not advertise financing — hide the secondary CTA. */
+    document.querySelectorAll('.btn-financing').forEach(function (btn) {
+      btn.hidden = status === 'sold';
+    });
     setText('[data-pdp-selected]', name);
     document.querySelectorAll('[data-open-lead]').forEach(function (button) {
       button.setAttribute('data-product', name);

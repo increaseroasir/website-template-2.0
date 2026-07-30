@@ -184,15 +184,26 @@
       '<h2 class="h3">' + escapeHtml(product.inventory_name || 'Inventory Product') + '</h2>',
       '<div class="facts">' + facts.slice(0, 3).map(fact => '<span>' + escapeHtml(fact) + '</span>').join('') + '</div>',
       '<p>' + escapeHtml(state ? state.note : (product.delivery_promise || 'Ask for current local availability and delivery timing.')) + '</p>',
-      /* A sold unit must not advertise a payment it cannot honour. Pending keeps
-         pricing — a backup buyer needs it. No price on record → never print "$0";
-         sell the 30-second price request instead. */
-      (product.status === 'sold'
-        ? '<div class="price price--ask"><span>Availability</span><b>No Longer Available</b><span>Sold \u2014 ask about the next one</span></div>'
-        : Number(product.price || 0) > 0
-        ? '<div class="price"><span>From</span><b>' + money(product.price) + '</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : 'Ask for payment options') + '</span></div>'
-        : '<div class="price price--ask"><span>Today&apos;s local price</span><b>Text-back pricing</b><span>' + (product.monthly_payment ? money(product.monthly_payment) + '/mo with approved credit' : '30-second request \u2014 no obligation') + '</span></div>'),
-      '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + escapeAttr(product.inventory_name) + '">' + escapeHtml(state ? state.cta : 'Get Today\u2019s Price') + '</button><a class="btn btn-outline" href="' + escapeAttr(productUrl(product)) + '">View Details</a></div>',
+      /* Pricing: monthly leads when present; cash is secondary. Sold never teases
+         a payment. No price/monthly → short ask fallback (never "$0"). */
+      (function () {
+        if (product.status === 'sold') {
+          return '<div class="price price--ask"><span>Availability</span><b>No Longer Available</b><span>Sold \u2014 ask about the next one</span></div>';
+        }
+        const monthly = Number(product.monthly_payment || 0);
+        const price = Number(product.price || 0);
+        if (monthly > 0) {
+          return '<div class="price"><span>As low as</span><b>' + money(monthly) + '/mo*</b>' +
+            (price > 0 ? '<span>Cash price ' + money(price) + '</span>' : '<span>with approved credit</span>') + '</div>';
+        }
+        if (price > 0) {
+          return '<div class="price"><span>From</span><b>' + money(price) + '</b><span>Ask for payment options</span></div>';
+        }
+        return '<div class="price price--ask"><span>Today&apos;s local price</span><b>Ask \u2014 we\u2019ll text it back</b><span>30-second request \u2014 no obligation</span></div>';
+      }()),
+      '<div class="product-actions"><button class="btn btn-red" data-open-lead data-product="' + escapeAttr(product.inventory_name) + '">' + escapeHtml(state ? state.cta : 'Get Today\u2019s Price') + '</button>' +
+      (product.status !== 'sold' ? '<a class="btn btn-financing" href="/financing.html">Apply for Financing</a>' : '') +
+      '<a class="btn btn-outline" href="' + escapeAttr(productUrl(product)) + '">View Details</a></div>',
       '</div>'
     ].join('');
     const leadButton = article.querySelector('[data-open-lead]');
@@ -206,6 +217,25 @@
     const qty = Number(product.quantity || 0);
     const state = cardStatus(product);
     const badge = state ? state.badge : (product.promo_label || (qty > 0 ? qty + ' available' : (product.status || 'Available')));
+    const monthly = Number(product.monthly_payment || 0);
+    const price = Number(product.price || 0);
+    const isSold = product.status === 'sold';
+    let priceBlock;
+    if (isSold) {
+      priceBlock = '<div class="sold-note">Sold \u2014 ask about the next available unit</div>';
+    } else if (monthly > 0) {
+      priceBlock = '<div class="price-block"><div class="mo mo-hero">As low as ' + money(monthly) + '/mo*</div>' +
+        (price > 0 ? '<div class="cash-secondary"><span class="from">Cash price</span><span class="num num-cash">' + money(price) + '</span></div>' : '') +
+        '</div>';
+    } else if (price > 0) {
+      priceBlock = '<div class="price-block"><span class="from">From</span><span class="num">' + money(price) + '</span></div>';
+    } else {
+      priceBlock = '<div class="price-block"><span class="from">Today\u2019s local price</span><span class="num num-ask">Ask \u2014 we\u2019ll text it back</span></div>';
+    }
+    const ctaStack = '<div class="card-cta-stack">' +
+      '<button class="btn btn-gold" type="button" data-home-prefill="' + escapeAttr(name) + '" data-product="' + escapeAttr(name) + '" data-pricing-source="home_inventory_card">' + escapeHtml(state ? state.cta : 'Get today\'s local price') + '</button>' +
+      (isSold ? '' : '<a class="btn btn-financing" href="/financing.html">Apply for Financing</a>') +
+      '</div>';
     const article = document.createElement('article');
     article.className = 'pcard';
     article.setAttribute('data-product-card', '');
@@ -217,13 +247,8 @@
       '<h2 class="h3">' + escapeHtml(name) + '</h2>',
       '<p class="spec">' + escapeHtml(facts.slice(0, 3).join(' · ') || 'Ask for specs') + '</p>',
       '<p class="why">' + escapeHtml(state ? state.note : (product.delivery_promise || product.card_summary || 'In stock — ask for today\'s local price.')) + '</p>',
-      /* No price on record → ask-treatment instead of "From $0" */
-      '<div class="price-block">' + (Number(product.price || 0) > 0
-        ? '<span class="from">From</span><span class="num">' + money(product.price) + '</span>'
-        : '<span class="from">Today\u2019s local price</span><span class="num num-ask">Ask \u2014 we\u2019ll text it back</span>'),
-      (product.monthly_payment ? '<div class="mo">or as low as ' + money(product.monthly_payment) + '/mo*</div>' : ''),
-      '</div>',
-      '<button class="btn btn-gold" type="button" data-home-prefill="' + escapeAttr(name) + '" data-product="' + escapeAttr(name) + '" data-pricing-source="home_inventory_card">' + escapeHtml(state ? state.cta : 'Get today\'s local price') + '</button>',
+      priceBlock,
+      ctaStack,
       '</div>'
     ].join('');
     return article;
@@ -273,16 +298,22 @@
       const kind = index === 0 ? 'people' : (index === 1 ? 'spark' : 'brand');
       return '<div class="inv-pill">' + pillSvg(kind) + '<span>' + escapeHtml(fact) + '</span></div>';
     }).join('');
-    /* A sold unit must not advertise a payment it cannot honour, so its price box
-       states the position instead. Pending keeps pricing — a backup buyer needs it. */
-    const priceBox = (state && product.status === 'sold')
-      ? '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">No Longer Available</p></div><p class="inv-card-monthly inv-card-monthly--ask">Sold</p></div>'
-      : price > 0
-      ? '<div class="inv-price-box"><div class="inv-price-left"><p class="inv-card-price">' + money(price) + '</p>' + (monthly ? '<p class="inv-financing-label">Financing as low as</p>' : '') + '</div>' + (monthly ? '<p class="inv-card-monthly">' + money(monthly) + '/mo</p>' : '') + '</div>'
-      : (monthly
-        ? '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">Financing As Low As</p></div><p class="inv-card-monthly">' + money(monthly) + '/mo</p></div>'
-        /* Neither price nor monthly on record → sell the text-back request */
-        : '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">Today\u2019s Local Price</p></div><p class="inv-card-monthly inv-card-monthly--ask">Ask \u2014 texted in minutes</p></div>');
+    /* Monthly leads when present; cash is secondary. Sold never teases a payment. */
+    let priceBox;
+    if (state && product.status === 'sold') {
+      priceBox = '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">No Longer Available</p></div><p class="inv-card-monthly inv-card-monthly--ask">Sold</p></div>';
+    } else if (monthly > 0) {
+      priceBox = '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">As low as</p>' +
+        (price > 0 ? '<p class="inv-card-price inv-card-price--secondary">' + money(price) + ' cash</p>' : '') +
+        '</div><p class="inv-card-monthly">' + money(monthly) + '/mo*</p></div>';
+    } else if (price > 0) {
+      priceBox = '<div class="inv-price-box"><div class="inv-price-left"><p class="inv-card-price">' + money(price) + '</p></div></div>';
+    } else {
+      priceBox = '<div class="inv-price-box inv-price-box--financing-only"><div class="inv-price-left"><p class="inv-financing-label">Today\u2019s Local Price</p></div><p class="inv-card-monthly inv-card-monthly--ask">Ask \u2014 texted in minutes</p></div>';
+    }
+    const financingBtn = (product.status !== 'sold')
+      ? '<a class="inv-card-financing" href="/financing.html">Apply for Financing</a>'
+      : '';
     card.innerHTML = [
       '<div class="inv-card-img"><span class="product-tag">' + escapeHtml(badge) + '</span>',
       '<img src="' + escapeAttr(safeImageUrl(product.primary_image)) + '" alt="' + escapeAttr(name) + '" loading="lazy" decoding="async"></div>',
@@ -292,8 +323,10 @@
       '<div class="inv-card-pills">' + pills + '</div>',
       priceBox,
       '</div>',
+      '<div class="inv-card-actions">',
       '<button type="button" class="inv-card-cta" data-open-lead data-product="' + escapeAttr(name) + '" data-pricing-source="inventory_card">' + escapeHtml(state ? state.cta : 'See Local Price & Availability') + ' <span class="inv-card-cta-arrow" aria-hidden="true">→</span></button>',
-      '</div>'
+      financingBtn,
+      '</div></div>'
     ].join('');
     const leadButton = card.querySelector('[data-open-lead]');
     if (leadButton) leadButton.setAttribute('data-product-json', JSON.stringify(product));

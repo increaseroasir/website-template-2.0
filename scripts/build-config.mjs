@@ -269,6 +269,52 @@ function inlineBlockingHeadScripts() {
 }
 inlineBlockingHeadScripts();
 
+/* ---- home.css inlined into the head (extends WTV-040 to the stylesheet).
+   With client.config.js and tracking.js inlined above, home.css is the ONLY
+   render-blocking resource left on the homepage. Lighthouse attributes 602ms of
+   render blocking to it, and the hero's LCP breakdown is dominated by ~1.19s of
+   "element render delay" against 5ms of image download — so the hero waits on
+   this stylesheet, not on the picture. (That also explains WTV-042: preloading
+   the hero could not help, because the image was never the constraint.)
+
+   Inlined wholesale rather than split into a hand-picked "critical" subset:
+   index.html is the only page that loads home.css, so there is no cross-page
+   cache to lose, and a wrong critical-subset guess surfaces as FOUC. 44KB raw
+   compresses to ~10KB inside the HTML response.
+
+   The file stays on disk and the raw template keeps its <link>, so an unhydrated
+   or partially built copy still styles correctly. ---- */
+function inlineRenderBlockingCss() {
+  const cssPath = join(root, 'assets', 'home.css');
+  const tag = /<link rel="stylesheet" href="[^"]*assets\/home\.css">/;
+  let css;
+  try {
+    css = readFileSync(cssPath, 'utf8');
+  } catch {
+    console.warn('Inline skipped: assets/home.css not found — leaving the blocking <link> in place.');
+    return;
+  }
+  /* Defensive, same as the script inliner above: a literal </style> in the CSS
+     would close the wrapper early. None exists today. */
+  const safe = css.replace(/<\/style/gi, '<\\/style');
+  const snippet = `<style data-inlined="home.css">\n${safe}\n</style>`;
+  let count = 0;
+  (function inject(dir) {
+    for (const name of readdirSync(dir)) {
+      if (name === 'node_modules' || name === '.wrangler' || name === '.git') continue;
+      const file = join(dir, name);
+      if (statSync(file).isDirectory()) { inject(file); continue; }
+      if (!/\.html$/i.test(name)) continue;
+      const text = readFileSync(file, 'utf8');
+      if (!tag.test(text)) continue;
+      writeFileSync(file, text.replace(tag, () => snippet));
+      count++;
+    }
+  })(root);
+  console.log(`Inlined home.css into ${count} HTML file(s) (was render-blocking).`);
+}
+inlineRenderBlockingCss();
+
 /* ---- SEO artifacts: robots.txt + sitemap.xml, generated into the build root.
    Skipped (with a loud warning) when no usable domain exists — e.g. when this
    script is run against the raw template instead of a hydrated dist/. ---- */

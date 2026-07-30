@@ -7,6 +7,7 @@ itself via `onerror`). Alt-text tokens follow the `*_ALT` convention where prese
 | Token | Page | Section | Purpose | Aspect ratio | Min pixels |
 |---|---|---|---|---|---|
 | `{{HOME_HERO_IMAGE}}` | `index.html` | Hero | LCP hero backdrop (preloaded, `fetchpriority="high"`) | 16:10 | 1600×1000 |
+| `{{OG_IMAGE_URL}}` | `index.html` | `<head>` | Social share card (`og:image` / `twitter:image`). **Absolute URL required** — scrapers do not resolve relative paths. Prefer JPG/PNG over webp for older scrapers. | 1.91:1 | 1200×630 |
 | `{{HOT_TUBS_CATEGORY_IMAGE}}` | `index.html` | Categories | Hot Tubs category tile background | 4:5 | 1000×1250 |
 | `{{SWIM_SPAS_CATEGORY_IMAGE}}` | `index.html` | Categories | Swim Spas category tile background | 4:5 | 1000×1250 |
 | `{{SAUNAS_CATEGORY_IMAGE}}` | `index.html` | Categories | Saunas category tile background | 4:5 | 1000×1250 |
