@@ -176,12 +176,26 @@ function keysFromClientConfig(cfgPath) {
   return new Set(Object.entries(map).filter(([, v]) => usable(v)).map(([k]) => k));
 }
 
-const OPTIONAL_PREFIXES = [
-  'OFFER_', 'GUIDE_', 'FLOOR_COUNT', 'MASSAGE_CATEGORY_SUMMARY',
-  'REVIEW_', 'REVIEWS_TOTAL_LINE'
-];
-function isOptionalMember(k) {
-  return OPTIONAL_PREFIXES.some(p => k === p || k.startsWith(p));
+/* Optional-section groups, mirroring optionalSections in build-config.mjs. A
+   member is exempt from the hard-required check ONLY while its control token is
+   absent — that is the case where the builder deletes the whole block. Once the
+   control IS set the block ships, so every member becomes hard-required, which
+   is the same rule build-config.mjs states: "A member token left unfilled while
+   its control IS set still fails scan-placeholders."
+
+   Exempting members unconditionally (the previous behaviour) is what let a
+   tokens.env pass this linter and then hydrate seventeen literal {{OFFER_*}} /
+   {{REVIEW_*}} placeholders into index.html, caught only at the launch gate. */
+const OPTIONAL_GROUPS = {
+  OFFER_NAME: k => /^OFFER_[A-Z0-9_]+$/.test(k),
+  GUIDE_HEADLINE: k => /^GUIDE_[A-Z0-9_]+$/.test(k),
+  FLOOR_COUNT_LABEL: k => /^FLOOR_COUNT(_LABEL)?$/.test(k),
+  MASSAGE_CATEGORY_SUMMARY: k => k === 'MASSAGE_CATEGORY_SUMMARY',
+  REVIEW_1_TEXT: k => /^REVIEW_[0-9]_[A-Z0-9_]+$/.test(k) || k === 'REVIEWS_TOTAL_LINE'
+};
+function exemptByHiddenGroup(k, available) {
+  return Object.entries(OPTIONAL_GROUPS)
+    .some(([control, isMember]) => isMember(k) && !available.has(control));
 }
 
 /** Expand @include partials the same way build-config.mjs does (depth-limited). */
@@ -203,8 +217,11 @@ function resolveIncludesForScan(content, componentsDir, depth = 0) {
   });
 }
 
-/** Hard-required tokens in template HTML (WTV-062 procedure). */
-function hardRequiredFromTemplate(root) {
+/** Hard-required tokens in template HTML (WTV-062 procedure).
+ *  `available` decides whether an <!-- IF:TOKEN --> block ships: an absent
+ *  control deletes the block (its tokens never reach the page), a present one
+ *  keeps the body, making every token inside it hard-required. */
+function hardRequiredFromTemplate(root, available) {
   const skip = new Set(['node_modules', '.git', 'clients', 'components', 'manus-skills', 'skills', 'docs', '.wrangler', '.cursor', 'dist']);
   const IF = /<!-- IF:([A-Z0-9_]+) -->([\s\S]*?)<!-- \/IF:\1 -->/g;
   const componentsDir = join(root, 'components');
@@ -219,7 +236,7 @@ function hardRequiredFromTemplate(root) {
       if (!/\.(html|xml|webmanifest)$/i.test(name)) continue;
       let text = readFileSync(full, 'utf8');
       text = resolveIncludesForScan(text, componentsDir);
-      text = text.replace(IF, ''); // absent IF control removes the block
+      text = text.replace(IF, (_, control, body) => (available.has(control) ? body : ''));
       for (const m of text.matchAll(/\{\{([A-Z0-9_]+)\}\}/g)) {
         hard.add(m[1]);
       }
@@ -230,10 +247,10 @@ function hardRequiredFromTemplate(root) {
 }
 
 const fromConfig = keysFromClientConfig(configPath);
-const hard = hardRequiredFromTemplate(templateRoot);
 const available = new Set([...supplied, ...fromConfig]);
+const hard = hardRequiredFromTemplate(templateRoot, available);
 const missingHard = [...hard]
-  .filter(k => !available.has(k) && !isOptionalMember(k))
+  .filter(k => !available.has(k) && !exemptByHiddenGroup(k, available))
   .sort();
 
 for (const k of missingHard) {

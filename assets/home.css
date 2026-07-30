@@ -265,10 +265,12 @@ body.home-page .on-dark h2,.on-dark h2{color:#fff}
 .cats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:28px}
 .cat{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:1/.92;background:linear-gradient(160deg,#16469B,#081D45);background-size:cover;background-position:center;background-repeat:no-repeat;display:flex;align-items:flex-end;isolation:isolate;transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
 .cat:hover{transform:translateY(-5px);box-shadow:0 26px 48px -20px rgba(6,24,61,.45)}
-/* Tile art is an <img> rather than a background-image so it can be lazy-loaded
-   (all three tiles sit below the fold) and so it can zoom on hover, which the
-   card spec requires and a background-image cannot do. .cat keeps its gradient
-   as the placeholder base for when onerror removes an unhydrated image. */
+/* Tile art is a real image element rather than a background-image so it can be
+   lazy-loaded (all three tiles sit below the fold) and so it can zoom on hover,
+   which the card spec requires and a background-image cannot do. .cat keeps its
+   gradient as the placeholder base for when onerror removes an unhydrated image.
+   Angle-bracket tag names are spelled out on purpose: this file is inlined into
+   the page, so markup-shaped prose in a comment reads as markup to scanners. */
 .cat-img{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease-out)}
 .cat:hover .cat-img{transform:scale(1.06)}
 .cat::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,12,32,.15) 20%,rgba(3,12,32,.72) 58%,rgba(3,12,32,.96));transition:background .35s;z-index:1}

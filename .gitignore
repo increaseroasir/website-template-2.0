@@ -5,3 +5,7 @@ node_modules/
 
 manus-skills/*.zip
 .DS_Store
+
+# Hydrated build artifacts. hydrate.md builds into clients/<name>/dist/, which
+# is a generated copy of the whole template with one client's values baked in.
+clients/*/dist/

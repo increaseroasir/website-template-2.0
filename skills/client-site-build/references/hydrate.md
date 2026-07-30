@@ -11,8 +11,13 @@ rsync -a --exclude .git --exclude node_modules --exclude skills \
   ./ clients/<name>/dist/
 cp clients/<name>/client.config.js clients/<name>/dist/client.config.js
 cd clients/<name>/dist && set -a && . ../tokens.env && set +a && node scripts/build-config.mjs
-rm -rf scripts
+rm -rf scripts components
 ```
+
+`components/` holds `@include` partials, not pages. build-config.mjs inlines them
+into the real pages and leaves the folder behind, still carrying raw
+`{{TOKENS}}` — shipping it fails the gate's token check and publishes four URLs
+that render an unstyled fragment. Delete it alongside `scripts/`.
 
 Staging: `ROBOTS_DIRECTIVE=noindex, follow` in tokens.env.
 Prod: `ROBOTS_DIRECTIVE=index,follow` + DOMAIN set. Admin keeps hardcoded noindex.

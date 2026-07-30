@@ -338,7 +338,10 @@ function generateSeoArtifacts() {
   const htmlPages = [];
   (function collect(dir, rel) {
     for (const name of readdirSync(dir)) {
-      if (['node_modules', '.wrangler', '.git', 'scripts', 'functions', 'clients', 'skills', 'docs'].includes(name)) continue;
+      /* components/ holds @include partials, not pages. They are inlined into
+         real pages at build time and the hydrate procedure deletes the folder
+         before deploy, so listing them yields sitemap URLs that 404. */
+      if (['node_modules', '.wrangler', '.git', 'scripts', 'functions', 'clients', 'skills', 'docs', 'components'].includes(name)) continue;
       const file = join(dir, name);
       const relPath = rel ? `${rel}/${name}` : name;
       if (statSync(file).isDirectory()) collect(file, relPath);

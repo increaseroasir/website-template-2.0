@@ -108,6 +108,11 @@ function lineOf(text, idx) { return text.slice(0, idx).split('\n').length; }
 function inertRanges(text) {
   const ranges = [];
   for (const m of text.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi)) ranges.push([m.index, m.index + m[0].length]);
+  /* <style> is inert for the same reason <script> is: it is CSS, not markup. It
+     matters now that the build inlines home.css into the page — a CSS comment
+     reading "tile art is an <img> rather than a background-image" was reported
+     as a real <img> missing alt and width/height. */
+  for (const m of text.matchAll(/<style\b[^>]*>[\s\S]*?<\/style>/gi)) ranges.push([m.index, m.index + m[0].length]);
   for (const m of text.matchAll(/<!--[\s\S]*?-->/g)) ranges.push([m.index, m.index + m[0].length]);
   return ranges;
 }
