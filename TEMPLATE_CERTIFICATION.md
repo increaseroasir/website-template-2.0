@@ -1,5 +1,27 @@
 # TEMPLATE CERTIFICATION — website-template-2.0 (premium-redesign)
 
+## Recertification — template `1.1.0` (2026-07-30)
+
+Re-ran mechanical gates against current `premium-redesign` HEAD after the v1.1.0
+token/CAPI/attribution changes. Hostile-rehearsal `dist/` remains **stale evidence**
+(see `clients/hostile-rehearsal/STALE-DO-NOT-GATE.md`); live proof is the Sun Pool
+hydrate.
+
+| Check | Result |
+|---|---|
+| `npm run brand:guard` | PASS |
+| `check:tokens` sun-pool-spa | PASS — 144 tokens, 69/69 hard-required |
+| `check:tokens` hostile-rehearsal | PASS — 294 tokens, 76/76 hard-required |
+| `gate.mjs --env prod` on `clients/sun-pool-spa/dist` | **20 PASS / 0 FAIL / 9 MANUAL** |
+| Canonical host in hydrated config | `https://www.sunpoolandspasupply.com` |
+| Turnstile references | none (TVD-025) |
+
+Original Part A narrative below is retained as historical evidence from July 23.
+Treat **this section + `VERSION`/`CHANGELOG.md`** as the current certification
+pointer; re-run Part A UI/screenshot rows only when markup/CSS changes again.
+
+---
+
 Part A of `FINAL_DIAL_IN_AND_LAUNCH_GATE.md`, run July 23, 2026.
 Verdict: **CERTIFIED — every row PASS or MANUAL, zero FAILs open.**
 

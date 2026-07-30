@@ -753,3 +753,25 @@ curl -s -X POST "https://{DOMAIN}/api/meta-offline" \
 - **Fix:** determine sufficiency from the template, never from file age or edit history. Enumerate `{{TOKEN}}` occurrences that have **no** `|default`, subtract the keys `build-config.mjs` supplies from `client.config.js` (48 of them), subtract members of `optionalSections` groups whose control token is absent, and subtract anything appearing only inside `<!-- IF:TOKEN -->`. What remains is the true required set — 66 tokens here, of which 5 were unsupplied. A naive scan over-reported this as 55 missing, which is how the wrong conclusion looked plausible.
 - **Rule / prevention:** when two copies of a client input disagree, reconcile by **applying the newer file's value changes onto the more complete base**, not by picking one wholesale. `npm run check:tokens` proves a file is well-formed; it does not prove the file is sufficient. Those are different claims, and only the second one gates a build.
 - **Status:** FIXED (procedure corrected; delta handed to the builder to apply onto its complete base).
+
+---
+
+### [WTV-063] CAPI verification looks dead when the phone was already used
+- **Date:** 2026-07-30
+- **Client:** Sun Pool & Spa Supply
+- **Symptom:** After restoring `META_CAPI_ACCESS_TOKEN`, a follow-up `POST /api/lead` returned `meta_capi: false` / `fire_meta: false` with `duplicate: true`. Looked identical to a blank CAPI token.
+- **Root cause:** `shouldFireMeta` correctly suppresses duplicate and FAILED-retry leads so one conversion is not double-counted. Reusing the same phone/email for verification therefore never reaches Meta, even with a working token. Separately (pre-fix), CAPI was also gated on `ghlResult.ok`, so a CRM outage erased the ad signal.
+- **Fix:** CAPI now fires whenever the lead is not a duplicate/retry — CRM success is no longer a prerequisite. Verification procedure: **always use a unique phone and email** for each CAPI probe; a reused contact proves nothing about Meta.
+- **Rule / prevention:** a CAPI check that reuses contact data is invalid evidence. Unique identity every time. Documented in `docs/GHL_META_OFFLINE_WORKFLOW.md` and the launch checklist.
+- **Status:** FIXED.
+
+---
+
+### [WTV-064] `tokens.env` and `client.config.js` owning the same keys silently drifts
+- **Date:** 2026-07-30
+- **Client:** Sun Pool & Spa Supply
+- **Symptom:** `CLIENT_WEBSITE_URL` in tokens.env was `https://www.sunpoolandspasupply.com` while `client.config.js` held the apex. Hydrate used www (process.env wins). Runtime `traffic-attribution.js` used the apex. Every internal click was classified as `referral`.
+- **Root cause:** `tokenMapFromConfig` seeds from config, then `process.env` overwrites. Two sources of truth; no lint. Sun Pool also carried 49 dead tokens and a stale `turnstileSiteKey` after TVD-025.
+- **Fix:** `client.config.js` is authoritative for every key `tokenMapFromConfig` can fill; those keys were removed from Sun Pool's `tokens.env`. Dead tokens stripped (213 → 144). Generator templates no longer ship the static-PDP leftovers. Linter now fails on dead tokens and on dual-owned keys.
+- **Rule / prevention:** one fact, one home. Identity/tracking/offers that ship as `window.CLIENT_CONFIG` live in `client.config.js`. Content-only page copy lives in `tokens.env`. `npm run check:tokens` enforces both.
+- **Status:** FIXED.

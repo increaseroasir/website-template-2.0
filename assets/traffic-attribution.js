@@ -4,8 +4,12 @@
   var KEY = prefix + '_traffic_channel';
   var ATTR_KEY = prefix + '_traffic_attribution';
   function referrerHost() { try { return document.referrer ? new URL(document.referrer).hostname.toLowerCase() : ''; } catch (err) { return ''; } }
-  function siteHost() { try { return new URL((cfg.client && cfg.client.websiteUrl) || window.location.origin).hostname.toLowerCase(); } catch (err) { return window.location.hostname.toLowerCase(); } }
-  function isSiteHost(host) { return host && host === siteHost(); }
+  function bareHost(h) { return String(h || '').toLowerCase().replace(/^www\./, ''); }
+  function siteHost() { try { return bareHost(new URL((cfg.client && cfg.client.websiteUrl) || window.location.origin).hostname); } catch (err) { return bareHost(window.location.hostname); } }
+  /* Compare apex-normalised, and also accept the host actually being served: a
+     configured websiteUrl that disagrees with the live hostname (apex vs www) used
+     to classify every internal click as "referral" and inflate referral traffic. */
+  function isSiteHost(host) { var h = bareHost(host); return !!h && (h === siteHost() || h === bareHost(window.location.hostname)); }
   function isSearchEngine(host) { return /google\.|bing\.|duckduckgo\.|yahoo\.|search\.|ecosia\.|ask\.com/.test(host); }
   function isPaidSocialHost(host) { return /facebook\.com|instagram\.com|fb\.com/.test(host); }
   function classifyTraffic() { var params = new URLSearchParams(window.location.search); if (params.get('fbclid') || params.get('gclid') || params.get('msclkid')) return 'paid'; var medium = (params.get('utm_medium') || '').toLowerCase(); var source = (params.get('utm_source') || '').toLowerCase(); if (['cpc','ppc','paid','paidsocial','paid-social','cpm','display'].includes(medium)) return 'paid'; if (medium === 'organic') return 'organic'; if (['facebook','fb','instagram','ig','meta'].includes(source) && (!medium || ['paid','cpc','paidsocial','social'].includes(medium))) return 'paid'; var host = referrerHost(); if (host && isSiteHost(host)) return 'internal'; if (host && isSearchEngine(host)) return 'organic'; if (host && isPaidSocialHost(host)) return 'paid'; return host ? 'referral' : 'direct'; }

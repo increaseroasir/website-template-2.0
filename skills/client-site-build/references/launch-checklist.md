@@ -40,6 +40,11 @@ workflow until stage names match the snapshot.
       (Worker sends `action_source: website` with the shared `event_id`;
       browser carries `value: 300` matching `META_VALUE_SCHEDULE`); one
       simulated stage → server `QualifiedLead`.
+      **Unique phone + email every probe** (reuse → `duplicate: true`, Meta never
+      fires — WTV-063). For the Test Events *panel* specifically, temporarily bind
+      `META_TEST_EVENT_CODE` in hydrated `wrangler.toml` `[vars]`, redeploy, fire,
+      confirm, then **strip and redeploy** — leaving it on routes all live Leads
+      into the test stream (`docs/GHL_META_OFFLINE_WORKFLOW.md`).
 
 ## Pre-launch (staging URL)
 

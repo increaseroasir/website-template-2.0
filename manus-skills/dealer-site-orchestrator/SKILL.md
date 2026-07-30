@@ -22,7 +22,8 @@ You are the router for dealer website fulfillment. **Do not do all work in this 
 ## Laws (never violate)
 
 1. **Hydrate, never rebuild.** Client builds change config, tokens, and images only.
-2. **No unversioned copies.** Record template version in `WIRING.md`.
+2. **No unversioned copies.** Record template version in `WIRING.md` as root
+   `VERSION` **and** the fetched git SHA (e.g. `template: 1.1.0 @ <sha>`).
 3. **Palette is the product.** Navy + gold stays; client = logo, copy, photos, market.
 4. **Fail loudly before launch.** Gate FAIL or unchecked wiring = blocked launch.
 5. **Rush reduces scope, never quality gates.** A rush build still runs full

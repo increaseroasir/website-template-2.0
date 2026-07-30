@@ -7,7 +7,7 @@
 window.CLIENT_CONFIG = {
   client: {
     name: 'Sun Pool & Spa Supply',                       // short trading name, ≤40 chars (header/drawer/footer)
-    legalName: '',                  // full legal name (JSON-LD, TCPA)
+    legalName: 'Sun Pool & Spa Supply',                  // full legal name (JSON-LD, TCPA)
     market: 'East County San Diego',                     // e.g. "Greater Knoxville"
     tagline: 'The Best Hot Tub & Swim Spa Store in San Diego County',
     primaryPhone: '(619) 561-8587',               // display format, e.g. "865-555-0142"
@@ -16,7 +16,11 @@ window.CLIENT_CONFIG = {
     address: '12473 Woodside Ave, Suite C, Lakeside, CA 92040',
     mapUrl: 'https://www.google.com/maps/place/Sun+Pool+%26+Spa+Supply/@32.8550,-116.9220,15z',                     // GMB share link
     hours: 'Mon-Fri: 9:30 a.m. – 5 p.m., Sat: 9 a.m. – 5 p.m., Sun: 10 a.m. – 2 p.m.',
-    websiteUrl: 'https://sunpoolandspasupply.com',                 // https://production-domain.com
+    /* www is canonical: it is the only hostname attachable to Pages while DNS stays
+       at SiteGround (the apex cannot CNAME), and the apex 301s here. Must match the
+       canonical/OG host exactly — traffic-attribution.js derives siteHost() from
+       this value to tell internal clicks from referral traffic. */
+    websiteUrl: 'https://www.sunpoolandspasupply.com',
     storagePrefix: 'sun-pool-spa',              // kebab-case asset prefix, e.g. "smoky-mountain"
     email: 'info@sunpoolandspasupply.com',
     logoUrl: '',
@@ -40,7 +44,6 @@ window.CLIENT_CONFIG = {
     metaPixelId: '4074640486011315', // client's pixel — verify in Test Events
     ga4Id: 'G-KSJ8N5G2ZJ',      // G-XXXXXXXXXX — verify in Realtime
     clarityId: '',
-    turnstileSiteKey: '0x4AAAAAAD9eD20M7uqPSNXi', // Public site key; secret remains Cloudflare-only.
     gscVerification: '',            // Search Console meta token. Empty = meta omitted (launch may proceed; verify within 48h).
     ghlExternalTracking: '',        // GHL External Tracking script src URL (per-location snippet). Empty = not injected — attribution loss, not lead loss; add within 48h. NEVER a real ID on staging.
     ghlBookingCalendarId: '',       // GHL calendar ID for /book/. Empty = request-mode (no live slots; leads still captured + confirmed by text).
@@ -53,8 +56,8 @@ window.CLIENT_CONFIG = {
     admin: '/api/admin'
   },
   offers: {
-    primary: 'Evergreen Catalog',
-    financing: 'Flexible financing available for all credit types',
+    primary: 'Explore Hot Tubs & Swim Spas',
+    financing: 'Flexible financing available',
     delivery: 'Professional local delivery and installation',
     name: 'Evergreen Catalog',
     headline: 'There has never been a better time to buy a Hot Tub',

@@ -9,8 +9,12 @@
 | **Canonical repo (Manus/clients)** | https://github.com/increaseroasir/website-template-2.0 |
 | **Legacy remote (`origin`)** | https://github.com/ssaofficial/website-template-2.0 |
 | **Branch** | `premium-redesign` (default on the increaseroasir repo) |
+| **Template version** | See root `VERSION` + `CHANGELOG.md` (currently `1.1.0`) |
 
 No GitHub fork required for Cursor agents — just open this folder. Fork only if you need a separate remote for another person/machine.
+
+**Secrets vault:** 1Password (one vault per client). Supabase holds non-secret IDs +
+status only — never CAPI / GHL / admin / GCP private keys.
 
 **Design/motion source of truth: `SITE_MASTER_SPEC.md` (repo root).** Read the
 relevant Parts before every batch and run its Part 6 audit gates before

@@ -82,3 +82,34 @@ Replace stage names to match the snapshot pipeline. Custom field merge keys must
 2. Move opportunity to Qualified → Events Manager shows `QualifiedLead` with `action_source = system_generated`.
 3. Confirm Event Match Quality after a few offline events with fbp/fbc present.
 4. Confirm `QualifiedLead` and `Showed` appear as **custom conversions** in Events Manager.
+
+### Meta Test Events — temporary bind (do not leave on)
+
+Server events only appear in Events Manager → **Test Events** when the payload
+includes `test_event_code`. Without it, CAPI still works and lands in real
+Activity — it just bypasses the test stream. That is why a working token can
+look "invisible" in Test Events.
+
+Safe procedure:
+
+1. Copy the `TEST…` code from the top of the Test Events panel.
+2. Add it as a **plain `[vars]` entry** in the hydrated `wrangler.toml`
+   (not a Pages secret — it is temporary and non-sensitive):
+
+   ```toml
+   [vars]
+   META_TEST_EVENT_CODE = "TEST61663"
+   ```
+
+3. Redeploy. Fire a lead with a **unique phone and unique email** every time
+   (reused contacts return `duplicate: true` and never call Meta — WTV-063).
+4. Confirm the server `Lead` appears under Test Events.
+5. **Strip the line and redeploy immediately.** A forgotten test code routes
+   every production Lead into the test stream and starves real conversion data.
+
+Never leave `META_TEST_EVENT_CODE` bound on a live client.
+
+### CAPI is independent of GHL
+
+`POST /api/lead` fires Meta whenever the submission is not a 24h duplicate or
+FAILED retry. A CRM outage must not also erase the ad-platform signal.

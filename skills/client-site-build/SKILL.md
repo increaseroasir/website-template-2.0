@@ -22,7 +22,8 @@ install `manus-skills/*` instead — behavior matches.
 ## Laws
 
 1. Hydrate, never rebuild (config/tokens/images only).  
-2. Record template version in `WIRING.md`.  
+2. Record template version in `WIRING.md` as `VERSION` (root file) **and** the
+   fetched git SHA — e.g. `template: 1.1.0 @ bedcb61`.  
 3. Palette is the product (navy + gold).  
 4. Fail loudly — gate FAIL or unchecked REQUIRED intake blocks launch.  
 5. **Rush reduces scope, never skips validate, gate, or post-launch test lead.**

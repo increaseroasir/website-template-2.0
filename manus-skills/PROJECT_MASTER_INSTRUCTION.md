@@ -57,14 +57,21 @@ premium redesign repo.
 Escalating for a value you could retrieve is what turned a 30-second fix into a lost
 day (WTV-045).
 
-1. Check the agency **Supabase `clients` registry** first: `ghlLocationId`,
-   `ghlPrivateToken`, `ghlBookingCalendarId`, `metaPixelId`, `metaCapiAccessToken`.
-2. Then the per-variable table in `dealer-site-wiring/references/wiring.md`, which
+**Vault of record is 1Password** — one vault per client (`Client · <Name>`), one
+item for Cloudflare Pages secrets. Supabase `clients` holds **non-secret IDs and
+status only** (`ghlLocationId`, `metaPixelId`, `pagesProject`, last
+`secrets:verify` result). Never store `GHL_API_TOKEN`, `META_CAPI_ACCESS_TOKEN`,
+`META_OFFLINE_WEBHOOK_SECRET`, `ADMIN_*`, or the GCP private key in Supabase.
+
+1. Read the client's **1Password vault** first for any secret value.
+2. Read Supabase `clients` for non-secret IDs and wiring status.
+3. Then the per-variable table in `dealer-site-wiring/references/wiring.md`, which
    names the exact source and whether the value is recoverable.
-3. Escalate **only** for genuinely owner-only values: a Meta CAPI token that is not
-   yet recorded in the registry, or a lost GCP service-account private key.
-4. **Write back everything you recover** to the client's registry row. A value
-   recovered but not recorded gets hunted again next build.
+4. Escalate **only** for genuinely owner-only values that are missing from
+   1Password (a Meta CAPI token never issued, or a lost GCP private key).
+5. **Write every recovered secret back to 1Password before Cloudflare.** Write
+   non-secret IDs / status back to the Supabase row. A value recovered but not
+   recorded gets hunted again next build.
 
 Setting secrets:
 

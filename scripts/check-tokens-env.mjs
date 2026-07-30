@@ -16,6 +16,17 @@
  *      Hard-required = appears as {{TOKEN}} with no |default, is not only inside
  *      an <!-- IF:TOKEN --> block, is not a member of an optionalSections group
  *      whose control is absent, and is not supplied by tokenMapFromConfig.
+ *   4. A dead token: assigned here but never consumed as {{TOKEN}} anywhere the
+ *      build reads. Harmless to the render, which is why it accumulates — Sun
+ *      Pool carried 49, including SEO_TITLE_* aliases superseded by *_META_
+ *      DESCRIPTION and a PRODUCT_* block left over from static product pages.
+ *      Each one is a field someone may still be collecting at intake for nothing.
+ *   5. A token owned by BOTH tokens.env and client.config.js. build-config.mjs
+ *      layers process.env over tokenMapFromConfig, so a non-empty tokens.env
+ *      value silently wins and the config file becomes a decoy. Sun Pool's two
+ *      copies had already drifted apart on the canonical host (apex in config,
+ *      www in tokens.env), and assets/traffic-attribution.js reads the config
+ *      one — so internal clicks were being classified as referral traffic.
  *
  *   node scripts/check-tokens-env.mjs clients/<name>/tokens.env
  *   node scripts/check-tokens-env.mjs clients/<name>/tokens.env --template .
@@ -246,8 +257,52 @@ function hardRequiredFromTemplate(root, available) {
   return hard;
 }
 
+/** Every token the build could consume, from any file type it rewrites.
+ *  Unlike hardRequiredFromTemplate this keeps |default forms and scans css/js/
+ *  toml too, because a token used only in wrangler.toml or a stylesheet is still
+ *  alive. components/ is included: build-config.mjs inlines those partials. */
+function referencedTokens(root) {
+  const skip = new Set(['node_modules', '.git', 'clients', 'docs', 'skills', 'manus-skills', '.wrangler', '.cursor', 'dist']);
+  const refs = new Set();
+  function walk(dir) {
+    for (const name of readdirSync(dir)) {
+      if (skip.has(name)) continue;
+      const full = join(dir, name);
+      let st;
+      try { st = statSync(full); } catch { continue; }
+      if (st.isDirectory()) { walk(full); continue; }
+      if (!/\.(html|css|js|toml|xml|json|webmanifest)$/i.test(name)) continue;
+      let text;
+      try { text = readFileSync(full, 'utf8'); } catch { continue; }
+      for (const m of text.matchAll(/\{\{([A-Z0-9_]+)(?:\|[^}]*)?\}\}/g)) refs.add(m[1]);
+    }
+  }
+  if (existsSync(root)) walk(root);
+  return refs;
+}
+
 const fromConfig = keysFromClientConfig(configPath);
 const available = new Set([...supplied, ...fromConfig]);
+
+const referenced = referencedTokens(templateRoot);
+for (const [key, lineNo] of seen) {
+  if (referenced.has(key)) continue;
+  errors.push({
+    lineNo,
+    msg: `${key} is never consumed — no {{${key}}} appears in any file the build rewrites. Delete it, or wire the token if the value is meant to render.`
+  });
+}
+
+/* client.config.js owns anything tokenMapFromConfig can fill. It has to: it ships
+   to the browser as window.CLIENT_CONFIG and is read at runtime. tokens.env owns
+   everything the config does not model. One fact, one home. */
+for (const [key, lineNo] of seen) {
+  if (!fromConfig.has(key)) continue;
+  errors.push({
+    lineNo,
+    msg: `${key} is set here AND supplied by client.config.js. tokens.env silently wins, making the config value a decoy that drifts. Remove it here and keep client.config.js authoritative.`
+  });
+}
 const hard = hardRequiredFromTemplate(templateRoot, available);
 const missingHard = [...hard]
   .filter(k => !available.has(k) && !exemptByHiddenGroup(k, available))

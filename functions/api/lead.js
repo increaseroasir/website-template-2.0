@@ -78,7 +78,12 @@ export async function onRequestPost(context) {
   if (vaultRange) { try { await updateLeadVaultRow(env, vaultRange, lead, ghlStatus, ghlResult.contactId || '', ghlResult.error || ''); } catch (err) {} }
   if (!ghlResult.ok && ghlStatus !== 'DUPLICATE') { try { await appendMissedLead(env, lead, ghlResult.error || 'Unknown GHL error'); } catch (err) {} try { await sendFailureAlert(env, lead, ghlResult.error || 'Unknown GHL error'); } catch (err) {} }
 
-  const shouldFireMeta = !isSentDuplicate && !isFailedRetry && ghlResult.ok;
+  /* Deliberately NOT gated on ghlResult.ok: a CRM outage must not also erase the
+     ad-platform conversion signal. The lead is already durable in the Lead Vault
+     at this point, so Meta should learn about it whether or not GHL accepted it.
+     Duplicate/retry suppression stays — that prevents double-counting one
+     conversion, which is a different concern from CRM availability. */
+  const shouldFireMeta = !isSentDuplicate && !isFailedRetry;
   let metaResult = { sent: false };
   if (shouldFireMeta) { try { metaResult = await sendLeadEvent(env, request, lead, { eventId: body.meta_event_id || body.metaEventId || lead.submissionId, fbp: body.fbp || '', fbc: body.fbc || '' }); } catch (err) {} }
   return jsonResponse({ ok: true, submission_id: lead.submissionId, duplicate: !!isSentDuplicate, ghl_ok: ghlResult.ok, fire_meta: shouldFireMeta, ghl_contact_id: ghlResult.contactId || undefined, meta_capi: metaResult.sent === true, meta_event_id: shouldFireMeta ? (metaResult.event_id || body.meta_event_id || lead.submissionId) : undefined, message: isSentDuplicate ? 'We already have your info.' : 'Thank you. Your request has been received.' }, 200, env, request);
