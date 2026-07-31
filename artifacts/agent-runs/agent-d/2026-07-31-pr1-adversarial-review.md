@@ -66,7 +66,9 @@ Real `protected-clients.json` has `client_id: null` for sun-pool-spa. Passing a 
 
 ## Fix PR
 
-Narrow hook + regression-test fix on `cursor/p0-agent-d-hook-bypass-fixes-1276` (stacked on PR #1 head).
+- Branch: `cursor/p0-agent-d-hook-bypass-fixes-1276` (stacked on PR #1 head)
+- URL: https://github.com/increaseroasir/website-template-2.0/pull/4
+- Comment posted on PR #1 with REQUEST CHANGES + evidence
 
 ## Confirmations
 
