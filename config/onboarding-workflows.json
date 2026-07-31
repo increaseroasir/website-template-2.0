@@ -1,0 +1,18 @@
+{
+  "design_freeze_version": "0.1.0-design",
+  "note": "Workflow specs only. No Make scenarios created.",
+  "workflows": [
+    {"id": "A_payment_received", "trigger": "payment_confirmed", "actions": ["create_or_identify_case", "send_main_form_within_15m", "set_form_due_5pm_next_biz_day", "create_csm_review_task", "log_correlation_id"]},
+    {"id": "B_form1_reminders", "ref": "docs/onboarding/REMINDERS_AND_ESCALATIONS.md"},
+    {"id": "C_form1_submitted", "actions": ["validate", "append_intake", "normalize_reported", "csm_review_task_4bh", "client_confirm", "request_transition_only_via_rpc"]},
+    {"id": "D_missing_information", "actions": ["one_consolidated_request"]},
+    {"id": "E_inventory", "ref": "docs/onboarding/REMINDERS_AND_ESCALATIONS.md"},
+    {"id": "F_call1_prep", "timing": "within_2_biz_days_after_main_complete"},
+    {"id": "G_call1_completed", "writes": "verified_via_system", "events": ["csm_call_1_completed", "csm_call_1_verified_field", "csm_call_1_blocker_created"]},
+    {"id": "H_employee_forms", "storage_binding": "BLOCKED_AT_CONTRACT_DECISION"},
+    {"id": "I_call2_prep", "prereqs": ["employees_recorded_or_exception", "crm_ready", "test_contact", "calendars", "routing", "comms_path"]},
+    {"id": "J_call2_completed", "events": ["csm_call_2_completed", "csm_call_2_test_recorded", "csm_call_2_training_recorded", "csm_call_2_blocker_created"]},
+    {"id": "K_blocker_reminders", "ref": "docs/onboarding/REMINDERS_AND_ESCALATIONS.md"},
+    {"id": "provisioning_ready_future", "ref": "docs/onboarding/PROVISIONING_READY.md", "build": false}
+  ]
+}

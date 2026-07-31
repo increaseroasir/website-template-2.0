@@ -1,0 +1,237 @@
+{
+  "total": 46,
+  "passed": 46,
+  "failed": 0,
+  "results": [
+    {
+      "name": "source_package_complete",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "contract_delta_hybrid_ac_approved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "contract_delta_rejects_b",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "product_ids_present",
+      "pass": true,
+      "detail": "['csm_call_1', 'csm_call_2', 'employee_crm_access', 'initial_inventory_upload', 'main_client_onboarding']"
+    },
+    {
+      "name": "employee_fields_present",
+      "pass": true,
+      "detail": "n=21"
+    },
+    {
+      "name": "employee_not_silently_form2",
+      "pass": true,
+      "detail": "n=21"
+    },
+    {
+      "name": "employee_child_table_status",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "inventory_child_table_status",
+      "pass": true,
+      "detail": "n=7"
+    },
+    {
+      "name": "inventory_not_form3",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "csm_system_storage",
+      "pass": true,
+      "detail": "n=101"
+    },
+    {
+      "name": "no_form4_form5",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form_spec_1_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form_spec_2_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form_spec_3_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form_spec_4_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form_spec_5_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "six_reported_fields_in_registry",
+      "pass": true,
+      "detail": "dns_reported_owner,dns_reported_provider,domain_reported_name,domain_reported_ownership_status,website_reported_status,website_reported_url"
+    },
+    {
+      "name": "reported_fields_form1_owned",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reported_website_status_on_main",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form1_no_operational_website_url_canonical",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "verified_website_on_call1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reported_not_same_as_verified_name",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_vague_options",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "clickup_ids_pending",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "provisioning_not_raw_form1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "provisioning_not_built",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden_aliases_file",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "state_machine_rpc",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "live_contract_still_0_1_1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "live_schema_still_1_0_0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "frozen_form2_owns_website",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "frozen_form2_owns_domain",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "versions_are_proposed_only",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reported_fields_not_in_live_identity_yet",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mapping_storage_approved_pending_publish",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mapping_employee_to_onboarding_employees",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mapping_inventory_to_inventory_submissions",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "proposed_migration_001_onboarding_employees.sql",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "proposed_migration_002_inventory_submissions.sql",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "proposed_migration_003_inventory_items_optional.sql",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "apply_authorized_still_false",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form2_spec_not_storage_form2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "form3_spec_not_storage_form3",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "source_forbids_passwords",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "idempotency_patterns_documented",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "amendment_plan_stop_for_approval",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

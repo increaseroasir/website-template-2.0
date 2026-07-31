@@ -1,0 +1,134 @@
+{
+  "form_id": "employee_crm_access",
+  "form_version": "1.0.0",
+  "human_title": "Employee CRM Access Request",
+  "audience": "client",
+  "source_file": "docs/onboarding/source/02_EMPLOYEE_CRM_ACCESS_REQUEST.md",
+  "due_rule": "due_noon_1_business_day_before_call_2",
+  "storage_binding_status": "proposed_child_table_onboarding_employees_pending_migration",
+  "submission_envelope": [
+    "form_type",
+    "form_version",
+    "submission_id",
+    "submitted_at",
+    "client_id",
+    "onboarding_case_id",
+    "correlation_id",
+    "actor_type",
+    "actor_id"
+  ],
+  "fields": [
+    {
+      "canonical_name": "client_id_display",
+      "required": true,
+      "field_type": "hidden/prefilled"
+    },
+    {
+      "canonical_name": "employee_full_name",
+      "required": true,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "employee_email",
+      "required": true,
+      "field_type": "email"
+    },
+    {
+      "canonical_name": "employee_mobile",
+      "required": true,
+      "field_type": "phone"
+    },
+    {
+      "canonical_name": "employee_job_title",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "employee_job_title_other",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "employee_location_id",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "required_crm_role",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "lead_assignment_role",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "can_view_all_leads",
+      "required": true,
+      "field_type": "radio"
+    },
+    {
+      "canonical_name": "can_edit_opportunities",
+      "required": true,
+      "field_type": "radio"
+    },
+    {
+      "canonical_name": "can_send_communications",
+      "required": true,
+      "field_type": "radio"
+    },
+    {
+      "canonical_name": "can_manage_calendar",
+      "required": true,
+      "field_type": "radio"
+    },
+    {
+      "canonical_name": "calendar_needed",
+      "required": true,
+      "field_type": "radio"
+    },
+    {
+      "canonical_name": "calendar_name",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "working_days",
+      "required": true,
+      "field_type": "multi_select"
+    },
+    {
+      "canonical_name": "working_hours",
+      "required": true,
+      "field_type": "structured schedule"
+    },
+    {
+      "canonical_name": "employee_timezone",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "required_crm_functions",
+      "required": true,
+      "field_type": "multi_select"
+    },
+    {
+      "canonical_name": "approving_manager_name",
+      "required": true,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "manager_approval_date",
+      "required": true,
+      "field_type": "date"
+    }
+  ],
+  "conditional_logic_ref": "docs/onboarding/CONDITIONAL_LOGIC.md",
+  "blocker_rules_ref": "docs/onboarding/source/00_GLOBAL_BUILD_RULES.md",
+  "completion_rules": "all_required_visible_fields_valid",
+  "next_workflow_event": "employee_crm_access_submitted",
+  "storage_table": "onboarding_employees",
+  "storage_form": null,
+  "notes": "NOT form2. Hybrid A+C approved; migration proposed only."
+}

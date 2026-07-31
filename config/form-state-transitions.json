@@ -1,0 +1,17 @@
+{
+  "design_freeze_version": "0.1.0-design",
+  "authority": "config/state-machine.json",
+  "rpc_only": "request_client_transition",
+  "free_form_status_updates": "forbidden",
+  "p2_allowed_examples": [
+    {"trigger": "main_client_onboarding_accepted", "from": "submitted", "to": "under_review", "actors": ["make_service", "csm", "system"]},
+    {"trigger": "csm_marks_needs_correction", "from": "under_review", "to": "needs_correction", "actors": ["csm"]},
+    {"trigger": "correction_resubmitted", "from": "needs_correction", "to": "under_review", "actors": ["csm", "make_service", "system"]}
+  ],
+  "p2_forbidden": [
+    "skip_to_approved_or_provisioning_without_readiness",
+    "make_direct_status_update",
+    "provisioning_ready_without_gate"
+  ],
+  "note": "Do not invent statuses. provisioning is a later lifecycle status only after approval gates — not triggered by form submit alone."
+}
