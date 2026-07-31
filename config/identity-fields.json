@@ -1,7 +1,7 @@
 {
-  "contract_version": "0.1.1",
-  "onboarding_schema_version": "1.0.0",
-  "description": "One canonical identity and form-field name set for the HTL factory. Do not invent alternate names.",
+  "contract_version": "0.2.0",
+  "onboarding_schema_version": "1.1.0",
+  "description": "One canonical identity and form-field name set for the HTL factory. Do not invent alternate names. Product destinations (0.2.0): main_client_onboarding\u2192form1 (+ reported website/domain fields); employee_crm_access\u2192onboarding_employees (not form2); initial_inventory_upload\u2192inventory_submissions (not form3); csm_call_1/csm_call_2\u2192system + CSM provenance. Child tables recognized at onboarding_schema_version 1.1.0; migrations may be landed in Git before apply.",
   "classifications": [
     "public_configuration",
     "sensitive_identifier",
@@ -46,7 +46,12 @@
       "immutable_after_create": false,
       "nullable_until_provision": true,
       "classification": "sensitive_identifier",
-      "required_before": ["approved", "awaiting_approval", "production_deploying", "live"]
+      "required_before": [
+        "approved",
+        "awaiting_approval",
+        "production_deploying",
+        "live"
+      ]
     },
     "client_slug": {
       "role": "human_slug",
@@ -85,255 +90,622 @@
       "classification": "public_configuration"
     }
   },
-  "upsert_forbidden_as_primary_key": ["email", "owner_email", "phone", "owner_phone", "business_name", "trading_name"],
+  "upsert_forbidden_as_primary_key": [
+    "email",
+    "owner_email",
+    "phone",
+    "owner_phone",
+    "business_name",
+    "trading_name"
+  ],
   "field_policies": {
     "business_name": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
     },
     "owner_name": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
     },
     "owner_email": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
     },
     "owner_phone": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
     },
     "offer_summary": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
     },
     "market": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form1"],
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
       "deferrable": true
     },
     "ghl_contact_id": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": false,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
     },
     "ghl_opportunity_id": {
       "owner": "form1",
-      "allowed_writers": ["form1", "human_override"],
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form1"]
+      "precedence": [
+        "human_override",
+        "form1"
+      ]
+    },
+    "website_reported_status": {
+      "owner": "form1",
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
+      "notes": "Client-reported website status from main intake. Not verified operational website_url."
+    },
+    "website_reported_url": {
+      "owner": "form1",
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
+      "notes": "Client-reported website URL from main intake. Operational website_url remains form2."
+    },
+    "domain_reported_name": {
+      "owner": "form1",
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
+      "notes": "Client-reported domain name from main intake. Operational domain remains form2."
+    },
+    "domain_reported_ownership_status": {
+      "owner": "form1",
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
+      "notes": "Client-reported domain ownership status. Not CSM-verified operational truth."
+    },
+    "dns_reported_provider": {
+      "owner": "form1",
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
+      "notes": "Client-reported DNS provider. Operational dns_provider remains form2."
+    },
+    "dns_reported_owner": {
+      "owner": "form1",
+      "allowed_writers": [
+        "form1",
+        "human_override"
+      ],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": [
+        "human_override",
+        "form1"
+      ],
+      "notes": "Client-reported DNS owner. Operational dns_owner remains form2."
     },
     "website_url": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form2"]
+      "precedence": [
+        "human_override",
+        "form2"
+      ]
     },
     "domain": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form2"],
+      "precedence": [
+        "human_override",
+        "form2"
+      ],
       "audited": true
     },
     "dns_provider": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form2"]
+      "precedence": [
+        "human_override",
+        "form2"
+      ]
     },
     "dns_owner": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form2"]
+      "precedence": [
+        "human_override",
+        "form2"
+      ]
     },
     "logo_url": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form2"],
+      "precedence": [
+        "human_override",
+        "form2"
+      ],
       "deferrable": true
     },
     "address": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form2"]
+      "precedence": [
+        "human_override",
+        "form2"
+      ]
     },
     "hours": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form2"]
+      "precedence": [
+        "human_override",
+        "form2"
+      ]
     },
     "phone_e164": {
       "owner": "form2",
-      "allowed_writers": ["form2", "human_override"],
+      "allowed_writers": [
+        "form2",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form2"]
+      "precedence": [
+        "human_override",
+        "form2"
+      ]
     },
     "ga4_id": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form3"],
+      "precedence": [
+        "human_override",
+        "form3"
+      ],
       "client_scoped": true,
       "notes": "Often visible in browser code; treat as client-scoped identifier, not a vault secret."
     },
     "meta_pixel_id": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form3"],
+      "precedence": [
+        "human_override",
+        "form3"
+      ],
       "client_scoped": true,
       "notes": "Often visible in browser code; treat as client-scoped identifier, not a vault secret."
     },
     "ghl_location_id": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override", "make_service"],
+      "allowed_writers": [
+        "form3",
+        "human_override",
+        "make_service"
+      ],
       "clearable": true,
       "classification": "sensitive_identifier",
       "storage": "config",
-      "precedence": ["human_override", "form3", "make_service"],
+      "precedence": [
+        "human_override",
+        "form3",
+        "make_service"
+      ],
       "client_scoped": true
     },
     "access_meta_bm": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form3"]
+      "precedence": [
+        "human_override",
+        "form3"
+      ]
     },
     "access_ga4": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form3"]
+      "precedence": [
+        "human_override",
+        "form3"
+      ]
     },
     "access_cloudflare": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "public_configuration",
       "storage": "config",
-      "precedence": ["human_override", "form3"]
+      "precedence": [
+        "human_override",
+        "form3"
+      ]
     },
     "capi_token_ref": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "secret_reference",
       "storage": "secret_reference",
-      "precedence": ["human_override", "form3"]
+      "precedence": [
+        "human_override",
+        "form3"
+      ]
     },
     "ghl_api_token_ref": {
       "owner": "form3",
-      "allowed_writers": ["form3", "human_override"],
+      "allowed_writers": [
+        "form3",
+        "human_override"
+      ],
       "clearable": true,
       "classification": "secret_reference",
       "storage": "secret_reference",
-      "precedence": ["human_override", "form3"]
+      "precedence": [
+        "human_override",
+        "form3"
+      ]
     }
   },
   "forms": {
     "form1": {
       "purpose": "intake_create_or_link",
       "idempotency_key_pattern": "intake:form1:{ghl_contact_id}:{submission_id}",
-      "creates": ["client_id", "onboarding_case_id"],
+      "creates": [
+        "client_id",
+        "onboarding_case_id"
+      ],
       "fields": {
-        "business_name": { "required": true, "owner": "form1", "maps_from": ["trading_name"] },
-        "owner_name": { "required": true, "owner": "form1" },
-        "owner_email": { "required": true, "owner": "form1" },
-        "owner_phone": { "required": true, "owner": "form1" },
-        "offer_summary": { "required": true, "owner": "form1" },
-        "market": { "required": false, "deferrable": true, "owner": "form1" },
-        "ghl_contact_id": { "required": true, "owner": "form1" },
-        "ghl_opportunity_id": { "required": false, "owner": "form1" }
+        "business_name": {
+          "required": true,
+          "owner": "form1",
+          "maps_from": [
+            "trading_name"
+          ]
+        },
+        "owner_name": {
+          "required": true,
+          "owner": "form1"
+        },
+        "owner_email": {
+          "required": true,
+          "owner": "form1"
+        },
+        "owner_phone": {
+          "required": true,
+          "owner": "form1"
+        },
+        "offer_summary": {
+          "required": true,
+          "owner": "form1"
+        },
+        "market": {
+          "required": false,
+          "deferrable": true,
+          "owner": "form1"
+        },
+        "ghl_contact_id": {
+          "required": true,
+          "owner": "form1"
+        },
+        "ghl_opportunity_id": {
+          "required": false,
+          "owner": "form1"
+        },
+        "website_reported_status": {
+          "required": false,
+          "owner": "form1"
+        },
+        "website_reported_url": {
+          "required": false,
+          "owner": "form1"
+        },
+        "domain_reported_name": {
+          "required": false,
+          "owner": "form1"
+        },
+        "domain_reported_ownership_status": {
+          "required": false,
+          "owner": "form1"
+        },
+        "dns_reported_provider": {
+          "required": false,
+          "owner": "form1"
+        },
+        "dns_reported_owner": {
+          "required": false,
+          "owner": "form1"
+        }
       }
     },
     "form2": {
       "purpose": "enrichment_merge",
       "idempotency_key_pattern": "intake:form2:{client_id}:{submission_id}",
-      "requires": ["onboarding_case_id"],
+      "requires": [
+        "onboarding_case_id"
+      ],
       "fields": {
-        "website_url": { "required": true, "owner": "form2" },
-        "domain": { "required": true, "owner": "form2", "audited": true },
-        "dns_provider": { "required": true, "owner": "form2" },
-        "dns_owner": { "required": true, "owner": "form2" },
-        "logo_url": { "required": false, "deferrable": true, "owner": "form2" },
-        "address": { "required": true, "owner": "form2" },
-        "hours": { "required": true, "owner": "form2" },
-        "phone_e164": { "required": true, "owner": "form2" }
+        "website_url": {
+          "required": true,
+          "owner": "form2"
+        },
+        "domain": {
+          "required": true,
+          "owner": "form2",
+          "audited": true
+        },
+        "dns_provider": {
+          "required": true,
+          "owner": "form2"
+        },
+        "dns_owner": {
+          "required": true,
+          "owner": "form2"
+        },
+        "logo_url": {
+          "required": false,
+          "deferrable": true,
+          "owner": "form2"
+        },
+        "address": {
+          "required": true,
+          "owner": "form2"
+        },
+        "hours": {
+          "required": true,
+          "owner": "form2"
+        },
+        "phone_e164": {
+          "required": true,
+          "owner": "form2"
+        }
       }
     },
     "form3": {
       "purpose": "enrichment_merge",
       "idempotency_key_pattern": "intake:form3:{client_id}:{submission_id}",
-      "requires": ["onboarding_case_id"],
+      "requires": [
+        "onboarding_case_id"
+      ],
       "fields": {
-        "ga4_id": { "required": true, "owner": "form3", "required_before_approve": true },
-        "meta_pixel_id": { "required": true, "owner": "form3", "required_before_approve": true },
-        "ghl_location_id": { "required": true, "owner": "form3", "required_before_approve": true },
-        "access_meta_bm": { "required": true, "owner": "form3", "type": "boolean" },
-        "access_ga4": { "required": true, "owner": "form3", "type": "boolean" },
-        "access_cloudflare": { "required": true, "owner": "form3", "type": "boolean" },
-        "capi_token_ref": { "required": false, "owner": "form3" },
-        "ghl_api_token_ref": { "required": false, "owner": "form3" }
+        "ga4_id": {
+          "required": true,
+          "owner": "form3",
+          "required_before_approve": true
+        },
+        "meta_pixel_id": {
+          "required": true,
+          "owner": "form3",
+          "required_before_approve": true
+        },
+        "ghl_location_id": {
+          "required": true,
+          "owner": "form3",
+          "required_before_approve": true
+        },
+        "access_meta_bm": {
+          "required": true,
+          "owner": "form3",
+          "type": "boolean"
+        },
+        "access_ga4": {
+          "required": true,
+          "owner": "form3",
+          "type": "boolean"
+        },
+        "access_cloudflare": {
+          "required": true,
+          "owner": "form3",
+          "type": "boolean"
+        },
+        "capi_token_ref": {
+          "required": false,
+          "owner": "form3"
+        },
+        "ghl_api_token_ref": {
+          "required": false,
+          "owner": "form3"
+        }
       },
-      "forbidden_in_payload": ["capi_token", "ghl_api_token", "webhook_secret", "admin_password", "password", "api_key", "private_token", "recovery_codes"]
+      "forbidden_in_payload": [
+        "capi_token",
+        "ghl_api_token",
+        "webhook_secret",
+        "admin_password",
+        "password",
+        "api_key",
+        "private_token",
+        "recovery_codes"
+      ]
     }
   },
   "merge_rules": {
@@ -346,16 +718,31 @@
     "null_does_not_clear": true,
     "forms_may_never_clear": true,
     "explicit_clear_required": true,
-    "explicit_clear_required_attrs": ["field_name", "actor", "reason", "timestamp", "expected_version"],
+    "explicit_clear_required_attrs": [
+      "field_name",
+      "actor",
+      "reason",
+      "timestamp",
+      "expected_version"
+    ],
     "ownership_scoped": true,
-    "owner_precedence": ["form3", "form2", "form1"],
+    "owner_precedence": [
+      "form3",
+      "form2",
+      "form1"
+    ],
     "human_override_outranks_forms": true,
     "human_override_requires_expected_version": true,
     "notes": "Precedence applies only inside each field's ownership contract. A later form cannot overwrite a field it does not own. Null/missing values do not clear. Explicit clear is a dedicated versioned operation."
   },
   "slug_lock": {
     "trigger": "first_managed_resource_reaches_created",
-    "fields": ["slug_locked", "slug_locked_at", "slug_locked_by_resource_id", "slug_locked_reason"],
+    "fields": [
+      "slug_locked",
+      "slug_locked_at",
+      "slug_locked_by_resource_id",
+      "slug_locked_reason"
+    ],
     "never_unlocks_on_status_transition": true,
     "never_unlocks_on_provision_failure": true,
     "never_unlocks_on_rollback": true

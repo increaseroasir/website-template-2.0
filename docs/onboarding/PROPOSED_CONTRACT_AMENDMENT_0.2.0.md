@@ -1,13 +1,19 @@
 # PROPOSED Contract Amendment — NOT FINAL
 
-**Status:** Proposal only. Do **not** treat as published contract law until owner explicitly approves version numbers and merges the live config bump.
+> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
+> Retained under historical filename for provenance.
+> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
+> **Published in Git ≠ applied in Supabase.**
+
+
+**Status:** **PUBLISHED IN GIT** (historical filename retained). Live `config/identity-fields.json` is `0.2.0` / `1.1.0`. Child tables landed in migrations; not applied.
 
 | Item | Current (live) | Proposed (awaiting approval) |
 |---|---|---|
-| `contract_version` | `0.1.1` | **`0.2.0` (proposed)** |
-| `onboarding_schema_version` | `1.0.0` | **`1.1.0` (proposed)** |
+| `contract_version` | `0.1.1` (prior) | **`0.2.0` (published in Git)** |
+| `onboarding_schema_version` | `1.0.0` (prior) | **`1.1.0` (published in Git)** |
 
-Live files that must **not** be bumped until approval:
+Live files now published at `0.2.0` / `1.1.0` (was blocked until approval):
 
 - `config/identity-fields.json`
 - `config/factory-contract.schema.json`
@@ -57,10 +63,8 @@ csm_call_1 / csm_call_2 → system + CSM provenance
 - Existing Make Form 1 identity path remains valid
 - Merge precedence rules unchanged; new fields are form1-scoped only
 
-## Owner action required
+## Owner action required next
 
-Approve or revise:
-
-1. Version numbers `0.2.0` / `1.1.0`
-2. The six field names above
-3. Then authorize a separate config PR/commit that actually bumps live contract files
+1. Authorize applying the two child-table migrations to `htl-factory-dev` only
+2. Read-only verification after apply
+3. Keep Make inactive until a separate E2E authorization

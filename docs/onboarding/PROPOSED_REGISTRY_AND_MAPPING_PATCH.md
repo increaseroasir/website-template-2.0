@@ -1,5 +1,11 @@
 # Proposed registry / mapping alignment — NOT applied to live JSON
 
+> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
+> Retained under historical filename for provenance.
+> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
+> **Published in Git ≠ applied in Supabase.**
+
+
 **Status:** Applied to design JSON (`config/onboarding-*.json`, `config/forms/*`) on 2026-07-31.  
 **Still not published:** live `config/identity-fields.json` remains `0.1.1` / `1.0.0`.
 

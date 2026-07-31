@@ -1,11 +1,17 @@
 # Form Field Registry (design freeze → Hybrid A+C)
 
+> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
+> Retained under historical filename for provenance.
+> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
+> **Published in Git ≠ applied in Supabase.**
+
+
 **Machine source:** [`config/onboarding-field-registry.json`](../../config/onboarding-field-registry.json)  
 **Option sets:** [`config/onboarding-option-sets.json`](../../config/onboarding-option-sets.json)  
 **Source of truth:** [`docs/onboarding/source/00–06`](./source/)  
 **GHL location (inventory):** Hot Tub Launch Success `wTkbEAsxM73C2gLNpdi8`  
 **Contract direction:** Hybrid A+C **APPROVED** — see [`CONTRACT_DELTA_REPORT.md`](./CONTRACT_DELTA_REPORT.md)  
-**Versions:** live still `0.1.1` / `1.0.0`; proposed `0.2.0` / `1.1.0` only — [`PROPOSED_CONTRACT_AMENDMENT_0.2.0.md`](./PROPOSED_CONTRACT_AMENDMENT_0.2.0.md)
+**Versions:** live in Git `0.2.0` / `1.1.0` — [`PROPOSED_CONTRACT_AMENDMENT_0.2.0.md`](./PROPOSED_CONTRACT_AMENDMENT_0.2.0.md) (historical filename)
 
 ## Rules
 

@@ -1,5 +1,11 @@
 # Form Field Mapping Matrix (Hybrid A+C)
 
+> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
+> Retained under historical filename for provenance.
+> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
+> **Published in Git ≠ applied in Supabase.**
+
+
 **Machine source:** [`config/onboarding-field-mappings.json`](../../config/onboarding-field-mappings.json)  
 **Direction:** Hybrid A+C **APPROVED**  
 **Live JSON:** may still say `blocked_pending_contract_decision` until patch applied — see [`PROPOSED_REGISTRY_AND_MAPPING_PATCH.md`](./PROPOSED_REGISTRY_AND_MAPPING_PATCH.md)
@@ -12,7 +18,7 @@
 | GHL custom field IDs | `pending_live_ids` (map/create later) |
 | ClickUp destinations | `pending_live_inventory` (MCP not connected) |
 | Storage form bindings | **Approved Hybrid A+C** — pending version publish + migration auth |
-| Contract versions | Live `0.1.1` / `1.0.0`; proposed `0.2.0` / `1.1.0` **not final** |
+| Contract versions | Live in Git `0.2.0` / `1.1.0`; child migrations landed **not applied** |
 
 ## Chain (target)
 

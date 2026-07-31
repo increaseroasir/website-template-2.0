@@ -1,11 +1,11 @@
 {
-  "design_freeze_version": "0.1.1-hybrid-ac-proposal",
+  "design_freeze_version": "0.2.0-hybrid-ac-published",
   "completeness": {
     "canonical_names": "complete_from_source",
     "ghl_ids": "pending_live_ids",
     "clickup_ids": "pending_live_inventory",
-    "storage_bindings": "approved_hybrid_ac_pending_version_and_migration",
-    "live_contract_versions": "still_0.1.1_and_1.0.0_not_published"
+    "storage_bindings": "published_0_2_0_migrations_landed_not_applied",
+    "live_contract_versions": "published_0.2.0_and_1.1.0_in_git_migrations_not_applied"
   },
   "mappings": [
     {
@@ -26,7 +26,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -49,7 +49,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -118,7 +118,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -141,7 +141,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -164,7 +164,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -187,7 +187,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -210,7 +210,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -233,7 +233,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -256,7 +256,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -279,7 +279,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -302,7 +302,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -325,7 +325,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -348,7 +348,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -371,7 +371,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -394,7 +394,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -417,7 +417,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -440,7 +440,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -463,7 +463,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -486,7 +486,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -509,7 +509,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -532,7 +532,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -555,7 +555,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -578,7 +578,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -601,7 +601,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -624,7 +624,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -647,7 +647,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -670,7 +670,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -693,7 +693,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -716,7 +716,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -739,7 +739,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -762,7 +762,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -785,7 +785,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -808,7 +808,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -831,7 +831,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null,
@@ -855,7 +855,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null,
@@ -879,7 +879,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null,
@@ -903,7 +903,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -926,7 +926,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -949,7 +949,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -972,7 +972,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -995,7 +995,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1018,7 +1018,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1041,7 +1041,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1064,7 +1064,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1087,7 +1087,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1110,7 +1110,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1133,7 +1133,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1156,7 +1156,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1179,7 +1179,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1202,7 +1202,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1225,7 +1225,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1248,7 +1248,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1271,7 +1271,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1294,7 +1294,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1317,7 +1317,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1340,7 +1340,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1363,7 +1363,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1386,7 +1386,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1409,7 +1409,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1432,7 +1432,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1455,7 +1455,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1478,7 +1478,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1501,7 +1501,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1524,7 +1524,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1547,7 +1547,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -1570,7 +1570,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1593,7 +1593,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1616,7 +1616,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1639,7 +1639,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1662,7 +1662,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1685,7 +1685,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1708,7 +1708,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1731,7 +1731,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1754,7 +1754,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1777,7 +1777,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1800,7 +1800,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1823,7 +1823,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1846,7 +1846,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1869,7 +1869,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1892,7 +1892,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1915,7 +1915,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1938,7 +1938,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1961,7 +1961,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -1984,7 +1984,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2007,7 +2007,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2030,7 +2030,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2053,7 +2053,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2076,7 +2076,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2099,7 +2099,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2122,7 +2122,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2145,7 +2145,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2168,7 +2168,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -2191,7 +2191,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_migrations_landed_not_applied",
       "storage_form": null,
       "blocker_effect": null,
       "status_effect": null
@@ -4538,7 +4538,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -4562,7 +4562,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null
@@ -4586,7 +4586,7 @@
       "merge_precedence": "human_override > verified_csm > reported_client (within ownership)",
       "null_behavior": "null_does_not_clear",
       "explicit_clear_behavior": "versioned_explicit_clear_only",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_form": "form1",
       "blocker_effect": null,
       "status_effect": null

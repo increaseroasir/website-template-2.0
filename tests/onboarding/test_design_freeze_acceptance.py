@@ -1,4 +1,4 @@
-"""Local acceptance checks for P2 onboarding Hybrid A+C proposal (no live I/O)."""
+"""Local acceptance checks for P2 onboarding Hybrid A+C (published in Git; no live I/O)."""
 from __future__ import annotations
 
 import json
@@ -203,8 +203,8 @@ def _run_checks() -> list[dict]:
     )
 
     ident = _load("config/identity-fields.json")
-    check("live_contract_still_0_1_1", ident.get("contract_version") == "0.1.1")
-    check("live_schema_still_1_0_0", ident.get("onboarding_schema_version") == "1.0.0")
+    check("live_contract_published_0_2_0", ident.get("contract_version") == "0.2.0")
+    check("live_schema_published_1_1_0", ident.get("onboarding_schema_version") == "1.1.0")
     check(
         "frozen_form2_owns_website",
         ident["field_policies"]["website_url"]["owner"] == "form2",
@@ -214,20 +214,25 @@ def _run_checks() -> list[dict]:
         ident["field_policies"]["domain"]["owner"] == "form2",
     )
     check(
-        "versions_are_proposed_only",
-        "0.2.0" in (ROOT / "docs/onboarding/PROPOSED_CONTRACT_AMENDMENT_0.2.0.md").read_text()
-        and ident.get("contract_version") == "0.1.1",
+        "amendment_doc_retained_for_provenance",
+        "Published in Git" in (ROOT / "docs/onboarding/PROPOSED_CONTRACT_AMENDMENT_0.2.0.md").read_text()
+        and ident.get("contract_version") == "0.2.0",
     )
     check(
-        "reported_fields_not_in_live_identity_yet",
-        all(name not in ident["field_policies"] for name in REPORTED_FIELDS),
+        "reported_fields_in_live_identity",
+        all(
+            name in ident["field_policies"]
+            and ident["field_policies"][name]["owner"] == "form1"
+            for name in REPORTED_FIELDS
+        ),
+        ",".join(REPORTED_FIELDS),
     )
 
     maps = _load("config/onboarding-field-mappings.json")
     check(
-        "mapping_storage_approved_pending_publish",
+        "mapping_storage_published_migrations_landed_not_applied",
         maps["completeness"]["storage_bindings"]
-        == "approved_hybrid_ac_pending_version_and_migration",
+        == "published_0_2_0_migrations_landed_not_applied",
     )
     emp_maps = [m for m in maps["mappings"] if m["product_form_id"] == "employee_crm_access"]
     check(
@@ -260,8 +265,10 @@ def _run_checks() -> list[dict]:
             "DO NOT APPLY" in text and "CREATE TABLE" in text,
         )
 
+    # LANDED_MIGRATION_CHECKS_PLACEHOLDER
     targets = _load("config/supabase-targets.json")
     check("apply_authorized_still_false", targets.get("apply_authorized") is False)
+    check("targets_contract_version_0_2_0", targets.get("contract_version") == "0.2.0")
 
     f2 = _load("config/forms/form-2-employee-access.json")
     f3 = _load("config/forms/form-3-inventory-upload.json")
@@ -285,8 +292,8 @@ def _run_checks() -> list[dict]:
 
     plan = (ROOT / "docs/onboarding/MIGRATION_AND_CONTRACT_AMENDMENT_PLAN.md").read_text()
     check(
-        "amendment_plan_stop_for_approval",
-        "STOP FOR OWNER APPROVAL" in plan and "Not ready for live implementation" in plan,
+        "amendment_plan_published_apply_gated",
+        "PUBLISHED IN GIT" in plan and "NOT APPLIED" in plan and "apply" in plan.lower(),
     )
 
     return results
@@ -323,10 +330,12 @@ def test_employee_storage_not_form2():
     assert all(f.get("storage_form") is None for f in emp)
 
 
-def test_live_versions_not_published():
+def test_live_versions_published_in_git():
     ident = _load("config/identity-fields.json")
-    assert ident["contract_version"] == "0.1.1"
-    assert ident["onboarding_schema_version"] == "1.0.0"
+    assert ident["contract_version"] == "0.2.0"
+    assert ident["onboarding_schema_version"] == "1.1.0"
+    for name in REPORTED_FIELDS:
+        assert ident["field_policies"][name]["owner"] == "form1"
 
 
 if __name__ == "__main__":

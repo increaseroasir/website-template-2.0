@@ -1,5 +1,5 @@
 {
-  "design_freeze_version": "0.1.1-hybrid-ac-proposal",
+  "design_freeze_version": "0.2.0-hybrid-ac-published",
   "source_package": "docs/onboarding/source/00-06",
   "ghl_location_id": "wTkbEAsxM73C2gLNpdi8",
   "ghl_location_name": "Hot Tub Launch Success",
@@ -10157,5 +10157,6 @@
   "awaiting": [
     "owner_version_publish_0.2.0",
     "owner_migration_apply_auth"
-  ]
+  ],
+  "notes": {}
 }

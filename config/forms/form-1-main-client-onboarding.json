@@ -378,5 +378,5 @@
   "completion_rules": "all_required_visible_fields_valid",
   "next_workflow_event": "main_client_onboarding_submitted",
   "proposed_contract_version": "0.2.0",
-  "live_contract_version_note": "Do not treat 0.2.0 as published until owner approval"
+  "live_contract_version_note": "Published in Git as contract 0.2.0 / onboarding schema 1.1.0. Child-table migrations may be landed but not applied."
 }

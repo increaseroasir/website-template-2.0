@@ -1,9 +1,15 @@
 # Contract Delta Report — Product Forms vs Frozen Storage Forms
 
+> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
+> Retained under historical filename for provenance.
+> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
+> **Published in Git ≠ applied in Supabase.**
+
+
 **Status:** **APPROVED — Hybrid A+C** (owner decision 2026-07-31)  
 **Rejected:** Alternative B (remap form2→employees / form3→inventory)  
-**Live contract file (unchanged until version approval):** [`config/identity-fields.json`](../../config/identity-fields.json) — still `contract_version` **0.1.1**, `onboarding_schema_version` **1.0.0**  
-**Proposed versions (NOT FINAL — require next owner approval):** `contract_version` **0.2.0**, `onboarding_schema_version` **1.1.0**  
+**Live contract file:** [`config/identity-fields.json`](../../config/identity-fields.json) — `contract_version` **0.2.0**, `onboarding_schema_version` **1.1.0** (published in Git)  
+**Child migrations:** landed in `supabase/migrations/` — **NOT APPLIED**  
 **Proposal pack:** [`PROPOSED_CONTRACT_AMENDMENT_0.2.0.md`](./PROPOSED_CONTRACT_AMENDMENT_0.2.0.md), [`proposed-migrations/`](./proposed-migrations/)
 
 ## Owner decision (locked)
@@ -28,7 +34,7 @@ Preserve frozen storage semantics:
 - Website/domain answers on the main form → **separate reported fields** (proposed)
 - Verified operational website/domain fields keep current ownership (`form2` / CSM)
 
-**Employees / inventory:** repeatable child tables (proposed SQL only; not applied).
+**Employees / inventory:** repeatable child tables (migrations landed in Git; not applied).
 
 ## Why B was rejected
 
@@ -51,7 +57,7 @@ Silent remapping would make `form2` mean website enrichment in old code and empl
 | `initial_inventory_upload` | `inventory_submissions` (+ optional `inventory_items`) — **not** form3 |
 | `csm_call_1` / `csm_call_2` | `config_versions.source_form=system` + CSM provenance |
 
-## Proposed reported fields (form1-owned) — not finalized in live contract yet
+## Reported fields (form1-owned) — published in live contract
 
 See amendment proposal. Exact six:
 
@@ -66,8 +72,8 @@ Operational (unchanged ownership): `website_url`, `domain`, `dns_provider`, `dns
 
 ## Remaining gates
 
-1. Owner approves proposed versions `0.2.0` / schema `1.1.0` (or revises numbers)
-2. Separate authorization to apply proposed migrations to `htl-factory-dev` only
+1. ~~Publish versions `0.2.0` / `1.1.0`~~ **done in Git**
+2. Separate authorization to apply landed migrations to `htl-factory-dev` only
 3. Separate authorization for live GHL/Make/ClickUp create
 
-**Not done / not authorized now:** migration apply; live platform objects; `EXECUTION_STATE`; production; Paradise Spas; Sun Pool; Retainer Snapshot mutation.
+**Not done / not authorized now:** migration apply; live platform objects; production; protected-client mutation.

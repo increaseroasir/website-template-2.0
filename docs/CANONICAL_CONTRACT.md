@@ -3,8 +3,8 @@
 **Status:** P0.5 **COMPLETE AND VERIFIED** (owner approved with required changes incorporated).  
 **Make scenarios:** NOT AUTHORIZED  
 **Migration apply:** COMPLETE BUT NOT APPLIED (no inferred target)  
-**Contract version:** `0.1.1`  
-**Onboarding schema version:** `1.0.0`
+**Contract version:** `0.2.0`  
+**Onboarding schema version:** `1.1.0`
 
 Machine-readable companions (authoritative for field names, transitions, and validation):
 
@@ -150,12 +150,12 @@ Once `slug_locked` is true, status transitions never unlock it.
 
 ## Forms (versioned)
 
-Every payload carries `schema_version` and a raw `submission_id`. Payload shapes unchanged → `onboarding_schema_version` remains `1.0.0`.
+Every payload carries `schema_version` and a raw `submission_id`. Factory `onboarding_schema_version` is **`1.1.0`** (six reported website/domain fields + child tables `onboarding_employees` / `inventory_submissions` recognized in contract). Child-table migrations may be landed in Git before apply; **Published in Git ≠ applied in Supabase.**
 
 | Form | Purpose |
 |---|---|
-| Form 1 | Intake — creates/links `client_id` + `onboarding_case_id`; stores external GHL IDs; appends raw submission |
-| Form 2 | Enrichment merge onto same case |
+| Form 1 | Intake — creates/links `client_id` + `onboarding_case_id`; stores external GHL IDs; appends raw submission; owns six `*_reported_*` website/domain fields |
+| Form 2 | Enrichment merge — operational website/domain/DNS/location (unchanged ownership) |
 | Form 3 | Enrichment merge onto same case |
 
 **Idempotency key patterns**

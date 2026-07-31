@@ -1,6 +1,6 @@
 {
-  "total": 46,
-  "passed": 46,
+  "total": 47,
+  "passed": 47,
   "failed": 0,
   "results": [
     {
@@ -144,12 +144,12 @@
       "detail": ""
     },
     {
-      "name": "live_contract_still_0_1_1",
+      "name": "live_contract_published_0_2_0",
       "pass": true,
       "detail": ""
     },
     {
-      "name": "live_schema_still_1_0_0",
+      "name": "live_schema_published_1_1_0",
       "pass": true,
       "detail": ""
     },
@@ -164,17 +164,17 @@
       "detail": ""
     },
     {
-      "name": "versions_are_proposed_only",
+      "name": "amendment_doc_retained_for_provenance",
       "pass": true,
       "detail": ""
     },
     {
-      "name": "reported_fields_not_in_live_identity_yet",
+      "name": "reported_fields_in_live_identity",
       "pass": true,
-      "detail": ""
+      "detail": "website_reported_status,website_reported_url,domain_reported_name,domain_reported_ownership_status,dns_reported_provider,dns_reported_owner"
     },
     {
-      "name": "mapping_storage_approved_pending_publish",
+      "name": "mapping_storage_published_migrations_landed_not_applied",
       "pass": true,
       "detail": ""
     },
@@ -209,6 +209,11 @@
       "detail": ""
     },
     {
+      "name": "targets_contract_version_0_2_0",
+      "pass": true,
+      "detail": ""
+    },
+    {
       "name": "form2_spec_not_storage_form2",
       "pass": true,
       "detail": ""
@@ -229,7 +234,7 @@
       "detail": ""
     },
     {
-      "name": "amendment_plan_stop_for_approval",
+      "name": "amendment_plan_published_apply_gated",
       "pass": true,
       "detail": ""
     }

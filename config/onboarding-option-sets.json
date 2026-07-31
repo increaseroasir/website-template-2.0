@@ -1,5 +1,5 @@
 {
-  "contract_version_note": "design_freeze_only; not a contract bump",
+  "contract_version_note": "published_contract_0.2.0_schema_1.1.0_in_git",
   "option_sets": {
     "boolean_status": [
       "yes",

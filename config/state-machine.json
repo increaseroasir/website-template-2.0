@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.1",
+  "contract_version": "0.2.0",
   "description": "Authoritative fulfillment status transitions. Only request_client_transition may commit status changes.",
   "status_field": "onboarding_cases.status",
   "version_field": "onboarding_cases.version",
@@ -28,43 +28,268 @@
     "archived"
   ],
   "initial_status": "submitted",
-  "terminal_statuses": ["archived"],
+  "terminal_statuses": [
+    "archived"
+  ],
   "transitions": [
-    { "from": "submitted", "to": "under_review", "actors": ["csm", "make_service", "system"] },
-    { "from": "under_review", "to": "needs_correction", "actors": ["csm"] },
-    { "from": "needs_correction", "to": "under_review", "actors": ["csm", "make_service", "system"] },
-    { "from": "under_review", "to": "rejected", "actors": ["csm", "owner"] },
-    { "from": "under_review", "to": "deferred", "actors": ["csm"] },
-    { "from": "deferred", "to": "under_review", "actors": ["csm"] },
-    { "from": "under_review", "to": "approved", "actors": ["csm", "system"], "requires_approval_readiness": true },
-    { "from": "approved", "to": "provisioning", "actors": ["make_service", "tech_operator", "system"] },
-    { "from": "provisioning", "to": "provision_failed", "actors": ["make_service", "system"] },
-    { "from": "provision_failed", "to": "provisioning", "actors": ["make_service", "tech_operator", "system"] },
-    { "from": "provisioning", "to": "infrastructure_ready", "actors": ["make_service", "system"] },
-    { "from": "infrastructure_ready", "to": "building", "actors": ["ai_build_agent", "tech_operator", "system"] },
-    { "from": "building", "to": "build_failed", "actors": ["ai_build_agent", "system"] },
-    { "from": "build_failed", "to": "building", "actors": ["ai_build_agent", "tech_operator", "system"] },
-    { "from": "building", "to": "staging", "actors": ["ai_build_agent", "tech_operator", "system"] },
-    { "from": "staging", "to": "qa_failed", "actors": ["csm", "approver"] },
-    { "from": "qa_failed", "to": "building", "actors": ["ai_build_agent", "tech_operator", "system"] },
-    { "from": "staging", "to": "awaiting_approval", "actors": ["csm", "approver", "system"] },
-    { "from": "awaiting_approval", "to": "production_deploying", "actors": ["approver", "tech_operator", "system"], "requires_production_approval": true },
-    { "from": "production_deploying", "to": "live", "actors": ["system", "tech_operator"] },
-    { "from": "live", "to": "update_requested", "actors": ["csm", "owner"] },
-    { "from": "update_requested", "to": "updating", "actors": ["tech_operator", "ai_build_agent", "system"] },
-    { "from": "updating", "to": "staging", "actors": ["ai_build_agent", "tech_operator", "system"] },
-    { "from": "live", "to": "suspended", "actors": ["owner", "tech_operator"] },
-    { "from": "suspended", "to": "live", "actors": ["owner", "tech_operator"] },
-    { "from": "rejected", "to": "archived", "actors": ["csm", "owner"] },
-    { "from": "live", "to": "archived", "actors": ["owner"] }
+    {
+      "from": "submitted",
+      "to": "under_review",
+      "actors": [
+        "csm",
+        "make_service",
+        "system"
+      ]
+    },
+    {
+      "from": "under_review",
+      "to": "needs_correction",
+      "actors": [
+        "csm"
+      ]
+    },
+    {
+      "from": "needs_correction",
+      "to": "under_review",
+      "actors": [
+        "csm",
+        "make_service",
+        "system"
+      ]
+    },
+    {
+      "from": "under_review",
+      "to": "rejected",
+      "actors": [
+        "csm",
+        "owner"
+      ]
+    },
+    {
+      "from": "under_review",
+      "to": "deferred",
+      "actors": [
+        "csm"
+      ]
+    },
+    {
+      "from": "deferred",
+      "to": "under_review",
+      "actors": [
+        "csm"
+      ]
+    },
+    {
+      "from": "under_review",
+      "to": "approved",
+      "actors": [
+        "csm",
+        "system"
+      ],
+      "requires_approval_readiness": true
+    },
+    {
+      "from": "approved",
+      "to": "provisioning",
+      "actors": [
+        "make_service",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "provisioning",
+      "to": "provision_failed",
+      "actors": [
+        "make_service",
+        "system"
+      ]
+    },
+    {
+      "from": "provision_failed",
+      "to": "provisioning",
+      "actors": [
+        "make_service",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "provisioning",
+      "to": "infrastructure_ready",
+      "actors": [
+        "make_service",
+        "system"
+      ]
+    },
+    {
+      "from": "infrastructure_ready",
+      "to": "building",
+      "actors": [
+        "ai_build_agent",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "building",
+      "to": "build_failed",
+      "actors": [
+        "ai_build_agent",
+        "system"
+      ]
+    },
+    {
+      "from": "build_failed",
+      "to": "building",
+      "actors": [
+        "ai_build_agent",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "building",
+      "to": "staging",
+      "actors": [
+        "ai_build_agent",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "staging",
+      "to": "qa_failed",
+      "actors": [
+        "csm",
+        "approver"
+      ]
+    },
+    {
+      "from": "qa_failed",
+      "to": "building",
+      "actors": [
+        "ai_build_agent",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "staging",
+      "to": "awaiting_approval",
+      "actors": [
+        "csm",
+        "approver",
+        "system"
+      ]
+    },
+    {
+      "from": "awaiting_approval",
+      "to": "production_deploying",
+      "actors": [
+        "approver",
+        "tech_operator",
+        "system"
+      ],
+      "requires_production_approval": true
+    },
+    {
+      "from": "production_deploying",
+      "to": "live",
+      "actors": [
+        "system",
+        "tech_operator"
+      ]
+    },
+    {
+      "from": "live",
+      "to": "update_requested",
+      "actors": [
+        "csm",
+        "owner"
+      ]
+    },
+    {
+      "from": "update_requested",
+      "to": "updating",
+      "actors": [
+        "tech_operator",
+        "ai_build_agent",
+        "system"
+      ]
+    },
+    {
+      "from": "updating",
+      "to": "staging",
+      "actors": [
+        "ai_build_agent",
+        "tech_operator",
+        "system"
+      ]
+    },
+    {
+      "from": "live",
+      "to": "suspended",
+      "actors": [
+        "owner",
+        "tech_operator"
+      ]
+    },
+    {
+      "from": "suspended",
+      "to": "live",
+      "actors": [
+        "owner",
+        "tech_operator"
+      ]
+    },
+    {
+      "from": "rejected",
+      "to": "archived",
+      "actors": [
+        "csm",
+        "owner"
+      ]
+    },
+    {
+      "from": "live",
+      "to": "archived",
+      "actors": [
+        "owner"
+      ]
+    }
   ],
   "forbidden_examples": [
-    { "from": "submitted", "to": "provisioning", "reason": "Must pass review and approval" },
-    { "from": "submitted", "to": "live", "reason": "Skip path forbidden" },
-    { "from": "approved", "to": "live", "reason": "Must provision, build, stage, and obtain production approval" },
-    { "from": "staging", "to": "live", "reason": "Must pass awaiting_approval with approval row" },
-    { "from": "under_review", "to": "live", "reason": "Skip path forbidden" },
-    { "from": "infrastructure_ready", "to": "live", "reason": "Skip path forbidden" }
+    {
+      "from": "submitted",
+      "to": "provisioning",
+      "reason": "Must pass review and approval"
+    },
+    {
+      "from": "submitted",
+      "to": "live",
+      "reason": "Skip path forbidden"
+    },
+    {
+      "from": "approved",
+      "to": "live",
+      "reason": "Must provision, build, stage, and obtain production approval"
+    },
+    {
+      "from": "staging",
+      "to": "live",
+      "reason": "Must pass awaiting_approval with approval row"
+    },
+    {
+      "from": "under_review",
+      "to": "live",
+      "reason": "Skip path forbidden"
+    },
+    {
+      "from": "infrastructure_ready",
+      "to": "live",
+      "reason": "Skip path forbidden"
+    }
   ],
   "idempotency": {
     "repeated_identical_request": "return_prior_result",
