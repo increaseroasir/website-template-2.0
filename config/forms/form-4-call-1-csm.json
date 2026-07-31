@@ -1,0 +1,296 @@
+{
+  "form_id": "csm_call_1",
+  "form_version": "1.0.0",
+  "human_title": "Call 1 Kickoff and Access Form",
+  "audience": "csm",
+  "source_file": "docs/onboarding/source/04_CALL_1_KICKOFF_AND_ACCESS_FORM.md",
+  "due_rule": "complete_live_within_2_business_days_after_main_form",
+  "storage_binding_status": "system_ok",
+  "submission_envelope": [
+    "form_type",
+    "form_version",
+    "submission_id",
+    "submitted_at",
+    "client_id",
+    "onboarding_case_id",
+    "correlation_id",
+    "actor_type",
+    "actor_id"
+  ],
+  "fields": [
+    {
+      "canonical_name": "call_date",
+      "required": true,
+      "field_type": "date"
+    },
+    {
+      "canonical_name": "csm_user_id",
+      "required": true,
+      "field_type": "user_dropdown"
+    },
+    {
+      "canonical_name": "client_attendees",
+      "required": true,
+      "field_type": "repeatable_people"
+    },
+    {
+      "canonical_name": "decision_maker_present",
+      "required": true,
+      "field_type": "boolean_status"
+    },
+    {
+      "canonical_name": "business_information_confirmed",
+      "required": true,
+      "field_type": "checkbox"
+    },
+    {
+      "canonical_name": "location_information_confirmed",
+      "required": true,
+      "field_type": "checkbox"
+    },
+    {
+      "canonical_name": "campaign_context_confirmed",
+      "required": true,
+      "field_type": "checkbox"
+    },
+    {
+      "canonical_name": "lead_routing_confirmed",
+      "required": true,
+      "field_type": "checkbox"
+    },
+    {
+      "canonical_name": "appointment_availability_confirmed",
+      "required": true,
+      "field_type": "checkbox"
+    },
+    {
+      "canonical_name": "website_verified_status",
+      "required": true,
+      "field_type": "website_status_verified"
+    },
+    {
+      "canonical_name": "desired_domain",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "domain_registered",
+      "required": false,
+      "field_type": "boolean_status"
+    },
+    {
+      "canonical_name": "registrar_name",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "registrar_access_status",
+      "required": false,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "dns_access_status",
+      "required": false,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "website_build_required",
+      "required": false,
+      "field_type": "boolean_status"
+    },
+    {
+      "canonical_name": "facebook_page_verified_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "meta_portfolio_verified_status",
+      "required": true,
+      "field_type": "meta_portfolio_status_verified"
+    },
+    {
+      "canonical_name": "meta_ad_account_verified_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "meta_billing_verified_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "meta_pixel_dataset_verified_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "htl_partner_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "client_admin_confirmed",
+      "required": true,
+      "field_type": "boolean_status"
+    },
+    {
+      "canonical_name": "google_account_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "google_business_profile_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "hosting_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "domain_dns_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "existing_crm_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "phone_provider_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "pos_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "inventory_system_access_status",
+      "required": true,
+      "field_type": "access_status"
+    },
+    {
+      "canonical_name": "previous_agency_access_risk",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "access_approved",
+      "required": true,
+      "field_type": "access_approved"
+    },
+    {
+      "canonical_name": "primary_positioning",
+      "required": false,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "priority_products_brands",
+      "required": false,
+      "field_type": "tags"
+    },
+    {
+      "canonical_name": "priority_offers",
+      "required": false,
+      "field_type": "tags"
+    },
+    {
+      "canonical_name": "key_differentiators",
+      "required": false,
+      "field_type": "tags"
+    },
+    {
+      "canonical_name": "primary_cta",
+      "required": false,
+      "field_type": "primary_cta"
+    },
+    {
+      "canonical_name": "prohibited_topics_claims",
+      "required": false,
+      "field_type": "tags"
+    },
+    {
+      "canonical_name": "advertising_approval_owner",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "creative_direction_notes",
+      "required": false,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "evidence_inventory_status",
+      "required": true,
+      "field_type": "evidence_status"
+    },
+    {
+      "canonical_name": "evidence_offers_status",
+      "required": true,
+      "field_type": "evidence_status"
+    },
+    {
+      "canonical_name": "evidence_financing_status",
+      "required": true,
+      "field_type": "evidence_status"
+    },
+    {
+      "canonical_name": "evidence_testimonials_status",
+      "required": false,
+      "field_type": "evidence_status"
+    },
+    {
+      "canonical_name": "evidence_awards_status",
+      "required": false,
+      "field_type": "evidence_status"
+    },
+    {
+      "canonical_name": "evidence_people_permission_status",
+      "required": false,
+      "field_type": "evidence_status"
+    },
+    {
+      "canonical_name": "employee_access_form_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "client_commitments",
+      "required": false,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "htl_commitments",
+      "required": false,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "call_2_scheduled",
+      "required": true,
+      "field_type": "boolean_status"
+    },
+    {
+      "canonical_name": "call_2_datetime",
+      "required": false,
+      "field_type": "datetime"
+    },
+    {
+      "canonical_name": "kickoff_outcome_summary",
+      "required": true,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "recommended_status_transition",
+      "required": false,
+      "field_type": "text"
+    }
+  ],
+  "conditional_logic_ref": "docs/onboarding/CONDITIONAL_LOGIC.md",
+  "blocker_rules_ref": "docs/onboarding/source/00_GLOBAL_BUILD_RULES.md",
+  "completion_rules": "all_required_visible_fields_valid",
+  "next_workflow_event": "csm_call_1_completed"
+}

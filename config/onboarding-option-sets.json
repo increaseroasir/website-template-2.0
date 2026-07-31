@@ -1,0 +1,228 @@
+{
+  "contract_version_note": "design_freeze_only; not a contract bump",
+  "option_sets": {
+    "boolean_status": [
+      "yes",
+      "no",
+      "unknown"
+    ],
+    "existence_status": [
+      "yes_verified",
+      "yes_unverified",
+      "no",
+      "unknown"
+    ],
+    "access_status": [
+      "verified_full_access",
+      "verified_limited_access",
+      "invite_sent_pending",
+      "client_action_required",
+      "previous_agency_blocked",
+      "ownership_unclear",
+      "not_applicable",
+      "not_verified"
+    ],
+    "test_result": [
+      "pass",
+      "pass_with_issue",
+      "fail",
+      "blocked",
+      "not_tested",
+      "not_applicable"
+    ],
+    "evidence_status": [
+      "verified",
+      "submitted_pending_review",
+      "missing",
+      "unsupported",
+      "not_applicable"
+    ],
+    "approval_status": [
+      "approved",
+      "approved_with_conditions",
+      "pending",
+      "rejected",
+      "not_required"
+    ],
+    "blocker_status": [
+      "open",
+      "waiting_on_client",
+      "waiting_on_htl",
+      "waiting_on_third_party",
+      "resolved",
+      "waived"
+    ],
+    "website_status_reported": [
+      "live_client_controls",
+      "live_previous_agency_controls",
+      "live_access_unclear",
+      "no_website",
+      "under_construction"
+    ],
+    "website_status_verified": [
+      "live_access_verified",
+      "live_access_pending",
+      "previous_agency_controls",
+      "ownership_unclear",
+      "no_website",
+      "under_construction"
+    ],
+    "facebook_page_status": [
+      "exists_verified",
+      "exists_unverified",
+      "no_page",
+      "unknown"
+    ],
+    "meta_portfolio_status_reported": [
+      "exists_client_owned",
+      "exists_previous_agency_owned",
+      "exists_ownership_unclear",
+      "does_not_exist",
+      "client_restricted",
+      "unknown"
+    ],
+    "meta_portfolio_status_verified": [
+      "exists_client_owned_verified",
+      "exists_client_owned_unverified",
+      "previous_agency_owned",
+      "ownership_unclear",
+      "does_not_exist",
+      "client_account_restricted"
+    ],
+    "meta_ad_account_status": [
+      "exists_active",
+      "exists_disabled",
+      "does_not_exist",
+      "unknown"
+    ],
+    "meta_payment_method_status": [
+      "added",
+      "not_added",
+      "expired_or_failed",
+      "unknown"
+    ],
+    "inventory_availability": [
+      "ready_to_upload",
+      "needs_template",
+      "no_current_inventory",
+      "pending"
+    ],
+    "inventory_source_system": [
+      "spreadsheet",
+      "pos_export",
+      "inventory_platform",
+      "none"
+    ],
+    "employee_job_title": [
+      "owner",
+      "general_manager",
+      "sales_manager",
+      "salesperson",
+      "csm",
+      "receptionist",
+      "marketing",
+      "service",
+      "finance",
+      "other"
+    ],
+    "required_crm_role": [
+      "admin",
+      "manager",
+      "sales_user",
+      "appointment_setter",
+      "view_only",
+      "custom"
+    ],
+    "lead_routing_method": [
+      "primary_only",
+      "round_robin",
+      "location_based",
+      "product_based",
+      "manual",
+      "other"
+    ],
+    "contact_database_status": [
+      "exists_exportable",
+      "exists_not_exportable",
+      "none",
+      "unknown"
+    ],
+    "email_consent_status": [
+      "verified",
+      "mixed_or_unclear",
+      "failed",
+      "not_applicable",
+      "unknown"
+    ],
+    "a2p_status": [
+      "approved",
+      "submitted",
+      "pending_client",
+      "rejected",
+      "not_required"
+    ],
+    "contact_list_import_approval": [
+      "approved",
+      "approved_partial",
+      "pending",
+      "rejected",
+      "not_required"
+    ],
+    "training_outcome": [
+      "passed",
+      "passed_with_follow_up",
+      "failed",
+      "reschedule_required"
+    ],
+    "product_categories": [
+      "hot_tubs",
+      "swim_spas",
+      "saunas",
+      "cold_plunges",
+      "accessories",
+      "service",
+      "other"
+    ],
+    "promotion_status": [
+      "active",
+      "planned",
+      "none",
+      "unknown"
+    ],
+    "financing_available": [
+      "yes_verified",
+      "yes_unverified",
+      "no",
+      "unknown"
+    ],
+    "target_area_type": [
+      "cities",
+      "zip_codes",
+      "counties",
+      "radius",
+      "mixed"
+    ],
+    "primary_cta": [
+      "shop_inventory",
+      "book_appointment",
+      "request_pricing",
+      "claim_offer",
+      "call_store",
+      "visit_showroom",
+      "other"
+    ],
+    "access_approved": [
+      "approved",
+      "approved_with_blockers",
+      "not_approved"
+    ],
+    "lead_test_source": [
+      "website_form",
+      "facebook_lead_ad",
+      "manual_test",
+      "chat",
+      "phone",
+      "other"
+    ]
+  }
+}

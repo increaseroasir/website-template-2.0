@@ -1,0 +1,64 @@
+{
+  "form_id": "initial_inventory_upload",
+  "form_version": "1.0.0",
+  "human_title": "Initial Inventory Upload",
+  "audience": "client",
+  "source_file": "docs/onboarding/source/03_INITIAL_INVENTORY_UPLOAD_FORM.md",
+  "due_rule": "due_noon_1_business_day_before_call_1",
+  "storage_binding_status": "proposed_child_table_inventory_submissions_pending_migration",
+  "submission_envelope": [
+    "form_type",
+    "form_version",
+    "submission_id",
+    "submitted_at",
+    "client_id",
+    "onboarding_case_id",
+    "correlation_id",
+    "actor_type",
+    "actor_id"
+  ],
+  "fields": [
+    {
+      "canonical_name": "client_id_display",
+      "required": true,
+      "field_type": "hidden/prefilled"
+    },
+    {
+      "canonical_name": "inventory_availability",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "inventory_spreadsheet",
+      "required": false,
+      "field_type": "file upload"
+    },
+    {
+      "canonical_name": "inventory_source_system",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "inventory_approval_owner",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "inventory_rights_confirmed",
+      "required": false,
+      "field_type": "checkbox"
+    },
+    {
+      "canonical_name": "inventory_expected_date",
+      "required": false,
+      "field_type": "date"
+    }
+  ],
+  "conditional_logic_ref": "docs/onboarding/CONDITIONAL_LOGIC.md",
+  "blocker_rules_ref": "docs/onboarding/source/00_GLOBAL_BUILD_RULES.md",
+  "completion_rules": "all_required_visible_fields_valid",
+  "next_workflow_event": "initial_inventory_upload_submitted",
+  "storage_table": "inventory_submissions",
+  "storage_form": null,
+  "notes": "NOT form3. Hybrid A+C approved; migration proposed only."
+}

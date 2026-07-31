@@ -1,0 +1,382 @@
+{
+  "form_id": "main_client_onboarding",
+  "form_version": "1.0.0",
+  "human_title": "Main Client Onboarding Form",
+  "audience": "client",
+  "source_file": "docs/onboarding/source/01_MAIN_CLIENT_ONBOARDING_FORM.md",
+  "due_rule": "send_within_15m_after_payment; due_5pm_next_business_day_client_tz",
+  "storage_binding_status": "form1_hybrid_ac_reported_website_fields_pending_version_publish",
+  "submission_envelope": [
+    "form_type",
+    "form_version",
+    "submission_id",
+    "submitted_at",
+    "client_id",
+    "onboarding_case_id",
+    "correlation_id",
+    "actor_type",
+    "actor_id"
+  ],
+  "fields": [
+    {
+      "canonical_name": "legal_business_name",
+      "required": true,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "public_dba_name",
+      "required": true,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "domain_reported_name",
+      "required": false,
+      "field_type": "URL",
+      "notes": " Canonical Hybrid A+C reported domain; source pack label was Primary Domain."
+    },
+    {
+      "canonical_name": "owner_name",
+      "required": true,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "owner_email",
+      "required": true,
+      "field_type": "email"
+    },
+    {
+      "canonical_name": "owner_cell",
+      "required": true,
+      "field_type": "phone"
+    },
+    {
+      "canonical_name": "submitted_by_email",
+      "required": true,
+      "field_type": "email"
+    },
+    {
+      "canonical_name": "primary_business_address",
+      "required": true,
+      "field_type": "address"
+    },
+    {
+      "canonical_name": "primary_timezone",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "number_of_locations",
+      "required": true,
+      "field_type": "number"
+    },
+    {
+      "canonical_name": "ein_availability",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "implementation_lead_type",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "implementation_lead_name",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "primary_business_goals",
+      "required": true,
+      "field_type": "multi_select"
+    },
+    {
+      "canonical_name": "monthly_lead_volume_range",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "monthly_sales_range",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "referral_source",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "primary_location_name",
+      "required": true,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "primary_location_address",
+      "required": true,
+      "field_type": "address"
+    },
+    {
+      "canonical_name": "location_timezone",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "location_main_phone",
+      "required": true,
+      "field_type": "phone"
+    },
+    {
+      "canonical_name": "location_store_hours",
+      "required": true,
+      "field_type": "structured schedule"
+    },
+    {
+      "canonical_name": "appointment_availability",
+      "required": true,
+      "field_type": "structured schedule"
+    },
+    {
+      "canonical_name": "target_area_type",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "target_areas",
+      "required": true,
+      "field_type": "tags/multiline"
+    },
+    {
+      "canonical_name": "excluded_target_areas",
+      "required": false,
+      "field_type": "tags/multiline"
+    },
+    {
+      "canonical_name": "additional_locations_exist",
+      "required": true,
+      "field_type": "radio"
+    },
+    {
+      "canonical_name": "product_categories",
+      "required": true,
+      "field_type": "multi_select"
+    },
+    {
+      "canonical_name": "featured_products",
+      "required": true,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "active_promotion_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "current_offers",
+      "required": false,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "offer_start_date",
+      "required": false,
+      "field_type": "date"
+    },
+    {
+      "canonical_name": "offer_end_date",
+      "required": false,
+      "field_type": "date"
+    },
+    {
+      "canonical_name": "financing_available",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "financing_provider",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "financing_details_available",
+      "required": false,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "website_reported_status",
+      "required": true,
+      "field_type": "dropdown",
+      "form_source_field": "website_status"
+    },
+    {
+      "canonical_name": "website_reported_url",
+      "required": false,
+      "field_type": "URL",
+      "form_source_field": "website_url"
+    },
+    {
+      "canonical_name": "domain_reported_ownership_status",
+      "required": true,
+      "field_type": "dropdown",
+      "form_source_field": "domain_ownership_status"
+    },
+    {
+      "canonical_name": "facebook_page_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "facebook_page_url",
+      "required": false,
+      "field_type": "URL"
+    },
+    {
+      "canonical_name": "instagram_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "google_business_profile_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "logo_available",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "media_assets_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "awards_certifications",
+      "required": false,
+      "field_type": "paragraph"
+    },
+    {
+      "canonical_name": "existing_crm_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "existing_crm_platform",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "crm_user_count",
+      "required": false,
+      "field_type": "number"
+    },
+    {
+      "canonical_name": "meta_business_portfolio_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "meta_ad_account_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "meta_payment_method_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "phone_provider_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "pos_system_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "inventory_system_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "chatbot_ai_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "previous_agency_involved",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "contact_database_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "contact_database_source",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "email_consent_status",
+      "required": false,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "opt_out_status_available",
+      "required": false,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "social_ads_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "reporting_setup_status",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "sales_team_structure",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "primary_lead_recipient_email",
+      "required": true,
+      "field_type": "email"
+    },
+    {
+      "canonical_name": "backup_lead_recipient_email",
+      "required": true,
+      "field_type": "email"
+    },
+    {
+      "canonical_name": "backup_lead_recipient_mobile",
+      "required": true,
+      "field_type": "phone"
+    },
+    {
+      "canonical_name": "default_lead_routing_method",
+      "required": true,
+      "field_type": "dropdown"
+    },
+    {
+      "canonical_name": "dns_reported_provider",
+      "required": false,
+      "field_type": "text"
+    },
+    {
+      "canonical_name": "dns_reported_owner",
+      "required": false,
+      "field_type": "text"
+    }
+  ],
+  "conditional_logic_ref": "docs/onboarding/CONDITIONAL_LOGIC.md",
+  "blocker_rules_ref": "docs/onboarding/source/00_GLOBAL_BUILD_RULES.md",
+  "completion_rules": "all_required_visible_fields_valid",
+  "next_workflow_event": "main_client_onboarding_submitted",
+  "proposed_contract_version": "0.2.0",
+  "live_contract_version_note": "Do not treat 0.2.0 as published until owner approval"
+}

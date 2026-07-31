@@ -1,0 +1,35 @@
+{
+  "design_freeze_version": "0.1.0-design",
+  "clickup_mcp_connected": false,
+  "workspace_id": "pending_live_inventory",
+  "space_id": "pending_live_inventory",
+  "list_id": "pending_live_inventory",
+  "template_id": "pending_live_inventory",
+  "master_task_pattern": "Onboarding — {public_dba_name} — {client_slug}",
+  "statuses": [
+    "New",
+    "Waiting on Client",
+    "Ready for CSM",
+    "In Progress",
+    "Waiting on HTL",
+    "Waiting on Third Party",
+    "Blocked",
+    "Ready for Call",
+    "QA",
+    "Complete",
+    "Cancelled"
+  ],
+  "phases": [
+    "Intake and Forms",
+    "Call 1 and Access",
+    "GHL Setup",
+    "A2P and Compliance",
+    "Meta and Tracking",
+    "Website Build",
+    "CRM Testing",
+    "Call 2 and Training",
+    "Launch Readiness"
+  ],
+  "custom_fields": "see docs/onboarding/CLICKUP_ONBOARDING_STRUCTURE.md; all ids pending_live_inventory",
+  "idempotency_key_pattern": "onboarding_case_id + obligation_type + obligation_instance"
+}
