@@ -61,6 +61,7 @@ export function applyFormSubmission(store, envelope, identity = loadIdentityFiel
       schema_version,
       submission_id,
       payload,
+      expected_version,
       correlation_id,
       idemKey,
       formDef,
@@ -95,8 +96,15 @@ function buildIdempotencyKey(form, formDef, payload, clientId, submissionId) {
 }
 
 function applyForm1(store, ctx) {
-  const { payload, submission_id, schema_version, correlation_id, idemKey, formDef } =
-    ctx;
+  const {
+    payload,
+    submission_id,
+    schema_version,
+    expected_version,
+    correlation_id,
+    idemKey,
+    formDef,
+  } = ctx;
 
   if (!payload.ghl_contact_id) {
     throw new ContractError("invalid_argument", "ghl_contact_id is required on form1");
@@ -105,10 +113,11 @@ function applyForm1(store, ctx) {
     throw new ContractError("invalid_argument", "business_name is required on form1");
   }
 
-  // Idempotent Form1: same ghl_contact_id + existing active case → reuse (do not create second case)
-  // Primary dedupe is submission_id; secondary logical dedupe for duplicate intake uses opportunity or contact+slug intent.
+  // Primary dedupe is submission_id; secondary logical link uses opportunity or client_slug.
+  // Contact ≠ company: ghl_contact_id alone must never create-or-replace the org key.
   let client = null;
   let caseRow = null;
+  let created = false;
 
   if (payload.ghl_opportunity_id) {
     for (const row of store.onboarding_cases.values()) {
@@ -162,10 +171,37 @@ function applyForm1(store, ctx) {
     };
     store.clients.set(client_id, client);
     store.onboarding_cases.set(onboarding_case_id, caseRow);
+    created = true;
   }
 
-  const config = mergeOwnedFields({}, "form1", payload, formDef, ctx.identity);
-  const configVersion = nextConfigVersion(store, caseRow.onboarding_case_id);
+  // Re-intake onto an existing case must merge onto head config and honor expected_version.
+  // Starting from {} would wipe Form2/Form3 enrichment (critical defect).
+  const head = headConfig(store, caseRow.onboarding_case_id);
+  const headVersion = head?.config_version ?? 0;
+  if (!created) {
+    if (expected_version === undefined || expected_version === null) {
+      throw new ContractError(
+        "invalid_argument",
+        "expected_version is required for Form1 re-intake on an existing case"
+      );
+    }
+    if (expected_version !== headVersion) {
+      throw new ContractError(
+        "concurrency_conflict",
+        `expected_version=${expected_version} but head config_version=${headVersion}`,
+        { expected_version, actual_version: headVersion }
+      );
+    }
+  }
+
+  const config = mergeOwnedFields(
+    { ...(head?.config ?? {}) },
+    "form1",
+    payload,
+    formDef,
+    ctx.identity
+  );
+  const configVersion = headVersion + 1;
   appendConfigVersion(store, {
     client_id: client.client_id,
     onboarding_case_id: caseRow.onboarding_case_id,

@@ -119,6 +119,25 @@ export function requestClientTransition(store, req, stateMachine = loadStateMach
     }
   }
 
+  if (rule.requires_production_approval) {
+    const now = Date.now();
+    const approval = [...store.production_approvals.values()].find(
+      (row) =>
+        row.onboarding_case_id === caseRow.onboarding_case_id &&
+        row.environment === "production" &&
+        !row.consumed_at &&
+        new Date(row.expires_at).getTime() > now
+    );
+    if (!approval) {
+      throw new ContractError(
+        "production_approval_required",
+        "awaiting_approval -> production_deploying requires an unexpired unused production approval"
+      );
+    }
+    approval.consumed_at = new Date().toISOString();
+    store.production_approvals.set(approval.production_approval_id, approval);
+  }
+
   const newVersion = caseRow.version + 1;
   const fromStatus = caseRow.status;
   caseRow.status = requested_status;

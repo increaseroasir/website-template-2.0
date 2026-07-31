@@ -84,6 +84,7 @@ describe("Form 1/2/3 merge (mocked, no live GHL/Make)", () => {
       form: "form1",
       schema_version: "1.0.0",
       submission_id: "sub-b",
+      expected_version: a.config_version,
       payload: {
         business_name: "Prairie Tubs",
         owner_name: "Alex",
@@ -97,6 +98,82 @@ describe("Form 1/2/3 merge (mocked, no live GHL/Make)", () => {
     assert.equal(b.client_id, a.client_id);
     assert.equal(b.onboarding_case_id, a.onboarding_case_id);
     assert.equal(store.onboarding_cases.size, 1);
+  });
+
+  it("Form1 re-intake merges onto head and does not wipe Form2/Form3 fields", () => {
+    const f1 = applyFormSubmission(store, {
+      form: "form1",
+      schema_version: "1.0.0",
+      submission_id: "sub-wipe-1",
+      payload: {
+        business_name: "Wipe Spas",
+        owner_name: "Pat",
+        owner_email: "p@example.com",
+        owner_phone: "+15550001212",
+        offer_summary: "Offer",
+        ghl_contact_id: "ghl_c_wipe",
+        ghl_opportunity_id: "ghl_o_wipe",
+      },
+    });
+    const f2 = applyFormSubmission(store, {
+      form: "form2",
+      schema_version: "1.0.0",
+      submission_id: "sub-wipe-2",
+      client_id: f1.client_id,
+      onboarding_case_id: f1.onboarding_case_id,
+      expected_version: f1.config_version,
+      payload: {
+        website_url: "https://wipe.example",
+        domain: "wipe.example",
+        dns_provider: "cloudflare",
+        dns_owner: "agency",
+        address: "9 Main",
+        hours: "9-5",
+        phone_e164: "+15550001313",
+      },
+    });
+    const f3 = applyFormSubmission(store, {
+      form: "form3",
+      schema_version: "1.0.0",
+      submission_id: "sub-wipe-3",
+      client_id: f1.client_id,
+      onboarding_case_id: f1.onboarding_case_id,
+      expected_version: f2.config_version,
+      payload: {
+        ga4_id: "G-WIPE",
+        meta_pixel_id: "111",
+        ghl_location_id: "loc_wipe",
+        access_meta_bm: true,
+        access_ga4: true,
+        access_cloudflare: true,
+      },
+    });
+
+    const reintake = applyFormSubmission(store, {
+      form: "form1",
+      schema_version: "1.0.0",
+      submission_id: "sub-wipe-1b",
+      expected_version: f3.config_version,
+      payload: {
+        business_name: "Wipe Spas LLC",
+        owner_name: "Pat",
+        owner_email: "p@example.com",
+        owner_phone: "+15550001212",
+        offer_summary: "Offer updated",
+        ghl_contact_id: "ghl_c_wipe",
+        ghl_opportunity_id: "ghl_o_wipe",
+      },
+    });
+    assert.equal(reintake.ok, true);
+
+    const head = [...store.config_versions.values()].sort(
+      (a, b) => b.config_version - a.config_version
+    )[0];
+    assert.equal(head.config.domain, "wipe.example");
+    assert.equal(head.config.ga4_id, "G-WIPE");
+    assert.equal(head.config.ghl_location_id, "loc_wipe");
+    assert.equal(head.config.business_name, "Wipe Spas LLC");
+    assert.equal(head.config.offer_summary, "Offer updated");
   });
 
   it("allows out-of-order Form3 before Form2 on the same case", () => {

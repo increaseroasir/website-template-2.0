@@ -15,6 +15,7 @@ export function createMockStore() {
     deferrals: [],
     sync_failures: [],
     approval_readiness: new Map(),
+    production_approvals: new Map(),
     workflow_events: [],
   };
 }

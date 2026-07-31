@@ -225,6 +225,40 @@ CREATE TABLE IF NOT EXISTS approval_readiness (
 );
 
 -- ---------------------------------------------------------------------------
+-- production_approvals — human-bound immutable deployment candidates
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS production_approvals (
+  production_approval_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id uuid NOT NULL REFERENCES clients (client_id),
+  onboarding_case_id uuid NOT NULL REFERENCES onboarding_cases (onboarding_case_id),
+  configuration_version integer NOT NULL,
+  onboarding_schema_version text NOT NULL,
+  template_version text NOT NULL,
+  git_sha text NOT NULL,
+  hydrator_version text NOT NULL,
+  gate_version text NOT NULL,
+  deployment_workflow_version text NOT NULL,
+  artifact_digest text NOT NULL,
+  environment text NOT NULL CHECK (environment = 'production'),
+  approved_by text NOT NULL,
+  approved_at timestamptz NOT NULL,
+  expires_at timestamptz NOT NULL,
+  consumed_at timestamptz,
+  correlation_id text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT production_approvals_expiration_check CHECK (expires_at > approved_at),
+  CONSTRAINT production_approvals_config_positive CHECK (configuration_version >= 1),
+  CONSTRAINT production_approvals_digest_format CHECK (artifact_digest ~ '^sha256:[0-9a-f]{64}$')
+);
+
+CREATE INDEX IF NOT EXISTS production_approvals_open_idx
+  ON production_approvals (onboarding_case_id)
+  WHERE consumed_at IS NULL;
+
+COMMENT ON TABLE production_approvals IS
+  'Human-approved immutable deployment candidate. Required and consumed for awaiting_approval -> production_deploying.';
+
+-- ---------------------------------------------------------------------------
 -- workflow_events — correlation / audit trail
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS workflow_events (
