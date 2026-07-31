@@ -34,3 +34,8 @@ export {
   requestMirrorUpdate,
   reconcileClickUpMirror,
 } from "./clickup-mirror.mjs";
+export {
+  assertApprovedSupabaseTarget,
+  assertMigrationApplyAuthorized,
+  getRegisteredSupabaseTarget,
+} from "./supabase-targets.mjs";

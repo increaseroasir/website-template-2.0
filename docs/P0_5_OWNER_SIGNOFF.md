@@ -37,4 +37,5 @@ Machine-readable incorporation:
 **COMPLETE AND VERIFIED** for P0.5 contract freeze after verification evidence passes.
 
 Make remains **NOT AUTHORIZED** until a separate explicit green light.  
-Migrations remain **COMPLETE BUT NOT APPLIED** until the owner names a safe Supabase development/test target.
+Registered Supabase target: `htl-factory-dev` / `epeddfdifckzzmskhdsz` (`config/supabase-targets.json`).  
+Migrations remain **COMPLETE BUT NOT APPLIED** until a separate apply authorization.

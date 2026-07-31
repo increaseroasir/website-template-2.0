@@ -307,16 +307,21 @@
       "type": "object",
       "required": [
         "contract_version",
+        "project_name",
         "apply_authorized",
         "production_apply_authorized",
-        "dev_test_project_ref"
+        "dev_test_project_ref",
+        "target_environment"
       ],
       "properties": {
         "contract_version": { "const": "0.1.1" },
+        "project_name": { "const": "htl-factory-dev" },
         "apply_authorized": { "const": false },
         "production_apply_authorized": { "const": false },
-        "dev_test_project_ref": { "type": ["string", "null"] },
+        "dev_test_project_ref": { "const": "epeddfdifckzzmskhdsz" },
         "production_project_ref": { "type": ["string", "null"] },
+        "target_environment": { "const": "dev_test" },
+        "approved_at": { "type": "string" },
         "rule": { "type": "string" }
       }
     },
