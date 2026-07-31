@@ -34,13 +34,15 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE BLUEPRINT ALIGNED TO 0.2.0 / 1.1.0 — E2E STILL BLOCKED**
+- P2 Make intake: **INACTIVE CREATE-OR-LINK BLUEPRINT ALIGNED — E2E STILL BLOCKED BY CAPACITY**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`
-  - Blueprint updated while inactive: contract `0.2.0`, onboarding schema `1.1.0`, Form 1 identity + six reported fields in intake/config
+  - Blueprint: contract `0.2.0` / schema `1.1.0` + company create-or-link
+  - Match order: `client_id` → `deployment_key` → `client_slug` (never contact/email/phone/name/domain)
+  - Fail closed: `identity_conflict` / `review_required` do not fall through to create
+  - Outcomes: `created` / `linked` / `replayed` / `identity_conflict` / `review_required`
   - No GHL/ClickUp modules; no activation; no webhook executions; no synthetic DB rows
-  - Synthetic Form 1 E2E **still blocked** on Make capacity (26 active); do not pause live scenarios
-  - GHL wiring still unauthorized; ClickUp still unauthorized
-  - Forms 2/3 not built
+  - Synthetic Form 1 E2E **still blocked** on Make capacity (26 active)
+  - GHL wiring still unauthorized; ClickUp still unauthorized; Forms 2/3 not built
 - P2 overall: **NOT COMPLETE** (Make E2E + GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
@@ -57,11 +59,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Form 1 Make blueprint is aligned to contract `0.2.0` / schema `1.1.0` and remains inactive. Synthetic E2E blocked only on Make active-slot capacity. GHL / ClickUp / P3 remain unauthorized.
+Child tables verified on `htl-factory-dev`. Form 1 create-or-link blueprint is statically aligned to contract `0.2.0` / schema `1.1.0` and remains inactive. Synthetic E2E blocked only on Make active-slot capacity. GHL / ClickUp / P3 remain unauthorized.
 
 Next owner decision:
 
-1. Increase Make capacity by at least one active scenario slot, then authorize synthetic Form 1 E2E on inactive scenario `4852018` (no real client data; no pausing live workflows).
+1. Increase Make capacity by one active scenario slot, then authorize synthetic create, link, replay, and conflict Form 1 E2E cases on scenario `4852018` (no real client data; no pausing live workflows).
 
 ## Usage governance
 

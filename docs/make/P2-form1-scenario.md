@@ -4,48 +4,56 @@
 **Live IDs (verified 2026-07-31):** scenario `4852018` · webhook `2785703` · Supabase connection `4834536`  
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
-**Legalization:** Owner legalized these inactive dev/test objects as the current baseline (2026-07-31).  
 
 **Status (verified):**
 
 | Field | Value |
 |---|---|
 | Scenario active | **false** (inactive) |
-| Blueprint | Wired to contract **0.2.0** / onboarding schema **1.1.0** (inactive upgrade 2026-07-31) |
+| Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
 | Executions / runs | **none observed** |
-| Client data processed | **none** |
-| E2E verification | **blocked** — Make at 26 active scenarios; no capacity increase yet |
+| E2E verification | **blocked** — Make at 26 active scenarios |
 | Activation | **not authorized** until capacity + synthetic E2E authorization |
 | Capacity note | Prefer **raise Make active-slot capacity**; do not pause live lead/SMS/Typeform scenarios |
 
-**GHL forms:** Not authorized in this pass. Later install in an owner-named existing location — see [`P2-ghl-forms-dependency.md`](./P2-ghl-forms-dependency.md).
+## Matching order (company create-or-link)
 
-## Modules (live blueprint shape)
+1. Valid `client_id` (exactly one)  
+2. `deployment_key` (exactly one)  
+3. Normalized `client_slug` (exactly one)  
 
-| Step | Module | Purpose |
-|---|---|---|
-| 1 | `gateway:CustomWebHook` v1 | Hook `2785703` |
-| 2 | `supabase:makeAnApiCall` v1 | Idempotency GET `intake_submissions` (`form=form1`, `submission_id`) via conn `4834536` |
-| 3 | `builtin:BasicRouter` | Dup vs new |
-| 4a | `gateway:WebhookRespond` | Idempotent 200 when prior row exists |
-| 4b | `supabase:createARow` × clients / onboarding_cases / intake_submissions / config_versions | Create path (link path not in this blueprint) |
-| 5 | `supabase:makeAnApiCall` | PATCH `clients.active_onboarding_case_id`; RPC `request_client_transition` → `under_review` |
-| 6 | `gateway:WebhookRespond` | JSON result including `contract_version` / `onboarding_schema_version` |
+**Never auto-link using** `ghl_contact_id`, owner email/phone, `business_name`, `domain`, or fuzzy matching.
 
-Connection type: Make app connection `supabase` (basic). Prefer official Supabase modules so auth stays in Make credentials.
+| Result | Outcome |
+|---|---|
+| Zero high-confidence matches | `created` |
+| Exactly one agreed match | `linked` (reuse immutable `client_id`; new onboarding case) |
+| Conflicting identifiers | `identity_conflict` (no create) |
+| Multiple rows for one identifier | `review_required` (no create) |
+| Same `submission_id` replay | `replayed` (no writes) |
 
-## Versions written by blueprint
+## Modules (live shape)
+
+```text
+webhook → idempotency GET → router(replay | continue)
+continue → lookup client_id → deployment_key → client_slug → opportunity
+         → router(review_required | identity_conflict | link_* | create_new)
+link/create → onboarding case → PATCH active case → intake → config → RPC → respond
+```
+
+Link path does **not** create a client row and does **not** overwrite clients operational fields. Form 1 reported website/domain fields persist into intake/config only (Form 2 operational fields untouched).
+
+## Versions written
 
 | Location | Value |
 |---|---|
 | `onboarding_cases.onboarding_schema_version` | `1.1.0` |
 | `intake_submissions.schema_version` | `1.1.0` |
 | `config_versions.config.contract_version` | `0.2.0` |
-| `config_versions.config.onboarding_schema_version` | `1.1.0` |
-| Response body | includes both version fields |
+| Response | includes `outcome`, contract + schema versions |
 
-## Required webhook JSON (synthetic / fake dealer — E2E not authorized yet)
+## Required webhook JSON (synthetic — E2E not authorized yet)
 
 ```json
 {
@@ -73,55 +81,23 @@ Connection type: Make app connection `supabase` (basic). Prefer official Supabas
 }
 ```
 
-Form 1 identity fields persist into `intake_submissions.payload` and `config_versions.config`.  
-Form 2 operational fields (`website_url`, `dns_provider`, `dns_owner`, etc.) are **not** written here.
-
-## Fail closed
-
-- Missing `submission_id`, `correlation_id`, `business_name`, `client_slug`, `deployment_key`
-- Forbidden aliases (`ghlLocationId`, `location_id`, …)
-- `client_slug` = protected Sun Pool slug
-- Any project_ref other than `epeddfdifckzzmskhdsz`
+Optional for link tests: `client_id` of an existing synthetic client.
 
 ## Idempotency
 
-Key: `intake:form1:{ghl_contact_id}:{submission_id}`  
-Also rely on unique `(form, submission_id)` on `intake_submissions`.
-
-Duplicate → return prior `client_id` / `onboarding_case_id` without second inserts.
-
-## RPC
-
-```text
-POST /rest/v1/rpc/request_client_transition
-{
-  "p_onboarding_case_id": "<uuid>",
-  "p_expected_current_status": "submitted",
-  "p_requested_status": "under_review",
-  "p_expected_version": 1,
-  "p_actor": "make_service",
-  "p_correlation_id": "<from payload>",
-  "p_reason": "form1_intake_auto_review",
-  "p_idempotency_key": "transition:<case_id>:under_review:<correlation_id>"
-}
-```
+Key pattern: `intake:form1:{ghl_contact_id}:{submission_id}`  
+DB unique: `(form, submission_id)` on `intake_submissions`.  
+Duplicate → `outcome=replayed` before any create/link writes.
 
 ## Non-goals / still unauthorized
 
 - Activate scenario `4852018`
-- Send webhook / process submissions (fake or real)
-- Pause any live Make scenario to free a slot
-- GHL sub-account **create** / provisioning
+- Send webhook / process submissions
+- Pause any live Make scenario
+- GHL / ClickUp wiring
 - Forms 2/3 Make scenarios
-- Cloudflare / hydrate / deploy
-- Make data store as status SoT
 
-## Create order
+## Evidence
 
-1. ~~Owner completes Make credential request for Supabase → project `epeddfdifckzzmskhdsz` only.~~
-2. ~~Create dedicated `gateway-webhook` named `HTL Factory Form 1 Intake (dev_test)`.~~
-3. ~~Inactive blueprint wired to that hook + Supabase connection id.~~
-4. ~~Owner legalizes inactive objects as current baseline (docs + EXECUTION_STATE).~~
-5. ~~Align inactive blueprint to contract `0.2.0` / schema `1.1.0`.~~
-6. **Later (separate auth):** increase Make active capacity → activate → synthetic E2E only → verify Supabase → deactivate.
-7. **Later (separate auth):** owner provides target GHL location + current forms → wire submit to webhook `2785703`.
+- `artifacts/agent-runs/integrator/20260731T203300Z-form1-create-or-link-blueprint.md`
+- Before/after blueprint JSON snapshots beside that file
