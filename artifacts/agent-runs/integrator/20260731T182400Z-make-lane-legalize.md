@@ -24,8 +24,9 @@
 5. Updated scenario doc with verified inactive/wired/no-runs language
 6. Updated `docs/EXECUTION_STATE.md` to minimum accurate P2 state (not complete)
 7. Included reconciliation evidence + GHL dependency note (docs only)
-8. Committed and pushed Make branch
+8. Committed and pushed Make branch — SHA `cf5fd6771f67fd89b39344e6045cdde6f4c709d4`
 9. Did **not** activate, run, modify Make objects, publish contracts, or merge to integration
+10. Re-confirmed live scenario `4852018` still `isActive: false` after push
 
 ## Not authorized / not performed
 
