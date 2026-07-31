@@ -19,7 +19,8 @@
       "client_id": null,
       "reason": "Production reference client",
       "requires_break_glass": true,
-      "notes": "Never mutate, hydrate, deploy, migrate, or include in fleet/canary without a named break-glass approval artifact (actor, reason, expiration, scope)."
+      "missing_client_id_is_additional_protection": true,
+      "notes": "Never mutate, hydrate, deploy, migrate, or include in fleet/canary without a named break-glass approval artifact (actor, reason, expiration, scope). Do not invent a client_id UUID. A null client_id is an additional protection condition, not an error that permits mutation. Registering a UUID later does not authorize mutation."
     }
   ]
 }

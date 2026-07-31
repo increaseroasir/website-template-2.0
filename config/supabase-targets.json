@@ -1,0 +1,8 @@
+{
+  "contract_version": "0.1.1",
+  "apply_authorized": false,
+  "production_apply_authorized": false,
+  "dev_test_project_ref": null,
+  "production_project_ref": null,
+  "rule": "No agent may infer or guess a Supabase project. P1 migrations remain COMPLETE BUT NOT APPLIED until the owner explicitly provides or approves a dedicated HTL factory development/test project. Production apply is never authorized by inference."
+}

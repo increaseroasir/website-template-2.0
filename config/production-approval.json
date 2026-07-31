@@ -1,0 +1,52 @@
+{
+  "contract_version": "0.1.1",
+  "default_ttl_hours": 24,
+  "max_failed_attempts": 2,
+  "states": [
+    "pending",
+    "active",
+    "deployment_attempted",
+    "consumed",
+    "expired",
+    "revoked"
+  ],
+  "initial_state": "active",
+  "rules": {
+    "binds_to": [
+      "client_id",
+      "onboarding_case_id",
+      "configuration_version",
+      "onboarding_schema_version",
+      "template_version",
+      "git_sha",
+      "hydrator_version",
+      "gate_version",
+      "deployment_workflow_version",
+      "artifact_digest",
+      "environment"
+    ],
+    "one_environment_per_approval": true,
+    "candidate_mismatch": "reject",
+    "expired_or_revoked": "reject",
+    "deployment_attempt_does_not_consume": true,
+    "successful_production_deploy_consumes": true,
+    "failed_retry_same_candidate_while_active_unexpired": true,
+    "after_max_failures_require_new_approval": true,
+    "rollback_requires_separate_authorization": true
+  },
+  "rollback_authorization": {
+    "required_fields": [
+      "rollback_authorization_id",
+      "client_id",
+      "onboarding_case_id",
+      "from_artifact_digest",
+      "to_artifact_digest",
+      "environment",
+      "approved_by",
+      "approved_at",
+      "expires_at",
+      "reason"
+    ],
+    "distinct_from_production_approval": true
+  }
+}

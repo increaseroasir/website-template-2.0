@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "description": "CI and agents must reject these aliases when the canonical name is required. Prefer fail-closed.",
   "aliases": [
     {

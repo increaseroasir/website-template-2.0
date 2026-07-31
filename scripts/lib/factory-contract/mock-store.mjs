@@ -16,6 +16,9 @@ export function createMockStore() {
     sync_failures: [],
     approval_readiness: new Map(),
     production_approvals: new Map(),
+    rollback_authorizations: new Map(),
+    managed_resources: new Map(),
+    clickup_mirrors: new Map(),
     workflow_events: [],
   };
 }

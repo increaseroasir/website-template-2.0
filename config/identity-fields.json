@@ -1,13 +1,20 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "onboarding_schema_version": "1.0.0",
   "description": "One canonical identity and form-field name set for the HTL factory. Do not invent alternate names.",
+  "classifications": [
+    "public_configuration",
+    "sensitive_identifier",
+    "secret_reference",
+    "credential"
+  ],
   "identity": {
     "client_id": {
       "role": "organization",
       "type": "uuid",
       "immutable_after_create": true,
       "primary_key_for": "clients",
+      "classification": "sensitive_identifier",
       "notes": "Dealer / customer organization. Never substitute ghl_contact_id."
     },
     "onboarding_case_id": {
@@ -15,6 +22,7 @@
       "type": "uuid",
       "immutable_after_create": true,
       "primary_key_for": "onboarding_cases",
+      "classification": "sensitive_identifier",
       "notes": "One onboarding engagement. Match all form merges and transitions to this id."
     },
     "ghl_contact_id": {
@@ -22,49 +30,264 @@
       "type": "string",
       "immutable_after_create": false,
       "is_company_key": false,
+      "classification": "sensitive_identifier",
       "notes": "Person / contact in GHL. One contact may own multiple dealers or cases."
     },
     "ghl_opportunity_id": {
       "role": "external_opportunity",
       "type": "string",
       "immutable_after_create": false,
-      "unique_when_set": true
+      "unique_when_set": true,
+      "classification": "sensitive_identifier"
     },
     "ghl_location_id": {
       "role": "external_location",
       "type": "string",
       "immutable_after_create": false,
       "nullable_until_provision": true,
+      "classification": "sensitive_identifier",
       "required_before": ["approved", "awaiting_approval", "production_deploying", "live"]
     },
     "client_slug": {
       "role": "human_slug",
       "type": "string",
       "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-      "immutable_after": "infrastructure_ready",
+      "system_owned_after_reservation": true,
+      "proposed_from": "business_name",
+      "human_editable_until_slug_locked": true,
+      "lock_trigger": "first_managed_resource_created",
+      "lock_never_unlocks": true,
+      "business_name_change_does_not_rename": true,
+      "silent_rename_forbidden": true,
+      "classification": "public_configuration",
       "maps_to_git_path": "clients/<client_slug>/"
     },
     "deployment_key": {
       "role": "machine_deploy_id",
       "type": "string",
       "immutable_after_create": true,
+      "classification": "sensitive_identifier",
       "notes": "Cloudflare / deploy jobs reference this and/or client_id, never business_name alone."
     },
     "business_name": {
       "role": "display_name",
       "type": "string",
       "editable": true,
-      "immutable_after_create": false
+      "immutable_after_create": false,
+      "classification": "public_configuration"
     },
     "domain": {
       "role": "public_domain",
       "type": "string",
       "editable": true,
       "audited": true,
-      "immutable_after_create": false
+      "immutable_after_create": false,
+      "classification": "public_configuration"
     }
   },
   "upsert_forbidden_as_primary_key": ["email", "owner_email", "phone", "owner_phone", "business_name", "trading_name"],
+  "field_policies": {
+    "business_name": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "owner_name": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "owner_email": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "owner_phone": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "offer_summary": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "market": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form1"],
+      "deferrable": true
+    },
+    "ghl_contact_id": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": false,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "ghl_opportunity_id": {
+      "owner": "form1",
+      "allowed_writers": ["form1", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form1"]
+    },
+    "website_url": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form2"]
+    },
+    "domain": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form2"],
+      "audited": true
+    },
+    "dns_provider": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form2"]
+    },
+    "dns_owner": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form2"]
+    },
+    "logo_url": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form2"],
+      "deferrable": true
+    },
+    "address": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form2"]
+    },
+    "hours": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form2"]
+    },
+    "phone_e164": {
+      "owner": "form2",
+      "allowed_writers": ["form2", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form2"]
+    },
+    "ga4_id": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form3"],
+      "client_scoped": true,
+      "notes": "Often visible in browser code; treat as client-scoped identifier, not a vault secret."
+    },
+    "meta_pixel_id": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form3"],
+      "client_scoped": true,
+      "notes": "Often visible in browser code; treat as client-scoped identifier, not a vault secret."
+    },
+    "ghl_location_id": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override", "make_service"],
+      "clearable": true,
+      "classification": "sensitive_identifier",
+      "storage": "config",
+      "precedence": ["human_override", "form3", "make_service"],
+      "client_scoped": true
+    },
+    "access_meta_bm": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form3"]
+    },
+    "access_ga4": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form3"]
+    },
+    "access_cloudflare": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "public_configuration",
+      "storage": "config",
+      "precedence": ["human_override", "form3"]
+    },
+    "capi_token_ref": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "secret_reference",
+      "storage": "secret_reference",
+      "precedence": ["human_override", "form3"]
+    },
+    "ghl_api_token_ref": {
+      "owner": "form3",
+      "allowed_writers": ["form3", "human_override"],
+      "clearable": true,
+      "classification": "secret_reference",
+      "storage": "secret_reference",
+      "precedence": ["human_override", "form3"]
+    }
+  },
   "forms": {
     "form1": {
       "purpose": "intake_create_or_link",
@@ -106,21 +329,36 @@
         "ghl_location_id": { "required": true, "owner": "form3", "required_before_approve": true },
         "access_meta_bm": { "required": true, "owner": "form3", "type": "boolean" },
         "access_ga4": { "required": true, "owner": "form3", "type": "boolean" },
-        "access_cloudflare": { "required": true, "owner": "form3", "type": "boolean" }
+        "access_cloudflare": { "required": true, "owner": "form3", "type": "boolean" },
+        "capi_token_ref": { "required": false, "owner": "form3" },
+        "ghl_api_token_ref": { "required": false, "owner": "form3" }
       },
-      "forbidden_in_payload": ["capi_token", "ghl_api_token", "webhook_secret", "admin_password"]
+      "forbidden_in_payload": ["capi_token", "ghl_api_token", "webhook_secret", "admin_password", "password", "api_key", "private_token", "recovery_codes"]
     }
   },
   "merge_rules": {
-    "strategy": "field_owner_with_optimistic_concurrency",
+    "strategy": "per_field_owner_with_optimistic_concurrency",
     "duplicate_form1": "idempotent_same_case",
     "out_of_order_form2_form3": "allowed",
     "version_field": "config_version",
     "expected_version_required": true,
     "stale_write_behavior": "reject_concurrency_conflict",
     "null_does_not_clear": true,
+    "forms_may_never_clear": true,
+    "explicit_clear_required": true,
+    "explicit_clear_required_attrs": ["field_name", "actor", "reason", "timestamp", "expected_version"],
+    "ownership_scoped": true,
     "owner_precedence": ["form3", "form2", "form1"],
-    "notes": "A later form may fill nulls owned by an earlier form. A form must not overwrite a field owned by a higher-precedence form unless the higher owner has not set it. Never overwrite a newer config_version."
+    "human_override_outranks_forms": true,
+    "human_override_requires_expected_version": true,
+    "notes": "Precedence applies only inside each field's ownership contract. A later form cannot overwrite a field it does not own. Null/missing values do not clear. Explicit clear is a dedicated versioned operation."
+  },
+  "slug_lock": {
+    "trigger": "first_managed_resource_reaches_created",
+    "fields": ["slug_locked", "slug_locked_at", "slug_locked_by_resource_id", "slug_locked_reason"],
+    "never_unlocks_on_status_transition": true,
+    "never_unlocks_on_provision_failure": true,
+    "never_unlocks_on_rollback": true
   },
   "deferral_required_attributes": [
     "field_name",

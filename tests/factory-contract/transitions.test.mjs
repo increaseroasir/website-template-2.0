@@ -4,6 +4,7 @@ import {
   createMockStore,
   newId,
   requestClientTransition,
+  createProductionApproval,
   ContractError,
 } from "../../scripts/lib/factory-contract/index.mjs";
 
@@ -186,9 +187,8 @@ describe("request_client_transition (mocked RPC)", () => {
         err instanceof ContractError && err.code === "production_approval_required"
     );
 
-    const approvalId = newId();
-    store.production_approvals.set(approvalId, {
-      production_approval_id: approvalId,
+    const digest = `sha256:${"ab".repeat(32)}`;
+    const approval = createProductionApproval(store, {
       client_id: clientId,
       onboarding_case_id: caseId,
       configuration_version: 3,
@@ -198,12 +198,8 @@ describe("request_client_transition (mocked RPC)", () => {
       hydrator_version: "1.0.0",
       gate_version: "1.0.0",
       deployment_workflow_version: "1.0.0",
-      artifact_digest: `sha256:${"ab".repeat(32)}`,
+      artifact_digest: digest,
       environment: "production",
-      approved_by: "owner@example.com",
-      approved_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 86400000).toISOString(),
-      consumed_at: null,
     });
 
     const ok = requestClientTransition(store, {
@@ -213,8 +209,26 @@ describe("request_client_transition (mocked RPC)", () => {
       expected_version: 10,
       actor: "approver",
       correlation_id: "corr-prod-ok",
+      production_approval_id: approval.production_approval_id,
+      artifact_digest: digest,
+      environment: "production",
     });
     assert.equal(ok.status, "production_deploying");
-    assert.ok(store.production_approvals.get(approvalId).consumed_at);
+    const row = store.production_approvals.get(approval.production_approval_id);
+    assert.equal(row.status, "deployment_attempted");
+    assert.equal(row.consumed_at, null);
+
+    const live = requestClientTransition(store, {
+      onboarding_case_id: caseId,
+      expected_current_status: "production_deploying",
+      requested_status: "live",
+      expected_version: 11,
+      actor: "system",
+      correlation_id: "corr-prod-live",
+      production_approval_id: approval.production_approval_id,
+      artifact_digest: digest,
+    });
+    assert.equal(live.status, "live");
+    assert.ok(store.production_approvals.get(approval.production_approval_id).consumed_at);
   });
 });
