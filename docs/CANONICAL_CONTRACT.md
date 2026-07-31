@@ -25,7 +25,7 @@ CI and agents MUST reject forbidden aliases (e.g. `ghlLocationId`, `location_id`
 
 ## Locked owner decisions (P0.5)
 
-1. **Migration target** — Approved HTL factory development/test project is **`htl-factory-dev`** (`epeddfdifckzzmskhdsz`) only. No agent may infer or substitute another project. `apply_authorized` remains **false** until a separate owner apply authorization. Production apply is never authorized by inference (`config/supabase-targets.json`).
+1. **Migration target** — Approved HTL factory development/test project is **`htl-factory-dev`** (`epeddfdifckzzmskhdsz`) only. No agent may infer or substitute another project. Dev/test migrations were applied 2026-07-31 under one-time owner authorization; `apply_authorized` remains **false** for further apply without a new owner authorization. Production apply is never authorized by inference (`config/supabase-targets.json`).
 2. **Production approval TTL** — Default **24 hours**. Binds to one exact deployment candidate + `artifact_digest` + one environment. Attempt does not consume; success consumes; max **2** failed retries; rollback needs separate authorization (`config/production-approval.json` + `scripts/lib/factory-contract/production-approval.mjs`).
 3. **Client slug** — System-owned after reservation; proposed from business name; human-editable until explicit `slug_locked` when first managed resource reaches `created`. Never unlocks on failure/rollback/status change. Business-name changes do not rename.
 4. **Sun Pool** — Do not invent a UUID. Protect by slug `sun-pool-spa`. Missing UUID increases protection. Fail closed without break-glass.
@@ -270,17 +270,18 @@ Cloud agents: **zero** production credentials for P0 / P0.5.
 
 ## Migration status
 
-Supabase SQL under `supabase/migrations/` is **COMPLETE BUT NOT APPLIED**.
+Supabase SQL under `supabase/migrations/` is **COMPLETE AND VERIFIED** on `htl-factory-dev` (`epeddfdifckzzmskhdsz`) as of 2026-07-31.
 
-Registered target (identity only — not apply authorization):
+Evidence: `artifacts/agent-runs/integrator/20260731T081500Z-dev-test-migration-apply.md`
+
+Registered target:
 
 | Field | Value |
 |---|---|
 | `project_name` | `htl-factory-dev` |
 | `dev_test_project_ref` | `epeddfdifckzzmskhdsz` |
 | `target_environment` | `dev_test` |
-| `apply_authorized` | `false` |
+| `apply_authorized` | `false` (further apply requires new owner authorization) |
 | `production_apply_authorized` | `false` |
 
-Do not apply migrations until the owner separately authorizes apply against this exact project.  
 Local/CI verification uses mocked contract tests in `tests/factory-contract/`.

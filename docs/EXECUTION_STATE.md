@@ -11,7 +11,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 | Clean baseline branch | `premium-redesign` |
 | Baseline tag | `htl-factory-pre-hardening-2026-07-30` |
 | Integration branch | `factory/p0-safety-lock` |
-| Integration tip | `e9ec1cf` (merge of PR #7) |
+| Integration tip | `71fcdfb` (dev/test migration apply verified) |
 | `required_base_sha` | `309ac92d226b14cafd0bee6130606c3fcf1b5195` (post-brain tip; must be ancestor of agent PRs) |
 | Baseline tag SHA | `42ba6eda625afbcea9e0f10da070d3c309e763ad` |
 | Sun Pool tree OID | `f3da831b2c31d37693f6022340b2d2f936bb4f72` |
@@ -24,7 +24,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 - P0 safety and control plane: COMPLETE AND VERIFIED
 - P0.5 canonical contract freeze: COMPLETE AND VERIFIED
 - P1 Supabase target registration: COMPLETE AND VERIFIED
-- P1 Supabase migrations/RPC: COMPLETE BUT NOT APPLIED
+- P1 Supabase migrations/RPC: COMPLETE AND VERIFIED
 - P2 Make intake: NOT STARTED / NOT AUTHORIZED
 - P3 provisioning: NOT STARTED
 - P4 hydration: NOT STARTED
@@ -42,23 +42,26 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 - Registered Supabase project name: htl-factory-dev
 - Registered Supabase project ref: epeddfdifckzzmskhdsz
 - Registered Supabase environment: dev_test
-- Migration apply authorized: no
+- Migration apply authorized (config gate): no — further apply requires new owner authorization
+- Migration apply completed: yes (dev_test `epeddfdifckzzmskhdsz` only; 2026-07-31)
 - Production migration apply authorized: no
+- Migration apply evidence: `artifacts/agent-runs/integrator/20260731T081500Z-dev-test-migration-apply.md`
 - Sun Pool tree OID: f3da831b2c31d37693f6022340b2d2f936bb4f72
 - Sun Pool mutation authorized: no
 
 ## Active Gate
 
-No Make implementation and no migration application are authorized.
+Make implementation remains **NOT AUTHORIZED**.
 
-Registered target identity is locked to `htl-factory-dev` / `epeddfdifckzzmskhdsz` only.
+Registered target identity remains locked to `htl-factory-dev` / `epeddfdifckzzmskhdsz` only.
 No agent may infer or substitute another project.
+Production migration apply remains unauthorized.
 
-Next owner decisions:
+Dev/test migrations were applied and verified on 2026-07-31 (evidence run `20260731T081500Z-dev-test-migration-apply`).
 
-1. Separately authorize applying the authored migrations to `htl-factory-dev` (`epeddfdifckzzmskhdsz`) only.
-2. Verify the applied schema and RPC behavior against that exact project.
-3. Only then decide whether to authorize Make intake implementation.
+Next owner decision:
+
+1. Decide whether to authorize Make intake implementation (P2) against the verified `htl-factory-dev` schema only.
 
 ## Usage governance
 

@@ -7,5 +7,5 @@
   "apply_authorized": false,
   "production_apply_authorized": false,
   "approved_at": "2026-07-31",
-  "rule": "Owner-approved HTL Factory development/test Supabase project is htl-factory-dev (epeddfdifckzzmskhdsz) only. No agent may infer, guess, or substitute another project. Migration apply remains unauthorized until a separate owner authorization. Production apply is never authorized by inference."
+  "rule": "Owner-approved HTL Factory development/test Supabase project is htl-factory-dev (epeddfdifckzzmskhdsz) only. No agent may infer, guess, or substitute another project. Migration apply remains unauthorized in config until a separate owner authorization (one-time apply completed 2026-07-31; further apply requires new authorization). Production apply is never authorized by inference."
 }
