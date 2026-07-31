@@ -1,0 +1,79 @@
+{
+  "contract_version": "0.1.0",
+  "description": "CI and agents must reject these aliases when the canonical name is required. Prefer fail-closed.",
+  "aliases": [
+    {
+      "canonical": "ghl_location_id",
+      "forbidden": [
+        "ghlLocationId",
+        "ghl_location",
+        "location_id",
+        "GHL_LOCATION",
+        "ghlSubAccountId",
+        "ghl_sub_account_id",
+        "subAccountId",
+        "sub_account_id"
+      ],
+      "notes": "Cloudflare secret env name GHL_LOCATION_ID is a runtime secret name, not a contract field alias. Contract/API/JSON must use ghl_location_id."
+    },
+    {
+      "canonical": "ghl_contact_id",
+      "forbidden": ["ghlContactId", "contact_id", "GHL_CONTACT", "contactId"]
+    },
+    {
+      "canonical": "ghl_opportunity_id",
+      "forbidden": ["ghlOpportunityId", "opportunity_id", "GHL_OPPORTUNITY", "opportunityId"]
+    },
+    {
+      "canonical": "client_id",
+      "forbidden": ["clientId", "dealer_id", "org_id", "organizationId", "customer_id"]
+    },
+    {
+      "canonical": "onboarding_case_id",
+      "forbidden": ["onboardingCaseId", "case_id", "engagement_id", "engagementId", "onboardingId"]
+    },
+    {
+      "canonical": "client_slug",
+      "forbidden": ["clientSlug", "dealer_slug", "site_slug"]
+    },
+    {
+      "canonical": "deployment_key",
+      "forbidden": ["deploymentKey", "deploy_key", "deployKey"]
+    },
+    {
+      "canonical": "business_name",
+      "forbidden": ["businessName", "company_name", "companyName", "tradingName"]
+    },
+    {
+      "canonical": "domain",
+      "forbidden": ["hostname", "primary_domain", "primaryDomain", "website_domain"]
+    },
+    {
+      "canonical": "infrastructure_ready",
+      "forbidden": ["infra_ready", "infraReady", "infrastructureReady"]
+    },
+    {
+      "canonical": "configuration_version",
+      "forbidden": ["configVersion", "configurationVersion"]
+    },
+    {
+      "canonical": "config_version",
+      "forbidden": ["configVersion", "configurationVersion"],
+      "notes": "Row/version column on config_versions. Deployment candidate uses configuration_version for the bound integer."
+    },
+    {
+      "canonical": "onboarding_schema_version",
+      "forbidden": ["onboardingSchemaVersion", "schemaVersion"],
+      "notes": "Payload field schema_version is the form envelope version and is allowed. Do not use schemaVersion camelCase for the factory pin; use onboarding_schema_version."
+    }
+  ],
+  "ci_policy": {
+    "scan_paths": [
+      "config/",
+      "supabase/migrations/"
+    ],
+    "on_match": "fail",
+    "allow_in_forbidden_aliases_file": true,
+    "notes": "Scans contract JSON + SQL for alternate field names. Implementation locals in JS may use camelCase; persisted/API keys must be snake_case canonical names."
+  }
+}

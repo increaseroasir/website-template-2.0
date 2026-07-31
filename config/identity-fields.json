@@ -1,0 +1,150 @@
+{
+  "contract_version": "0.1.0",
+  "onboarding_schema_version": "1.0.0",
+  "description": "One canonical identity and form-field name set for the HTL factory. Do not invent alternate names.",
+  "identity": {
+    "client_id": {
+      "role": "organization",
+      "type": "uuid",
+      "immutable_after_create": true,
+      "primary_key_for": "clients",
+      "notes": "Dealer / customer organization. Never substitute ghl_contact_id."
+    },
+    "onboarding_case_id": {
+      "role": "engagement",
+      "type": "uuid",
+      "immutable_after_create": true,
+      "primary_key_for": "onboarding_cases",
+      "notes": "One onboarding engagement. Match all form merges and transitions to this id."
+    },
+    "ghl_contact_id": {
+      "role": "external_person",
+      "type": "string",
+      "immutable_after_create": false,
+      "is_company_key": false,
+      "notes": "Person / contact in GHL. One contact may own multiple dealers or cases."
+    },
+    "ghl_opportunity_id": {
+      "role": "external_opportunity",
+      "type": "string",
+      "immutable_after_create": false,
+      "unique_when_set": true
+    },
+    "ghl_location_id": {
+      "role": "external_location",
+      "type": "string",
+      "immutable_after_create": false,
+      "nullable_until_provision": true,
+      "required_before": ["approved", "awaiting_approval", "production_deploying", "live"]
+    },
+    "client_slug": {
+      "role": "human_slug",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "immutable_after": "infrastructure_ready",
+      "maps_to_git_path": "clients/<client_slug>/"
+    },
+    "deployment_key": {
+      "role": "machine_deploy_id",
+      "type": "string",
+      "immutable_after_create": true,
+      "notes": "Cloudflare / deploy jobs reference this and/or client_id, never business_name alone."
+    },
+    "business_name": {
+      "role": "display_name",
+      "type": "string",
+      "editable": true,
+      "immutable_after_create": false
+    },
+    "domain": {
+      "role": "public_domain",
+      "type": "string",
+      "editable": true,
+      "audited": true,
+      "immutable_after_create": false
+    }
+  },
+  "upsert_forbidden_as_primary_key": ["email", "owner_email", "phone", "owner_phone", "business_name", "trading_name"],
+  "forms": {
+    "form1": {
+      "purpose": "intake_create_or_link",
+      "idempotency_key_pattern": "intake:form1:{ghl_contact_id}:{submission_id}",
+      "creates": ["client_id", "onboarding_case_id"],
+      "fields": {
+        "business_name": { "required": true, "owner": "form1", "maps_from": ["trading_name"] },
+        "owner_name": { "required": true, "owner": "form1" },
+        "owner_email": { "required": true, "owner": "form1" },
+        "owner_phone": { "required": true, "owner": "form1" },
+        "offer_summary": { "required": true, "owner": "form1" },
+        "market": { "required": false, "deferrable": true, "owner": "form1" },
+        "ghl_contact_id": { "required": true, "owner": "form1" },
+        "ghl_opportunity_id": { "required": false, "owner": "form1" }
+      }
+    },
+    "form2": {
+      "purpose": "enrichment_merge",
+      "idempotency_key_pattern": "intake:form2:{client_id}:{submission_id}",
+      "requires": ["onboarding_case_id"],
+      "fields": {
+        "website_url": { "required": true, "owner": "form2" },
+        "domain": { "required": true, "owner": "form2", "audited": true },
+        "dns_provider": { "required": true, "owner": "form2" },
+        "dns_owner": { "required": true, "owner": "form2" },
+        "logo_url": { "required": false, "deferrable": true, "owner": "form2" },
+        "address": { "required": true, "owner": "form2" },
+        "hours": { "required": true, "owner": "form2" },
+        "phone_e164": { "required": true, "owner": "form2" }
+      }
+    },
+    "form3": {
+      "purpose": "enrichment_merge",
+      "idempotency_key_pattern": "intake:form3:{client_id}:{submission_id}",
+      "requires": ["onboarding_case_id"],
+      "fields": {
+        "ga4_id": { "required": true, "owner": "form3", "required_before_approve": true },
+        "meta_pixel_id": { "required": true, "owner": "form3", "required_before_approve": true },
+        "ghl_location_id": { "required": true, "owner": "form3", "required_before_approve": true },
+        "access_meta_bm": { "required": true, "owner": "form3", "type": "boolean" },
+        "access_ga4": { "required": true, "owner": "form3", "type": "boolean" },
+        "access_cloudflare": { "required": true, "owner": "form3", "type": "boolean" }
+      },
+      "forbidden_in_payload": ["capi_token", "ghl_api_token", "webhook_secret", "admin_password"]
+    }
+  },
+  "merge_rules": {
+    "strategy": "field_owner_with_optimistic_concurrency",
+    "duplicate_form1": "idempotent_same_case",
+    "out_of_order_form2_form3": "allowed",
+    "version_field": "config_version",
+    "expected_version_required": true,
+    "stale_write_behavior": "reject_concurrency_conflict",
+    "null_does_not_clear": true,
+    "owner_precedence": ["form3", "form2", "form1"],
+    "notes": "A later form may fill nulls owned by an earlier form. A form must not overwrite a field owned by a higher-precedence form unless the higher owner has not set it. Never overwrite a newer config_version."
+  },
+  "deferral_required_attributes": [
+    "field_name",
+    "reason",
+    "approved_by",
+    "approved_at",
+    "expires_at",
+    "launch_consequence",
+    "production_allowed",
+    "required_before_launch"
+  ],
+  "approval_required_fields": [
+    "business_name",
+    "owner_name",
+    "owner_email",
+    "owner_phone",
+    "offer_summary",
+    "domain",
+    "dns_owner",
+    "address",
+    "hours",
+    "phone_e164",
+    "ga4_id",
+    "meta_pixel_id",
+    "ghl_location_id"
+  ]
+}

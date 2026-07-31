@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "brand:guard": "node scripts/check-template-guard.mjs",
+    "test:factory-contract": "node --test tests/factory-contract/**/*.test.mjs",
+    "test": "npm run test:factory-contract",
     "client:new": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
     "client:validate": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
     "client:gate": "node manus-skills/dealer-site-launch/scripts/gate.mjs",
