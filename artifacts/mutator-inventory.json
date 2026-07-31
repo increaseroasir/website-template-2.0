@@ -1,9 +1,14 @@
 {
-  "schema_version": "1.0.0",
-  "generated_by": "agent-c",
-  "generated_at": "2026-07-31T02:19:42Z",
-  "mapped_at_sha": "c63b3dd597c83802f1386fa82fcdd80834c9b31b",
-  "purpose": "Inventory of scripts and package scripts that mutate filesystem state or contact external systems. Shared file — refine, do not fork a second inventory.",
+  "schema_version": "1.1.0",
+  "generated_by": "agent-c+agent-a-reconcile",
+  "generated_at": "2026-07-31T02:28:00Z",
+  "mapped_at_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
+  "reconciled_from": {
+    "agent_a": "protection-wiring mutators[] (post PR #4 / factory/p0-safety-lock tip 5601906)",
+    "agent_c": "package_scripts + filesystem_mutators + secret_surface classification (PR #2)",
+    "note": "Single shared inventory — keep both intents; do not fork a second file."
+  },
+  "purpose": "Inventory of scripts and package scripts that mutate filesystem state, contact external systems, or require client-protection guard wiring.",
   "legend": {
     "read_only_check": "No intentional FS mutation of client/template product files; exit code based",
     "local_fs_mutator": "Writes under repo or temp dirs; no intended prod remote",
@@ -19,10 +24,25 @@
       "safe_for_p0_agents": true
     },
     {
+      "name": "test",
+      "cmd": "node --test tests/safety/*.test.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true,
+      "notes": "Added by Agent A safety lock; no network, no client mutation"
+    },
+    {
+      "name": "test:safety",
+      "cmd": "node scripts/check-safety.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true,
+      "notes": "CI entrypoint for protection config, OID, hooks presence"
+    },
+    {
       "name": "client:new",
       "cmd": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
       "class": "local_fs_mutator",
       "safe_for_p0_agents": false,
+      "guard_wired": true,
       "notes": "Writes clients/<slug>/ on --init; never target sun-pool-spa"
     },
     {
@@ -44,6 +64,7 @@
       "cmd": "node scripts/build-config.mjs",
       "class": "local_fs_mutator",
       "safe_for_p0_agents": false,
+      "guard_wired": false,
       "notes": "Rewrites files in cwd — only safe inside clients/<slug>/dist/"
     },
     {
@@ -124,14 +145,18 @@
       "cmd": "wrangler pages deploy … --branch main",
       "class": "remote_mutator",
       "safe_for_p0_agents": false,
-      "cloud_setup_forbidden": true
+      "cloud_setup_forbidden": true,
+      "guard_wired": false,
+      "notes": "Blocked by fail-closed beforeShellExecution hook + agent policy"
     },
     {
       "name": "preview:deploy",
       "cmd": "wrangler pages deploy … --branch preview",
       "class": "remote_mutator",
       "safe_for_p0_agents": false,
-      "cloud_setup_forbidden": true
+      "cloud_setup_forbidden": true,
+      "guard_wired": false,
+      "notes": "Blocked by fail-closed beforeShellExecution hook"
     },
     {
       "name": "leads:reimport-missed",
@@ -143,7 +168,8 @@
       "name": "images:optimize",
       "cmd": "node scripts/optimize-images.mjs",
       "class": "local_fs_mutator",
-      "safe_for_p0_agents": false
+      "safe_for_p0_agents": false,
+      "guard_wired": true
     },
     {
       "name": "lh:*|psi:*|ga4:funnel",
@@ -152,23 +178,140 @@
       "safe_for_p0_agents": false
     }
   ],
+  "mutators": [
+    {
+      "path": "manus-skills/dealer-site-intake/scripts/new-client.mjs",
+      "npm_script": "client:new",
+      "mutation_modes": ["--init"],
+      "read_only_modes": ["--validate"],
+      "client_identity": "CLI name after --init/--validate",
+      "guard_wired": true,
+      "guard_operation": "init",
+      "risk": "Creates/overwrites clients/<slug>/{intake.json,client.config.js,WIRING.md,tokens.env}"
+    },
+    {
+      "path": "manus-skills/dealer-site-intake/scripts/map-intake.mjs",
+      "npm_script": null,
+      "mutation_modes": ["--write-wiring"],
+      "read_only_modes": ["--sheet/--brief without --write-wiring"],
+      "client_identity": "--client <slug>",
+      "guard_wired": true,
+      "guard_operation": "write-wiring",
+      "risk": "Writes clients/<slug>/WIRING.md"
+    },
+    {
+      "path": "scripts/dev-preview.sh",
+      "npm_script": null,
+      "mutation_modes": ["any invocation (hydrates into /tmp)"],
+      "read_only_modes": [],
+      "client_identity": "first arg (defaults to sun-pool-spa)",
+      "guard_wired": true,
+      "guard_operation": "preview-hydrate",
+      "risk": "Hydrates client tokens into /tmp preview; default client is protected sun-pool-spa; may fetch prod assets"
+    },
+    {
+      "path": "scripts/optimize-images.mjs",
+      "npm_script": "images:optimize",
+      "mutation_modes": ["default write / --replace"],
+      "read_only_modes": ["--dry-run (still guarded if path under clients/<slug>)"],
+      "client_identity": "path segment /clients/<slug>/",
+      "guard_wired": true,
+      "guard_operation": "images-optimize",
+      "risk": "Rewrites image binaries under provided paths"
+    },
+    {
+      "path": "scripts/build-config.mjs",
+      "npm_script": "build:config",
+      "mutation_modes": ["rewrites HTML/CSS/JS in CWD"],
+      "read_only_modes": [],
+      "client_identity": "implicit via CWD client.config.js (no slug arg)",
+      "guard_wired": false,
+      "guard_deferred_reason": "No client slug argument; intended to run inside an already-gated clients/<slug>/dist after hydrate. Callers must gate first.",
+      "risk": "Token hydration writes across working tree"
+    },
+    {
+      "path": "manus-skills/dealer-site-launch/scripts/indexnow.mjs",
+      "npm_script": null,
+      "mutation_modes": ["--init writes key into dist/"],
+      "read_only_modes": ["--submit --dry-run"],
+      "client_identity": "implicit via --dist path",
+      "guard_wired": false,
+      "guard_deferred_reason": "Dist-scoped; no stable slug parser yet. Deploy/submit still blocked by hooks/CI agent policy.",
+      "risk": "Writes IndexNow key file into dist; --submit contacts IndexNow API"
+    },
+    {
+      "path": "manus-skills/dealer-site-launch/scripts/gate.mjs",
+      "npm_script": "client:gate",
+      "mutation_modes": [],
+      "read_only_modes": ["--env staging|prod --dist"],
+      "client_identity": "implicit via --dist",
+      "guard_wired": false,
+      "guard_deferred_reason": "Read-only gate; no filesystem mutation of clients/<slug> source",
+      "risk": "None for source tree; must not be confused with deploy authorization"
+    },
+    {
+      "path": "manus-skills/dealer-site-hydrate/SKILL.md",
+      "npm_script": null,
+      "mutation_modes": ["documented shell hydrate into clients/<name>/dist"],
+      "read_only_modes": [],
+      "client_identity": "<name> in skill steps",
+      "guard_wired": false,
+      "guard_deferred_reason": "No hydrate-client.mjs yet (P2). Hooks block sun-pool-spa shell hydrate paths.",
+      "risk": "Agent-followed shell can mkdir/rsync/build under clients/<slug>/dist"
+    },
+    {
+      "path": "package.json#deploy",
+      "npm_script": "deploy",
+      "mutation_modes": ["wrangler pages deploy --branch main"],
+      "read_only_modes": [],
+      "client_identity": "project token {{CLOUDFLARE_PAGES_PROJECT}}",
+      "guard_wired": false,
+      "guard_deferred_reason": "Blocked by fail-closed beforeShellExecution hook + agent policy; not a per-slug mutator library call site",
+      "risk": "Production Pages deploy"
+    },
+    {
+      "path": "package.json#preview:deploy",
+      "npm_script": "preview:deploy",
+      "mutation_modes": ["wrangler pages deploy --branch preview"],
+      "read_only_modes": [],
+      "client_identity": "project token {{CLOUDFLARE_PAGES_PROJECT}}",
+      "guard_wired": false,
+      "guard_deferred_reason": "Blocked by fail-closed beforeShellExecution hook",
+      "risk": "Preview Pages deploy"
+    },
+    {
+      "path": "skills/client-site-build/scripts/*.mjs",
+      "npm_script": null,
+      "mutation_modes": ["legacy duplicates of intake/launch scripts"],
+      "read_only_modes": [],
+      "client_identity": "varies",
+      "guard_wired": false,
+      "guard_deferred_reason": "Legacy skills/ is not SoT; manus-skills/ is authoritative. Do not dual-wire this sprint.",
+      "risk": "Stale forks could bypass manus-skills guards if invoked directly"
+    }
+  ],
   "filesystem_mutators": [
     {
       "path": "scripts/build-config.mjs",
       "writes": "HTML/JS/CSS/toml in cwd via token replace + @include expand",
       "intended_cwd": "clients/<slug>/dist/",
-      "blast_radius": "cwd only — catastrophic if run at repo root on shared templates"
+      "blast_radius": "cwd only — catastrophic if run at repo root on shared templates",
+      "guard_wired": false
     },
     {
       "path": "scripts/dev-preview.sh",
       "writes": "temp hydrated preview dir; sources tokens.env via bash",
       "blast_radius": "local temp + client tokens.env read",
-      "gap": "shell-source pattern (F-004); supersede with hydrate-client.mjs in P4"
+      "gap": "shell-source pattern (F-004); supersede with hydrate-client.mjs in P4",
+      "guard_wired": true,
+      "guard_operation": "preview-hydrate"
     },
     {
       "path": "scripts/optimize-images.mjs",
       "writes": "image binaries / sidecars",
-      "blast_radius": "paths passed by operator"
+      "blast_radius": "paths passed by operator",
+      "guard_wired": true,
+      "guard_operation": "images-optimize"
     },
     {
       "path": "scripts/reinline-css.mjs",
@@ -179,23 +322,29 @@
       "path": "manus-skills/dealer-site-intake/scripts/new-client.mjs",
       "writes": "clients/<name>/{intake.json,client.config.js,tokens.env,WIRING.md}",
       "blast_radius": "one client directory; --force overwrites",
-      "protected_client_rule": "must refuse sun-pool-spa without break-glass (enforce in P0 Agent A)"
+      "protected_client_rule": "must refuse sun-pool-spa without break-glass (enforced by Agent A client-protection.mjs)",
+      "guard_wired": true,
+      "guard_operation": "init"
     },
     {
       "path": "manus-skills/dealer-site-intake/scripts/map-intake.mjs",
       "writes": "client wiring / mapped fields under clients/<name>/",
-      "blast_radius": "one client directory"
+      "blast_radius": "one client directory",
+      "guard_wired": true,
+      "guard_operation": "write-wiring"
     },
     {
       "path": "manus-skills/dealer-site-hydrate/SKILL.md",
       "writes": "clients/<name>/dist/ via rsync + build-config (recipe, not a CLI yet)",
       "blast_radius": "one client dist/; shell-sources tokens.env",
-      "gap": "hydrate-client.mjs promised in TEMPLATE_DECISIONS but missing"
+      "gap": "hydrate-client.mjs promised in TEMPLATE_DECISIONS but missing",
+      "guard_wired": false
     },
     {
       "path": "manus-skills/dealer-site-launch/scripts/indexnow.mjs",
       "writes": "may notify IndexNow; network side effect",
-      "blast_radius": "search engines for submitted URLs"
+      "blast_radius": "search engines for submitted URLs",
+      "guard_wired": false
     }
   ],
   "secret_surface_mutators": [
@@ -229,5 +378,10 @@
     "wrangler d1 execute --remote",
     "ghl:fields:create",
     "Any mutation under clients/sun-pool-spa/"
+  ],
+  "notes": [
+    "Guard wiring uses scripts/lib/client-protection.mjs assertClientMutationAllowed where safe.",
+    "Legacy skills/ copies are not SoT (manus-skills/ is). Do not run mutating commands during inventory.",
+    "hydrate-client.mjs is not present yet; hydrate today is shell steps in manus-skills/dealer-site-hydrate/SKILL.md."
   ]
 }

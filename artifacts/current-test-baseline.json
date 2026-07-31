@@ -1,22 +1,17 @@
 {
-  "schema_version": "1.0.0",
-  "generated_by": "agent-c",
-  "generated_at": "2026-07-31T02:19:42Z",
-  "mapped_at_sha": "c63b3dd597c83802f1386fa82fcdd80834c9b31b",
+  "schema_version": "1.1.0",
+  "generated_by": "agent-c-reconcile",
+  "generated_at": "2026-07-31T02:28:00Z",
+  "mapped_at_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
   "required_base_sha": "309ac92d226b14cafd0bee6130606c3fcf1b5195",
   "required_base_sha_ancestor": "PASS",
+  "safety_base_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
   "package_manager": "npm",
   "lockfile": "package-lock.json",
   "template_version": "1.1.0",
-  "unit_test_framework": null,
-  "notes": "No lint/test/typecheck scripts exist yet (EXECUTION_STATE R0). Baseline is the set of local npm checks that are safe and were exercised or classified at P0 start.",
+  "unit_test_framework": "node:test",
+  "notes": "Post-safety baseline after PR #4 (Agent A protection + Agent D hook fixes) landed on factory/p0-safety-lock. npm test / test:safety and .github/workflows/safety.yml now exist. brand:guard remains the template fingerprint gate.",
   "checks_run_this_session": [
-    {
-      "command": "npm run brand:guard",
-      "result": "PASS",
-      "exit_code": 0,
-      "summary": "Template guard passed."
-    },
     {
       "command": "git remote get-url origin contains increaseroasir/website-template-2.0",
       "result": "PASS"
@@ -26,22 +21,45 @@
       "result": "PASS"
     },
     {
+      "command": "git merge-base --is-ancestor 5601906e7ac09e5a30934bd5bc8135fbb6d70e40 HEAD",
+      "result": "PENDING_after_merge_commit",
+      "notes": "PR #2 branch rebased/merged onto factory/p0-safety-lock tip"
+    },
+    {
       "command": "git rev-parse HEAD:clients/sun-pool-spa",
       "result": "f3da831b2c31d37693f6022340b2d2f936bb4f72",
       "expected": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
+    },
+    {
+      "command": "npm run brand:guard",
+      "result": "PENDING_run"
+    },
+    {
+      "command": "npm run test:safety",
+      "result": "PENDING_run"
     }
   ],
   "local_check_scripts_available": [
     {
       "script": "brand:guard",
       "purpose": "Block origin-brand fingerprint hardcodes in shared template",
-      "baseline_status": "PASS_at_c63b3dd"
+      "baseline_status": "to_reverify_post_reconcile"
+    },
+    {
+      "script": "test:safety",
+      "purpose": "Protection config, Sun Pool OID, hooks/library presence (Agent A)",
+      "baseline_status": "to_reverify_post_reconcile"
+    },
+    {
+      "script": "test",
+      "purpose": "node:test suite under tests/safety/",
+      "baseline_status": "available_post_safety"
     },
     {
       "script": "check:tokens",
       "purpose": "Lint tokens.env before hydrate (quoting, dual-ownership, hard-required)",
       "baseline_status": "NOT_RUN_this_session",
-      "reason": "Requires a client tokens.env path; do not touch sun-pool-spa; hostile-rehearsal available for later non-mutating validate"
+      "reason": "Requires a client tokens.env path; do not touch sun-pool-spa"
     },
     {
       "script": "placeholder:check",
@@ -71,11 +89,18 @@
     }
   ],
   "absent_tooling": [
-    "npm test",
     "npm run lint",
     "npm run typecheck",
-    ".github/workflows/*",
     "scripts/hydrate-client.mjs"
+  ],
+  "present_post_safety": [
+    "npm test",
+    "npm run test:safety",
+    ".github/workflows/safety.yml",
+    "scripts/lib/client-protection.mjs",
+    "scripts/check-safety.mjs",
+    "tests/safety/*.test.mjs",
+    ".cursor/hooks.json"
   ],
   "cloud_setup_must_not_run": [
     "deploy",
@@ -88,7 +113,7 @@
   ],
   "gaps_for_later_agents": [
     "Add CI workflow running brand:guard + check:tokens on changed non-protected clients",
-    "Add unit tests for protection library and identity alias rejection (Agent A/B)",
-    "Add deterministic hydrate dry-run tests once hydrate-client.mjs exists (P4)"
+    "Add deterministic hydrate dry-run tests once hydrate-client.mjs exists (P4)",
+    "Dual skill pack (skills/ vs manus-skills/) still on disk — SoT documented"
   ]
 }
