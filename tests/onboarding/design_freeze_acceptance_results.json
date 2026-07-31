@@ -1,6 +1,6 @@
 {
-  "total": 47,
-  "passed": 47,
+  "total": 53,
+  "passed": 53,
   "failed": 0,
   "results": [
     {
@@ -200,6 +200,36 @@
     },
     {
       "name": "proposed_migration_003_inventory_items_optional.sql",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "landed_employees_migration_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "landed_inventory_migration_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "landed_migrations_enable_rls",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "landed_migrations_no_anon_grant_or_policy",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "inventory_items_not_landed",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "landed_migration_versions_after_remote_max",
       "pass": true,
       "detail": ""
     },

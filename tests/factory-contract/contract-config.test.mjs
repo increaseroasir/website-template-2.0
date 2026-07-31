@@ -186,4 +186,27 @@ describe("canonical contract companions", () => {
   });
 
 
+  it("lands child-table migrations after remote max with fail-closed RLS", () => {
+    const emp = readFileSync(
+      join(repoRoot(), "supabase/migrations/20260731184500_create_onboarding_employees.sql"),
+      "utf8"
+    );
+    const inv = readFileSync(
+      join(repoRoot(), "supabase/migrations/20260731184600_create_inventory_submissions.sql"),
+      "utf8"
+    );
+    assert.match(emp, /CREATE TABLE IF NOT EXISTS public\.onboarding_employees/);
+    assert.match(inv, /CREATE TABLE IF NOT EXISTS public\.inventory_submissions/);
+    assert.match(emp, /ENABLE ROW LEVEL SECURITY/);
+    assert.match(inv, /ENABLE ROW LEVEL SECURITY/);
+    assert.equal(/^\s*GRANT\b/im.test(emp), false);
+    assert.equal(/^\s*GRANT\b/im.test(inv), false);
+    assert.equal(/^\s*CREATE\s+POLICY\b/im.test(emp), false);
+    assert.equal(/^\s*CREATE\s+POLICY\b/im.test(inv), false);
+    assert.equal(emp.includes("inventory_items"), false);
+    assert.equal(inv.includes("inventory_items"), false);
+    assert.ok("20260731184500" > "20260731081314");
+  });
+
+
 });

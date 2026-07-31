@@ -265,7 +265,37 @@ def _run_checks() -> list[dict]:
             "DO NOT APPLY" in text and "CREATE TABLE" in text,
         )
 
-    # LANDED_MIGRATION_CHECKS_PLACEHOLDER
+    landed_emp = ROOT / "supabase/migrations/20260731184500_create_onboarding_employees.sql"
+    landed_inv = ROOT / "supabase/migrations/20260731184600_create_inventory_submissions.sql"
+    check("landed_employees_migration_exists", landed_emp.is_file())
+    check("landed_inventory_migration_exists", landed_inv.is_file())
+    if landed_emp.is_file() and landed_inv.is_file():
+        emp_sql = landed_emp.read_text()
+        inv_sql = landed_inv.read_text()
+        check(
+            "landed_migrations_enable_rls",
+            "ENABLE ROW LEVEL SECURITY" in emp_sql and "ENABLE ROW LEVEL SECURITY" in inv_sql,
+        )
+        check(
+            "landed_migrations_no_anon_grant_or_policy",
+            not any(
+                line.strip().upper().startswith("GRANT")
+                or line.strip().upper().startswith("CREATE POLICY")
+                for line in (emp_sql + "\n" + inv_sql).splitlines()
+            ),
+        )
+        check(
+            "inventory_items_not_landed",
+            not any(
+                "inventory_items" in p.name
+                for p in (ROOT / "supabase/migrations").glob("*.sql")
+            ),
+        )
+        check(
+            "landed_migration_versions_after_remote_max",
+            "20260731184500" > "20260731081314" and "20260731184600" > "20260731184500",
+        )
+
     targets = _load("config/supabase-targets.json")
     check("apply_authorized_still_false", targets.get("apply_authorized") is False)
     check("targets_contract_version_0_2_0", targets.get("contract_version") == "0.2.0")

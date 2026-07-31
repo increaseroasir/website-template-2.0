@@ -1,24 +1,31 @@
-# Migration + Contract Amendment Plan — STOP FOR OWNER APPROVAL
+# Migration + Contract Amendment Plan — PUBLISHED IN GIT / APPLY STILL GATED
+
+> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
+> Retained under historical filename for provenance.
+> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
+> **Published in Git ≠ applied in Supabase.**
+
 
 **Date:** 2026-07-31  
 **Decision status:** Hybrid A+C direction **APPROVED**  
-**Version status:** `contract_version` **0.2.0** and `onboarding_schema_version` **1.1.0** are **PROPOSALS ONLY** — not finalized, not published into live contract files  
-**Live contract remains:** `0.1.1` / `1.0.0` in [`config/identity-fields.json`](../../config/identity-fields.json)
+**Version status:** `contract_version` **0.2.0** and `onboarding_schema_version` **1.1.0** are **PUBLISHED IN GIT**  
+**Live contract file:** [`config/identity-fields.json`](../../config/identity-fields.json) = `0.2.0` / `1.1.0`  
+**Child migrations:** landed under `supabase/migrations/` — **NOT APPLIED**
 
 ## What was completed
 
 1. Marked [`CONTRACT_DELTA_REPORT.md`](./CONTRACT_DELTA_REPORT.md) as **APPROVED Hybrid A+C**; rejected B.
-2. Proposed smallest version bump in [`PROPOSED_CONTRACT_AMENDMENT_0.2.0.md`](./PROPOSED_CONTRACT_AMENDMENT_0.2.0.md) — **not published**.
-3. Six reported website/domain fields in design registry/mappings/form-1 (still absent from live `identity-fields.json`).
-4. SQL proposals under [`proposed-migrations/`](./proposed-migrations/) (`.md` + `.sql` twins; not applied).
-5. Design JSON + form specs aligned; acceptance **46/46** green.
+2. Published contract amendment into live config — [`PROPOSED_CONTRACT_AMENDMENT_0.2.0.md`](./PROPOSED_CONTRACT_AMENDMENT_0.2.0.md) retained for provenance.
+3. Six reported website/domain fields now in live `identity-fields.json`.
+4. Child-table SQL landed as `20260731184500_create_onboarding_employees.sql` and `20260731184600_create_inventory_submissions.sql` (not applied).
+5. Design JSON + form specs aligned; acceptance suite updated for published-in-Git truth.
 
 ## Smallest proposed contract change
 
 | Item | Live | Proposed |
 |---|---|---|
-| `contract_version` | `0.1.1` | **`0.2.0` (proposed)** |
-| `onboarding_schema_version` | `1.0.0` | **`1.1.0` (proposed)** |
+| `contract_version` | `0.1.1` (prior) | **`0.2.0` (published in Git)** |
+| `onboarding_schema_version` | `1.0.0` (prior) | **`1.1.0` (published in Git)** |
 
 ### Exact new fields (form1-owned)
 
@@ -76,26 +83,21 @@ Line items under a submission; defer until parser authorized.
 
 - Acceptance suite updated for Hybrid A+C (`APPROVED`); see [`tests/onboarding/`](../../tests/onboarding/).
 - [`PROPOSED_TEST_UPDATES.md`](./PROPOSED_TEST_UPDATES.md) records the historical blocked→approved test expectation change.
-- **Do not treat versions as final** in any test that bumps live `identity-fields.json`.
+- Versions are published in Git; keep `apply_authorized: false` until apply authorization.
 
 ## Explicit readiness statement
 
-**Not ready for live implementation.**
+**Contract/schema published in Git. Child migrations landed but not applied.**
 
 Still forbidden until separate owner authorizations:
 
-- Finalize/publish `0.2.0` / `1.1.0`
-- Apply migrations (even to dev)
-- Create live Make / GHL / ClickUp / Supabase objects
-- Update `EXECUTION_STATE`
-- Touch production, Paradise Spas, Sun Pool, or Retainer Snapshot
+- Apply child-table migrations (even to dev)
+- Activate Make / run E2E
+- Create live GHL / ClickUp objects
+- Touch production or protected clients
 
 ## Owner decisions needed next
 
-Reply with approvals or revisions for:
-
-1. Version numbers: accept `0.2.0` / `1.1.0`, or supply different numbers  
-2. Exact six reported field names  
-3. Child-table SQL shapes (employees + inventory_submissions; inventory_items optional/deferred)  
-4. Authorize Agent mode to land JSON/registry/test patches **without** publishing versions until you say so — or authorize version publish in the same breath  
-5. Later, separate auth to copy SQL into `supabase/migrations/` and apply to `htl-factory-dev` only
+1. Authorize applying the two child-table migrations to `htl-factory-dev` only
+2. Read-only verification and smoke testing after apply
+3. Keep Make inactive until a separate E2E authorization
