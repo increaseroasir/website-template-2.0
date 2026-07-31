@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "generated_by": "agent-a",
+  "generated_at": "2026-07-31",
+  "notes": [
+    "Inventory of scripts that can create/modify client artifacts under clients/<slug>/ or hydrate/deploy a named client.",
+    "Guard wiring uses scripts/lib/client-protection.mjs assertClientMutationAllowed where safe.",
+    "Legacy skills/ copies are not SoT (manus-skills/ is). Do not run mutating commands during inventory.",
+    "hydrate-client.mjs is not present yet; hydrate today is shell steps in manus-skills/dealer-site-hydrate/SKILL.md."
+  ],
+  "mutators": [
+    {
+      "path": "manus-skills/dealer-site-intake/scripts/new-client.mjs",
+      "npm_script": "client:new",
+      "mutation_modes": ["--init"],
+      "read_only_modes": ["--validate"],
+      "client_identity": "CLI name after --init/--validate",
+      "guard_wired": true,
+      "guard_operation": "init",
+      "risk": "Creates/overwrites clients/<slug>/{intake.json,client.config.js,WIRING.md,tokens.env}"
+    },
+    {
+      "path": "manus-skills/dealer-site-intake/scripts/map-intake.mjs",
+      "npm_script": null,
+      "mutation_modes": ["--write-wiring"],
+      "read_only_modes": ["--sheet/--brief without --write-wiring"],
+      "client_identity": "--client <slug>",
+      "guard_wired": true,
+      "guard_operation": "write-wiring",
+      "risk": "Writes clients/<slug>/WIRING.md"
+    },
+    {
+      "path": "scripts/dev-preview.sh",
+      "npm_script": null,
+      "mutation_modes": ["any invocation (hydrates into /tmp)"],
+      "read_only_modes": [],
+      "client_identity": "first arg (defaults to sun-pool-spa)",
+      "guard_wired": true,
+      "guard_operation": "preview-hydrate",
+      "risk": "Hydrates client tokens into /tmp preview; default client is protected sun-pool-spa; may fetch prod assets"
+    },
+    {
+      "path": "scripts/optimize-images.mjs",
+      "npm_script": "images:optimize",
+      "mutation_modes": ["default write / --replace"],
+      "read_only_modes": ["--dry-run (still guarded if path under clients/<slug>)"],
+      "client_identity": "path segment /clients/<slug>/",
+      "guard_wired": true,
+      "guard_operation": "images-optimize",
+      "risk": "Rewrites image binaries under provided paths"
+    },
+    {
+      "path": "scripts/build-config.mjs",
+      "npm_script": "build:config",
+      "mutation_modes": ["rewrites HTML/CSS/JS in CWD"],
+      "read_only_modes": [],
+      "client_identity": "implicit via CWD client.config.js (no slug arg)",
+      "guard_wired": false,
+      "guard_deferred_reason": "No client slug argument; intended to run inside an already-gated clients/<slug>/dist after hydrate. Callers must gate first.",
+      "risk": "Token hydration writes across working tree"
+    },
+    {
+      "path": "manus-skills/dealer-site-launch/scripts/indexnow.mjs",
+      "npm_script": null,
+      "mutation_modes": ["--init writes key into dist/"],
+      "read_only_modes": ["--submit --dry-run"],
+      "client_identity": "implicit via --dist path",
+      "guard_wired": false,
+      "guard_deferred_reason": "Dist-scoped; no stable slug parser yet. Deploy/submit still blocked by hooks/CI agent policy.",
+      "risk": "Writes IndexNow key file into dist; --submit contacts IndexNow API"
+    },
+    {
+      "path": "manus-skills/dealer-site-launch/scripts/gate.mjs",
+      "npm_script": "client:gate",
+      "mutation_modes": [],
+      "read_only_modes": ["--env staging|prod --dist"],
+      "client_identity": "implicit via --dist",
+      "guard_wired": false,
+      "guard_deferred_reason": "Read-only gate; no filesystem mutation of clients/<slug> source",
+      "risk": "None for source tree; must not be confused with deploy authorization"
+    },
+    {
+      "path": "manus-skills/dealer-site-hydrate/SKILL.md",
+      "npm_script": null,
+      "mutation_modes": ["documented shell hydrate into clients/<name>/dist"],
+      "read_only_modes": [],
+      "client_identity": "<name> in skill steps",
+      "guard_wired": false,
+      "guard_deferred_reason": "No hydrate-client.mjs yet (P2). Hooks block sun-pool-spa shell hydrate paths.",
+      "risk": "Agent-followed shell can mkdir/rsync/build under clients/<slug>/dist"
+    },
+    {
+      "path": "package.json#deploy",
+      "npm_script": "deploy",
+      "mutation_modes": ["wrangler pages deploy --branch main"],
+      "read_only_modes": [],
+      "client_identity": "project token {{CLOUDFLARE_PAGES_PROJECT}}",
+      "guard_wired": false,
+      "guard_deferred_reason": "Blocked by fail-closed beforeShellExecution hook + agent policy; not a per-slug mutator library call site",
+      "risk": "Production Pages deploy"
+    },
+    {
+      "path": "package.json#preview:deploy",
+      "npm_script": "preview:deploy",
+      "mutation_modes": ["wrangler pages deploy --branch preview"],
+      "read_only_modes": [],
+      "client_identity": "project token {{CLOUDFLARE_PAGES_PROJECT}}",
+      "guard_wired": false,
+      "guard_deferred_reason": "Blocked by fail-closed beforeShellExecution hook",
+      "risk": "Preview Pages deploy"
+    },
+    {
+      "path": "skills/client-site-build/scripts/*.mjs",
+      "npm_script": null,
+      "mutation_modes": ["legacy duplicates of intake/launch scripts"],
+      "read_only_modes": [],
+      "client_identity": "varies",
+      "guard_wired": false,
+      "guard_deferred_reason": "Legacy skills/ is not SoT; manus-skills/ is authoritative. Do not dual-wire this sprint.",
+      "risk": "Stale forks could bypass manus-skills guards if invoked directly"
+    }
+  ]
+}

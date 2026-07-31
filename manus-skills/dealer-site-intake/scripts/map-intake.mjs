@@ -6,6 +6,10 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  assertClientMutationAllowed,
+  ClientProtectionError
+} from '../../../scripts/lib/client-protection.mjs';
 
 const skillRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 function findRepoRoot(start) {
@@ -214,6 +218,16 @@ const status = requiredBlank.length ? 'BLOCKED' : 'READY';
 const result = { status, client: opts.client, requiredBlank, fixList48h, niceBlank, mappedCount: mapped.length };
 
 if (opts.writeWiring) {
+  try {
+    assertClientMutationAllowed({
+      repoRoot,
+      clientSlug: opts.client,
+      operation: 'write-wiring'
+    });
+  } catch (err) {
+    if (err instanceof ClientProtectionError) die(`[client-protection] ${err.message}`, 1);
+    throw err;
+  }
   const clientDir = join(repoRoot, 'clients', opts.client);
   mkdirSync(clientDir, { recursive: true });
   const wiringPath = join(clientDir, 'WIRING.md');

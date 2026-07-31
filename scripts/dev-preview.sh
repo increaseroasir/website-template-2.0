@@ -10,6 +10,26 @@ PORT="${2:-4211}"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="/tmp/preview-$CLIENT-$PORT"
 
+# Fail closed: protected clients (e.g. sun-pool-spa) require a break-glass artifact.
+# A CLI flag alone is never sufficient authorization.
+(
+  cd "$REPO"
+  node --input-type=module -e "
+import { assertClientMutationAllowed, ClientProtectionError } from './scripts/lib/client-protection.mjs';
+try {
+  assertClientMutationAllowed({
+    repoRoot: process.cwd(),
+    clientSlug: process.argv[1],
+    operation: 'preview-hydrate'
+  });
+} catch (err) {
+  const msg = err instanceof ClientProtectionError ? err.message : String(err);
+  console.error('[client-protection]', msg);
+  process.exit(1);
+}
+" "$CLIENT"
+)
+
 if [ ! -f "$REPO/clients/$CLIENT/tokens.env" ]; then
   echo "no tokens.env for client '$CLIENT'" >&2
   exit 1
