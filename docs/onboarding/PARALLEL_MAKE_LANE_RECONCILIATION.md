@@ -1,19 +1,15 @@
 # Parallel Make Lane Reconciliation
 
-**Status:** Inspect-only documentation for interrupted Make work  
-**Date (UTC):** 2026-07-31  
-**Rule:** Do **not** merge, cherry-pick, pop, apply, drop, or rewrite this lane in the onboarding design-freeze pass.
+**Status (historical):** Written during onboarding design freeze as inspect-only documentation for interrupted Make work.  
+**Superseded (2026-07-31):** Make lane legalized inactive on `factory/p2-make-intake` @ `cb4cc58`, then merged into `factory/p2-integration-reconcile`. Live IDs below are now **verified inactive** (not activated). See [`docs/make/P2-form1-scenario.md`](../make/P2-form1-scenario.md) and [`docs/EXECUTION_STATE.md`](../EXECUTION_STATE.md).
 
-Related read-only inventory (GHL + Make IDs as observed during design freeze): [`EXISTING_WORKFLOWS_REVIEW.md`](./EXISTING_WORKFLOWS_REVIEW.md).
+**Still true:** activation, E2E, GHL wiring, and Forms 2/3 remain unauthorized / incomplete.
 
-## Authorization conflict
+Related inventory: [`EXISTING_WORKFLOWS_REVIEW.md`](./EXISTING_WORKFLOWS_REVIEW.md).
 
-[`docs/EXECUTION_STATE.md`](../EXECUTION_STATE.md) (integrator-owned) states:
+## Authorization conflict (design-freeze snapshot — superseded)
 
-- **P2 Make intake: NOT STARTED / NOT AUTHORIZED**
-- Make implementation remains **NOT AUTHORIZED**
-
-Therefore any live Make scenario/webhook/connection IDs are **authorization conflicts** until the owner separately authorizes Make work and an integrator updates execution state.
+At design freeze, [`docs/EXECUTION_STATE.md`](../EXECUTION_STATE.md) still stated P2 Make intake **NOT STARTED**. That wording was corrected when the Make lane was legalized inactive. The conflict below is retained as the freeze-time record only.
 
 ## Local branch `factory/p2-make-intake`
 
