@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.1.0",
+  "generated_by": "agent-c-reconcile",
+  "generated_at": "2026-07-31T02:30:00Z",
+  "mapped_at_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
+  "required_base_sha": "309ac92d226b14cafd0bee6130606c3fcf1b5195",
+  "required_base_sha_ancestor": "PASS",
+  "safety_base_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
+  "safety_base_sha_ancestor": "PASS",
+  "package_manager": "npm",
+  "lockfile": "package-lock.json",
+  "template_version": "1.1.0",
+  "unit_test_framework": "node:test",
+  "notes": "Post-safety baseline after PR #4 (Agent A protection + Agent D hook fixes) landed on factory/p0-safety-lock. npm test / test:safety and .github/workflows/safety.yml now exist. brand:guard remains the template fingerprint gate.",
+  "checks_run_this_session": [
+    {
+      "command": "git remote get-url origin contains increaseroasir/website-template-2.0",
+      "result": "PASS"
+    },
+    {
+      "command": "git merge-base --is-ancestor 309ac92d226b14cafd0bee6130606c3fcf1b5195 HEAD",
+      "result": "PASS"
+    },
+    {
+      "command": "git merge-base --is-ancestor 5601906e7ac09e5a30934bd5bc8135fbb6d70e40 HEAD",
+      "result": "PASS",
+      "notes": "PR #2 branch merged onto factory/p0-safety-lock tip"
+    },
+    {
+      "command": "npm run test:safety (includes Sun Pool tree OID check)",
+      "result": "PASS",
+      "expected_oid": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
+    },
+    {
+      "command": "npm run brand:guard",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "Template guard passed."
+    },
+    {
+      "command": "npm run test:safety",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "All safety checks passed."
+    },
+    {
+      "command": "npm test",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "31/31 tests passed"
+    }
+  ],
+  "local_check_scripts_available": [
+    {
+      "script": "brand:guard",
+      "purpose": "Block origin-brand fingerprint hardcodes in shared template",
+      "baseline_status": "PASS_post_reconcile"
+    },
+    {
+      "script": "test:safety",
+      "purpose": "Protection config, Sun Pool OID, hooks/library presence (Agent A)",
+      "baseline_status": "PASS_post_reconcile"
+    },
+    {
+      "script": "test",
+      "purpose": "node:test suite under tests/safety/",
+      "baseline_status": "PASS_post_reconcile"
+    },
+    {
+      "script": "check:tokens",
+      "purpose": "Lint tokens.env before hydrate (quoting, dual-ownership, hard-required)",
+      "baseline_status": "NOT_RUN_this_session",
+      "reason": "Requires a client tokens.env path; do not touch protected clients"
+    },
+    {
+      "script": "placeholder:check",
+      "purpose": "Fail unresolved deploy tokens in hydrated site",
+      "baseline_status": "NOT_RUN_this_session",
+      "reason": "Intended inside hydrated dist/"
+    },
+    {
+      "script": "launch:check",
+      "purpose": "Composite launch static checks",
+      "baseline_status": "NOT_RUN_this_session"
+    },
+    {
+      "script": "client:validate",
+      "purpose": "Validate clients/<slug>/ intake + config",
+      "baseline_status": "NOT_RUN_this_session"
+    },
+    {
+      "script": "client:gate",
+      "purpose": "gate.mjs PASS/FAIL for launch",
+      "baseline_status": "NOT_RUN_this_session"
+    },
+    {
+      "script": "fulfillment:check",
+      "purpose": "Fulfillment artifact presence checks",
+      "baseline_status": "NOT_RUN_this_session"
+    }
+  ],
+  "absent_tooling": [
+    "npm run lint",
+    "npm run typecheck",
+    "scripts/hydrate-client.mjs"
+  ],
+  "present_post_safety": [
+    "npm test",
+    "npm run test:safety",
+    ".github/workflows/safety.yml",
+    "scripts/lib/client-protection.mjs",
+    "scripts/check-safety.mjs",
+    "tests/safety/*.test.mjs",
+    ".cursor/hooks.json"
+  ],
+  "cloud_setup_must_not_run": [
+    "deploy",
+    "preview:deploy",
+    "db:init:remote",
+    "db:init:local",
+    "ghl:fields:check",
+    "ghl:fields:create",
+    "secrets:verify"
+  ],
+  "gaps_for_later_agents": [
+    "Add CI workflow running brand:guard + check:tokens on changed non-protected clients",
+    "Add deterministic hydrate dry-run tests once hydrate-client.mjs exists (P4)",
+    "Dual skill pack (skills/ vs manus-skills/) still on disk — SoT documented"
+  ]
+}
