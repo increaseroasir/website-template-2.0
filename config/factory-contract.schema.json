@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://increase-roas.com/schemas/factory-contract.schema.json",
+  "title": "HTL Factory Canonical Contract Artifacts",
+  "description": "Validates identity-fields, state-machine companions, form payloads, deferrals, and deployment candidates.",
+  "type": "object",
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fulfillmentStatus": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "under_review",
+        "needs_correction",
+        "rejected",
+        "deferred",
+        "approved",
+        "provisioning",
+        "provision_failed",
+        "infrastructure_ready",
+        "building",
+        "build_failed",
+        "staging",
+        "qa_failed",
+        "awaiting_approval",
+        "production_deploying",
+        "live",
+        "update_requested",
+        "updating",
+        "suspended",
+        "archived"
+      ]
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["development", "test", "staging", "production"]
+    },
+    "identityLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "client_id",
+        "onboarding_case_id",
+        "ghl_contact_id",
+        "client_slug",
+        "deployment_key",
+        "business_name"
+      ],
+      "properties": {
+        "client_id": { "$ref": "#/$defs/uuid" },
+        "onboarding_case_id": { "$ref": "#/$defs/uuid" },
+        "ghl_contact_id": { "$ref": "#/$defs/nonEmptyString" },
+        "ghl_opportunity_id": { "type": ["string", "null"] },
+        "ghl_location_id": { "type": ["string", "null"] },
+        "client_slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "deployment_key": { "$ref": "#/$defs/nonEmptyString" },
+        "business_name": { "$ref": "#/$defs/nonEmptyString" },
+        "domain": { "type": ["string", "null"] }
+      }
+    },
+    "deferral": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_name",
+        "reason",
+        "approved_by",
+        "approved_at",
+        "expires_at",
+        "launch_consequence",
+        "production_allowed",
+        "required_before_launch"
+      ],
+      "properties": {
+        "field_name": { "$ref": "#/$defs/nonEmptyString" },
+        "reason": { "$ref": "#/$defs/nonEmptyString" },
+        "approved_by": { "$ref": "#/$defs/nonEmptyString" },
+        "approved_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "launch_consequence": { "$ref": "#/$defs/nonEmptyString" },
+        "production_allowed": { "type": "boolean" },
+        "required_before_launch": { "type": "boolean" }
+      }
+    },
+    "formSubmissionEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["form", "schema_version", "submission_id", "payload"],
+      "properties": {
+        "form": { "type": "string", "enum": ["form1", "form2", "form3"] },
+        "schema_version": { "$ref": "#/$defs/nonEmptyString" },
+        "submission_id": { "$ref": "#/$defs/nonEmptyString" },
+        "onboarding_case_id": { "$ref": "#/$defs/uuid" },
+        "client_id": { "$ref": "#/$defs/uuid" },
+        "expected_version": { "type": "integer", "minimum": 0 },
+        "correlation_id": { "$ref": "#/$defs/nonEmptyString" },
+        "payload": { "type": "object" }
+      }
+    },
+    "transitionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_current_status",
+        "requested_status",
+        "expected_version",
+        "actor",
+        "correlation_id"
+      ],
+      "properties": {
+        "client_id": { "$ref": "#/$defs/uuid" },
+        "onboarding_case_id": { "$ref": "#/$defs/uuid" },
+        "expected_current_status": { "$ref": "#/$defs/fulfillmentStatus" },
+        "requested_status": { "$ref": "#/$defs/fulfillmentStatus" },
+        "expected_version": { "type": "integer", "minimum": 0 },
+        "actor": { "$ref": "#/$defs/nonEmptyString" },
+        "correlation_id": { "$ref": "#/$defs/nonEmptyString" },
+        "reason": { "type": "string" },
+        "idempotency_key": { "type": "string" }
+      }
+    },
+    "deploymentCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "client_id",
+        "onboarding_case_id",
+        "configuration_version",
+        "onboarding_schema_version",
+        "template_version",
+        "git_sha",
+        "hydrator_version",
+        "gate_version",
+        "deployment_workflow_version",
+        "artifact_digest",
+        "environment"
+      ],
+      "properties": {
+        "client_id": { "$ref": "#/$defs/uuid" },
+        "onboarding_case_id": { "$ref": "#/$defs/uuid" },
+        "configuration_version": { "type": "integer", "minimum": 1 },
+        "onboarding_schema_version": { "type": "string", "const": "1.0.0" },
+        "template_version": { "$ref": "#/$defs/nonEmptyString" },
+        "git_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$"
+        },
+        "hydrator_version": { "$ref": "#/$defs/nonEmptyString" },
+        "gate_version": { "$ref": "#/$defs/nonEmptyString" },
+        "deployment_workflow_version": { "$ref": "#/$defs/nonEmptyString" },
+        "artifact_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "environment": { "$ref": "#/$defs/environment" }
+      }
+    },
+    "identityFieldsDocument": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "onboarding_schema_version",
+        "identity",
+        "forms",
+        "merge_rules"
+      ],
+      "properties": {
+        "contract_version": { "type": "string" },
+        "onboarding_schema_version": { "type": "string" },
+        "identity": {
+          "type": "object",
+          "required": [
+            "client_id",
+            "onboarding_case_id",
+            "ghl_contact_id",
+            "ghl_opportunity_id",
+            "ghl_location_id",
+            "client_slug",
+            "deployment_key",
+            "business_name",
+            "domain"
+          ]
+        },
+        "forms": {
+          "type": "object",
+          "required": ["form1", "form2", "form3"]
+        },
+        "merge_rules": { "type": "object" }
+      }
+    },
+    "stateMachineDocument": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "statuses",
+        "transitions",
+        "rpc",
+        "free_form_status_updates"
+      ],
+      "properties": {
+        "contract_version": { "type": "string" },
+        "statuses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fulfillmentStatus" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "actors"],
+            "properties": {
+              "from": { "$ref": "#/$defs/fulfillmentStatus" },
+              "to": { "$ref": "#/$defs/fulfillmentStatus" },
+              "actors": {
+                "type": "array",
+                "items": { "type": "string" },
+                "minItems": 1
+              }
+            }
+          }
+        },
+        "rpc": { "const": "request_client_transition" },
+        "free_form_status_updates": { "const": "forbidden" }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/identityFieldsDocument" },
+    { "$ref": "#/$defs/stateMachineDocument" },
+    { "$ref": "#/$defs/deploymentCandidate" },
+    { "$ref": "#/$defs/formSubmissionEnvelope" },
+    { "$ref": "#/$defs/transitionRequest" },
+    { "$ref": "#/$defs/deferral" },
+    { "$ref": "#/$defs/identityLock" }
+  ]
+}
