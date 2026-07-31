@@ -28,7 +28,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 | Stream | Status |
 |---|---|
-| Five-file brain | in progress → commit on this branch |
+| Five-file brain | COMPLETE at `26b78b4` |
 | Agent A Safety | not started |
 | Agent B Contract + Supabase | not started |
 | Agent C Impl map | not started |
