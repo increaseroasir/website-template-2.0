@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "protected_clients": [
+    {
+      "slug": "sun-pool-spa",
+      "client_id": null,
+      "reason": "Production reference client",
+      "requires_break_glass": true,
+      "notes": "Never mutate, hydrate, deploy, migrate, or include in fleet/canary without a named break-glass approval artifact (actor, reason, expiration, scope)."
+    }
+  ]
+}
