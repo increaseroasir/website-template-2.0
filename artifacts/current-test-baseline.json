@@ -1,11 +1,12 @@
 {
   "schema_version": "1.1.0",
   "generated_by": "agent-c-reconcile",
-  "generated_at": "2026-07-31T02:28:00Z",
+  "generated_at": "2026-07-31T02:30:00Z",
   "mapped_at_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
   "required_base_sha": "309ac92d226b14cafd0bee6130606c3fcf1b5195",
   "required_base_sha_ancestor": "PASS",
   "safety_base_sha": "5601906e7ac09e5a30934bd5bc8135fbb6d70e40",
+  "safety_base_sha_ancestor": "PASS",
   "package_manager": "npm",
   "lockfile": "package-lock.json",
   "template_version": "1.1.0",
@@ -22,44 +23,54 @@
     },
     {
       "command": "git merge-base --is-ancestor 5601906e7ac09e5a30934bd5bc8135fbb6d70e40 HEAD",
-      "result": "PENDING_after_merge_commit",
-      "notes": "PR #2 branch rebased/merged onto factory/p0-safety-lock tip"
+      "result": "PASS",
+      "notes": "PR #2 branch merged onto factory/p0-safety-lock tip"
     },
     {
-      "command": "git rev-parse HEAD:clients/sun-pool-spa",
-      "result": "f3da831b2c31d37693f6022340b2d2f936bb4f72",
-      "expected": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
+      "command": "npm run test:safety (includes Sun Pool tree OID check)",
+      "result": "PASS",
+      "expected_oid": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
     },
     {
       "command": "npm run brand:guard",
-      "result": "PENDING_run"
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "Template guard passed."
     },
     {
       "command": "npm run test:safety",
-      "result": "PENDING_run"
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "All safety checks passed."
+    },
+    {
+      "command": "npm test",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "31/31 tests passed"
     }
   ],
   "local_check_scripts_available": [
     {
       "script": "brand:guard",
       "purpose": "Block origin-brand fingerprint hardcodes in shared template",
-      "baseline_status": "to_reverify_post_reconcile"
+      "baseline_status": "PASS_post_reconcile"
     },
     {
       "script": "test:safety",
       "purpose": "Protection config, Sun Pool OID, hooks/library presence (Agent A)",
-      "baseline_status": "to_reverify_post_reconcile"
+      "baseline_status": "PASS_post_reconcile"
     },
     {
       "script": "test",
       "purpose": "node:test suite under tests/safety/",
-      "baseline_status": "available_post_safety"
+      "baseline_status": "PASS_post_reconcile"
     },
     {
       "script": "check:tokens",
       "purpose": "Lint tokens.env before hydrate (quoting, dual-ownership, hard-required)",
       "baseline_status": "NOT_RUN_this_session",
-      "reason": "Requires a client tokens.env path; do not touch sun-pool-spa"
+      "reason": "Requires a client tokens.env path; do not touch protected clients"
     },
     {
       "script": "placeholder:check",
