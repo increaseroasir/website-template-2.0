@@ -83,43 +83,48 @@ Ask only for missing required values:
 - Missing required fields list
 - Secrets list with owner
 
-## Skill 3: Repository And Cloudflare Provisioning
+## Skill 3: Monorepo client folder + Cloudflare Pages provisioning
 
 ### Inputs
 
-- `client.fulfillment.json`
-- Public template repo: `https://github.com/increaseroasir/website-template-2.0` (branch `premium-redesign`, default)
+- `client.fulfillment.json` (or canonical intake mapped to identity fields)
+- Canonical factory monorepo: `https://github.com/increaseroasir/website-template-2.0`
+  (integration via `clients/<slug>/` — **no per-client GitHub forks**)
 
 ### Responsibilities
 
-- Clone the public template into a new client repo.
-- Fill `client.config.js`.
-- Fill `wrangler.toml`.
-- Create or link Cloudflare Pages project.
+- Ensure `clients/<slug>/` exists in the **one** factory monorepo (scaffold via
+  `manus-skills` intake scripts — never create a new GitHub repository per dealer).
+- Fill `client.config.js` and `tokens.env` under that slug.
+- Create or link a **Cloudflare Pages project for that slug** (one project per dealer).
 - Create D1 database and bind it as `DB`.
 - Create R2 bucket and bind it as `PRODUCT_IMAGES`.
 - Apply `functions/db/schema.sql` to D1.
-- Set required Cloudflare variables and secrets.
-- Run `npm run placeholder:check` and block if unresolved deploy tokens remain.
-- Deploy preview branch only.
+- Set required Cloudflare variables and secrets via `wrangler pages secret put` only
+  (never `deployment_configs` PATCH — WTV-049).
+- Record non-secret resource IDs in Supabase; secret values stay in 1Password.
+- Hydrate into `clients/<slug>/dist/`, run `npm run placeholder:check`, block if
+  unresolved deploy tokens remain.
+- Deploy preview/staging branch only until production approval exists.
 
 ### Stop Conditions
 
 Stop and report if:
 
-- Template repo is not public.
+- Operator attempts a per-client GitHub fork or new template clone-as-repo.
 - Cloudflare account access is missing.
 - D1 or R2 cannot be created.
-- Required secrets are unavailable.
+- Required secrets are unavailable from 1Password.
 - Placeholder scan still finds client tokens after config.
+- Target slug is protected (`sun-pool-spa`) without break-glass.
 
 ### Output
 
-- Client repo URL
-- Cloudflare preview URL
+- Monorepo path `clients/<slug>/` (not a separate client repo URL)
+- Cloudflare Pages project name + preview URL
 - D1 database name and ID
 - R2 bucket name
-- Secrets checklist with set/missing status
+- Secrets checklist with set/missing status (no secret values in the checklist file)
 
 ## Skill 4: Tracking Setup
 

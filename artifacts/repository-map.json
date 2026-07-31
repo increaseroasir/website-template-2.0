@@ -1,0 +1,217 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "agent-c",
+  "generated_at": "2026-07-31T02:19:42Z",
+  "repository": {
+    "canonical_remote": "increaseroasir/website-template-2.0",
+    "canonical_local_path_name": "website-template-premium-redesign",
+    "integration_branch": "factory/p0-safety-lock",
+    "required_base_sha": "309ac92d226b14cafd0bee6130606c3fcf1b5195",
+    "mapped_at_sha": "c63b3dd597c83802f1386fa82fcdd80834c9b31b",
+    "template_version": "1.1.0",
+    "sun_pool_tree_oid": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
+  },
+  "architecture_lock": {
+    "repo_model": "one_monorepo_no_per_client_forks",
+    "client_layout": "clients/<slug>/",
+    "hosting": "one_cloudflare_pages_project_per_dealer",
+    "fulfillment_authority": "supabase",
+    "secrets_authority": "1password",
+    "skills_sot": "manus-skills/",
+    "skills_legacy_not_sot": "skills/",
+    "make_role": "provision_empty_infrastructure_only",
+    "template_role": "hydrate_build_gate_deploy"
+  },
+  "systems_of_record": {
+    "fulfillment_status_ids_config_versions": "supabase",
+    "secret_values": "1password",
+    "website_template_and_client_files": "this_git_repo",
+    "crm_contacts_opportunities_forms": "ghl",
+    "human_checklist_ui": "clickup_mirror",
+    "cloudflare_resources": "cloudflare_ids_recorded_in_supabase"
+  },
+  "top_level_layout": [
+    {
+      "path": "index.html",
+      "role": "shared_page_template",
+      "notes": "Homepage; hydrated into clients/<slug>/dist/"
+    },
+    {
+      "path": "hot-tubs/|swim-spas/|saunas/|active-inventory/|book/|quiz/|admin/|privacy-policy/",
+      "role": "shared_page_templates",
+      "notes": "Category and feature pages"
+    },
+    {
+      "path": "inventory.html|contact.html|financing.html|thank-you.html|404.html",
+      "role": "shared_page_templates",
+      "notes": "Root-level HTML pages"
+    },
+    {
+      "path": "components/",
+      "role": "include_partials",
+      "notes": "nav/header/footer; expanded by build-config.mjs then removed from dist"
+    },
+    {
+      "path": "assets/",
+      "role": "shared_css_js_media",
+      "notes": "theme.css is canonical token layer; do not fork"
+    },
+    {
+      "path": "functions/",
+      "role": "cloudflare_pages_functions",
+      "entry_points": [
+        "functions/api/lead.js",
+        "functions/api/meta-offline.js",
+        "functions/api/readiness.js",
+        "functions/api/inventory.js",
+        "functions/api/booking.js",
+        "functions/api/admin.js"
+      ],
+      "notes": "Isolation via per-project env bindings, not app multi-tenancy"
+    },
+    {
+      "path": "scripts/",
+      "role": "build_lint_gate_ops_clis",
+      "notes": "See artifacts/mutator-inventory.json"
+    },
+    {
+      "path": "clients/",
+      "role": "per_client_inputs",
+      "known_slugs": ["sun-pool-spa", "hostile-rehearsal"],
+      "protected": ["sun-pool-spa"],
+      "notes": "dist/ is hydrate output (gitignored pattern); never copy Sun Pool for fixtures"
+    },
+    {
+      "path": "manus-skills/",
+      "role": "skills_source_of_truth",
+      "skills": [
+        "dealer-site-orchestrator",
+        "dealer-site-intake",
+        "dealer-site-hydrate",
+        "dealer-site-wiring",
+        "dealer-site-launch"
+      ]
+    },
+    {
+      "path": "skills/",
+      "role": "legacy_zip_pack_not_sot",
+      "notes": "Duplication risk; deprecate as install SoT; do not prefer over manus-skills/"
+    },
+    {
+      "path": "config/",
+      "role": "factory_policy_config",
+      "files": ["protected-clients.json"],
+      "planned": [
+        "identity-fields.json",
+        "state-machine.json",
+        "factory-contract.schema.json"
+      ]
+    },
+    {
+      "path": "docs/",
+      "role": "constitution_contracts_runbooks_work_packages",
+      "notes": "EXECUTION_STATE.md is integrator-only"
+    },
+    {
+      "path": "artifacts/",
+      "role": "agent_inventories_and_run_reports",
+      "notes": "Repository memory for sprint agents"
+    },
+    {
+      "path": ".github/workflows/",
+      "role": "ci",
+      "status": "absent",
+      "notes": "P0/P1 gap — Agent A territory for protection CI"
+    },
+    {
+      "path": "wrangler.toml",
+      "role": "pages_project_template",
+      "notes": "Contains {{CLOUDFLARE_PAGES_PROJECT}}; hydrate into client dist"
+    }
+  ],
+  "entry_points": {
+    "browser_application": {
+      "entry": "hydrated HTML + client.config.js",
+      "status": "implemented"
+    },
+    "website_generation": {
+      "entry": "manus-skills/dealer-site-hydrate/SKILL.md + scripts/build-config.mjs",
+      "status": "implemented_manual",
+      "gap": "scripts/hydrate-client.mjs missing; shell-sources tokens.env"
+    },
+    "onboarding_data": {
+      "entry": "manus-skills/dealer-site-intake/scripts/new-client.mjs + map-intake.mjs",
+      "status": "partial",
+      "gap": "no GHL onboarding webhook in repo"
+    },
+    "deployment": {
+      "entry": "npm run deploy | preview:deploy → wrangler pages deploy from client dist/",
+      "status": "implemented_manual",
+      "risk": "SIDE_EFFECT_OR_REMOTE — never run in cloud setup / P0 agents"
+    },
+    "client_data_sot_today": {
+      "entry": "files under clients/<slug>/",
+      "intended": "Supabase for status/IDs/config versions; git for template + client files"
+    },
+    "template_sot": {
+      "entry": "this git repo + VERSION",
+      "status": "implemented"
+    },
+    "deploy_status_sot": {
+      "entry": "Cloudflare + human WIRING.md",
+      "status": "partial_missing_job_ledger"
+    }
+  },
+  "client_folder_contract": {
+    "required_inputs": [
+      "client.config.js",
+      "tokens.env",
+      "intake.json",
+      "WIRING.md"
+    ],
+    "optional_inputs": ["redirects.extra", "NOTES.md", "assets/"],
+    "outputs": ["dist/"],
+    "never_store_in_git": [
+      "GHL_API_TOKEN",
+      "META_CAPI_ACCESS_TOKEN",
+      "META_OFFLINE_WEBHOOK_SECRET",
+      "ADMIN_PASSWORD",
+      "ADMIN_SESSION_SECRET",
+      "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY"
+    ]
+  },
+  "protected_clients": {
+    "config_path": "config/protected-clients.json",
+    "slugs": ["sun-pool-spa"],
+    "rule": "fail_closed_without_break_glass",
+    "sun_pool_tree_oid_expected": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
+  },
+  "identity_fields_canonical_do_not_invent": [
+    "client_id",
+    "onboarding_case_id",
+    "ghl_contact_id",
+    "ghl_opportunity_id",
+    "ghl_location_id",
+    "client_slug",
+    "deployment_key",
+    "business_name",
+    "domain"
+  ],
+  "forbidden_identity_aliases": [
+    "ghlLocationId",
+    "location_id",
+    "GHL_LOCATION",
+    "ghlSubAccountId"
+  ],
+  "phase_ownership_pointer": {
+    "agent_a": "protection library, hooks, CI rejection tests",
+    "agent_b": "canonical contract configs + Supabase schema",
+    "agent_c": "repository map, mutator inventory, test baseline, secrets runbook, work packages P2–P7, no-fork doc corrections",
+    "agent_d": "review-fix after first PR"
+  },
+  "work_packages_index": "docs/work-packages/",
+  "related_inventories": {
+    "mutator_inventory": "artifacts/mutator-inventory.json",
+    "current_test_baseline": "artifacts/current-test-baseline.json"
+  }
+}

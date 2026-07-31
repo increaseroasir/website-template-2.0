@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "agent-c",
+  "generated_at": "2026-07-31T02:19:42Z",
+  "mapped_at_sha": "c63b3dd597c83802f1386fa82fcdd80834c9b31b",
+  "required_base_sha": "309ac92d226b14cafd0bee6130606c3fcf1b5195",
+  "required_base_sha_ancestor": "PASS",
+  "package_manager": "npm",
+  "lockfile": "package-lock.json",
+  "template_version": "1.1.0",
+  "unit_test_framework": null,
+  "notes": "No lint/test/typecheck scripts exist yet (EXECUTION_STATE R0). Baseline is the set of local npm checks that are safe and were exercised or classified at P0 start.",
+  "checks_run_this_session": [
+    {
+      "command": "npm run brand:guard",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "Template guard passed."
+    },
+    {
+      "command": "git remote get-url origin contains increaseroasir/website-template-2.0",
+      "result": "PASS"
+    },
+    {
+      "command": "git merge-base --is-ancestor 309ac92d226b14cafd0bee6130606c3fcf1b5195 HEAD",
+      "result": "PASS"
+    },
+    {
+      "command": "git rev-parse HEAD:clients/sun-pool-spa",
+      "result": "f3da831b2c31d37693f6022340b2d2f936bb4f72",
+      "expected": "f3da831b2c31d37693f6022340b2d2f936bb4f72"
+    }
+  ],
+  "local_check_scripts_available": [
+    {
+      "script": "brand:guard",
+      "purpose": "Block origin-brand fingerprint hardcodes in shared template",
+      "baseline_status": "PASS_at_c63b3dd"
+    },
+    {
+      "script": "check:tokens",
+      "purpose": "Lint tokens.env before hydrate (quoting, dual-ownership, hard-required)",
+      "baseline_status": "NOT_RUN_this_session",
+      "reason": "Requires a client tokens.env path; do not touch sun-pool-spa; hostile-rehearsal available for later non-mutating validate"
+    },
+    {
+      "script": "placeholder:check",
+      "purpose": "Fail unresolved deploy tokens in hydrated site",
+      "baseline_status": "NOT_RUN_this_session",
+      "reason": "Intended inside hydrated dist/"
+    },
+    {
+      "script": "launch:check",
+      "purpose": "Composite launch static checks",
+      "baseline_status": "NOT_RUN_this_session"
+    },
+    {
+      "script": "client:validate",
+      "purpose": "Validate clients/<slug>/ intake + config",
+      "baseline_status": "NOT_RUN_this_session"
+    },
+    {
+      "script": "client:gate",
+      "purpose": "gate.mjs PASS/FAIL for launch",
+      "baseline_status": "NOT_RUN_this_session"
+    },
+    {
+      "script": "fulfillment:check",
+      "purpose": "Fulfillment artifact presence checks",
+      "baseline_status": "NOT_RUN_this_session"
+    }
+  ],
+  "absent_tooling": [
+    "npm test",
+    "npm run lint",
+    "npm run typecheck",
+    ".github/workflows/*",
+    "scripts/hydrate-client.mjs"
+  ],
+  "cloud_setup_must_not_run": [
+    "deploy",
+    "preview:deploy",
+    "db:init:remote",
+    "db:init:local",
+    "ghl:fields:check",
+    "ghl:fields:create",
+    "secrets:verify"
+  ],
+  "gaps_for_later_agents": [
+    "Add CI workflow running brand:guard + check:tokens on changed non-protected clients",
+    "Add unit tests for protection library and identity alias rejection (Agent A/B)",
+    "Add deterministic hydrate dry-run tests once hydrate-client.mjs exists (P4)"
+  ]
+}

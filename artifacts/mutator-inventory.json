@@ -1,0 +1,233 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "agent-c",
+  "generated_at": "2026-07-31T02:19:42Z",
+  "mapped_at_sha": "c63b3dd597c83802f1386fa82fcdd80834c9b31b",
+  "purpose": "Inventory of scripts and package scripts that mutate filesystem state or contact external systems. Shared file — refine, do not fork a second inventory.",
+  "legend": {
+    "read_only_check": "No intentional FS mutation of client/template product files; exit code based",
+    "local_fs_mutator": "Writes under repo or temp dirs; no intended prod remote",
+    "remote_reader": "HTTP/API read against a target host or third party",
+    "remote_mutator": "Creates/updates remote resources or deploys",
+    "cloud_setup_forbidden": "Must never run in cloud agent Install/Start scripts"
+  },
+  "package_scripts": [
+    {
+      "name": "brand:guard",
+      "cmd": "node scripts/check-template-guard.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true
+    },
+    {
+      "name": "client:new",
+      "cmd": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
+      "class": "local_fs_mutator",
+      "safe_for_p0_agents": false,
+      "notes": "Writes clients/<slug>/ on --init; never target sun-pool-spa"
+    },
+    {
+      "name": "client:validate",
+      "cmd": "node manus-skills/dealer-site-intake/scripts/new-client.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true,
+      "notes": "Validate mode is read-only when --validate"
+    },
+    {
+      "name": "client:gate",
+      "cmd": "node manus-skills/dealer-site-launch/scripts/gate.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true,
+      "notes": "Static gate against a client dist; confirm no write flags before use"
+    },
+    {
+      "name": "build:config",
+      "cmd": "node scripts/build-config.mjs",
+      "class": "local_fs_mutator",
+      "safe_for_p0_agents": false,
+      "notes": "Rewrites files in cwd — only safe inside clients/<slug>/dist/"
+    },
+    {
+      "name": "placeholder:check",
+      "cmd": "node scripts/scan-placeholders.mjs --launch",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true
+    },
+    {
+      "name": "launch:check",
+      "cmd": "node scripts/launch-check.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true
+    },
+    {
+      "name": "check:tokens",
+      "cmd": "node scripts/check-tokens-env.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true
+    },
+    {
+      "name": "fulfillment:check",
+      "cmd": "node scripts/check-fulfillment-artifacts.mjs",
+      "class": "read_only_check",
+      "safe_for_p0_agents": true
+    },
+    {
+      "name": "verify:cards",
+      "cmd": "node scripts/verify-card-status.mjs",
+      "class": "remote_reader",
+      "safe_for_p0_agents": false
+    },
+    {
+      "name": "admin:smoke",
+      "cmd": "node scripts/admin-inventory-smoke.mjs",
+      "class": "remote_mutator",
+      "safe_for_p0_agents": false,
+      "notes": "PATCH against live admin API"
+    },
+    {
+      "name": "ghl:fields:check",
+      "cmd": "node scripts/verify-ghl-fields.mjs",
+      "class": "remote_reader",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true
+    },
+    {
+      "name": "ghl:fields:create",
+      "cmd": "node scripts/verify-ghl-fields.mjs --create",
+      "class": "remote_mutator",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true
+    },
+    {
+      "name": "secrets:verify",
+      "cmd": "node scripts/verify-runtime-secrets.mjs",
+      "class": "remote_reader",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true,
+      "notes": "Requires ADMIN_PASSWORD + live host; does not print secret values if well-behaved"
+    },
+    {
+      "name": "db:init:local",
+      "cmd": "wrangler d1 execute DB --local --file=functions/db/schema.sql",
+      "class": "local_fs_mutator",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true
+    },
+    {
+      "name": "db:init:remote",
+      "cmd": "wrangler d1 execute DB --remote --file=functions/db/schema.sql",
+      "class": "remote_mutator",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true
+    },
+    {
+      "name": "deploy",
+      "cmd": "wrangler pages deploy … --branch main",
+      "class": "remote_mutator",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true
+    },
+    {
+      "name": "preview:deploy",
+      "cmd": "wrangler pages deploy … --branch preview",
+      "class": "remote_mutator",
+      "safe_for_p0_agents": false,
+      "cloud_setup_forbidden": true
+    },
+    {
+      "name": "leads:reimport-missed",
+      "cmd": "node scripts/reimport-missed-leads.mjs",
+      "class": "remote_mutator",
+      "safe_for_p0_agents": false
+    },
+    {
+      "name": "images:optimize",
+      "cmd": "node scripts/optimize-images.mjs",
+      "class": "local_fs_mutator",
+      "safe_for_p0_agents": false
+    },
+    {
+      "name": "lh:*|psi:*|ga4:funnel",
+      "cmd": "performance / analytics reporters",
+      "class": "remote_reader",
+      "safe_for_p0_agents": false
+    }
+  ],
+  "filesystem_mutators": [
+    {
+      "path": "scripts/build-config.mjs",
+      "writes": "HTML/JS/CSS/toml in cwd via token replace + @include expand",
+      "intended_cwd": "clients/<slug>/dist/",
+      "blast_radius": "cwd only — catastrophic if run at repo root on shared templates"
+    },
+    {
+      "path": "scripts/dev-preview.sh",
+      "writes": "temp hydrated preview dir; sources tokens.env via bash",
+      "blast_radius": "local temp + client tokens.env read",
+      "gap": "shell-source pattern (F-004); supersede with hydrate-client.mjs in P4"
+    },
+    {
+      "path": "scripts/optimize-images.mjs",
+      "writes": "image binaries / sidecars",
+      "blast_radius": "paths passed by operator"
+    },
+    {
+      "path": "scripts/reinline-css.mjs",
+      "writes": "HTML with inlined CSS",
+      "blast_radius": "targeted files"
+    },
+    {
+      "path": "manus-skills/dealer-site-intake/scripts/new-client.mjs",
+      "writes": "clients/<name>/{intake.json,client.config.js,tokens.env,WIRING.md}",
+      "blast_radius": "one client directory; --force overwrites",
+      "protected_client_rule": "must refuse sun-pool-spa without break-glass (enforce in P0 Agent A)"
+    },
+    {
+      "path": "manus-skills/dealer-site-intake/scripts/map-intake.mjs",
+      "writes": "client wiring / mapped fields under clients/<name>/",
+      "blast_radius": "one client directory"
+    },
+    {
+      "path": "manus-skills/dealer-site-hydrate/SKILL.md",
+      "writes": "clients/<name>/dist/ via rsync + build-config (recipe, not a CLI yet)",
+      "blast_radius": "one client dist/; shell-sources tokens.env",
+      "gap": "hydrate-client.mjs promised in TEMPLATE_DECISIONS but missing"
+    },
+    {
+      "path": "manus-skills/dealer-site-launch/scripts/indexnow.mjs",
+      "writes": "may notify IndexNow; network side effect",
+      "blast_radius": "search engines for submitted URLs"
+    }
+  ],
+  "secret_surface_mutators": [
+    {
+      "operation": "wrangler pages secret put",
+      "allowed": true,
+      "authority": "docs/runbooks/SECRETS_RUNBOOK.md",
+      "rule": "Only approved path to install secret values into Cloudflare Pages"
+    },
+    {
+      "operation": "Cloudflare deployment_configs PATCH",
+      "allowed": false,
+      "wtv": "WTV-049",
+      "rule": "Forbidden — read-modify-write blanks masked secret_text values"
+    },
+    {
+      "operation": "npm run secrets:verify",
+      "allowed": "read-only verify against exact host after deploy",
+      "rule": "Does not install secrets; proves presence at runtime"
+    }
+  ],
+  "skills_sot_note": {
+    "source_of_truth": "manus-skills/",
+    "legacy_not_sot": "skills/client-site-build/",
+    "risk": "Running legacy zip scripts can reintroduce fixed bugs and duplicate mutators"
+  },
+  "fleet_selection_rule": "Never discover clients via unrestricted clients/* glob for bulk mutate/deploy. Use Supabase/release-manifest allowlist. Canary must not be sun-pool-spa.",
+  "explicitly_out_of_scope_for_p0_agents": [
+    "wrangler pages deploy",
+    "wrangler pages secret put against real projects",
+    "wrangler d1 execute --remote",
+    "ghl:fields:create",
+    "Any mutation under clients/sun-pool-spa/"
+  ]
+}

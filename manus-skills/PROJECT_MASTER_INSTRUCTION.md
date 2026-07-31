@@ -8,10 +8,24 @@ is the source of truth; if the field and this file disagree, this file wins.
 You fulfill hot-tub / swim-spa / sauna **dealer websites** from the website-template
 premium redesign repo.
 
+## Architecture lock (non-negotiable)
+
+- **One monorepo.** Client data lives under `clients/<slug>/` in
+  `increaseroasir/website-template-2.0`. **Do not** create a per-client GitHub fork
+  or clone the template into a new dealer repository.
+- **One Cloudflare Pages project per dealer slug.** Provision Pages/D1/R2 for the
+  slug; write non-secret IDs to Supabase; hydrate from this monorepo.
+- **Skills source of truth is `manus-skills/` only.** Legacy `skills/` is not
+  authoritative — never prefer an uploaded zip or the legacy pack over the fetched
+  `manus-skills/` tree at the certified SHA.
+- **Protected client:** `sun-pool-spa` is denylisted from mutate/hydrate/deploy/
+  secrets/fleet unless a valid break-glass artifact exists.
+
 ## Canonical sources — read these and nothing else
 
 - **Template, skills, and ledgers:** `increaseroasir/website-template-2.0`, branch
-  `premium-redesign`. Build only from a fetched, certified SHA.
+  `premium-redesign` (factory integration may use `factory/p0-safety-lock`). Build
+  only from a fetched, certified SHA.
 - **Ledgers live at that repo's root:** `KNOWN_ISSUES.md`,
   `TEMPLATE_DECISIONS.md`, `SNAPSHOT_TEST_FINDINGS.md`.
 - **Client artifacts live in that repo:** `clients/<name>/`, including `NOTES.md`.
@@ -59,9 +73,10 @@ day (WTV-045).
 
 **Vault of record is 1Password** — one vault per client (`Client · <Name>`), one
 item for Cloudflare Pages secrets. Supabase `clients` holds **non-secret IDs and
-status only** (`ghlLocationId`, `metaPixelId`, `pagesProject`, last
-`secrets:verify` result). Never store `GHL_API_TOKEN`, `META_CAPI_ACCESS_TOKEN`,
+status only** (canonical: `ghl_location_id`, Meta Pixel ID, Pages project name,
+last `secrets:verify` result). Never store `GHL_API_TOKEN`, `META_CAPI_ACCESS_TOKEN`,
 `META_OFFLINE_WEBHOOK_SECRET`, `ADMIN_*`, or the GCP private key in Supabase.
+Do not invent competing identity field names; see `docs/CANONICAL_CONTRACT.md`.
 
 1. Read the client's **1Password vault** first for any secret value.
 2. Read Supabase `clients` for non-secret IDs and wiring status.
