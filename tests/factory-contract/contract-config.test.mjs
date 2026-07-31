@@ -164,8 +164,11 @@ describe("canonical contract companions", () => {
     assert.equal(sync.contract_version, "0.1.1");
     assert.equal(sync.authoritative_system, "supabase");
     assert.equal(targets.contract_version, "0.1.1");
+    assert.equal(targets.project_name, "htl-factory-dev");
+    assert.equal(targets.dev_test_project_ref, "epeddfdifckzzmskhdsz");
+    assert.equal(targets.target_environment, "dev_test");
     assert.equal(targets.apply_authorized, false);
     assert.equal(targets.production_apply_authorized, false);
-    assert.equal(targets.dev_test_project_ref, null);
+    assert.equal(targets.production_project_ref, null);
   });
 });

@@ -363,12 +363,13 @@ describe("P0.5 owner decision proofs", () => {
     assert.equal(store.onboarding_cases.get(caseId).status, "approved");
   });
 
-  it("does not infer a Supabase migration target", () => {
+  it("registers approved Supabase target without authorizing apply", () => {
     const targets = loadSupabaseTargets();
     assert.equal(targets.apply_authorized, false);
     assert.equal(targets.production_apply_authorized, false);
-    assert.equal(targets.dev_test_project_ref, null);
-    assert.equal(targets.production_project_ref, null);
+    assert.equal(targets.dev_test_project_ref, "epeddfdifckzzmskhdsz");
+    assert.equal(targets.project_name, "htl-factory-dev");
+    assert.equal(targets.target_environment, "dev_test");
   });
 
   it("missing Sun Pool UUID still fails closed", () => {
