@@ -11,10 +11,9 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 | Clean baseline branch | `premium-redesign` |
 | Baseline tag | `htl-factory-pre-hardening-2026-07-30` |
 | Integration branch | `factory/p0-safety-lock` |
-| Pre-publish integration branch | `factory/p2-integration-reconcile` |
+| Active work branch | `factory/p2-integration-reconcile` |
 | Integration tip (p0-safety-lock) | `9b51c64` |
-| Onboarding lane | `factory/p2-onboarding-forms-and-workflows` @ `9ba627d` |
-| Make lane | `factory/p2-make-intake` @ `cb4cc58` |
+| Publish tip before apply | `1cd2c73` |
 | `required_base_sha` | `309ac92d226b14cafd0bee6130606c3fcf1b5195` |
 | Baseline tag SHA | `42ba6eda625afbcea9e0f10da070d3c309e763ad` |
 | Sun Pool tree OID | `f3da831b2c31d37693f6022340b2d2f936bb4f72` |
@@ -28,19 +27,18 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 - P0.5 canonical contract freeze: COMPLETE AND VERIFIED
 - P1 Supabase target registration: COMPLETE AND VERIFIED
 - P1 Supabase migrations/RPC: COMPLETE AND VERIFIED (dev_test `epeddfdifckzzmskhdsz`)
-- P2 onboarding design: **Hybrid A+C PUBLISHED IN GIT**
-  - Contract `0.2.0` / onboarding schema `1.1.0` live in Git config
-  - Six `*_reported_*` website/domain fields published (form1-owned)
-  - Child-table migration **files landed**; **NOT APPLIED** to Supabase
+- P2 onboarding design: **Hybrid A+C PUBLISHED IN GIT** (`0.2.0` / `1.1.0`)
+- P2 child tables: **APPLIED AND VERIFIED on htl-factory-dev**
+  - `onboarding_employees` applied (remote version `20260731193347`)
+  - `inventory_submissions` applied (remote version `20260731193358`)
+  - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
+  - Synthetic smoke passed; synthetic data deleted
+  - `apply_authorized` returned to **false**
 - P2 Make intake: **INACTIVE DEV OBJECTS EXIST — NOT COMPLETE**
-  - Form 1 scenario `4852018` inactive; webhook `2785703`; connection `4834536`
+  - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`
   - No scenario executions; activation not authorized; E2E incomplete
-  - Forms 2 and 3 not built; GHL wiring not authorized
 - P3 provisioning: NOT STARTED
-- P4 hydration: NOT STARTED
-- P5 staging: NOT STARTED
-- P6 production: NOT STARTED
-- P7 fleet: NOT STARTED
+- P4–P7: NOT STARTED
 
 ## Current Contract
 
@@ -48,33 +46,17 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 - Onboarding schema version (live in Git): **1.1.0**
 - Registered Supabase project: htl-factory-dev / `epeddfdifckzzmskhdsz` / dev_test
 - Migration apply authorized (config gate): **no**
-- P1 migration apply completed: yes (core tables + RPC only; 2026-07-31)
-- Child-table migrations landed in Git: yes (`20260731184500`, `20260731184600`) — **NOT APPLIED**
+- Child-table migrations applied to dev: **yes** (verified)
 - Production migration apply authorized: no
 - Sun Pool mutation authorized: no
 
 ## Active Gate
 
-**Published in Git ≠ applied in Supabase.**
-
-Landed child migrations (Git only):
-
-- `supabase/migrations/20260731184500_create_onboarding_employees.sql`
-- `supabase/migrations/20260731184600_create_inventory_submissions.sql`
-
-Timestamps sort after verified remote max `20260731081314`. RLS ENABLE present; zero policies; no anon grants.
-
-**Still unauthorized / incomplete:**
-
-- apply child-table migrations to `htl-factory-dev`
-- activate scenario `4852018` / webhook E2E
-- GHL form wiring; Forms 2/3; ClickUp live create
-- P3+ provisioning / production
-- merge of this branch into `factory/p0-safety-lock`
+Child tables exist in `htl-factory-dev`. Make remains inactive. E2E / GHL / ClickUp / P3 remain unauthorized.
 
 Next owner decision:
 
-1. Authorize applying the two child-table migrations to `htl-factory-dev` only, followed by read-only verification and smoke testing.
+1. Authorize a synthetic Form 1 E2E through inactive scenario `4852018`, including a temporary Make active-slot plan, with no real client data.
 
 ## Usage governance
 
