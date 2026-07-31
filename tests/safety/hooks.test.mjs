@@ -57,6 +57,24 @@ describe('factory-safety-shell hook', () => {
     assert.equal(evaluateShellCommand('npm run secrets:verify').deny, true);
     assert.equal(evaluateShellCommand('npm run ghl:fields:create').deny, true);
   });
+
+  it('blocks find -delete on sun-pool-spa (absolute and relative)', () => {
+    assert.equal(evaluateShellCommand('find clients/sun-pool-spa -delete').deny, true);
+    assert.equal(evaluateShellCommand('find ./clients/sun-pool-spa -delete').deny, true);
+    assert.equal(evaluateShellCommand('find /workspace/clients/sun-pool-spa -name x -delete').deny, true);
+    assert.equal(evaluateShellCommand('find /workspace/clients/sun-pool-spa -exec rm -rf {} +').deny, true);
+  });
+
+  it('blocks wrangler pages deploy even with preview/staging branch', () => {
+    assert.equal(evaluateShellCommand('wrangler pages deploy dist --project-name demo --branch preview').deny, true);
+    assert.equal(evaluateShellCommand('npx wrangler pages deploy dist --branch staging').deny, true);
+    assert.equal(evaluateShellCommand('pnpm wrangler pages deploy dist --branch preview').deny, true);
+  });
+
+  it('blocks wrangler secret put', () => {
+    assert.equal(evaluateShellCommand('wrangler pages secret put META_PIXEL_ID').deny, true);
+    assert.equal(evaluateShellCommand('wrangler secret put FOO').deny, true);
+  });
 });
 
 describe('factory-safety-pretool hook', () => {

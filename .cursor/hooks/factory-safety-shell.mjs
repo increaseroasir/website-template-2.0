@@ -41,12 +41,16 @@ export function evaluateShellCommand(command) {
   const compact = lower.replace(/\s+/g, ' ').trim();
 
   // Protected client mutation / targeting
-  if (/(^|[/\s'"`])clients\/sun-pool-spa(\/|\s|$|['"`])/.test(lower)
+  const targetsSunPool = /(^|[/\s'"`])clients\/sun-pool-spa(\/|\s|$|['"`])/.test(lower)
     || /(?:--client|--name|--slug|--init|--validate|--dist)\s+['"]?sun-pool-spa\b/.test(lower)
-    || /\bsun-pool-spa\b/.test(lower) && /\b(npm run|node |wrangler |hydrate|deploy|migrate|init|write|rm |cp |mv |rsync|mkdir)/.test(lower)) {
-    // Allow pure read inspection that does not mutate (git show / rev-parse / cat of tree OID checks).
-    const readOnly = /^(git\s+(rev-parse|ls-tree|cat-file|show|log|diff|status)|ls\b|cat\b|head\b|rg\b|grep\b|find\b)/.test(compact)
-      && !/\b(checkout|commit|push|reset|clean|rm|mv|cp|write|tee|sed\s+-i|perl\s+-i)\b/.test(compact);
+    || (/\bsun-pool-spa\b/.test(lower)
+      && /\b(npm run|node |wrangler |hydrate|deploy|migrate|init|write|rm |cp |mv |rsync|mkdir|find\b|touch\b|tee\b|sed\s+-i|perl\s+-i)/.test(lower));
+  if (targetsSunPool) {
+    // Narrow read-only allowlist for OID/tree inspection only.
+    // `find` is NOT read-only: -delete/-exec can mutate; use git/ls/rg instead.
+    const readOnly = /^(git\s+(rev-parse|ls-tree|cat-file|show|log|diff|status)|ls\b|cat\b|head\b|rg\b|grep\b)\b/.test(compact)
+      && !/\b(checkout|commit|push|reset|clean|rm|mv|cp|write|tee|sed\s+-i|perl\s+-i|-delete|-exec|-execdir)\b/.test(compact)
+      && !/\bfind\b/.test(compact);
     if (!readOnly) {
       return {
         deny: true,
@@ -55,23 +59,24 @@ export function evaluateShellCommand(command) {
     }
   }
 
-  // Production wrangler / pages deploy
-  if (/\bwrangler\b/.test(lower) && /\b(pages\s+deploy|deploy)\b/.test(lower)) {
-    const prodBranch = /--branch\s+['"]?(main|production|prod)['"]?/.test(lower);
-    const prodProject = /--env\s+['"]?production['"]?/.test(lower) || /\bproduction\b/.test(lower);
-    const npmDeploy = /\bnpm\s+run\s+(deploy|preview:deploy)\b/.test(lower);
-    if (prodBranch || prodProject || npmDeploy || !/--branch\s+/.test(lower)) {
-      // Fail closed: any wrangler pages deploy / npm run deploy is denied in agent context.
-      return {
-        deny: true,
-        reason: 'Production/wrangler deploy is blocked in agent context (no production deploy).'
-      };
-    }
+  // All wrangler pages/workers deploys and secret installs are blocked in agent context
+  // (including --branch preview/staging). Preview/prod deploy is never agent-authorized.
+  if (/\bwrangler\b/.test(lower) && /\b(?:pages\s+deploy|pages\s+deployment\s+create|deploy)\b/.test(lower)) {
+    return {
+      deny: true,
+      reason: 'wrangler deploy / pages deploy is blocked in agent context (including preview branches).'
+    };
+  }
+  if (/\bwrangler\b/.test(lower) && /\b(pages\s+secret\s+put|secret\s+put|secret\s+bulk)\b/.test(lower)) {
+    return {
+      deny: true,
+      reason: 'wrangler secret put against real systems is blocked in agent context.'
+    };
   }
   if (/\bnpm\s+run\s+(deploy|preview:deploy)\b/.test(lower)) {
     return { deny: true, reason: 'npm run deploy / preview:deploy is blocked in agent context.' };
   }
-  if (/\bnpm\s+run\s+db:init:remote\b/.test(lower) || /\bwrangler\s+d1\s+execute\b/.test(lower) && /\b--remote\b/.test(lower)) {
+  if (/\bnpm\s+run\s+db:init:remote\b/.test(lower) || (/\bwrangler\s+d1\s+execute\b/.test(lower) && /\b--remote\b/.test(lower))) {
     return { deny: true, reason: 'Remote D1 init/execute is blocked in agent context.' };
   }
   if (/\bnpm\s+run\s+ghl:fields:(check|create)\b/.test(lower) || /\bnpm\s+run\s+secrets:verify\b/.test(lower)) {
@@ -81,8 +86,8 @@ export function evaluateShellCommand(command) {
   // Bulk clients/* operations
   if (/clients\/\*\*?/.test(cmd)
     || /for\s+\w+\s+in\s+clients\//.test(lower)
-    || /ls\s+clients\/\s*;/.test(lower) && /\b(rm|mv|cp|hydrate|deploy|upgrade)\b/.test(lower)
-    || /\bfind\s+clients\b/.test(lower) && /\b(-delete|-exec)\b/.test(lower)
+    || (/ls\s+clients\/\s*;/.test(lower) && /\b(rm|mv|cp|hydrate|deploy|upgrade)\b/.test(lower))
+    || (/\bfind\b/.test(lower) && /(?:^|[/\s'"`])clients(?:\/|\s|$)/.test(lower) && /\b(-delete|-exec|-execdir)\b/.test(lower))
     || /\brm\s+(-[a-z]*r[a-z]*|--recursive).*\bclients\b/.test(lower)) {
     return {
       deny: true,
