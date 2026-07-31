@@ -12,7 +12,7 @@
 | Base (`origin/factory/p0-safety-lock`) | `9b51c64a808a5e041921c544272f56eab8d52fcb` |
 | Onboarding tip (`origin/factory/p2-onboarding-forms-and-workflows`) | `9ba627de0b836d7fef14f8b8440b61fac6cee9e2` |
 | Make tip (`origin/factory/p2-make-intake`) | `cb4cc58be33092e12fd571c22dc05e26d98413f1` |
-| Integration tip | set after push: `git rev-parse origin/factory/p2-integration-reconcile` |
+| Integration tip (`origin/factory/p2-integration-reconcile`) | `f8cac00e74f0a25fcdea25d9437f99f9224e681c` |
 
 Remote verified: `increaseroasir/website-template-2.0`.
 
