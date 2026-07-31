@@ -168,4 +168,53 @@ describe("request_client_transition (mocked RPC)", () => {
     });
     assert.equal(ok.status, "approved");
   });
+
+  it("blocks awaiting_approval -> production_deploying without production approval", () => {
+    store.onboarding_cases.get(caseId).status = "awaiting_approval";
+    store.onboarding_cases.get(caseId).version = 10;
+    assert.throws(
+      () =>
+        requestClientTransition(store, {
+          onboarding_case_id: caseId,
+          expected_current_status: "awaiting_approval",
+          requested_status: "production_deploying",
+          expected_version: 10,
+          actor: "approver",
+          correlation_id: "corr-prod-blocked",
+        }),
+      (err) =>
+        err instanceof ContractError && err.code === "production_approval_required"
+    );
+
+    const approvalId = newId();
+    store.production_approvals.set(approvalId, {
+      production_approval_id: approvalId,
+      client_id: clientId,
+      onboarding_case_id: caseId,
+      configuration_version: 3,
+      onboarding_schema_version: "1.0.0",
+      template_version: "1.1.0",
+      git_sha: "abcdef1",
+      hydrator_version: "1.0.0",
+      gate_version: "1.0.0",
+      deployment_workflow_version: "1.0.0",
+      artifact_digest: `sha256:${"ab".repeat(32)}`,
+      environment: "production",
+      approved_by: "owner@example.com",
+      approved_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 86400000).toISOString(),
+      consumed_at: null,
+    });
+
+    const ok = requestClientTransition(store, {
+      onboarding_case_id: caseId,
+      expected_current_status: "awaiting_approval",
+      requested_status: "production_deploying",
+      expected_version: 10,
+      actor: "approver",
+      correlation_id: "corr-prod-ok",
+    });
+    assert.equal(ok.status, "production_deploying");
+    assert.ok(store.production_approvals.get(approvalId).consumed_at);
+  });
 });

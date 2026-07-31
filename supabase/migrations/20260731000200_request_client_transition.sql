@@ -64,6 +64,7 @@ AS $$
 DECLARE
   v_case onboarding_cases%ROWTYPE;
   v_rule factory_transition_rules%ROWTYPE;
+  v_approval production_approvals%ROWTYPE;
   v_key text;
   v_prior idempotency_keys%ROWTYPE;
   v_result jsonb;
@@ -176,6 +177,25 @@ BEGIN
       RAISE EXCEPTION 'approval_readiness_blocked: case is not ready'
         USING ERRCODE = 'check_violation';
     END IF;
+  END IF;
+
+  IF v_rule.requires_production_approval THEN
+    SELECT * INTO v_approval
+    FROM production_approvals
+    WHERE onboarding_case_id = v_case.onboarding_case_id
+      AND environment = 'production'
+      AND consumed_at IS NULL
+      AND expires_at > now()
+    ORDER BY approved_at DESC
+    LIMIT 1
+    FOR UPDATE;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'production_approval_required: unexpired unused production approval missing'
+        USING ERRCODE = 'check_violation';
+    END IF;
+    UPDATE production_approvals
+    SET consumed_at = now()
+    WHERE production_approval_id = v_approval.production_approval_id;
   END IF;
 
   v_new_version := v_case.version + 1;

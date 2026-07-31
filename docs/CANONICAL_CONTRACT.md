@@ -82,8 +82,8 @@ Every work package that touches fulfillment MUST satisfy this checklist. Missing
 
 ### Supabase control plane (this PR)
 
-- [x] Tables for clients, onboarding cases, intake submissions, config versions, idempotency, status history, deferrals, sync failures, approval readiness, workflow events
-- [x] Controlled transition RPC; no free-form status updates
+- [x] Tables for clients, onboarding cases, intake submissions, config versions, idempotency, status history, deferrals, sync failures, approval readiness, production approvals, workflow events
+- [x] Controlled transition RPC; no free-form status updates; `requires_production_approval` consumes an unexpired unused `production_approvals` row
 - [x] Migrations authored; **not** applied to production (`COMPLETE BUT NOT APPLIED`)
 
 ---

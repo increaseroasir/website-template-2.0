@@ -119,11 +119,22 @@ describe("canonical contract companions", () => {
       "deferrals",
       "sync_failures",
       "approval_readiness",
+      "production_approvals",
       "workflow_events",
     ]) {
       assert.match(sql, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}`));
     }
     assert.match(sql, /forbid_direct_onboarding_status_update/);
     assert.match(sql, /free_form_status_update_forbidden/);
+  });
+
+  it("RPC enforces requires_production_approval", () => {
+    const sql = readFileSync(
+      join(repoRoot(), "supabase/migrations/20260731000200_request_client_transition.sql"),
+      "utf8"
+    );
+    assert.match(sql, /requires_production_approval/);
+    assert.match(sql, /production_approval_required/);
+    assert.match(sql, /FROM production_approvals/);
   });
 });
