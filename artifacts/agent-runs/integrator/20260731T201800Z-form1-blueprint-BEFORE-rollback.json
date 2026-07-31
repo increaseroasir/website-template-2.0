@@ -1,0 +1,298 @@
+{
+  "captured_at_utc": "20260731T201742Z",
+  "scenario_id": 4852018,
+  "name": "HTL Factory Form 1 Intake (dev_test)",
+  "isActive": false,
+  "hookId": 2785703,
+  "connection_ids": [
+    4834536
+  ],
+  "project_ref": "epeddfdifckzzmskhdsz",
+  "execution_runs_observed": 0,
+  "note": "Rollback snapshot immediately before contract 0.2.0 / schema 1.1.0 blueprint upgrade. Scenario inactive.",
+  "blueprint": {
+    "name": "HTL Factory Form 1 Intake (dev_test)",
+    "metadata": {
+      "instant": true,
+      "version": 1
+    },
+    "scheduling": {
+      "type": "immediately"
+    },
+    "interface": {
+      "input": [],
+      "output": []
+    },
+    "flow": [
+      {
+        "id": 1,
+        "mapper": {},
+        "module": "gateway:CustomWebHook",
+        "version": 1,
+        "metadata": {
+          "designer": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "parameters": {
+          "hook": 2785703
+        }
+      },
+      {
+        "id": 2,
+        "mapper": {
+          "qs": [
+            {
+              "key": "form",
+              "value": "eq.form1"
+            },
+            {
+              "key": "select",
+              "value": "intake_submission_id,client_id,onboarding_case_id"
+            },
+            {
+              "key": "submission_id",
+              "value": "eq.{{1.submission_id}}"
+            }
+          ],
+          "url": "/rest/v1/intake_submissions",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "module": "supabase:makeAnApiCall",
+        "version": 1,
+        "metadata": {
+          "designer": {
+            "x": 300,
+            "y": 0
+          }
+        },
+        "parameters": {
+          "__IMTCONN__": 4834536
+        }
+      },
+      {
+        "id": 3,
+        "mapper": {},
+        "module": "builtin:BasicRouter",
+        "version": 1,
+        "metadata": {
+          "designer": {
+            "x": 600,
+            "y": 0
+          }
+        },
+        "parameters": {},
+        "routes": [
+          {
+            "flow": [
+              {
+                "id": 4,
+                "filter": {
+                  "name": "dup",
+                  "conditions": [
+                    [
+                      {
+                        "a": "{{2.body}}",
+                        "b": "[]",
+                        "o": "text:notequal"
+                      }
+                    ]
+                  ]
+                },
+                "mapper": {
+                  "body": "{\"ok\":true,\"idempotent\":true,\"result\":{{2.body}}}",
+                  "status": 200
+                },
+                "module": "gateway:WebhookRespond",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 900,
+                    "y": -100
+                  }
+                },
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "flow": [
+              {
+                "id": 5,
+                "mapper": {
+                  "table": "clients",
+                  "domain": "{{1.domain}}",
+                  "client_slug": "{{1.client_slug}}",
+                  "business_name": "{{1.business_name}}",
+                  "deployment_key": "{{1.deployment_key}}",
+                  "ghl_contact_id": "{{1.ghl_contact_id}}"
+                },
+                "module": "supabase:createARow",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 900,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 6,
+                "mapper": {
+                  "table": "onboarding_cases",
+                  "status": "submitted",
+                  "version": "1",
+                  "client_id": "{{5.client_id}}",
+                  "correlation_id": "{{1.correlation_id}}",
+                  "ghl_contact_id": "{{1.ghl_contact_id}}",
+                  "ghl_opportunity_id": "{{1.ghl_opportunity_id}}",
+                  "onboarding_schema_version": "1.0.0"
+                },
+                "module": "supabase:createARow",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1200,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 7,
+                "mapper": {
+                  "url": "/rest/v1/clients?client_id=eq.{{5.client_id}}",
+                  "body": "{\"active_onboarding_case_id\":\"{{6.onboarding_case_id}}\"}",
+                  "method": "PATCH",
+                  "headers": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Prefer",
+                      "value": "return=representation"
+                    }
+                  ]
+                },
+                "module": "supabase:makeAnApiCall",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1500,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 8,
+                "mapper": {
+                  "form": "form1",
+                  "table": "intake_submissions",
+                  "payload": "{}",
+                  "client_id": "{{5.client_id}}",
+                  "submission_id": "{{1.submission_id}}",
+                  "correlation_id": "{{1.correlation_id}}",
+                  "ghl_contact_id": "{{1.ghl_contact_id}}",
+                  "schema_version": "1.0.0",
+                  "onboarding_case_id": "{{6.onboarding_case_id}}"
+                },
+                "module": "supabase:createARow",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1800,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 9,
+                "mapper": {
+                  "table": "config_versions",
+                  "config": "{}",
+                  "client_id": "{{5.client_id}}",
+                  "source_form": "form1",
+                  "submission_id": "{{1.submission_id}}",
+                  "config_version": "1",
+                  "correlation_id": "{{1.correlation_id}}",
+                  "onboarding_case_id": "{{6.onboarding_case_id}}"
+                },
+                "module": "supabase:createARow",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 2100,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 10,
+                "mapper": {
+                  "url": "/rest/v1/rpc/request_client_transition",
+                  "body": "{\"p_client_id\":\"{{5.client_id}}\",\"p_onboarding_case_id\":\"{{6.onboarding_case_id}}\",\"p_expected_current_status\":\"submitted\",\"p_requested_status\":\"under_review\",\"p_expected_version\":1,\"p_actor\":\"make_service\",\"p_correlation_id\":\"{{1.correlation_id}}\",\"p_reason\":\"form1_intake_auto_review\",\"p_idempotency_key\":\"transition:{{6.onboarding_case_id}}:under_review:{{1.correlation_id}}\"}",
+                  "method": "POST",
+                  "headers": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ]
+                },
+                "module": "supabase:makeAnApiCall",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 2400,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 11,
+                "mapper": {
+                  "body": "{\"ok\":true,\"idempotent\":false,\"client_id\":\"{{5.client_id}}\",\"onboarding_case_id\":\"{{6.onboarding_case_id}}\",\"status\":\"under_review\"}",
+                  "status": 200
+                },
+                "module": "gateway:WebhookRespond",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 2700,
+                    "y": 100
+                  }
+                },
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

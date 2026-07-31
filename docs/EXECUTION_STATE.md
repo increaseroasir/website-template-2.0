@@ -34,12 +34,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE DEV OBJECTS EXIST — SYNTHETIC E2E BLOCKED**
+- P2 Make intake: **INACTIVE BLUEPRINT ALIGNED TO 0.2.0 / 1.1.0 — E2E STILL BLOCKED**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`
-  - Identity/blueprint inspected 2026-07-31; no GHL/ClickUp modules
-  - Synthetic Form 1 E2E **not executed**: Make at 26 active / 43 total with no owner-named noncritical pause candidate
-  - Secondary: live blueprint still hardcodes onboarding schema `1.0.0` and empty intake/config payloads (not contract `0.2.0` / schema `1.1.0` reported fields)
-  - No scenario executions from this attempt; no synthetic DB rows created
+  - Blueprint updated while inactive: contract `0.2.0`, onboarding schema `1.1.0`, Form 1 identity + six reported fields in intake/config
+  - No GHL/ClickUp modules; no activation; no webhook executions; no synthetic DB rows
+  - Synthetic Form 1 E2E **still blocked** on Make capacity (26 active); do not pause live scenarios
   - GHL wiring still unauthorized; ClickUp still unauthorized
   - Forms 2/3 not built
 - P2 overall: **NOT COMPLETE** (Make E2E + GHL gates open)
@@ -58,11 +57,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Form 1 Make scenario remains inactive. Synthetic E2E blocked on active-slot authorization (and ideally a blueprint bump for `0.2.0` / `1.1.0`). GHL / ClickUp / P3 remain unauthorized.
+Child tables verified on `htl-factory-dev`. Form 1 Make blueprint is aligned to contract `0.2.0` / schema `1.1.0` and remains inactive. Synthetic E2E blocked only on Make active-slot capacity. GHL / ClickUp / P3 remain unauthorized.
 
 Next owner decision:
 
-1. Name one specific Make scenario ID that may be temporarily paused to free an active slot for synthetic Form 1 E2E on `4852018` (or raise Make capacity). Prefer also authorizing a blueprint update to contract `0.2.0` / schema `1.1.0` before that run.
+1. Increase Make capacity by at least one active scenario slot, then authorize synthetic Form 1 E2E on inactive scenario `4852018` (no real client data; no pausing live workflows).
 
 ## Usage governance
 
