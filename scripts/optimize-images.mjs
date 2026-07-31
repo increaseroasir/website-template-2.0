@@ -18,6 +18,10 @@
 
 import { readdirSync, statSync, mkdirSync, existsSync, renameSync, writeFileSync } from 'node:fs';
 import { join, extname, basename, dirname, resolve } from 'node:path';
+import {
+  assertClientMutationAllowed,
+  ClientProtectionError
+} from './lib/client-protection.mjs';
 
 let sharp;
 try {
@@ -46,6 +50,24 @@ const inputs = argv.filter((a, i) => !a.startsWith('--') && argv[i - 1] !== '--o
 if (!inputs.length) {
   console.error('usage: node scripts/optimize-images.mjs <dir-or-file...> [--out DIR] [--max-kb 120] [--max-edge 1600] [--replace] [--dry-run]');
   process.exit(2);
+}
+
+for (const input of inputs) {
+  const abs = resolve(input);
+  const m = abs.replace(/\\/g, '/').match(/\/clients\/([^/]+)(?:\/|$)/);
+  if (!m) continue;
+  try {
+    assertClientMutationAllowed({
+      clientSlug: m[1],
+      operation: dryRun ? 'images-optimize-dry-run' : 'images-optimize'
+    });
+  } catch (err) {
+    if (err instanceof ClientProtectionError) {
+      console.error('[client-protection]', err.message);
+      process.exit(1);
+    }
+    throw err;
+  }
 }
 
 const SOURCE = /\.(jpe?g|png|webp)$/i;

@@ -1,5 +1,18 @@
 {
   "version": 1,
+  "break_glass": {
+    "artifact_dir": "artifacts/break-glass",
+    "required_fields": [
+      "version",
+      "client_slug",
+      "actor",
+      "reason",
+      "scope",
+      "expires_at",
+      "approved_by"
+    ],
+    "notes": "A CLI flag alone is never sufficient authorization. Break-glass must be a named approval artifact under artifacts/break-glass/ with actor, reason, expiration, and scope."
+  },
   "protected_clients": [
     {
       "slug": "sun-pool-spa",

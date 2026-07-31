@@ -1,0 +1,50 @@
+name: Safety
+
+on:
+  push:
+    branches:
+      - factory/p0-safety-lock
+      - 'cursor/**'
+      - 'factory/**'
+  pull_request:
+    branches:
+      - factory/p0-safety-lock
+      - premium-redesign
+      - main
+
+jobs:
+  protected-client-safety:
+    name: Protected client rejection + safety unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run safety checks
+        run: npm run test:safety
+
+      - name: Prove required_base_sha is ancestor
+        run: |
+          REQUIRED=309ac92d226b14cafd0bee6130606c3fcf1b5195
+          if git merge-base --is-ancestor "$REQUIRED" HEAD; then
+            echo "PASS required_base_sha $REQUIRED is ancestor of HEAD"
+          else
+            echo "FAIL required_base_sha $REQUIRED is NOT an ancestor of HEAD"
+            exit 1
+          fi
+
+      - name: Confirm Sun Pool tree OID
+        run: |
+          EXPECTED=f3da831b2c31d37693f6022340b2d2f936bb4f72
+          ACTUAL=$(git rev-parse HEAD:clients/sun-pool-spa)
+          echo "Sun Pool tree OID: $ACTUAL"
+          test "$ACTUAL" = "$EXPECTED"

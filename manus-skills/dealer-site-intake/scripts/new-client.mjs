@@ -8,6 +8,10 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSy
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import {
+  assertClientMutationAllowed,
+  ClientProtectionError
+} from '../../../scripts/lib/client-protection.mjs';
 
 const skillRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 function findRepoRoot(start) {
@@ -102,6 +106,17 @@ const clientDir = join(clientsRoot, name);
 
 /* ---------------- init ---------------- */
 if (mode === '--init') {
+  try {
+    assertClientMutationAllowed({
+      repoRoot,
+      clientSlug: name,
+      operation: 'init',
+      cliForceFlag: force
+    });
+  } catch (err) {
+    if (err instanceof ClientProtectionError) die(`[client-protection] ${err.message}`, 1);
+    throw err;
+  }
   const pairs = [
     ['intake.template.json', 'intake.json'],
     ['client.config.template.js', 'client.config.js'],

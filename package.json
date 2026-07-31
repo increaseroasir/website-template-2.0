@@ -28,7 +28,9 @@
     "lh:desktop": "node scripts/lighthouse-check.mjs --desktop",
     "psi:mobile": "node scripts/psi-check.mjs",
     "psi:desktop": "node scripts/psi-check.mjs --desktop",
-    "images:optimize": "node scripts/optimize-images.mjs"
+    "images:optimize": "node scripts/optimize-images.mjs",
+    "test": "node --test tests/safety/*.test.mjs",
+    "test:safety": "node scripts/check-safety.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.3",
