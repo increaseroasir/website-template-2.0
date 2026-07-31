@@ -2,8 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://increase-roas.com/schemas/factory-contract.schema.json",
   "title": "HTL Factory Canonical Contract Artifacts",
-  "description": "Validates identity-fields, state-machine companions, form payloads, deferrals, and deployment candidates.",
+  "description": "Validates identity-fields, state-machine companions, form payloads, deferrals, deployment candidates, approvals, sync policy, and supabase targets.",
   "type": "object",
+  "contract_version": "0.1.1",
   "$defs": {
     "uuid": {
       "type": "string",
@@ -41,6 +42,99 @@
     "environment": {
       "type": "string",
       "enum": ["development", "test", "staging", "production"]
+    },
+    "valueClassification": {
+      "type": "string",
+      "enum": [
+        "public_configuration",
+        "sensitive_identifier",
+        "secret_reference",
+        "credential"
+      ]
+    },
+    "approvalState": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "deployment_attempted",
+        "consumed",
+        "expired",
+        "revoked"
+      ]
+    },
+    "fieldPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "allowed_writers",
+        "clearable",
+        "classification",
+        "storage",
+        "precedence"
+      ],
+      "properties": {
+        "owner": { "$ref": "#/$defs/nonEmptyString" },
+        "allowed_writers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "clearable": { "type": "boolean" },
+        "classification": { "$ref": "#/$defs/valueClassification" },
+        "storage": {
+          "type": "string",
+          "enum": ["config", "secret_reference", "vault_only"]
+        },
+        "precedence": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "audited": { "type": "boolean" },
+        "deferrable": { "type": "boolean" },
+        "client_scoped": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "slugLockEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slug_locked",
+        "slug_locked_at",
+        "slug_locked_by_resource_id",
+        "slug_locked_reason"
+      ],
+      "properties": {
+        "slug_locked": { "const": true },
+        "slug_locked_at": { "type": "string", "format": "date-time" },
+        "slug_locked_by_resource_id": { "$ref": "#/$defs/nonEmptyString" },
+        "slug_locked_reason": {
+          "const": "first_managed_resource_created"
+        }
+      }
+    },
+    "explicitClearOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_name",
+        "actor",
+        "reason",
+        "timestamp",
+        "expected_version"
+      ],
+      "properties": {
+        "field_name": { "$ref": "#/$defs/nonEmptyString" },
+        "actor": { "$ref": "#/$defs/nonEmptyString" },
+        "reason": { "$ref": "#/$defs/nonEmptyString" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "expected_version": { "type": "integer", "minimum": 0 },
+        "onboarding_case_id": { "$ref": "#/$defs/uuid" },
+        "client_id": { "$ref": "#/$defs/uuid" }
+      }
     },
     "identityLock": {
       "type": "object",
@@ -126,7 +220,10 @@
         "actor": { "$ref": "#/$defs/nonEmptyString" },
         "correlation_id": { "$ref": "#/$defs/nonEmptyString" },
         "reason": { "type": "string" },
-        "idempotency_key": { "type": "string" }
+        "idempotency_key": { "type": "string" },
+        "production_approval_id": { "$ref": "#/$defs/uuid" },
+        "artifact_digest": { "type": "string" },
+        "environment": { "$ref": "#/$defs/environment" }
       }
     },
     "deploymentCandidate": {
@@ -165,6 +262,64 @@
         "environment": { "$ref": "#/$defs/environment" }
       }
     },
+    "productionApprovalDocument": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "default_ttl_hours",
+        "max_failed_attempts",
+        "states",
+        "rules"
+      ],
+      "properties": {
+        "contract_version": { "const": "0.1.1" },
+        "default_ttl_hours": { "const": 24 },
+        "max_failed_attempts": { "type": "integer", "minimum": 1 },
+        "states": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/approvalState" }
+        },
+        "rules": { "type": "object" }
+      }
+    },
+    "syncPolicyDocument": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "authoritative_system",
+        "mirror",
+        "normal_sync_target_seconds",
+        "delayed_after_seconds",
+        "sync_failure_after_seconds"
+      ],
+      "properties": {
+        "contract_version": { "const": "0.1.1" },
+        "authoritative_system": { "const": "supabase" },
+        "mirror": { "const": "clickup" },
+        "normal_sync_target_seconds": { "type": "integer" },
+        "delayed_after_seconds": { "type": "integer" },
+        "sync_failure_after_seconds": { "type": "integer" },
+        "mirror_may_overwrite_newer_authoritative": { "const": false },
+        "authoritative_rollback_on_mirror_failure": { "const": false }
+      }
+    },
+    "supabaseTargetsDocument": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "apply_authorized",
+        "production_apply_authorized",
+        "dev_test_project_ref"
+      ],
+      "properties": {
+        "contract_version": { "const": "0.1.1" },
+        "apply_authorized": { "const": false },
+        "production_apply_authorized": { "const": false },
+        "dev_test_project_ref": { "type": ["string", "null"] },
+        "production_project_ref": { "type": ["string", "null"] },
+        "rule": { "type": "string" }
+      }
+    },
     "identityFieldsDocument": {
       "type": "object",
       "required": [
@@ -172,11 +327,12 @@
         "onboarding_schema_version",
         "identity",
         "forms",
-        "merge_rules"
+        "merge_rules",
+        "field_policies"
       ],
       "properties": {
-        "contract_version": { "type": "string" },
-        "onboarding_schema_version": { "type": "string" },
+        "contract_version": { "const": "0.1.1" },
+        "onboarding_schema_version": { "const": "1.0.0" },
         "identity": {
           "type": "object",
           "required": [
@@ -195,6 +351,7 @@
           "type": "object",
           "required": ["form1", "form2", "form3"]
         },
+        "field_policies": { "type": "object" },
         "merge_rules": { "type": "object" }
       }
     },
@@ -208,7 +365,7 @@
         "free_form_status_updates"
       ],
       "properties": {
-        "contract_version": { "type": "string" },
+        "contract_version": { "const": "0.1.1" },
         "statuses": {
           "type": "array",
           "items": { "$ref": "#/$defs/fulfillmentStatus" },
@@ -243,6 +400,12 @@
     { "$ref": "#/$defs/formSubmissionEnvelope" },
     { "$ref": "#/$defs/transitionRequest" },
     { "$ref": "#/$defs/deferral" },
-    { "$ref": "#/$defs/identityLock" }
+    { "$ref": "#/$defs/identityLock" },
+    { "$ref": "#/$defs/productionApprovalDocument" },
+    { "$ref": "#/$defs/syncPolicyDocument" },
+    { "$ref": "#/$defs/supabaseTargetsDocument" },
+    { "$ref": "#/$defs/slugLockEvent" },
+    { "$ref": "#/$defs/explicitClearOperation" },
+    { "$ref": "#/$defs/fieldPolicy" }
   ]
 }

@@ -1,19 +1,38 @@
 # Canonical Contract
 
-**Status:** content-complete for P0 (Agent B). Make scenarios remain blocked until owner P0.5 freeze.  
-**Contract version:** `0.1.0`  
+**Status:** P0.5 **COMPLETE AND VERIFIED** (owner approved with required changes incorporated).  
+**Make scenarios:** NOT AUTHORIZED  
+**Migration apply:** COMPLETE BUT NOT APPLIED (no inferred target)  
+**Contract version:** `0.1.1`  
 **Onboarding schema version:** `1.0.0`
 
 Machine-readable companions (authoritative for field names, transitions, and validation):
 
 | File | Role |
 |---|---|
-| `config/identity-fields.json` | One canonical name set, ownership, merge precedence, immutability |
+| `config/identity-fields.json` | Identity, per-field ownership/classification, merge + slug-lock rules |
 | `config/state-machine.json` | Allowed / forbidden transitions + actors |
+| `config/production-approval.json` | Approval TTL, states, retry limits, candidate binding |
+| `config/sync-policy.json` | Supabase authority + ClickUp mirror lag policy |
+| `config/supabase-targets.json` | Migration apply authorization (fail closed) |
 | `config/factory-contract.schema.json` | JSON Schema for contract artifacts + deployment candidate |
 | `config/forbidden-aliases.json` | Rejected alternate spellings / casings |
+| `config/protected-clients.json` | Sun Pool denylist; null UUID is additional protection |
 
 CI and agents MUST reject forbidden aliases (e.g. `ghlLocationId`, `location_id`, `GHL_LOCATION` when canon is `ghl_location_id`).
+
+---
+
+## Locked owner decisions (P0.5)
+
+1. **Migration target** — Do not apply to production. No agent may guess a project. Until owner names a dedicated HTL factory development/test Supabase project, migrations remain **COMPLETE BUT NOT APPLIED** (`config/supabase-targets.json`).
+2. **Production approval TTL** — Default **24 hours**. Binds to one exact deployment candidate + `artifact_digest` + one environment. Attempt does not consume; success consumes; max **2** failed retries; rollback needs separate authorization (`config/production-approval.json` + `scripts/lib/factory-contract/production-approval.mjs`).
+3. **Client slug** — System-owned after reservation; proposed from business name; human-editable until explicit `slug_locked` when first managed resource reaches `created`. Never unlocks on failure/rollback/status change. Business-name changes do not rename.
+4. **Sun Pool** — Do not invent a UUID. Protect by slug `sun-pool-spa`. Missing UUID increases protection. Fail closed without break-glass.
+5. **ClickUp lag** — Supabase authoritative. 5 min → delayed; 15 min → `sync_failure` + alert. Never roll back Supabase because ClickUp failed. No stale mirror replay.
+6. **Field precedence** — `form3 > form2 > form1` only inside each field’s ownership contract (`field_policies`). Null does not clear. Explicit clear is versioned. Human overrides outrank forms and still require `expected_version`.
+7. **Form 3 secrets** — May collect secret **references**, access status, account IDs, authorization metadata. Must not store passwords, API keys, private tokens, recovery codes, or raw credentials. Classifications: `public_configuration` | `sensitive_identifier` | `secret_reference` | `credential`. Client-scoped identifiers must not leak cross-client.
+8. **Transition authority** — Only `request_client_transition`. Make/GHL/ClickUp/AI may request; they may not bypass expected status, actor auth, validity, idempotency, or audit.
 
 ---
 
@@ -28,9 +47,9 @@ Every work package that touches fulfillment MUST satisfy this checklist. Missing
 - [x] `ghl_contact_id` — external **person** / contact; never the company primary key
 - [x] `ghl_opportunity_id` — external sales / onboarding workflow; unique when set
 - [x] `ghl_location_id` — provisioned GHL sub-account; nullable until provision
-- [x] `client_slug` — reserved human-readable slug; effectively immutable after infrastructure
+- [x] `client_slug` — reserved human-readable slug; locked via explicit `slug_locked` event
 - [x] `deployment_key` — machine deploy identifier; immutable
-- [x] `business_name` — display name; editable
+- [x] `business_name` — display name; editable (does not auto-rename slug)
 - [x] `domain` — public domain; editable; audited
 
 ### Forms and merge
@@ -41,12 +60,14 @@ Every work package that touches fulfillment MUST satisfy this checklist. Missing
 - [x] Duplicate Form 1 is idempotent (one logical case)
 - [x] Form 2 / Form 3 may arrive out of order
 - [x] Repeated Form 2 / Form 3 must not overwrite newer config (`expected_version` / optimistic concurrency)
-- [x] Field ownership and merge precedence enumerated in `config/identity-fields.json`
+- [x] Per-field ownership, writers, clearing, classification, storage, and precedence in `field_policies`
+- [x] Forms never clear; only `clearConfigField` with actor/reason/timestamp/`expected_version`
 
 ### Deferrals
 
 - [x] A null field is **not** a deferral
 - [x] Approved deferral requires: field name, reason, approved by, timestamp, expiration, launch consequence, whether production is still allowed, whether required before launch
+- [x] Expired deferrals do not satisfy approval readiness
 
 ### State machine
 
@@ -70,21 +91,23 @@ Every work package that touches fulfillment MUST satisfy this checklist. Missing
 - [x] Environments: `development` | `test` | `staging` | `production`
 - [x] Cloud agents: **zero** production credentials for P0 / P0.5
 - [x] Deployment candidate binds: `client_id`, `onboarding_case_id`, `configuration_version`, `onboarding_schema_version`, `template_version`, `git_sha`, `hydrator_version`, `gate_version`, `deployment_workflow_version`, `artifact_digest`, `environment`
-- [x] Any post-approval change to bound fields (or domain / tracking / secrets) invalidates approval
-- [x] Approvals expire, are single-use on success; rollback needs distinct authorization
+- [x] Any post-approval change to bound fields invalidates approval
+- [x] Approvals expire (24h default), are single-use on success; rollback needs distinct authorization
+- [x] Max two failed production retries under one active unexpired approval
 
 ### Secrets and approval readiness
 
 - [x] Secret **values**: 1Password only
 - [x] Install: `wrangler pages secret put` + `secrets:verify` only
 - [x] Forbidden: `deployment_configs` PATCH; secrets in Git / Supabase / Make / logs / docs / `wiring.json` values
+- [x] Tracking IDs (GA4 / Meta Pixel) are `sensitive_identifier` / public configuration — client-scoped, not automatically vault secrets
 - [x] Approval blocked unless required fields exist **or** are covered by unexpired deferrals that explicitly allow the target environment
 
-### Supabase control plane (this PR)
+### Supabase control plane
 
 - [x] Tables for clients, onboarding cases, intake submissions, config versions, idempotency, status history, deferrals, sync failures, approval readiness, production approvals, workflow events
-- [x] Controlled transition RPC; no free-form status updates; `requires_production_approval` consumes an unexpired unused `production_approvals` row
-- [x] Migrations authored; **not** applied to production (`COMPLETE BUT NOT APPLIED`)
+- [x] Controlled transition RPC; no free-form status updates; production path validates dedicated approval module
+- [x] Migrations authored; **not** applied (`COMPLETE BUT NOT APPLIED`)
 
 ---
 
@@ -97,7 +120,7 @@ Every work package that touches fulfillment MUST satisfy this checklist. Missing
 | `ghl_contact_id` | External person / contact | External; not the company key |
 | `ghl_opportunity_id` | External sales / onboarding workflow | Unique when set |
 | `ghl_location_id` | Provisioned GHL sub-account | Nullable until provision |
-| `client_slug` | Reserved human-readable slug | Effectively immutable after infrastructure |
+| `client_slug` | Human-readable slug | Locked by explicit `slug_locked` event |
 | `deployment_key` | Machine deploy identifier | Immutable |
 | `business_name` | Display name | Editable |
 | `domain` | Public domain | Editable; audited |
@@ -110,11 +133,24 @@ Every work package that touches fulfillment MUST satisfy this checklist. Missing
 - Cloudflare / D1 / R2 / deploy jobs reference `client_id` and/or `deployment_key`, not business name alone.
 - Protected client `sun-pool-spa` is never mutated without a valid break-glass artifact (see `config/protected-clients.json`).
 
+### Slug lock event
+
+```json
+{
+  "slug_locked": true,
+  "slug_locked_at": "2026-07-30T22:00:00Z",
+  "slug_locked_by_resource_id": "resource_uuid",
+  "slug_locked_reason": "first_managed_resource_created"
+}
+```
+
+Once `slug_locked` is true, status transitions never unlock it.
+
 ---
 
 ## Forms (versioned)
 
-Every payload carries `schema_version` and a raw `submission_id`.
+Every payload carries `schema_version` and a raw `submission_id`. Payload shapes unchanged → `onboarding_schema_version` remains `1.0.0`.
 
 | Form | Purpose |
 |---|---|
@@ -136,17 +172,7 @@ Every payload carries `schema_version` and a raw `submission_id`.
 - Duplicate Form 1 → one logical onboarding case (idempotent).
 - Form 2 / Form 3 may arrive out of order.
 - Repeated Form 2 / Form 3 must not overwrite newer config (optimistic concurrency).
-- Field ownership and merge precedence: `config/identity-fields.json`.
-
-### Form field ownership (summary)
-
-| Form | Owns (canonical) |
-|---|---|
-| 1 | `business_name`, `owner_name`, `owner_email`, `owner_phone`, `offer_summary`, `market` (may defer), `ghl_contact_id`, `ghl_opportunity_id` |
-| 2 | `domain`, `dns_provider`, `dns_owner`, `website_url`, `logo_url` (deferrable), `address`, `hours`, `phone_e164` |
-| 3 | `ga4_id`, `meta_pixel_id`, `ghl_location_id`, access checkboxes; secrets never stored in form DB |
-
-Brand palette colors are **not** collected by default (product Law 3); only via documented exception.
+- Per-field ownership: `config/identity-fields.json` → `field_policies`.
 
 ---
 
@@ -165,7 +191,7 @@ A null field is not a deferral. An approved deferral requires:
 | `production_allowed` | yes (bool) |
 | `required_before_launch` | yes (bool) |
 
-Stored in `deferrals` (see Supabase migrations). Expired deferrals do not satisfy approval readiness.
+Stored in `deferrals`. Expired deferrals do not satisfy approval readiness.
 
 ---
 
@@ -188,21 +214,9 @@ request_client_transition(
 )
 ```
 
-Rules:
-
-- Exactly one of `p_client_id` or `p_onboarding_case_id` may resolve the target case (client_id resolves the active case).
-- Ban free-form `UPDATE … SET status`.
-- Repeated identical transition requests (same idempotency key or same from→to with matching version) are idempotent.
-- Invalid transitions are rejected.
-- Stale writes (wrong `expected_version` or `expected_current_status`) are rejected with a concurrency error.
+Production approval creation/expiration/consumption/rollback live in `scripts/lib/factory-contract/production-approval.mjs`. The transition RPC validates (and on live success consumes) but does not own approval lifecycle.
 
 Exact allowed / forbidden transitions: `config/state-machine.json`.
-
-### Canonical statuses
-
-`submitted` → `under_review` → (`needs_correction` ↔ `under_review`) → `approved` | `rejected` | `deferred` → `provisioning` → (`provision_failed` ↔ `provisioning`) → `infrastructure_ready` → `building` → (`build_failed` ↔ `building`) → `staging` → (`qa_failed` → `building`) → `awaiting_approval` → `production_deploying` → `live` → (`update_requested` → `updating` → `staging`) | `suspended` ↔ `live` | `archived`
-
-**Hard-forbidden examples:** `submitted → provisioning`, `approved → live`, `staging → live` (must pass `awaiting_approval` + approval row).
 
 ---
 
@@ -211,26 +225,10 @@ Exact allowed / forbidden transitions: `config/state-machine.json`.
 | Resource | Version column | Write rule |
 |---|---|---|
 | Onboarding case status / case row | `onboarding_cases.version` | RPC / merge requires `expected_version` |
-| Normalized config | `config_versions.config_version` | Append-only new version; merge reads head and checks `expected_version` |
+| Normalized config | `config_versions.config_version` | Append-only new version; merge/clear/override check `expected_version` |
 | Domain edits | audited via `workflow_events` | Prior value retained in event payload |
 
 Mismatch → reject (`concurrency_conflict`) + reconcile from authoritative Supabase row. Never last-write-wins across forms.
-
----
-
-## Idempotency
-
-Every side-effecting job carries an idempotency key (Form submission, provision step, hydrate, deploy, transition).  
-Duplicates return the original result; they do not double-create.  
-Keys live in `idempotency_keys` with unique constraint on `key`.
-
----
-
-## Correlation IDs
-
-Chain: `submission` → `onboarding_case` → `client` → `approval` → `provisioning_job` → `resources` → `hydration` → `staging_deploy` → `qa_approval` → `production_deploy`.
-
-All workflow writes SHOULD include `correlation_id` for trace reconstruction. Persisted on `workflow_events` and transition history.
 
 ---
 
@@ -247,63 +245,17 @@ Cloud agents: **zero** production credentials for P0 / P0.5.
 
 ---
 
-## Deployment candidate (bind all of these)
-
-```json
-{
-  "client_id": "uuid",
-  "onboarding_case_id": "uuid",
-  "configuration_version": 1,
-  "onboarding_schema_version": "1.0.0",
-  "template_version": "1.1.0",
-  "git_sha": "...",
-  "hydrator_version": "...",
-  "gate_version": "...",
-  "deployment_workflow_version": "...",
-  "artifact_digest": "sha256:...",
-  "environment": "staging"
-}
-```
-
-Any post-approval change to these (or domain / tracking / secrets) invalidates approval.  
-Approvals expire, are single-use on success, and rollback needs distinct authorization.
-
-Schema: `config/factory-contract.schema.json` → `$defs/deploymentCandidate`.
-
----
-
 ## Secrets
 
 - Values: 1Password only.
 - Install: `wrangler pages secret put` + `secrets:verify` only.
 - Forbidden: `deployment_configs` PATCH; secrets in Git / Supabase / Make / logs / docs / `wiring.json` values.
 - Supabase may store secret **refs** (`op://…`) and verification timestamps only — never plaintext secret values.
+- GA4 / Meta Pixel IDs are client-scoped identifiers, not automatically vault secrets.
 
 ---
 
-## Approval readiness
-
-Computed / stored in `approval_readiness`:
-
-- Blocked unless every required field for the target environment is present **or** covered by an unexpired deferral with `production_allowed` / environment flags that permit that environment.
-- Null ≠ deferred.
-- `sync_failures` must be empty or explicitly waived for the case before production approval.
-
----
-
-## Later-phase contracts (specify now; side effects gated)
-
-| Phase | Must define in work packages |
-|---|---|
-| P3 Provision | Per-resource lifecycle: `not_requested` → `requested` → `creating` → `created` → `verified` / `failed` / `orphaned` / `externally_missing`. Resources: pages, D1, R2, GHL location, lead sheet. |
-| P4 Hydrate | Temp workspace → validate → atomic swap; overrides never overwritten; determinism tested; `wiring.json` machine SoT. |
-| P5 Staging | Deployment job record; cross-client leakage suite; safe test-lead; noindex. |
-| P6 Prod | Expiring single-use approval; handoff; rollback drill on non-protected client. |
-| P7 Fleet | Release manifests; allowlists; canary ≠ Sun Pool. |
-
----
-
-## Systems of record (reminder)
+## Systems of record
 
 | Concern | Authority |
 |---|---|
@@ -319,4 +271,5 @@ Computed / stored in `approval_readiness`:
 ## Migration status
 
 Supabase SQL under `supabase/migrations/` is **COMPLETE BUT NOT APPLIED**.  
-Do not apply to production from this sprint. Local/CI verification uses mocked contract tests in `tests/factory-contract/`.
+Do not apply to any environment until the owner names a dedicated development/test project in `config/supabase-targets.json`.  
+Local/CI verification uses mocked contract tests in `tests/factory-contract/`.

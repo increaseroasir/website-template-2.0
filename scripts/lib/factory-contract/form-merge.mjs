@@ -157,6 +157,10 @@ function applyForm1(store, ctx) {
       domain: payload.domain ?? null,
       ghl_contact_id: payload.ghl_contact_id,
       active_onboarding_case_id: onboarding_case_id,
+      slug_locked: false,
+      slug_locked_at: null,
+      slug_locked_by_resource_id: null,
+      slug_locked_reason: null,
     };
     caseRow = {
       onboarding_case_id,
@@ -402,13 +406,15 @@ function appendConfigVersion(store, row) {
 }
 
 /**
- * Merge using field ownership. Null/undefined incoming values do not clear.
- * Higher-precedence owners (form3 > form2 > form1) are not overwritten by lower forms.
+ * Merge using per-field ownership policies.
+ * Null/undefined incoming values do not clear.
+ * A writer may only set fields it is allowed to own; global form precedence
+ * never lets form3 overwrite form1-owned fields it does not own.
  */
 export function mergeOwnedFields(base, form, payload, formDef, identity) {
-  const precedence = identity.merge_rules.owner_precedence;
   const out = { ...base };
   const fieldMeta = formDef.fields;
+  const policies = identity.field_policies || {};
 
   for (const [field, meta] of Object.entries(fieldMeta)) {
     let value = payload[field];
@@ -417,18 +423,73 @@ export function mergeOwnedFields(base, form, payload, formDef, identity) {
     }
     if (value === undefined || value === null) continue;
 
+    const policy = policies[field] || {
+      owner: meta.owner || form,
+      allowed_writers: [meta.owner || form],
+      precedence: [meta.owner || form],
+    };
+
+    if (!policy.allowed_writers.includes(form)) {
+      throw new ContractError(
+        "writer_not_allowed",
+        `${form} cannot write field ${field} outside its ownership contract`
+      );
+    }
+
     const existingOwner = out.__owners?.[field];
     if (existingOwner && existingOwner !== form) {
+      if (existingOwner === "human_override") {
+        // Human overrides outrank forms; forms must not overwrite them.
+        continue;
+      }
+      const precedence = policy.precedence || identity.merge_rules.owner_precedence;
       const existingRank = precedence.indexOf(existingOwner);
       const incomingRank = precedence.indexOf(form);
-      // Lower index in owner_precedence = higher precedence
       if (existingRank !== -1 && incomingRank !== -1 && existingRank < incomingRank) {
         continue;
+      }
+      // Even with higher global form precedence, do not write fields owned by another form.
+      if (policy.owner && policy.owner !== form && existingOwner === policy.owner) {
+        // same owner field — allow if writer permitted
+      }
+      if (policy.owner && !policy.allowed_writers.includes(form)) {
+        throw new ContractError(
+          "writer_not_allowed",
+          `${form} cannot overwrite ${field} owned by ${policy.owner}`
+        );
       }
     }
 
     out[field] = value;
     out.__owners = { ...(out.__owners || {}), [field]: form };
+
+    if (policy.client_scoped && out.__client_scope && payload.__foreign_client_id) {
+      if (payload.__foreign_client_id !== out.__client_scope) {
+        throw new ContractError(
+          "cross_client_leakage",
+          `${field} is client-scoped and cannot leak across clients`
+        );
+      }
+    }
+  }
+
+  // Reject attempts to smuggle non-owned known policy fields via payload extras.
+  for (const field of Object.keys(payload)) {
+    if (field === "trading_name" || field.startsWith("__")) continue;
+    if (fieldMeta[field]) continue;
+    if (
+      form === "form1" &&
+      ["client_slug", "deployment_key", "domain"].includes(field)
+    ) {
+      continue;
+    }
+    const policy = policies[field];
+    if (policy && !policy.allowed_writers.includes(form)) {
+      throw new ContractError(
+        "writer_not_allowed",
+        `${form} cannot write field ${field} outside its ownership contract`
+      );
+    }
   }
 
   // Allow non-owned passthrough identity links on form1

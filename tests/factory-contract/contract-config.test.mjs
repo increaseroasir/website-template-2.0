@@ -5,6 +5,9 @@ import {
   loadStateMachine,
   loadForbiddenAliases,
   loadFactoryContractSchema,
+  loadProductionApprovalPolicy,
+  loadSyncPolicy,
+  loadSupabaseTargets,
   scanForbiddenAliases,
 } from "../../scripts/lib/factory-contract/index.mjs";
 import { readFileSync } from "node:fs";
@@ -14,7 +17,7 @@ import { repoRoot } from "../../scripts/lib/factory-contract/load-contract.mjs";
 describe("canonical contract companions", () => {
   it("locks the identity name set", () => {
     const identity = loadIdentityFields();
-    assert.equal(identity.contract_version, "0.1.0");
+    assert.equal(identity.contract_version, "0.1.1");
     assert.equal(identity.onboarding_schema_version, "1.0.0");
     for (const key of [
       "client_id",
@@ -35,10 +38,16 @@ describe("canonical contract companions", () => {
     assert.equal(identity.identity.deployment_key.immutable_after_create, true);
     assert.equal(identity.identity.business_name.editable, true);
     assert.equal(identity.identity.domain.audited, true);
+    assert.equal(identity.identity.client_slug.lock_never_unlocks, true);
+    assert.ok(identity.field_policies.business_name);
+    assert.ok(identity.field_policies.ga4_id);
+    assert.equal(identity.field_policies.ga4_id.classification, "sensitive_identifier");
+    assert.equal(identity.field_policies.capi_token_ref.classification, "secret_reference");
   });
 
   it("state machine forbids free-form updates and skip paths", () => {
     const sm = loadStateMachine();
+    assert.equal(sm.contract_version, "0.1.1");
     assert.equal(sm.rpc, "request_client_transition");
     assert.equal(sm.free_form_status_updates, "forbidden");
     assert.ok(sm.statuses.includes("infrastructure_ready"));
@@ -91,10 +100,17 @@ describe("canonical contract companions", () => {
     ]) {
       assert.ok(required.includes(key), `deployment candidate missing ${key}`);
     }
+    assert.equal(schema.contract_version, "0.1.1");
+    assert.ok(schema.$defs.productionApprovalDocument);
+    assert.ok(schema.$defs.syncPolicyDocument);
+    assert.ok(schema.$defs.supabaseTargetsDocument);
+    assert.ok(schema.$defs.slugLockEvent);
+    assert.ok(schema.$defs.explicitClearOperation);
   });
 
   it("forbidden alias scanner finds no violations in owned paths", () => {
     const aliases = loadForbiddenAliases();
+    assert.equal(aliases.contract_version, "0.1.1");
     assert.ok(aliases.aliases.some((a) => a.canonical === "ghl_location_id"));
     const result = scanForbiddenAliases();
     assert.equal(
@@ -136,5 +152,20 @@ describe("canonical contract companions", () => {
     assert.match(sql, /requires_production_approval/);
     assert.match(sql, /production_approval_required/);
     assert.match(sql, /FROM production_approvals/);
+  });
+
+  it("loads P0.5 companion policies at contract 0.1.1", () => {
+    const approval = loadProductionApprovalPolicy();
+    const sync = loadSyncPolicy();
+    const targets = loadSupabaseTargets();
+    assert.equal(approval.contract_version, "0.1.1");
+    assert.equal(approval.default_ttl_hours, 24);
+    assert.equal(approval.max_failed_attempts, 2);
+    assert.equal(sync.contract_version, "0.1.1");
+    assert.equal(sync.authoritative_system, "supabase");
+    assert.equal(targets.contract_version, "0.1.1");
+    assert.equal(targets.apply_authorized, false);
+    assert.equal(targets.production_apply_authorized, false);
+    assert.equal(targets.dev_test_project_ref, null);
   });
 });

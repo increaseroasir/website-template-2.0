@@ -1,8 +1,16 @@
 import { ContractError } from "./errors.mjs";
 import { loadStateMachine } from "./load-contract.mjs";
+import {
+  consumeProductionApproval,
+  recordDeploymentAttempt,
+  validateProductionApproval,
+} from "./production-approval.mjs";
 
 /**
  * Mocked equivalent of supabase request_client_transition RPC.
+ * Validates production approvals via the dedicated approval module;
+ * does not own approval creation/expiration/rollback authorization.
+ *
  * @param {ReturnType<import('./mock-store.mjs').createMockStore>} store
  * @param {object} req
  */
@@ -17,6 +25,17 @@ export function requestClientTransition(store, req, stateMachine = loadStateMach
     correlation_id,
     reason = null,
     idempotency_key = null,
+    production_approval_id = null,
+    artifact_digest = null,
+    environment = null,
+    configuration_version = null,
+    onboarding_schema_version = "1.0.0",
+    template_version = null,
+    git_sha = null,
+    hydrator_version = null,
+    gate_version = null,
+    deployment_workflow_version = null,
+    nowMs = Date.now(),
   } = req ?? {};
 
   if (!expected_current_status || !requested_status) {
@@ -119,23 +138,88 @@ export function requestClientTransition(store, req, stateMachine = loadStateMach
     }
   }
 
+  let approvalUsed = null;
   if (rule.requires_production_approval) {
-    const now = Date.now();
-    const approval = [...store.production_approvals.values()].find(
-      (row) =>
-        row.onboarding_case_id === caseRow.onboarding_case_id &&
-        row.environment === "production" &&
-        !row.consumed_at &&
-        new Date(row.expires_at).getTime() > now
-    );
-    if (!approval) {
+    const approvalRow =
+      (production_approval_id &&
+        store.production_approvals.get(production_approval_id)) ||
+      [...store.production_approvals.values()].find(
+        (row) =>
+          row.onboarding_case_id === caseRow.onboarding_case_id &&
+          row.environment === "production"
+      );
+
+    if (!approvalRow) {
       throw new ContractError(
         "production_approval_required",
         "awaiting_approval -> production_deploying requires an unexpired unused production approval"
       );
     }
-    approval.consumed_at = new Date().toISOString();
-    store.production_approvals.set(approval.production_approval_id, approval);
+
+    const candidate = {
+      client_id: approvalRow.client_id,
+      onboarding_case_id: caseRow.onboarding_case_id,
+      configuration_version:
+        configuration_version ?? approvalRow.configuration_version,
+      onboarding_schema_version:
+        onboarding_schema_version ?? approvalRow.onboarding_schema_version,
+      template_version: template_version ?? approvalRow.template_version,
+      git_sha: git_sha ?? approvalRow.git_sha,
+      hydrator_version: hydrator_version ?? approvalRow.hydrator_version,
+      gate_version: gate_version ?? approvalRow.gate_version,
+      deployment_workflow_version:
+        deployment_workflow_version ?? approvalRow.deployment_workflow_version,
+      artifact_digest: artifact_digest ?? approvalRow.artifact_digest,
+      environment: environment ?? "production",
+    };
+
+    validateProductionApproval(store, {
+      production_approval_id: approvalRow.production_approval_id,
+      onboarding_case_id: caseRow.onboarding_case_id,
+      candidate,
+      nowMs,
+    });
+    approvalUsed = recordDeploymentAttempt(store, {
+      production_approval_id: approvalRow.production_approval_id,
+      candidate,
+      nowMs,
+    });
+  }
+
+  // Successful production deploy consumes approval: production_deploying -> live
+  if (
+    expected_current_status === "production_deploying" &&
+    requested_status === "live"
+  ) {
+    const approvalRow =
+      (production_approval_id &&
+        store.production_approvals.get(production_approval_id)) ||
+      [...store.production_approvals.values()].find(
+        (row) =>
+          row.onboarding_case_id === caseRow.onboarding_case_id &&
+          (row.status === "deployment_attempted" || row.status === "active") &&
+          row.environment === "production"
+      );
+    if (approvalRow) {
+      const candidate = {
+        client_id: approvalRow.client_id,
+        onboarding_case_id: caseRow.onboarding_case_id,
+        configuration_version: approvalRow.configuration_version,
+        onboarding_schema_version: approvalRow.onboarding_schema_version,
+        template_version: approvalRow.template_version,
+        git_sha: approvalRow.git_sha,
+        hydrator_version: approvalRow.hydrator_version,
+        gate_version: approvalRow.gate_version,
+        deployment_workflow_version: approvalRow.deployment_workflow_version,
+        artifact_digest: artifact_digest ?? approvalRow.artifact_digest,
+        environment: "production",
+      };
+      approvalUsed = consumeProductionApproval(store, {
+        production_approval_id: approvalRow.production_approval_id,
+        candidate,
+        nowMs,
+      });
+    }
   }
 
   const newVersion = caseRow.version + 1;
@@ -171,6 +255,7 @@ export function requestClientTransition(store, req, stateMachine = loadStateMach
       from_version: expected_version,
       to_version: newVersion,
       reason,
+      production_approval_id: approvalUsed?.production_approval_id ?? null,
     },
   });
 
@@ -181,6 +266,7 @@ export function requestClientTransition(store, req, stateMachine = loadStateMach
     client_id: caseRow.client_id,
     status: requested_status,
     version: newVersion,
+    production_approval_id: approvalUsed?.production_approval_id ?? null,
   };
 
   store.idempotency_keys.set(key, {

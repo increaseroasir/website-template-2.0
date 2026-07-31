@@ -253,6 +253,15 @@ export function assertClientMutationAllowed(opts = {}) {
     return { allowed: true, protected: Boolean(protectedEntry), breakGlassUsed: false };
   }
 
+  // Null / missing client_id on a protected entry is an additional protection
+  // condition — never invent a UUID and never treat it as permission to mutate.
+  if (
+    protectedEntry.client_id == null &&
+    (protectedEntry.missing_client_id_is_additional_protection !== false)
+  ) {
+    // Fall through to break-glass requirement; do not soften the gate.
+  }
+
   // CLI force/bypass flags are never enough for protected clients.
   if (opts.cliForceFlag || opts.force || opts.allowProtected) {
     // Continue only if a valid break-glass artifact also exists.

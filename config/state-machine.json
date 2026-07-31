@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "description": "Authoritative fulfillment status transitions. Only request_client_transition may commit status changes.",
   "status_field": "onboarding_cases.status",
   "version_field": "onboarding_cases.version",

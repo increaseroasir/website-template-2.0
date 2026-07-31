@@ -1,0 +1,16 @@
+{
+  "contract_version": "0.1.1",
+  "authoritative_system": "supabase",
+  "mirror": "clickup",
+  "normal_sync_target_seconds": 300,
+  "delayed_after_seconds": 300,
+  "sync_failure_after_seconds": 900,
+  "mirror_may_overwrite_newer_authoritative": false,
+  "authoritative_rollback_on_mirror_failure": false,
+  "reconciliation": {
+    "requires_authoritative_version": true,
+    "stale_mirror_replay": "forbidden",
+    "idempotent": true
+  },
+  "notes": "Supabase remains authoritative regardless of ClickUp lag. After 5 minutes mark delayed; after 15 minutes create sync_failure and alert. Never roll back an authoritative Supabase transition because ClickUp failed."
+}

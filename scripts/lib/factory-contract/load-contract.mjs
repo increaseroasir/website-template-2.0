@@ -24,6 +24,18 @@ export function loadFactoryContractSchema() {
   return readJson("config/factory-contract.schema.json");
 }
 
+export function loadProductionApprovalPolicy() {
+  return readJson("config/production-approval.json");
+}
+
+export function loadSyncPolicy() {
+  return readJson("config/sync-policy.json");
+}
+
+export function loadSupabaseTargets() {
+  return readJson("config/supabase-targets.json");
+}
+
 export function repoRoot() {
   return ROOT;
 }
