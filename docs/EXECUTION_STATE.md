@@ -11,7 +11,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 | Clean baseline branch | `premium-redesign` |
 | Baseline tag | `htl-factory-pre-hardening-2026-07-30` |
 | Integration branch | `factory/p0-safety-lock` |
-| Integration tip | `71fcdfb` (dev/test migration apply verified) |
+| Integration tip | `eb3a1c1` (dev/test migration apply verified) |
 | `required_base_sha` | `309ac92d226b14cafd0bee6130606c3fcf1b5195` (post-brain tip; must be ancestor of agent PRs) |
 | Baseline tag SHA | `42ba6eda625afbcea9e0f10da070d3c309e763ad` |
 | Sun Pool tree OID | `f3da831b2c31d37693f6022340b2d2f936bb4f72` |
