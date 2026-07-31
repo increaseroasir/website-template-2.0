@@ -11,7 +11,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 | Clean baseline branch | `premium-redesign` |
 | Baseline tag | `htl-factory-pre-hardening-2026-07-30` |
 | Integration branch | `factory/p0-safety-lock` |
-| Integration tip | `dd1ab2d` (merge of PR #6) |
+| Integration tip | `e9ec1cf` (merge of PR #7) |
 | `required_base_sha` | `309ac92d226b14cafd0bee6130606c3fcf1b5195` (post-brain tip; must be ancestor of agent PRs) |
 | Baseline tag SHA | `42ba6eda625afbcea9e0f10da070d3c309e763ad` |
 | Sun Pool tree OID | `f3da831b2c31d37693f6022340b2d2f936bb4f72` |
@@ -23,6 +23,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 - R0 Cursor readiness: COMPLETE AND VERIFIED
 - P0 safety and control plane: COMPLETE AND VERIFIED
 - P0.5 canonical contract freeze: COMPLETE AND VERIFIED
+- P1 Supabase target registration: COMPLETE AND VERIFIED
 - P1 Supabase migrations/RPC: COMPLETE BUT NOT APPLIED
 - P2 Make intake: NOT STARTED / NOT AUTHORIZED
 - P3 provisioning: NOT STARTED
@@ -37,6 +38,12 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 - Onboarding schema version: 1.0.0
 - P0.5 base SHA: a6ad5cd
 - P0.5 commit: 5040fa9
+- Supabase target registration commit: df5708b
+- Registered Supabase project name: htl-factory-dev
+- Registered Supabase project ref: epeddfdifckzzmskhdsz
+- Registered Supabase environment: dev_test
+- Migration apply authorized: no
+- Production migration apply authorized: no
 - Sun Pool tree OID: f3da831b2c31d37693f6022340b2d2f936bb4f72
 - Sun Pool mutation authorized: no
 
@@ -44,12 +51,14 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 No Make implementation and no migration application are authorized.
 
+Registered target identity is locked to `htl-factory-dev` / `epeddfdifckzzmskhdsz` only.
+No agent may infer or substitute another project.
+
 Next owner decisions:
 
-1. Approve a dedicated HTL factory development/test Supabase project.
-2. Separately authorize applying the migrations to that project.
-3. Verify the applied schema and RPC behavior.
-4. Only then decide whether to authorize Make intake implementation.
+1. Separately authorize applying the authored migrations to `htl-factory-dev` (`epeddfdifckzzmskhdsz`) only.
+2. Verify the applied schema and RPC behavior against that exact project.
+3. Only then decide whether to authorize Make intake implementation.
 
 ## Usage governance
 
