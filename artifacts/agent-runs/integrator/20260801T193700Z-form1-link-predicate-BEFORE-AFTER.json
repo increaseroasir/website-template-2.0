@@ -1,0 +1,231 @@
+{
+  "utc": "20260801T193700Z",
+  "decision": "remove numeric:equal 1 from link branches only; keep text:equal 1",
+  "hypothesis": "A CONFIRMED",
+  "changed": [
+    {
+      "label": "link_by_client_id",
+      "removed_numeric_equal_1": 1,
+      "old": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "new": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ]
+    },
+    {
+      "label": "link_by_deployment_key",
+      "removed_numeric_equal_1": 3,
+      "old": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.client_slug}}",
+            "o": "notexist"
+          }
+        ],
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{6.body[1].client_id}}",
+            "b": "{{7.body[1].client_id}}",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "new": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.client_slug}}",
+            "o": "notexist"
+          }
+        ],
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{6.body[1].client_id}}",
+            "b": "{{7.body[1].client_id}}",
+            "o": "text:equal"
+          }
+        ]
+      ]
+    },
+    {
+      "label": "link_by_client_slug",
+      "removed_numeric_equal_1": 1,
+      "old": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{1.deployment_key}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "new": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{1.deployment_key}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ]
+    }
+  ],
+  "create_unchanged": true
+}

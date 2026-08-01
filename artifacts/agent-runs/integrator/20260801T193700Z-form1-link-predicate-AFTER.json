@@ -1,0 +1,146 @@
+{
+  "runId": "20260801T193700Z-form1-link-predicate",
+  "scenarioId": 4852018,
+  "status": "SUCCESS",
+  "update": {
+    "confirmed": true,
+    "activated": false,
+    "second_patch": false,
+    "lastEdit": "2026-08-01T19:46:02.512Z"
+  },
+  "hard_stop_post": {
+    "isActive": false,
+    "nextExec": null
+  },
+  "module9": {
+    "id": 9,
+    "module": "builtin:BasicIfElse"
+  },
+  "link_branches": {
+    "link_by_client_id": {
+      "numeric_equal_length_1_remaining": 0,
+      "text_equal_1_present": 1,
+      "removed_numeric_equal_length_1": 1
+    },
+    "link_by_client_slug": {
+      "numeric_equal_length_1_remaining": 0,
+      "text_equal_1_present": 1,
+      "removed_numeric_equal_length_1": 1
+    },
+    "link_by_deployment_key": {
+      "numeric_equal_length_1_remaining": 0,
+      "text_equal_1_present": 3,
+      "removed_numeric_equal_length_1": 3
+    }
+  },
+  "create_new_unchanged_vs_pre_transform": true,
+  "create_new_conditions": [
+    [
+      {
+        "a": "{{1.client_id}}",
+        "o": "notexist"
+      },
+      {
+        "a": "{{length(5.body)}}",
+        "b": "0",
+        "o": "text:equal"
+      },
+      {
+        "a": "{{length(6.body)}}",
+        "b": "0",
+        "o": "text:equal"
+      },
+      {
+        "a": "{{length(7.body)}}",
+        "b": "0",
+        "o": "text:equal"
+      },
+      {
+        "a": "{{length(8.body)}}",
+        "b": "0",
+        "o": "text:equal"
+      }
+    ]
+  ],
+  "else": {
+    "label": "identity_resolution_unclassified",
+    "type": "else",
+    "flow_ids": [
+      78
+    ],
+    "still_78": true
+  },
+  "changed_counts": {
+    "branches_touched": 3,
+    "numeric_equal_length_1_removed_total": 5,
+    "per_branch_removed": {
+      "link_by_client_id": 1,
+      "link_by_deployment_key": 3,
+      "link_by_client_slug": 1
+    }
+  },
+  "verification_table": [
+    {
+      "check": "isActive=false",
+      "pass": true,
+      "value": false
+    },
+    {
+      "check": "nextExec=null",
+      "pass": true,
+      "value": null
+    },
+    {
+      "check": "module9 BasicIfElse",
+      "pass": true,
+      "value": "builtin:BasicIfElse"
+    },
+    {
+      "check": "link_by_client_id no numeric:equal 1 length",
+      "pass": true,
+      "value": 0
+    },
+    {
+      "check": "link_by_deployment_key no numeric:equal 1 length",
+      "pass": true,
+      "value": 0
+    },
+    {
+      "check": "link_by_client_slug no numeric:equal 1 length",
+      "pass": true,
+      "value": 0
+    },
+    {
+      "check": "link_by_client_id text:equal 1 present",
+      "pass": true,
+      "value": 1
+    },
+    {
+      "check": "link_by_deployment_key text:equal 1 present",
+      "pass": true,
+      "value": 3
+    },
+    {
+      "check": "link_by_client_slug text:equal 1 present",
+      "pass": true,
+      "value": 1
+    },
+    {
+      "check": "create_new unchanged vs pre-transform",
+      "pass": true,
+      "value": true
+    },
+    {
+      "check": "Else \u2192 78",
+      "pass": true,
+      "value": [
+        78
+      ]
+    },
+    {
+      "check": "not activated",
+      "pass": true,
+      "value": false
+    }
+  ]
+}

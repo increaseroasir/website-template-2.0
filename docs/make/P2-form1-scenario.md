@@ -5,7 +5,7 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T19:24Z):**
+**Status (verified 2026-08-01T19:49Z):**
 
 | Field | Value |
 |---|---|
@@ -13,15 +13,17 @@
 | Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
 | Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 — filters on first modules of Router 3 routes |
 | Nested identity filters | `length(5\|6\|7\|8.body)` empty=`text:equal "0"` / single=`text:equal "1"`; multi keeps `numeric:greater "1"` |
+| Link length=`1` | `text:equal "1"` only on link branches (dual `numeric:equal "1"` removed) |
 | Module 9 | `builtin:BasicIfElse` (17 branches; first-match); Else → module 78 only; **no BasicMerge** |
 | Module 78 | Else branch only (`identity_resolution_unclassified`) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
 | `config_versions` grants | service_role SELECT=**true**, INSERT=**true** (remote migration `20260801181727`) |
-| CREATE | **PASS** — exec `3b49db6db2cd4a5d8f478000924d05db`; ops **13**; module **76** `outcome=created` |
-| LINK E2E | **FAIL** — exec `e56c85057f104a22857f10b8828aa111`; ops **7**; module **78** Else; no writes |
-| REPLAY / IDENTITY_CONFLICT | **NOT RUN** (hard stop after LINK) |
-| Next owner gate | Authorize targeted BasicIfElse `length=1` predicate fix + re-run LINK/REPLAY/CONFLICT |
-| Evidence | `artifacts/agent-runs/integrator/20260801T192430Z-form1-link-replay-conflict-e2e.md` |
+| CREATE | **PASS** — exec `646ef201a41b44f09f9d375cae74a019`; ops **13**; `outcome=created` |
+| LINK E2E | **PASS** — exec `533058104fbb4349b0b03ceed380ae1d`; ops **12**; `outcome=linked` |
+| REPLAY | **PASS** — exec `08992679cd064b59888dd6705a596f17`; ops **3**; `outcome=replayed` |
+| IDENTITY_CONFLICT | **PASS** — exec `2826f47879e849afbb9e426da8d59f84`; ops **7**; HTTP 409 |
+| Next owner gate | E2E-08/09 and/or GHL Form 1 — do not mark P2 complete yet |
+| Evidence | `artifacts/agent-runs/integrator/20260801T194942Z-form1-link-predicate-fix-and-e2e.md` |
 
 ## Matching order (company create-or-link)
 
