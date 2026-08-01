@@ -5,7 +5,7 @@
   "audience": "client",
   "source_file": "docs/onboarding/source/01_MAIN_CLIENT_ONBOARDING_FORM.md",
   "due_rule": "send_within_15m_after_payment; due_5pm_next_business_day_client_tz",
-  "storage_binding_status": "form1_hybrid_ac_reported_website_fields_pending_version_publish",
+  "storage_binding_status": "form1_hybrid_ac_reported_website_fields_published_0_2_0",
   "submission_envelope": [
     "form_type",
     "form_version",
@@ -378,5 +378,5 @@
   "completion_rules": "all_required_visible_fields_valid",
   "next_workflow_event": "main_client_onboarding_submitted",
   "proposed_contract_version": "0.2.0",
-  "live_contract_version_note": "Published in Git as contract 0.2.0 / onboarding schema 1.1.0. Child-table migrations may be landed but not applied."
+  "live_contract_version_note": "Published in Git as contract 0.2.0 / onboarding schema 1.1.0. Child-table migrations applied and verified on htl-factory-dev (remote versions 20260731193347 / 20260731193358). apply_authorized=false for further applies. Form 1 E2E not run; P2 not complete."
 }

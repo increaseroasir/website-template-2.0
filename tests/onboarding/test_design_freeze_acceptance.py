@@ -68,7 +68,7 @@ def _run_checks() -> list[dict]:
         "employee_child_table_status",
         bool(emp)
         and all(
-            f.get("storage_binding_status") == "proposed_child_table_pending_migration"
+            f.get("storage_binding_status") == "published_schema_child_migrations_applied_dev"
             and f.get("supabase_destination") == "onboarding_employees"
             for f in emp
         ),
@@ -80,7 +80,7 @@ def _run_checks() -> list[dict]:
         bool(inv)
         and all(
             f.get("storage_form") is None
-            and f.get("storage_binding_status") == "proposed_child_table_pending_migration"
+            and f.get("storage_binding_status") == "published_schema_child_migrations_applied_dev"
             and f.get("supabase_destination") == "inventory_submissions"
             for f in inv
         ),
@@ -138,7 +138,7 @@ def _run_checks() -> list[dict]:
         all(
             f.get("storage_form") == "form1"
             and f.get("storage_binding_status")
-            == "proposed_aligned_pending_version_publish"
+            == "published_contract_0_2_0"
             for f in reg["fields"]
             if f["canonical_name"] in REPORTED_FIELDS
             and f["product_form_id"] == "main_client_onboarding"
@@ -213,9 +213,10 @@ def _run_checks() -> list[dict]:
         "frozen_form2_owns_domain",
         ident["field_policies"]["domain"]["owner"] == "form2",
     )
+    amendment = (ROOT / "docs/onboarding/PROPOSED_CONTRACT_AMENDMENT_0.2.0.md").read_text()
     check(
         "amendment_doc_retained_for_provenance",
-        "Published in Git" in (ROOT / "docs/onboarding/PROPOSED_CONTRACT_AMENDMENT_0.2.0.md").read_text()
+        ("Published in Git" in amendment or "published in Git" in amendment or "PUBLISHED IN GIT" in amendment)
         and ident.get("contract_version") == "0.2.0",
     )
     check(
@@ -230,9 +231,14 @@ def _run_checks() -> list[dict]:
 
     maps = _load("config/onboarding-field-mappings.json")
     check(
-        "mapping_storage_published_migrations_landed_not_applied",
+        "mapping_storage_published_child_migrations_applied_dev",
         maps["completeness"]["storage_bindings"]
-        == "published_0_2_0_migrations_landed_not_applied",
+        == "published_0_2_0_child_migrations_applied_dev",
+    )
+    check(
+        "mapping_live_contract_versions_applied_dev",
+        maps["completeness"]["live_contract_versions"]
+        == "published_0.2.0_and_1.1.0_child_migrations_applied_htl_factory_dev",
     )
     emp_maps = [m for m in maps["mappings"] if m["product_form_id"] == "employee_crm_access"]
     check(
@@ -323,7 +329,10 @@ def _run_checks() -> list[dict]:
     plan = (ROOT / "docs/onboarding/MIGRATION_AND_CONTRACT_AMENDMENT_PLAN.md").read_text()
     check(
         "amendment_plan_published_apply_gated",
-        "PUBLISHED IN GIT" in plan and "NOT APPLIED" in plan and "apply" in plan.lower(),
+        "PUBLISHED IN GIT" in plan
+        and ("applied and verified" in plan.lower() or "htl-factory-dev" in plan)
+        and "apply_authorized" in plan.lower()
+        and "e2e" in plan.lower(),
     )
 
     return results

@@ -1,7 +1,7 @@
 {
   "contract_version": "0.2.0",
   "onboarding_schema_version": "1.1.0",
-  "description": "One canonical identity and form-field name set for the HTL factory. Do not invent alternate names. Product destinations (0.2.0): main_client_onboarding\u2192form1 (+ reported website/domain fields); employee_crm_access\u2192onboarding_employees (not form2); initial_inventory_upload\u2192inventory_submissions (not form3); csm_call_1/csm_call_2\u2192system + CSM provenance. Child tables recognized at onboarding_schema_version 1.1.0; migrations may be landed in Git before apply.",
+  "description": "One canonical identity and form-field name set for the HTL factory. Do not invent alternate names. Product destinations (0.2.0): main_client_onboarding\u2192form1 (+ reported website/domain fields); employee_crm_access\u2192onboarding_employees (not form2); initial_inventory_upload\u2192inventory_submissions (not form3); csm_call_1/csm_call_2\u2192system + CSM provenance. Child tables recognized at onboarding_schema_version 1.1.0; onboarding_employees and inventory_submissions applied and verified on htl-factory-dev (further apply still gated by apply_authorized).",
   "classifications": [
     "public_configuration",
     "sensitive_identifier",

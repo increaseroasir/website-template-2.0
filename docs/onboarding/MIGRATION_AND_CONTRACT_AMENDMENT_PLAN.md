@@ -1,23 +1,23 @@
 # Migration + Contract Amendment Plan — PUBLISHED IN GIT / APPLY STILL GATED
 
-> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
-> Retained under historical filename for provenance.
-> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
-> **Published in Git ≠ applied in Supabase.**
+> **STATUS (2026-08-01 checkpoint):** Contract `0.2.0` / onboarding schema `1.1.0` **published in Git**.
+> Child migrations **applied and verified** on `htl-factory-dev` (remote `20260731193347` / `20260731193358`; RLS on; zero policies).
+> `apply_authorized=false` for further applies. Form 1 Make blueprint inactive; Form 1 E2E not run; **P2 not complete**.
+> Historical filename retained for provenance. Superseded proposal wording below may remain for trail.
 
 
 **Date:** 2026-07-31  
 **Decision status:** Hybrid A+C direction **APPROVED**  
 **Version status:** `contract_version` **0.2.0** and `onboarding_schema_version` **1.1.0** are **PUBLISHED IN GIT**  
 **Live contract file:** [`config/identity-fields.json`](../../config/identity-fields.json) = `0.2.0` / `1.1.0`  
-**Child migrations:** landed under `supabase/migrations/` — **NOT APPLIED**
+**Child migrations:** applied and verified on `htl-factory-dev` (remote `20260731193347` / `20260731193358`); `apply_authorized=false`
 
 ## What was completed
 
 1. Marked [`CONTRACT_DELTA_REPORT.md`](./CONTRACT_DELTA_REPORT.md) as **APPROVED Hybrid A+C**; rejected B.
 2. Published contract amendment into live config — [`PROPOSED_CONTRACT_AMENDMENT_0.2.0.md`](./PROPOSED_CONTRACT_AMENDMENT_0.2.0.md) retained for provenance.
 3. Six reported website/domain fields now in live `identity-fields.json`.
-4. Child-table SQL landed as `20260731184500_create_onboarding_employees.sql` and `20260731184600_create_inventory_submissions.sql` (not applied).
+4. Child-table SQL landed and **applied/verified** on htl-factory-dev as remote versions `20260731193347` / `20260731193358` (Git files `20260731184500_*` / `20260731184600_*`).
 5. Design JSON + form specs aligned; acceptance suite updated for published-in-Git truth.
 
 ## Smallest proposed contract change
@@ -87,17 +87,17 @@ Line items under a submission; defer until parser authorized.
 
 ## Explicit readiness statement
 
-**Contract/schema published in Git. Child migrations landed but not applied.**
+**Contract/schema published in Git. Child migrations applied and verified on htl-factory-dev. Form 1 E2E not run; P2 not complete.**
 
 Still forbidden until separate owner authorizations:
 
-- Apply child-table migrations (even to dev)
+- Further migration apply (apply_authorized currently false)
 - Activate Make / run E2E
 - Create live GHL / ClickUp objects
 - Touch production or protected clients
 
 ## Owner decisions needed next
 
-1. Authorize applying the two child-table migrations to `htl-factory-dev` only
-2. Read-only verification and smoke testing after apply
-3. Keep Make inactive until a separate E2E authorization
+1. ~~Authorize applying the two child-table migrations to `htl-factory-dev` only~~ **DONE** (applied+verified; keep `apply_authorized=false` for further applies)
+2. Increase Make capacity by one active slot, then authorize Form 1 synthetic E2E
+3. Keep Make inactive until that E2E authorization; GHL/ClickUp still unauthorized

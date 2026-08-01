@@ -1,9 +1,9 @@
 # Form Field Mapping Matrix (Hybrid A+C)
 
-> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
-> Retained under historical filename for provenance.
-> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
-> **Published in Git ≠ applied in Supabase.**
+> **STATUS (2026-08-01 checkpoint):** Contract `0.2.0` / onboarding schema `1.1.0` **published in Git**.
+> Child migrations **applied and verified** on `htl-factory-dev` (remote `20260731193347` / `20260731193358`; RLS on; zero policies).
+> `apply_authorized=false` for further applies. Form 1 Make blueprint inactive; Form 1 E2E not run; **P2 not complete**.
+> Historical filename retained for provenance. Superseded proposal wording below may remain for trail.
 
 
 **Machine source:** [`config/onboarding-field-mappings.json`](../../config/onboarding-field-mappings.json)  
@@ -17,8 +17,8 @@
 | Canonical names from source | Complete |
 | GHL custom field IDs | `pending_live_ids` (map/create later) |
 | ClickUp destinations | `pending_live_inventory` (MCP not connected) |
-| Storage form bindings | **Approved Hybrid A+C** — pending version publish + migration auth |
-| Contract versions | Live in Git `0.2.0` / `1.1.0`; child migrations landed **not applied** |
+| Storage form bindings | **Published Hybrid A+C** — contract `0.2.0` / schema `1.1.0`; child tables applied on htl-factory-dev |
+| Contract versions | Live in Git `0.2.0` / `1.1.0`; child migrations **applied** on htl-factory-dev |
 
 ## Chain (target)
 

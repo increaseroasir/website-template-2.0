@@ -10,7 +10,7 @@
     "csm_call_1",
     "csm_call_2"
   ],
-  "storage_binding_policy": "Hybrid A+C approved. Preserve form1/form2/form3 meanings. Employees\u2192onboarding_employees; inventory\u2192inventory_submissions; main website answers\u2192*_reported_*. Do not publish contract 0.2.0 without owner approval.",
+  "storage_binding_policy": "Hybrid A+C approved and published. Preserve form1/form2/form3 meanings. Employees\u2192onboarding_employees; inventory\u2192inventory_submissions; main website answers\u2192*_reported_*. Contract 0.2.0 / schema 1.1.0 live in Git; child migrations applied on htl-factory-dev.",
   "blocked_at_contract_decision": false,
   "fields": [
     {
@@ -1827,7 +1827,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "config_versions.config.website_reported_status",
       "storage_form": "form1",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_notes": "Maps main-form website_status \u2192 website_reported_status; does not overwrite form2 website_url",
       "frozen_owner": null,
       "ghl_destination": {
@@ -1879,7 +1879,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "config_versions.config.website_reported_url",
       "storage_form": "form1",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_notes": "Maps main-form website URL answer \u2192 website_reported_url; operational website_url remains form2",
       "frozen_owner": null,
       "ghl_destination": {
@@ -1931,7 +1931,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "config_versions.config.domain_reported_ownership_status",
       "storage_form": "form1",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_notes": "Maps main-form domain_ownership_status \u2192 domain_reported_ownership_status",
       "frozen_owner": null,
       "ghl_destination": {
@@ -1953,7 +1953,7 @@
     {
       "canonical_name": "dns_reported_owner",
       "human_label": "DNS Owner (Reported)",
-      "description": "Hybrid A+C proposed reported field (pending version publish 0.2.0)",
+      "description": "Hybrid A+C published reported field (contract 0.2.0 / schema 1.1.0)",
       "product_form_id": "main_client_onboarding",
       "form_owner": "client",
       "field_type": "text",
@@ -1983,7 +1983,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "config_versions.config.dns_reported_owner",
       "storage_form": "form1",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_notes": "Proposed form1 reported field; operational dns_owner remains form2",
       "frozen_owner": null,
       "ghl_destination": {
@@ -2005,7 +2005,7 @@
     {
       "canonical_name": "dns_reported_provider",
       "human_label": "DNS Provider (Reported)",
-      "description": "Hybrid A+C proposed reported field (pending version publish 0.2.0)",
+      "description": "Hybrid A+C published reported field (contract 0.2.0 / schema 1.1.0)",
       "product_form_id": "main_client_onboarding",
       "form_owner": "client",
       "field_type": "text",
@@ -2035,7 +2035,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "config_versions.config.dns_reported_provider",
       "storage_form": "form1",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_notes": "Proposed form1 reported field; operational dns_provider remains form2",
       "frozen_owner": null,
       "ghl_destination": {
@@ -2057,7 +2057,7 @@
     {
       "canonical_name": "domain_reported_name",
       "human_label": "Domain Name (Reported)",
-      "description": "Hybrid A+C proposed reported field (pending version publish 0.2.0)",
+      "description": "Hybrid A+C published reported field (contract 0.2.0 / schema 1.1.0)",
       "product_form_id": "main_client_onboarding",
       "form_owner": "client",
       "field_type": "URL",
@@ -2087,7 +2087,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "config_versions.config.domain_reported_name",
       "storage_form": "form1",
-      "storage_binding_status": "proposed_aligned_pending_version_publish",
+      "storage_binding_status": "published_contract_0_2_0",
       "storage_notes": "Proposed; derived from/alongside source-pack Primary Domain question answers; operational domain remains form2",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3612,7 +3612,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3663,7 +3663,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3712,7 +3712,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3763,7 +3763,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3814,7 +3814,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3865,7 +3865,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3916,7 +3916,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -3967,7 +3967,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4018,7 +4018,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4069,7 +4069,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4120,7 +4120,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4171,7 +4171,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4222,7 +4222,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4273,7 +4273,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4324,7 +4324,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4375,7 +4375,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4426,7 +4426,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4477,7 +4477,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4528,7 +4528,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4579,7 +4579,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4630,7 +4630,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "onboarding_employees",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: employee_crm_access \u2192 onboarding_employees (NOT form2). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4681,7 +4681,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4732,7 +4732,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4783,7 +4783,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4834,7 +4834,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4885,7 +4885,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4936,7 +4936,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -4987,7 +4987,7 @@
       "export_behavior": "owner_approved_export_only",
       "supabase_destination": "inventory_submissions",
       "storage_form": null,
-      "storage_binding_status": "proposed_child_table_pending_migration",
+      "storage_binding_status": "published_schema_child_migrations_applied_dev",
       "storage_notes": "Hybrid A+C: initial_inventory_upload \u2192 inventory_submissions (NOT form3). Migration proposed, not applied.",
       "frozen_owner": null,
       "ghl_destination": {
@@ -10152,11 +10152,12 @@
   "contract_direction": "hybrid_A_plus_C_approved",
   "proposed_contract_version": "0.2.0",
   "proposed_onboarding_schema_version": "1.1.0",
-  "live_contract_version_note": "identity-fields.json remains 0.1.1 / 1.0.0 until owner publishes versions",
+  "live_contract_version_note": "identity-fields.json is published at contract 0.2.0 / onboarding schema 1.1.0. Child tables onboarding_employees (remote 20260731193347) and inventory_submissions (remote 20260731193358) are applied and verified on htl-factory-dev; apply_authorized remains false for further applies. Form 1 Make blueprint inactive; Form 1 E2E not run; P2 not complete.",
   "hybrid_ac_approved": true,
   "awaiting": [
-    "owner_version_publish_0.2.0",
-    "owner_migration_apply_auth"
+    "make_capacity_plus_form1_synthetic_e2e",
+    "ghl_form_create_authorization",
+    "clickup_connect_and_template_authorization"
   ],
   "notes": {}
 }

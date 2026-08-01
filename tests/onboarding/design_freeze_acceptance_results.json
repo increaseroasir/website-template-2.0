@@ -1,6 +1,6 @@
 {
-  "total": 53,
-  "passed": 53,
+  "total": 54,
+  "passed": 54,
   "failed": 0,
   "results": [
     {
@@ -174,7 +174,12 @@
       "detail": "website_reported_status,website_reported_url,domain_reported_name,domain_reported_ownership_status,dns_reported_provider,dns_reported_owner"
     },
     {
-      "name": "mapping_storage_published_migrations_landed_not_applied",
+      "name": "mapping_storage_published_child_migrations_applied_dev",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mapping_live_contract_versions_applied_dev",
       "pass": true,
       "detail": ""
     },

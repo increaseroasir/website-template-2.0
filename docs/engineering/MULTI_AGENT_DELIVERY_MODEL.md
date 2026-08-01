@@ -1,14 +1,15 @@
 # Multi-Agent Delivery Model
 
-**Status:** Proposed after onboarding design-freeze preservation  
+**Status:** Active operating model (checkpoint 2026-08-01). For current parallel lanes see [`PARALLEL_AGENT_WORK_PLAN.md`](PARALLEL_AGENT_WORK_PLAN.md).
+**Integration tip at checkpoint:** `factory/p2-integration-reconcile` holds contract `0.2.0` / schema `1.1.0`, applied child tables, and inactive Form 1 create-or-link. P2 incomplete until Form 1 E2E.  
 **Integrator:** single human-supervised integrator agent  
 **Do not:** give multiple agents the same writable scope
 
 ## What works today
 
 - Fail-closed shell hooks for protected clients and destructive Supabase ops
-- P0→P1 foundation committed on `factory/p0-safety-lock`
-- Design freeze Hybrid A+C preserved on `factory/p2-onboarding-forms-and-workflows`
+- P0→P1 foundation on `factory/p0-safety-lock`; P2 integration work on `factory/p2-integration-reconcile` (contract `0.2.0` / schema `1.1.0`, child tables applied on htl-factory-dev, inactive Form 1 create-or-link)
+- Design freeze Hybrid A+C published; see checkpoint audit + `PARALLEL_AGENT_WORK_PLAN.md`
 - Evidence under `artifacts/agent-runs/integrator/`
 
 ## What wastes time

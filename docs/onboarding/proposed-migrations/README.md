@@ -1,9 +1,9 @@
 # Proposed migrations — historical provenance
 
-> **STATUS (2026-07-31):** Published in Git as contract `0.2.0` / onboarding schema `1.1.0`.
-> Retained under historical filename for provenance.
-> Child-table migrations landed under `supabase/migrations/` but **NOT APPLIED** to Supabase.
-> **Published in Git ≠ applied in Supabase.**
+> **STATUS (2026-08-01 checkpoint):** Contract `0.2.0` / onboarding schema `1.1.0` **published in Git**.
+> Child migrations **applied and verified** on `htl-factory-dev` (remote `20260731193347` / `20260731193358`; RLS on; zero policies).
+> `apply_authorized=false` for further applies. Form 1 Make blueprint inactive; Form 1 E2E not run; **P2 not complete**.
+> Historical filename retained for provenance. Superseded proposal wording below may remain for trail.
 
 Approved SQL for `onboarding_employees` and `inventory_submissions` has been copied into timestamped files under `supabase/migrations/` (versions after remote max `20260731081314`).
 

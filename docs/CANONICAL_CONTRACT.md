@@ -150,7 +150,7 @@ Once `slug_locked` is true, status transitions never unlock it.
 
 ## Forms (versioned)
 
-Every payload carries `schema_version` and a raw `submission_id`. Factory `onboarding_schema_version` is **`1.1.0`** (six reported website/domain fields + child tables `onboarding_employees` / `inventory_submissions` recognized in contract). Child-table migrations may be landed in Git before apply; **Published in Git ≠ applied in Supabase.**
+Every payload carries `schema_version` and a raw `submission_id`. Factory `onboarding_schema_version` is **`1.1.0`** (six reported website/domain fields + child tables `onboarding_employees` / `inventory_submissions` recognized in contract). Child tables `onboarding_employees` / `inventory_submissions` are **applied and verified** on `htl-factory-dev` (remote versions `20260731193347` / `20260731193358`); further migration apply remains gated by `apply_authorized=false`. General rule for unpublished applies: **Published in Git ≠ applied in Supabase.**
 
 | Form | Purpose |
 |---|---|
