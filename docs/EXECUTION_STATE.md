@@ -47,6 +47,7 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - `config_versions` SELECT+INSERT remain; grants/RLS unchanged; `apply_authorized=false`
   - Make/Supabase Form 1 synthetic acceptance gate **NOT CLOSED**; GHL Form 1 still blocked
   - GHL / ClickUp / Forms 2/3 still unauthorized
+- P2 Form1 null-omit: unwrap patch live but E2E-09 **FAIL** — Make IML `parseJSON` not found on LINK config map (exec `05023545…`); gate open; GHL blocked
 - P2 overall: **NOT COMPLETE** (E2E-09 null-clear open; GHL unauthorized)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
