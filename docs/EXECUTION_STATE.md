@@ -34,19 +34,16 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE CREATE-OR-LINK — E2E FAILED ON SERVICE_ROLE TABLE GRANTS**
-  - Make plan verified **Core** (org `1111422`); capacity no longer blocks activation
-  - Scenario `4852018` returned inactive; webhook `2785703`; connection `4834536`
-  - Blueprint: contract `0.2.0` / schema `1.1.0` + company create-or-link (unpatched)
-  - Match order: `client_id` → `deployment_key` → `client_slug` (never contact/email/phone/name/domain)
-  - Fail closed: `identity_conflict` / `review_required` do not fall through to create
-  - Outcomes: `created` / `linked` / `replayed` / `identity_conflict` / `review_required`
-  - Synthetic Form 1 E2E attempted 20260801: Case A **FAIL** — Make Supabase call `[403] permission denied for table intake_submissions`
-  - Root cause: `service_role` lacks SELECT/INSERT/UPDATE/DELETE on Form 1 tables
-  - No synthetic client/case/intake rows left; no real client data used
-  - `review_required` live multi-match **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS** (UNIQUE slug/key)
-  - E2E-08 / E2E-09 deferred; GHL wiring still unauthorized; ClickUp still unauthorized; Forms 2/3 not built
-- P2 overall: **NOT COMPLETE** (Form 1 E2E + GHL gates open)
+- P2 Make intake: **INACTIVE CREATE-OR-LINK — SERVICE_ROLE GRANTS APPLIED; E2E BLOCKED ON IDEMPOTENCY FILTER**
+  - Make plan verified **Core**; capacity no longer blocks activation
+  - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`
+  - Privilege migration `20260801041000_grant_form1_service_role_privileges` applied on `htl-factory-dev` (remote `20260801045303`)
+  - Least-privilege `service_role`: clients SELECT/INSERT/UPDATE; cases+intake SELECT/INSERT; config INSERT; RPC EXECUTE; **no DELETE**
+  - No anon/authenticated grants; RLS unchanged; blueprint unpatched
+  - Synthetic E2E rerun: Case A false `replayed` (empty GET body ≠ text `"[]"`); no rows written; residue zero
+  - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
+  - GHL wiring still unauthorized; ClickUp still unauthorized; Forms 2/3 not built
+- P2 overall: **NOT COMPLETE** (Form 1 E2E blueprint filter + GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -62,11 +59,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified; Form 1 create-or-link blueprint remains inactive and unpatched. Synthetic E2E blocked on missing `service_role` DML grants for Form 1 tables. GHL / ClickUp / P3 remain unauthorized.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 `service_role` least-privilege grants applied. Synthetic E2E blocked on blueprint idempotency filter false-replay. GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
 
 Next owner decision:
 
-1. Authorize GRANT of `service_role` SELECT/INSERT/UPDATE/DELETE on Form 1 tables (`clients`, `onboarding_cases`, `intake_submissions`, `config_versions`, `idempotency_keys`, `workflow_events`) plus EXECUTE on `request_client_transition` in `htl-factory-dev`, then re-run synthetic Form 1 E2E on scenario `4852018`.
+1. Authorize a blueprint-only fix to Form 1 idempotency routing on scenario `4852018` (treat empty intake GET as not-replay), then re-run synthetic Form 1 E2E. Do not broaden `service_role` grants.
 
 ## Usage governance
 
