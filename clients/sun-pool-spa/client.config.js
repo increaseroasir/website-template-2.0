@@ -42,7 +42,7 @@ window.CLIENT_CONFIG = {
   },
   tracking: {
     metaPixelId: '4074640486011315', // client's pixel — verify in Test Events
-    ga4Id: 'G-KSJ8N5G2ZJ',      // G-XXXXXXXXXX — verify in Realtime
+    ga4Id: 'G-KSJ8N5GZZJ',      // G-XXXXXXXXXX — verify in Realtime (corrected WTV-021: was G-KSJ8N5G2ZJ)
     clarityId: '',
     gscVerification: '',            // Search Console meta token. Empty = meta omitted (launch may proceed; verify within 48h).
     ghlExternalTracking: '',        // GHL External Tracking script src URL (per-location snippet). Empty = not injected — attribution loss, not lead loss; add within 48h. NEVER a real ID on staging.
