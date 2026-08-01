@@ -1,0 +1,19 @@
+{
+  "invariant": "config_versions.config must store a native JSON object",
+  "expected_jsonb_typeof": "object",
+  "verified_live": false,
+  "verified_execution_id": null,
+  "verified_evidence": null,
+  "true_acceptance_sql": "jsonb_typeof(config) = 'object'",
+  "proof_levels": ["contract", "blueprint", "database", "e2e09"],
+  "static_scan": {
+    "forbidden_patterns": [
+      "parseJSON(",
+      "\"[]\"",
+      "dual text/numeric length equality"
+    ],
+    "scan_roots": [],
+    "coverage": "limited — no canonical current blueprint snapshot in Git",
+    "claim_live_blueprint_fully_scanned": false
+  }
+}

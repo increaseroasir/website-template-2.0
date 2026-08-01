@@ -1,0 +1,43 @@
+---
+description: HTL Factory durable build brain — mandatory startup, conflict hierarchy, lessons, drift
+alwaysApply: true
+---
+
+# HTL Factory Build Brain
+
+## Source-of-truth hierarchy
+
+```text
+FACTORY_CONSTITUTION.md → BUILD_BRAIN.md (model) → EXECUTION_STATE.md (ops)
+  → FORM1_E2E_ACCEPTANCE_MATRIX.md (test status) → LESSONS.md → artifacts evidence
+```
+
+**Conflict rule:** Live evidence = what happened. `EXECUTION_STATE.md` = current operational status. `BUILD_BRAIN.md` = consolidated system model. Constitution = governance. `BUILD_BRAIN` links `EXECUTION_STATE` for volatile status; it does not replace it.
+
+## Mandatory startup (factory work)
+
+Before planning or changing Make / Supabase / identity / Form 1 acceptance:
+
+1. Read `docs/BUILD_BRAIN.md`
+2. Read `docs/LESSONS.md`
+3. Read `docs/EXECUTION_STATE.md`
+4. Read the latest evidence files listed in BUILD_BRAIN `latest_evidence_index`
+5. State which lessons apply to the assigned task
+6. Refuse plans that repeat failed approaches (especially unwrap/`parseJSON`/reader-only patches for double-encoded `config` — LESSON-005/007/009)
+
+## Completion after meaningful failure
+
+Update `docs/LESSONS.md` with Observed failure / Root cause / Bad fixes / Permanent rule / Required test / Status. Add a regression assertion when possible. Do not invent status “Closed” — use Open | Mitigated | Enforced | Waived | Superseded.
+
+## Drift rule
+
+Any integrator change to Make behavior, schema behavior, identity logic, or acceptance status must reconcile `docs/BUILD_BRAIN.md`, `docs/LESSONS.md`, and `docs/EXECUTION_STATE.md`, or explicitly record in the evidence artifact why no update was required.
+
+## Hard refusals for Form 1 config type bug
+
+Until write-boundary object storage is authorized and proven (`jsonb_typeof(config)='object'`):
+
+- Do not authorize another downstream unwrap/`parseJSON`/ifempty reader patch as the primary fix
+- Do not set `verified_live=true` without `verified_execution_id` + `verified_evidence`
+- Do not claim the Form 1 synthetic gate closed while E2E-09 is FAIL
+- Do not start GHL Form 1 wiring while the synthetic gate is open

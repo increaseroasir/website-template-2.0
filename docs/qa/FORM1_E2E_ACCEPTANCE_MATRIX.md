@@ -1,5 +1,7 @@
 # Form 1 E2E Acceptance Matrix
 
+> Subordinate to SoT hierarchy: Constitution → [`BUILD_BRAIN`](../BUILD_BRAIN.md) → [`EXECUTION_STATE`](../EXECUTION_STATE.md) → this matrix (test status) → [`LESSONS`](../LESSONS.md) → artifacts. Live ops tip: EXECUTION_STATE.
+
 **UTC:** 20260801T015851Z  
 **Agent:** qa  
 **Scenario (target):** `4852018` · webhook `2785703` · connection `4834536`  

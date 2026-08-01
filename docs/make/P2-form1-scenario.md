@@ -1,5 +1,7 @@
 # Make — Form 1 Intake scenario (dev_test)
 
+> Subordinate to SoT hierarchy: Constitution → [`BUILD_BRAIN`](../BUILD_BRAIN.md) → [`EXECUTION_STATE`](../EXECUTION_STATE.md) → matrix → [`LESSONS`](../LESSONS.md) → artifacts. Ops tip and next owner decision live in EXECUTION_STATE.
+
 **Scenario name:** `HTL Factory Form 1 Intake (dev_test)`  
 **Live IDs (verified 2026-07-31):** scenario `4852018` · webhook `2785703` · Supabase connection `4834536`  
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
@@ -25,7 +27,7 @@
 | E2E-08 forbidden auto-link | **PASS** — weak peer `created`, not linked |
 | E2E-09 null_does_not_clear | **FAIL** — unwrap re-verify LINK `05023545…` HTTP 500: `Function 'parseJSON' not found!` |
 | E2E-07 review_required | **WAIVED** (UNIQUE; not PASS) |
-| Next owner gate | Remap 33/43/53 with Make-supported unwrap (or store object); re-run E2E-09 — GHL blocked until GO |
+| Next owner gate | Write-boundary object storage for `config` (not unwrap/`parseJSON`); re-run E2E-09 — GHL blocked until GO |
 | Evidence | `artifacts/agent-runs/integrator/20260801T230505Z-form1-config-unwrap-fix-e2e09.md` |
 
 ## Matching order (company create-or-link)

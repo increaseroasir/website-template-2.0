@@ -2,6 +2,8 @@
 
 Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
+> **Source-of-truth hierarchy:** `FACTORY_CONSTITUTION` → `BUILD_BRAIN` (model) → this file (ops) → `FORM1_E2E_ACCEPTANCE_MATRIX` → `LESSONS` → `artifacts/agent-runs/*`. See `docs/BUILD_BRAIN.md` and `docs/LESSONS.md`.
+
 ## Repository
 
 | Field | Value |
@@ -70,7 +72,9 @@ Evidence: `artifacts/agent-runs/integrator/20260801T223500Z-form1-null-omit-merg
 
 Next owner decision:
 
-1. Authorize a targeted inactive blueprint fix so modules 36/46/56 return unwrapped reported fields from double-encoded `config` (or stop storing `config` as a JSON string), then re-run E2E-09 only. Do **not** start GHL until that returns GO.
+1. Authorize the Form 1 config write-boundary correction so config_versions.config stores a native JSONB object, remove downstream parse/unwrap approaches, prove jsonb_typeof(config)='object' on CREATE, then rerun E2E-09 only. Do **not** start GHL until that returns GO.
+
+Brain: `docs/BUILD_BRAIN.md` · Lessons: `docs/LESSONS.md` · Invariant: `config/form1-runtime-invariants.json` (`verified_live=false`).
 
 ## Usage governance
 

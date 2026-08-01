@@ -1,5 +1,7 @@
 # P2 Completion Checklist
 
+> Subordinate to SoT hierarchy: Constitution → [`BUILD_BRAIN`](../BUILD_BRAIN.md) → [`EXECUTION_STATE`](../EXECUTION_STATE.md) → matrix → [`LESSONS`](../LESSONS.md) → artifacts. Do not treat this checklist as ops tip.
+
 **Checkpoint:** 20260801T014500Z  
 **Rule:** P2 is **not complete** until Form 1 synthetic E2E is green and GHL intake path is authorized/built (or explicitly deferred by owner with risk accepted).  
 **Integration tip at checklist creation:** `e89ba944`

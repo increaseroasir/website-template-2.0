@@ -83,6 +83,28 @@ Stop and report **BLOCKED** when:
 - the same test fails twice without new evidence
 - the proposed diff exceeds the assignment
 
+## Mandatory startup (factory work)
+
+Before planning or changing Make / Supabase / identity / Form 1 acceptance:
+
+1. Read `docs/BUILD_BRAIN.md` (consolidated model + invariants)
+2. Read `docs/LESSONS.md` (failure prevention)
+3. Read `docs/EXECUTION_STATE.md` (ops tip + next authorized action)
+4. Read the latest evidence files listed in BUILD_BRAIN `latest_evidence_index`
+5. State which lessons apply to the assigned task
+6. Refuse plans that repeat failed approaches (especially unwrap / `parseJSON` / reader-only patches for double-encoded `config`)
+
+Source-of-truth hierarchy: Constitution → BUILD_BRAIN (model) → EXECUTION_STATE (ops) → FORM1 matrix (test status) → LESSONS → artifacts evidence.  
+Conflict rule: live evidence = what happened; EXECUTION_STATE = ops status; BUILD_BRAIN = consolidated model; Constitution = governance.
+
+## Completion (factory work)
+
+After a meaningful failure: update `docs/LESSONS.md` (Observed failure, Root cause, Bad fixes, Permanent rule, Required test, Status). Add a regression assertion when possible. Lesson statuses are only Open | Mitigated | Enforced | Waived | Superseded — never “Closed.”
+
+## Drift rule
+
+Any integrator change to Make behavior, schema behavior, identity logic, or acceptance status must reconcile `docs/BUILD_BRAIN.md`, `docs/LESSONS.md`, and `docs/EXECUTION_STATE.md`, or explicitly record in the evidence artifact why no update was required.
+
 ## Completion evidence
 
 Every PR must include:
