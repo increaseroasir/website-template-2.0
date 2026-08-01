@@ -1,0 +1,23 @@
+-- Form 1 Make runtime: grant service_role SELECT on public.config_versions.
+--
+-- Required for supabase:createARow insert/return path on module 74
+-- (PostgREST Prefer: return=representation). Live proof:
+--   - module 74 is supabase:createARow targeting public.config_versions
+--   - createARow output interface is the inserted table row (getTableInterface);
+--     same module returns PKs used as {{70.client_id}} / {{71.onboarding_case_id}}
+--   - API log: POST /rest/v1/config_versions → 403 with INSERT=true SELECT=false
+--     (return=minimal would have returned 201 with empty body)
+--
+-- Least privilege:
+--   INSERT already granted by 20260801041000_grant_form1_service_role_privileges
+--   This migration adds SELECT only
+--   No UPDATE
+--   No DELETE
+--   No TRUNCATE
+--   No anon / authenticated grants
+--   No ownership changes
+--   RLS remains enabled
+--
+-- Table comment left unchanged (already set in factory_core_tables).
+
+GRANT SELECT ON TABLE public.config_versions TO service_role;
