@@ -5,7 +5,7 @@
 **Scenario (target):** `4852018` · webhook `2785703` · connection `4834536`  
 **Project:** `htl-factory-dev` / `epeddfdifckzzmskhdsz`  
 **Contract / schema:** `0.2.0` / `1.1.0`  
-**Current status:** Nested length filters + module 78 under module 9 live; CREATE smoke ops=11 wrote client/case/intake then failed module 74 config_versions 403 (SELECT grant missing); see `artifacts/agent-runs/integrator/20260801T173241Z-form1-nested-length-filter-fix-smoke.md`  
+**Current status:** `config_versions` SELECT granted on htl-factory-dev; CREATE smoke ops=14 wrote full create path including config+RPC but HTTP was module 78 unclassified; see `artifacts/agent-runs/integrator/20260801T182500Z-form1-config-versions-select-and-create-smoke.md`  
 
 
 
@@ -52,7 +52,7 @@ Use distinct `submission_id` / `correlation_id` per case. Cleanup after suite.
 
 | Case ID | Intent | Key inputs | Expected `outcome` | Allowed writes | Forbidden writes | Status | Label |
 |---|---|---|---|---|---|---|---|
-| E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | **FAIL** | `live_verified_readonly` (exec `c1788f7b…`; ops=11; create_new wrote client/case/intake; module 74 config_versions 403; module 78 absent; residue cleaned) |
+| E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | **FAIL** | `live_verified_readonly` (exec `332f3838…`; ops=14; modules 74–76 wrote client/case/intake/config+RPC with contract 0.2.0/schema 1.1.0; module 78 also executed → HTTP unclassified; residue cleaned) |
 | E2E-02 | **link by client_id** | Existing synthetic `client_id` (+ agreeing key/slug or omit) | `linked` | new case + intake + config + RPC; clients PATCH `active_onboarding_case_id` only | clients create; overwrite domain/business_name | **NOT EXECUTABLE** | blocked by E2E-01 |
 | E2E-03 | **link by deployment_key** | Existing key; no `client_id` (or agreeing) | `linked` | same as E2E-02 | clients create; forbidden auto-link | **DEFERRED** | not run this pass |
 | E2E-04 | **link by client_slug** | Existing slug; no id/key (or agreeing) | `linked` | same as E2E-02 | clients create | **DEFERRED** | not run this pass |
@@ -61,7 +61,7 @@ Use distinct `submission_id` / `correlation_id` per case. Cleanup after suite.
 | E2E-07 | **review_required** | Force multi-row condition for one identifier (dev-only fixture) OR document skip if uniqueness makes multi impossible | `review_required` | respond only | client create | **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS** | UNIQUE slug/key |
 | E2E-08 | **forbidden auto-link negative** | Existing client shares owner_email / business_name / domain only; no id/key/slug | `created` (new client) **or** explicit non-link | must **not** `linked` to the email/name/domain peer | company auto-link | **DEFERRED** | not run |
 | E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | **DEFERRED** | not run |
-| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue after ops=11 partial writes) | `live_verified_readonly` |
+| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue after ops=14 create+78 dual-fire) | `live_verified_readonly` |
 
 ---
 

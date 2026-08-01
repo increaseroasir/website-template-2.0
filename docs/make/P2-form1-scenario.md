@@ -5,19 +5,20 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T17:35Z):**
+**Status (verified 2026-08-01T18:25Z):**
 
 | Field | Value |
 |---|---|
 | Scenario active | **false** (inactive); `nextExec=null` |
-| Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
+| Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** (unchanged this pass) |
 | Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 — **no Router 3 fallback** |
 | Nested identity filters | `length(5\|6\|7\|8.body)` empty=`text:equal "0"` / single=`text:equal "1"`; multi keeps `numeric:greater "1"` |
 | Module 78 | Module 9 native fallback only (`identity_resolution_unclassified`) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
-| CREATE smoke | **FAIL** — exec `c1788f7b19424dac8423c0c29e24e426`; ops **11**; create_new wrote client/case/intake; hard-stop module **74** `config_versions` 403 (INSERT yes / SELECT no); module 78 absent |
-| Next owner gate | `GRANT SELECT ON public.config_versions TO service_role` then CREATE smoke only |
-| Evidence | `artifacts/agent-runs/integrator/20260801T173241Z-form1-nested-length-filter-fix-smoke.md` |
+| `config_versions` grants | service_role SELECT=**true**, INSERT=**true** (remote migration `20260801181727`) |
+| CREATE smoke | **FAIL** — exec `332f3838e38e48588bedaea1d2c71107`; ops **14**; modules 74–76 path wrote client/case/intake/config + RPC; HTTP was module **78** unclassified |
+| Next owner gate | Fix module 9 fallback exclusivity (Make-only); re-run CREATE smoke before LINK/REPLAY/IDENTITY_CONFLICT |
+| Evidence | `artifacts/agent-runs/integrator/20260801T182500Z-form1-config-versions-select-and-create-smoke.md` |
 
 ## Matching order (company create-or-link)
 

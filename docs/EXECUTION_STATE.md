@@ -34,15 +34,15 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE; NESTED LENGTH FILTERS + MODULE 78 UNDER MODULE 9; CREATE HARD-STOP AT config_versions**
-  - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`
-  - Router 3: `length(2.body)` text 0/1 + numeric >1; **no native fallback**
-  - Nested 5–8 / create_new: `length(N.body)` text `"0"` / `"1"` (32 conditions); module 78 = module 9 fallback only
-  - CREATE smoke exec `c1788f7b19424dac8423c0c29e24e426`: ops **11**; create_new wrote client/case/intake; failed module **74** `config_versions` 403 (`cv_sel=false`); module 78 absent; residue cleaned
-  - Grants unchanged; RLS unchanged; `apply_authorized=false`
+- P2 Make intake: **INACTIVE; SELECT GRANT LIVE; CREATE SMOKE FAILED ON MODULE 78 DUAL-FIRE**
+  - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`; active count **26**
+  - Router 3 / nested filters / module 78 placement: unchanged this pass (not reopened)
+  - `config_versions` service_role SELECT+INSERT granted (remote `20260801181727`); UPDATE/DELETE still false; RLS unchanged
+  - CREATE smoke exec `332f3838e38e48588bedaea1d2c71107`: ops **14**; modules 74–76 wrote client/case/intake/config + RPC; HTTP was module **78** unclassified; residue cleaned
+  - `apply_authorized=false`; MCP read-only restored
   - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
   - GHL / ClickUp / Forms 2/3 still unauthorized
-- P2 overall: **NOT COMPLETE** (`config_versions` SELECT grant + GHL gates open)
+- P2 overall: **NOT COMPLETE** (CREATE PASS criteria unmet; GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -58,11 +58,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 nested identity empty/single-hit filters and module 78 exclusivity are live. CREATE smoke proved create_new writes then hard-stopped at module 74 `config_versions` (service_role INSERT without SELECT). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 nested filters live. `config_versions` SELECT grant applied and proven (module 74 succeeded). CREATE smoke still fails PASS criteria because module 78 dual-fires with create_new (ops 14; HTTP unclassified). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
 
 Next owner decision:
 
-1. Authorize `GRANT SELECT ON public.config_versions TO service_role` on `htl-factory-dev` only, then re-run CREATE smoke on scenario `4852018`. Do not reopen nested filter blueprint work. Do not grant DELETE.
+1. Authorize investigation/fix of **module 9 fallback exclusivity** on inactive scenario `4852018` (Make-only; no privilege broadening), then re-run CREATE smoke only. Do not authorize LINK / REPLAY / IDENTITY_CONFLICT until CREATE PASS (module 76 `created`, module 78 absent).
 
 ## Usage governance
 
