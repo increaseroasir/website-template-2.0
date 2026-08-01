@@ -1,0 +1,88 @@
+{
+  "snapshot_utc": "20260801T015734Z",
+  "evidence_label": "live_verified_readonly",
+  "location": {
+    "name": "Hot Tub Launch Success",
+    "id": "wTkbEAsxM73C2gLNpdi8"
+  },
+  "contract_versions_repository_derived": {
+    "contract_version": "0.2.0",
+    "onboarding_schema_version": "1.1.0"
+  },
+  "forms": [
+    {
+      "id": "m0crENESrVvozjmHIunZ",
+      "name": "Store Onboarding Form (Hot Tub Launch Success)",
+      "classification": "exists_needs_change"
+    },
+    {
+      "id": "HPb3oFLlZ4vYD2lqNgjf",
+      "name": "Notify Test Form (Hot Tub Launch Success)",
+      "classification": "not_required"
+    },
+    {
+      "id": "BOza6EMJRt9ZwUzG3TIr",
+      "name": "Form 0",
+      "classification": "not_required"
+    }
+  ],
+  "product_forms": [
+    {
+      "product_form_id": "main_client_onboarding",
+      "classification": "exists_needs_change",
+      "note": "Legacy store form is closest object; package form missing"
+    },
+    {
+      "product_form_id": "employee_crm_access",
+      "classification": "missing"
+    },
+    {
+      "product_form_id": "initial_inventory_upload",
+      "classification": "missing"
+    },
+    {
+      "product_form_id": "csm_call_1",
+      "classification": "missing"
+    },
+    {
+      "product_form_id": "csm_call_2",
+      "classification": "missing"
+    }
+  ],
+  "custom_field_count": 50,
+  "custom_field_parent_id": "1ayzDw6zjfrctGjmwVji",
+  "custom_field_prefix": "Store Onboarding |",
+  "workflows": [
+    {
+      "id": "cd3d6559-7618-41f7-9c1d-8c2bcbfab8d9",
+      "name": "Notify Test Form | Internal SMS Notification | v1",
+      "status": "published"
+    },
+    {
+      "id": "57118a4c-ec5d-43e0-a2b8-e80b9a5de285",
+      "name": "Store Onboarding | Send Service Agreement Contract | v1",
+      "status": "published"
+    },
+    {
+      "id": "911a6bcf-1568-45a0-bb78-d18aa94b011d",
+      "name": "Store Onboarding | Submission Thank You SMS | v1",
+      "status": "published"
+    },
+    {
+      "id": "ba425b5b-5c19-4c24-9aba-d0e9829b4098",
+      "name": "Store Onboarding | Tag on Form Completion | v1",
+      "status": "published"
+    }
+  ],
+  "pipelines": [],
+  "onboarding_completion_tag": {
+    "id": "1tYcMeJwtXUZtH1XZ61R",
+    "name": "store-onboarding-form-completed"
+  },
+  "forbidden_locations_not_touched": [
+    "Paradise Spas and Outdoor Living",
+    "Hot Tub Launch Retainer Snapshot",
+    "AI Agent Test Account",
+    "Sun Pool and Spa Supply"
+  ]
+}
