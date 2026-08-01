@@ -1,0 +1,128 @@
+{
+  "utc": "20260801T162655Z",
+  "execution_id": "146345b0dc8f4fa4a55929114bdabe51",
+  "detail_api": "executions_get-detail returned status SUCCESS only; no formal type label",
+  "evidence_threshold": {
+    "prior_mapper_body_length": "0",
+    "prior_route": "native fallback idempotency_lookup_unclassified",
+    "prior_ops": 3,
+    "prior_db_rows": 0,
+    "module2_structure_inference": "Supabase GET empty result; length(2.body) rendered 0 in respond mapper; filter numeric:equal 0 unmatched"
+  },
+  "router3_before": [
+    {
+      "first_id": 5,
+      "filter": {
+        "name": "not_replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "0",
+              "o": "numeric:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 4,
+      "filter": {
+        "name": "replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 77,
+      "filter": {
+        "name": "idempotency_integrity_error",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 78,
+      "filter": {
+        "name": "idempotency_lookup_error",
+        "fallback": true
+      }
+    }
+  ],
+  "working_length_numeric_samples": [
+    {
+      "module_id": 5,
+      "name": "not_replay",
+      "cond": {
+        "a": "{{length(2.body)}}",
+        "b": "0",
+        "o": "numeric:equal"
+      }
+    },
+    {
+      "module_id": 10,
+      "name": "multi_client_id",
+      "cond": {
+        "a": "{{length(5.body)}}",
+        "b": "1",
+        "o": "numeric:greater"
+      }
+    },
+    {
+      "module_id": 11,
+      "name": "multi_deployment_key",
+      "cond": {
+        "a": "{{length(6.body)}}",
+        "b": "1",
+        "o": "numeric:greater"
+      }
+    },
+    {
+      "module_id": 12,
+      "name": "multi_client_slug",
+      "cond": {
+        "a": "{{length(7.body)}}",
+        "b": "1",
+        "o": "numeric:greater"
+      }
+    },
+    {
+      "module_id": 30,
+      "name": "link_by_client_id",
+      "cond": {
+        "a": "{{length(5.body)}}",
+        "b": "1",
+        "o": "numeric:equal"
+      }
+    },
+    {
+      "module_id": 40,
+      "name": "link_by_deployment_key",
+      "cond": {
+        "a": "{{length(6.body)}}",
+        "b": "1",
+        "o": "numeric:equal"
+      }
+    }
+  ],
+  "shape_match_except_zero": true,
+  "authorized_default_patch": "text:equal 0/1 for empty/one; numeric:greater 1 for multi",
+  "nested_5_8_70_filter_sha_before": "73d20a2840e0d6a3a6340118d302f21ae3faccecb87776c6721487df208e405a",
+  "isActive": false,
+  "has70": true,
+  "placeholder": false
+}

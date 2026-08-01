@@ -1,0 +1,68 @@
+{
+  "success": true,
+  "scenarioId": 4852018,
+  "checks": {
+    "isActive_false": true,
+    "route0_module5_not_replay": true,
+    "route1_module4_replay": true,
+    "route2_module77_integrity": true,
+    "route3_module78_fallback": true,
+    "module_70_present": true,
+    "no_PLACEHOLDER_CONTINUE": true,
+    "no_incomplete_apply": true
+  },
+  "booleans": {
+    "isActive_false": true,
+    "route0_ok": true,
+    "route1_ok": true,
+    "route2_ok": true,
+    "route3_ok": true,
+    "module_70_present": true,
+    "no_PLACEHOLDER_CONTINUE": true,
+    "no_incomplete_apply": true
+  },
+  "isActive": false,
+  "lastEdit": "2026-08-01T16:56:47.241Z",
+  "module_count": 48,
+  "router9_route_count": 16,
+  "route0_filter": {
+    "name": "not_replay",
+    "conditions": [
+      [
+        {
+          "a": "{{length(2.body)}}",
+          "b": "0",
+          "o": "text:equal"
+        }
+      ]
+    ]
+  },
+  "route1_filter": {
+    "name": "replay",
+    "conditions": [
+      [
+        {
+          "a": "{{length(2.body)}}",
+          "b": "1",
+          "o": "text:equal"
+        }
+      ]
+    ]
+  },
+  "route2_filter": {
+    "name": "idempotency_integrity_error",
+    "conditions": [
+      [
+        {
+          "a": "{{length(2.body)}}",
+          "b": "1",
+          "o": "numeric:greater"
+        }
+      ]
+    ]
+  },
+  "route3_filter": {
+    "name": "idempotency_lookup_error",
+    "fallback": true
+  }
+}

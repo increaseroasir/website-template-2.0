@@ -1,0 +1,57 @@
+{
+  "utc": "20260801T162655Z",
+  "router_routes": [
+    {
+      "first_id": 5,
+      "filter": {
+        "name": "not_replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 4,
+      "filter": {
+        "name": "replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 77,
+      "filter": {
+        "name": "idempotency_integrity_error",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 78,
+      "filter": {
+        "name": "idempotency_lookup_error",
+        "fallback": true
+      }
+    }
+  ]
+}

@@ -5,17 +5,17 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T16:11Z):**
+**Status (verified 2026-08-01T16:58Z):**
 
 | Field | Value |
 |---|---|
 | Scenario active | **false** (inactive); `nextExec=null` |
 | Blueprint | Create-or-link restored; contract **0.2.0** / schema **1.1.0** |
-| Idempotency router | `length(2.body)` filters + **native fallback** (`fallback:true` on module 78) |
+| Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 + native `fallback:true` on module 78 |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
-| CREATE smoke | **FAIL** — exec `146345b0dc8f4fa4a55929114bdabe51`; mapper `body_length=0` but `numeric:equal 0` did not match; fallback responded; zero rows |
-| Nested 5–8 `"[]"` filters | unchanged (not reached this smoke) |
-| Evidence | `artifacts/agent-runs/integrator/20260801T160800Z-form1-idempotency-fix-and-e2e.md` |
+| CREATE smoke | **FAIL** — exec `17dcae12690b4bfe89f04dc0ce1be1a8`; ops **7** (entered modules 5–8); zero rows; response still fallback unclassified |
+| Nested 5–8 empty filters | unchanged — **next owner gate** (literal empty-array text compares) |
+| Evidence | `artifacts/agent-runs/integrator/20260801T162655Z-form1-empty-length-filter-fix-smoke.md` |
 
 ## Matching order (company create-or-link)
 

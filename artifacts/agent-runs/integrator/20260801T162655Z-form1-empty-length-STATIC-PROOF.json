@@ -1,0 +1,48 @@
+{
+  "inactive_required": true,
+  "has70": true,
+  "no_placeholder": true,
+  "no_incomplete_apply": true,
+  "three_filtered_plus_fallback": true,
+  "fallback_true_last": true,
+  "not_replay": {
+    "name": "not_replay",
+    "conditions": [
+      [
+        {
+          "a": "{{length(2.body)}}",
+          "b": "0",
+          "o": "text:equal"
+        }
+      ]
+    ]
+  },
+  "replay": {
+    "name": "replay",
+    "conditions": [
+      [
+        {
+          "a": "{{length(2.body)}}",
+          "b": "1",
+          "o": "text:equal"
+        }
+      ]
+    ]
+  },
+  "integrity": {
+    "name": "idempotency_integrity_error",
+    "conditions": [
+      [
+        {
+          "a": "{{length(2.body)}}",
+          "b": "1",
+          "o": "numeric:greater"
+        }
+      ]
+    ]
+  },
+  "no_statusCode": true,
+  "no_raw_body_brackets": true,
+  "nested_identity_filters_unchanged_sha": "d60bb669505f21f9b065e81d7b360aedc4dfad741089f8956f6524677794093d",
+  "nested_sha_match": true
+}

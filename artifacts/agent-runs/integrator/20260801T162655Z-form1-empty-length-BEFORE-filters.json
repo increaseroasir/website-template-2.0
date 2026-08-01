@@ -1,0 +1,59 @@
+{
+  "utc": "20260801T162655Z",
+  "scenario_id": 4852018,
+  "router_routes": [
+    {
+      "first_id": 5,
+      "filter": {
+        "name": "not_replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "0",
+              "o": "numeric:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 4,
+      "filter": {
+        "name": "replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 77,
+      "filter": {
+        "name": "idempotency_integrity_error",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 78,
+      "filter": {
+        "name": "idempotency_lookup_error",
+        "fallback": true
+      }
+    }
+  ],
+  "nested_sha": "73d20a2840e0d6a3a6340118d302f21ae3faccecb87776c6721487df208e405a"
+}
