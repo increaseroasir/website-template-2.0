@@ -5,11 +5,11 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T19:49Z):**
+**Status (verified 2026-08-01T22:16Z):**
 
 | Field | Value |
 |---|---|
-| Scenario active | **false** (inactive); `nextExec=null` |
+| Scenario active | **false** (inactive); `nextExec=null`; active count **26** |
 | Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
 | Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 — filters on first modules of Router 3 routes |
 | Nested identity filters | `length(5\|6\|7\|8.body)` empty=`text:equal "0"` / single=`text:equal "1"`; multi keeps `numeric:greater "1"` |
@@ -18,12 +18,14 @@
 | Module 78 | Else branch only (`identity_resolution_unclassified`) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
 | `config_versions` grants | service_role SELECT=**true**, INSERT=**true** (remote migration `20260801181727`) |
-| CREATE | **PASS** — exec `646ef201a41b44f09f9d375cae74a019`; ops **13**; `outcome=created` |
-| LINK E2E | **PASS** — exec `533058104fbb4349b0b03ceed380ae1d`; ops **12**; `outcome=linked` |
-| REPLAY | **PASS** — exec `08992679cd064b59888dd6705a596f17`; ops **3**; `outcome=replayed` |
-| IDENTITY_CONFLICT | **PASS** — exec `2826f47879e849afbb9e426da8d59f84`; ops **7**; HTTP 409 |
-| Next owner gate | E2E-08/09 and/or GHL Form 1 — do not mark P2 complete yet |
-| Evidence | `artifacts/agent-runs/integrator/20260801T194942Z-form1-link-predicate-fix-and-e2e.md` |
+| CREATE / LINK / REPLAY / CONFLICT | **PASS** (prior `20260801T194942Z`) |
+| E2E-03 link by key | **PASS** — exec `2cea3cc544a843de95648a85f9e548d2`; ops **12** |
+| E2E-04 link by slug | **PASS** — exec `eab7f315c66546f9aa3d6a00a01d63ec`; ops **12** |
+| E2E-08 forbidden auto-link | **PASS** — weak peer `created`, not linked |
+| E2E-09 null_does_not_clear | **FAIL** — omitted reported → empty strings on new link config |
+| E2E-07 review_required | **WAIVED** (UNIQUE; not PASS) |
+| Next owner gate | Fix null-omit reported merge; re-run E2E-09 — GHL blocked until GO |
+| Evidence | `artifacts/agent-runs/integrator/20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md` |
 
 ## Matching order (company create-or-link)
 

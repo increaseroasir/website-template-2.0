@@ -34,18 +34,19 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE; MODULE 9 BasicIfElse EXCLUSIVE; CREATE/LINK/REPLAY/IDENTITY_CONFLICT PASS**
+- P2 Make intake: **INACTIVE; E2E-03/04/08 PASS; E2E-09 FAIL; E2E-07 WAIVED**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`; active count **26**
   - Module 9 = `builtin:BasicIfElse` (17 branches, first-match); Else → module 78 only; BasicMerge omitted (Decision B)
-  - Link length=`1` predicates: `text:equal "1"` only (removed dual `numeric:equal "1"` AND; CREATE unchanged)
-  - CREATE PASS exec `646ef201a41b44f09f9d375cae74a019`: ops **13**; `outcome=created`
-  - LINK PASS exec `533058104fbb4349b0b03ceed380ae1d`: ops **12**; `outcome=linked`
-  - REPLAY PASS exec `08992679cd064b59888dd6705a596f17`: ops **3**; `outcome=replayed`
-  - IDENTITY_CONFLICT PASS exec `2826f47879e849afbb9e426da8d59f84`: ops **7**; HTTP 409; `client_id_deployment_key_disagree`
+  - Prior CREATE/LINK/REPLAY/IDENTITY_CONFLICT remain PASS (see `20260801T194942Z-…`)
+  - E2E-03 PASS (link by deployment_key; omit slug): exec `2cea3cc544a843de95648a85f9e548d2`; ops **12**; client `398326b7-…`
+  - E2E-04 PASS (link by client_slug; omit key): exec `eab7f315c66546f9aa3d6a00a01d63ec`; ops **12**; client `2b786b27-…`
+  - E2E-08 PASS (forbidden auto-link): peer `created` `546fb4f7-…` not linked to C `5571e098-…`; C case unchanged
+  - E2E-09 FAIL: link with omitted reported wrote empty strings into new config (`6004e522-…`); prior create config retained values
+  - E2E-07 **WAIVED** (UNIQUE slug/key; multi branches retained; length>1 static-only residual risk)
   - `config_versions` SELECT+INSERT remain; grants/RLS unchanged; `apply_authorized=false`
-  - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
+  - Make/Supabase Form 1 synthetic acceptance gate **NOT CLOSED**; GHL Form 1 still blocked
   - GHL / ClickUp / Forms 2/3 still unauthorized
-- P2 overall: **NOT COMPLETE** (core Form1 create/link/replay/conflict proven; E2E-08/09 + GHL gates open)
+- P2 overall: **NOT COMPLETE** (E2E-09 null-clear open; GHL unauthorized)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -61,13 +62,13 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 module 9 exclusivity fixed via BasicIfElse. Link length=`1` dual-numeric predicate removed. CREATE / LINK / REPLAY / IDENTITY_CONFLICT synthetic E2E **PASS**. Scenario inactive; capacity 26; residue 0. GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`. P2 **not** complete.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 E2E-03/04/08 **PASS**; E2E-07 **WAIVED**; E2E-09 **FAIL** (null/omit clears reported into empty strings on new link config). Scenario inactive; capacity 26; residue 0. Make/Supabase Form 1 synthetic acceptance **not closed**. GHL Form 1 **blocked**. `apply_authorized=false`. P2 **not** complete.
 
-Evidence: `artifacts/agent-runs/integrator/20260801T194942Z-form1-link-predicate-fix-and-e2e.md`
+Evidence: `artifacts/agent-runs/integrator/20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md`
 
 Next owner decision:
 
-1. Authorize E2E-08/09 (forbidden auto-link + null_does_not_clear) and/or GHL Form 1 install in a named location — do **not** mark P2 complete until those gates close.
+1. Authorize a targeted inactive blueprint fix so link/create config writes preserve prior reported values when webhook fields are null/omitted, then re-run E2E-09 only. Do **not** start GHL until that returns GO.
 
 ## Usage governance
 

@@ -52,19 +52,21 @@ Legend: `[x]` verified this checkpoint · `[ ]` open · `[~]` partial/stale docs
 
 ## P2C — Form 1 E2E
 
-- [!] Make capacity (last verified 26 active; no free slot)
-- [ ] Owner capacity decision (+1 slot preferred)
-- [ ] Owner E2E authorization
-- [ ] Synthetic **create**
-- [ ] Synthetic **link**
-- [ ] Synthetic **replay**
-- [ ] Synthetic **identity_conflict**
-- [ ] Synthetic **review_required**
-- [ ] Cleanup synthetic rows (clients/cases/intakes/config)
-- [ ] Scenario returned inactive; no leftover schedules
-- [ ] Evidence artifact under `artifacts/agent-runs/`
+- [x] Make capacity (Core; temporary +1 for 4852018; restored to 26)
+- [x] Owner capacity / temporary activation authorized
+- [x] Owner E2E authorization (synthetic 03/04/08/09 + E2E-07 waiver)
+- [x] Synthetic **create** (E2E-01)
+- [x] Synthetic **link** (E2E-02 client_id; E2E-03 deployment_key; E2E-04 client_slug)
+- [x] Synthetic **replay** (E2E-05)
+- [x] Synthetic **identity_conflict** (E2E-06)
+- [x] Synthetic **review_required** — **WAIVED** (UNIQUE; not PASS)
+- [x] Synthetic **forbidden auto-link** (E2E-08) **PASS**
+- [!] Synthetic **null_does_not_clear** (E2E-09) **FAIL** — empty-string clear on new link config
+- [x] Cleanup synthetic rows (clients/cases/intakes/config) — zero residue after 20260801T221625Z
+- [x] Scenario returned inactive; no leftover schedules
+- [x] Evidence artifact under `artifacts/agent-runs/` (`20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md`)
 
-**Acceptance gate:** all five outcomes + cleanup + inactive. **P2 cannot close without this** (unless owner explicitly defers with written risk acceptance).
+**Acceptance gate:** Make/Supabase Form 1 synthetic acceptance **NOT CLOSED** until E2E-09 PASS. **P2 cannot close** (GHL still unauthorized).
 
 ---
 
@@ -111,11 +113,11 @@ Legend: `[x]` verified this checkpoint · `[ ]` open · `[~]` partial/stale docs
 
 ## Cross-cutting before calling P2 “complete”
 
-- [x] Onboarding tests 53/53
+- [x] Onboarding tests 54/54
 - [x] Factory-contract tests 46/46
 - [x] Safety tests 31/31
 - [x] `brand:guard` pass
-- [ ] Form 1 E2E green (P2C)
+- [!] Form 1 E2E green (P2C) — blocked on E2E-09
 - [ ] GHL Form 1 path live or owner deferral recorded
 - [ ] `EXECUTION_STATE` P2 overall flipped to complete by integrator only
 - [ ] Integration merged to `factory/p0-safety-lock` (recommended after E2E)

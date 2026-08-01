@@ -5,7 +5,7 @@
 **Scenario (target):** `4852018` · webhook `2785703` · connection `4834536`  
 **Project:** `htl-factory-dev` / `epeddfdifckzzmskhdsz`  
 **Contract / schema:** `0.2.0` / `1.1.0`  
-**Current status:** Module 9 BasicIfElse exclusivity live; link length=`1` dual-numeric predicates removed; CREATE/LINK/REPLAY/IDENTITY_CONFLICT PASS; see `artifacts/agent-runs/integrator/20260801T194942Z-form1-link-predicate-fix-and-e2e.md`  
+**Current status:** E2E-01/02/03/04/05/06/08 PASS; E2E-07 WAIVED; E2E-09 FAIL (null/omit wrote empty reported on new config). See `artifacts/agent-runs/integrator/20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md` (+ prior `20260801T194942Z-…`). Make/Supabase synthetic acceptance **not closed**.  
 
 
 
@@ -54,14 +54,14 @@ Use distinct `submission_id` / `correlation_id` per case. Cleanup after suite.
 |---|---|---|---|---|---|---|---|
 | E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | **PASS** | `live_verified_readonly` (latest exec `646ef201…`; ops=13; `outcome=created`; residue cleaned) |
 | E2E-02 | **link by client_id** | Existing synthetic `client_id` (+ agreeing key/slug or omit) | `linked` | new case + intake + config + RPC; clients PATCH `active_onboarding_case_id` only | clients create; overwrite domain/business_name | **PASS** | `live_verified_readonly` (exec `53305810…`; ops=12; `outcome=linked`; prior FAIL `e56c8505…` fixed by removing link-branch `numeric:equal "1"`) |
-| E2E-03 | **link by deployment_key** | Existing key; no `client_id` (or agreeing) | `linked` | same as E2E-02 | clients create; forbidden auto-link | **READY** | awaiting owner authorization |
-| E2E-04 | **link by client_slug** | Existing slug; no id/key (or agreeing) | `linked` | same as E2E-02 | clients create | **READY** | awaiting owner authorization |
+| E2E-03 | **link by deployment_key** | Existing key; no `client_id` (or agreeing) | `linked` | same as E2E-02 | clients create; forbidden auto-link | **PASS** | `live_verified_readonly` (exec `2cea3cc5…`; ops=12; omit slug; client `398326b7-…`) |
+| E2E-04 | **link by client_slug** | Existing slug; no id/key (or agreeing) | `linked` | same as E2E-02 | clients create | **PASS** | `live_verified_readonly` (exec `eab7f315…`; ops=12; omit key; client `2b786b27-…`) |
 | E2E-05 | **replay** | Exact same `submission_id` as E2E-01 after success | `replayed` | respond only | any create/link/intake duplicate row | **PASS** | `live_verified_readonly` (exec `08992679…`; ops=3; `outcome=replayed`) |
 | E2E-06 | **identity_conflict** | Supplied `client_id` not found OR id/key/slug disagree OR opportunity already bound | `identity_conflict` | respond only | client create; case create | **PASS** | `live_verified_readonly` (exec `2826f478…`; ops=7; HTTP 409; `client_id_deployment_key_disagree`; no third client) |
-| E2E-07 | **review_required** | Force multi-row condition for one identifier (dev-only fixture) OR document skip if uniqueness makes multi impossible | `review_required` | respond only | client create | **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS** | UNIQUE slug/key |
-| E2E-08 | **forbidden auto-link negative** | Existing client shares owner_email / business_name / domain only; no id/key/slug | `created` (new client) **or** explicit non-link | must **not** `linked` to the email/name/domain peer | company auto-link | **DEFERRED** | not run |
-| E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | **DEFERRED** | not run |
-| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue after post-fix E2E) | `live_verified_readonly` |
+| E2E-07 | **review_required** | Force multi-row condition for one identifier (dev-only fixture) OR document skip if uniqueness makes multi impossible | `review_required` | respond only | client create | **WAIVED** (not PASS) | owner: UNIQUE slug/key retained; multi branches kept; length>1 static-only residual risk |
+| E2E-08 | **forbidden auto-link negative** | Existing client shares owner_email / business_name / domain only; no id/key/slug | `created` (new client) **or** explicit non-link | must **not** `linked` to the email/name/domain peer | company auto-link | **PASS** | `live_verified_readonly` (peer `created` `546fb4f7-…`; not linked to C `5571e098-…`; C case unchanged) |
+| E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | **FAIL** | link config `6004e522-…` wrote `""` for all six reported; prior create config retained; hard-stopped |
+| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue after 20260801T221625Z run) | `live_verified_readonly` |
 
 ---
 
