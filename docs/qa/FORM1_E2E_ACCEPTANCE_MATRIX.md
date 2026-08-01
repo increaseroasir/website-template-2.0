@@ -5,7 +5,7 @@
 **Scenario (target):** `4852018` · webhook `2785703` · connection `4834536`  
 **Project:** `htl-factory-dev` / `epeddfdifckzzmskhdsz`  
 **Contract / schema:** `0.2.0` / `1.1.0`  
-**Current status:** E2E-01/02/03/04/05/06/08 PASS; E2E-07 WAIVED; E2E-09 FAIL (null/omit wrote empty reported on new config). See `artifacts/agent-runs/integrator/20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md` (+ prior `20260801T194942Z-…`). Make/Supabase synthetic acceptance **not closed**.  
+**Current status:** E2E-01/02/03/04/05/06/08 PASS; E2E-07 WAIVED; E2E-09 FAIL (re-verify 20260801T2235Z after ifempty patch — double-encoded `config` priors empty). See `artifacts/agent-runs/integrator/20260801T223500Z-form1-null-omit-merge-fix-e2e09.md` (+ `20260801T221625Z-…`, `20260801T194942Z-…`). Make/Supabase synthetic acceptance **not closed**.  
 
 
 
@@ -60,8 +60,8 @@ Use distinct `submission_id` / `correlation_id` per case. Cleanup after suite.
 | E2E-06 | **identity_conflict** | Supplied `client_id` not found OR id/key/slug disagree OR opportunity already bound | `identity_conflict` | respond only | client create; case create | **PASS** | `live_verified_readonly` (exec `2826f478…`; ops=7; HTTP 409; `client_id_deployment_key_disagree`; no third client) |
 | E2E-07 | **review_required** | Force multi-row condition for one identifier (dev-only fixture) OR document skip if uniqueness makes multi impossible | `review_required` | respond only | client create | **WAIVED** (not PASS) | owner: UNIQUE slug/key retained; multi branches kept; length>1 static-only residual risk |
 | E2E-08 | **forbidden auto-link negative** | Existing client shares owner_email / business_name / domain only; no id/key/slug | `created` (new client) **or** explicit non-link | must **not** `linked` to the email/name/domain peer | company auto-link | **PASS** | `live_verified_readonly` (peer `created` `546fb4f7-…`; not linked to C `5571e098-…`; C case unchanged) |
-| E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | **FAIL** | link config `6004e522-…` wrote `""` for all six reported; prior create config retained; hard-stopped |
-| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue after 20260801T221625Z run) | `live_verified_readonly` |
+| E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | **FAIL** | re-verify link config `998d3c57-…` still `""` ×6; create `41a91770-…` retained; prior GET `config->>` empty on double-encoded jsonb string; no second patch |
+| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue after 20260801T223500Z E2E-09 run) | `live_verified_readonly` |
 
 ---
 

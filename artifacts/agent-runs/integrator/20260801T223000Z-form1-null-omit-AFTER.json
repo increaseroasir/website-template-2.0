@@ -1,0 +1,153 @@
+{
+  "runId": "20260801T223000Z-form1-null-omit",
+  "timestamp_utc": "2026-08-01T22:31:56Z",
+  "scenarioId": 4852018,
+  "name": "HTL Factory Form 1 Intake (dev_test)",
+  "teamId": 442605,
+  "isActive": false,
+  "nextExec": null,
+  "lastEdit": "2026-08-01T22:31:36.471Z",
+  "scheduling": {
+    "type": "immediately"
+  },
+  "active_scenarios_count_pre_update": 26,
+  "patch": {
+    "type": "null-omit-reported-field-merge",
+    "prior_modules": [
+      36,
+      46,
+      56
+    ],
+    "create_modules": [
+      33,
+      43,
+      53
+    ],
+    "unchanged": [
+      "create_new",
+      "module_74",
+      "BasicIfElse_conditions",
+      "Else_78",
+      "identity_lookups",
+      "RPC",
+      "webhook",
+      "connection"
+    ]
+  },
+  "branch_orders": {
+    "multi_client_id": [
+      10
+    ],
+    "multi_deployment_key": [
+      11
+    ],
+    "multi_client_slug": [
+      12
+    ],
+    "opportunity_bound": [
+      13
+    ],
+    "client_id_miss": [
+      14
+    ],
+    "id_key_disagree": [
+      15
+    ],
+    "id_slug_disagree": [
+      16
+    ],
+    "key_slug_disagree": [
+      17
+    ],
+    "key_miss_slug_hit": [
+      18
+    ],
+    "slug_miss_key_hit": [
+      19
+    ],
+    "id_hit_key_miss": [
+      20
+    ],
+    "id_hit_slug_miss": [
+      21
+    ],
+    "link_by_client_id": [
+      30,
+      31,
+      32,
+      36,
+      33,
+      34,
+      35
+    ],
+    "link_by_deployment_key": [
+      40,
+      41,
+      42,
+      46,
+      43,
+      44,
+      45
+    ],
+    "link_by_client_slug": [
+      50,
+      51,
+      52,
+      56,
+      53,
+      54,
+      55
+    ],
+    "create_new": [
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76
+    ],
+    "identity_resolution_unclassified": [
+      78
+    ]
+  },
+  "verification_checks": {
+    "isActive_false": true,
+    "nextExec_null": true,
+    "id": true,
+    "order_link_by_client_id": true,
+    "order_link_by_deployment_key": true,
+    "order_link_by_client_slug": true,
+    "order_create_new": true,
+    "order_identity_resolution_unclassified": true,
+    "36_before_33": true,
+    "46_before_43": true,
+    "56_before_53": true,
+    "prior_36_shape": true,
+    "prior_46_shape": true,
+    "prior_56_shape": true,
+    "config_33_ifempty": true,
+    "config_43_ifempty": true,
+    "config_53_ifempty": true,
+    "74_unchanged": true,
+    "74_no_ifempty": true,
+    "conditions_unchanged": true,
+    "else_to_78": true,
+    "else_label": true,
+    "create_new_unchanged_order": true,
+    "webhook_hook": true,
+    "conn_4834536": true
+  },
+  "all_checks_passed": true,
+  "config_snippets": {
+    "33.website_reported_status": "{{ifempty(trim(1.website_reported_status); 36.body[1].website_reported_status)}}",
+    "43.website_reported_status": "{{ifempty(trim(1.website_reported_status); 46.body[1].website_reported_status)}}",
+    "53.website_reported_status": "{{ifempty(trim(1.website_reported_status); 56.body[1].website_reported_status)}}",
+    "74.website_reported_status": "{{1.website_reported_status}}"
+  },
+  "not_activated": true,
+  "second_patch": false,
+  "sun_pool_untouched": true,
+  "production_not_contacted": true,
+  "secrets_not_exposed": true
+}

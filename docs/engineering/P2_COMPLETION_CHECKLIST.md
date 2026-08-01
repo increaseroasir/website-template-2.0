@@ -61,12 +61,12 @@ Legend: `[x]` verified this checkpoint · `[ ]` open · `[~]` partial/stale docs
 - [x] Synthetic **identity_conflict** (E2E-06)
 - [x] Synthetic **review_required** — **WAIVED** (UNIQUE; not PASS)
 - [x] Synthetic **forbidden auto-link** (E2E-08) **PASS**
-- [!] Synthetic **null_does_not_clear** (E2E-09) **FAIL** — empty-string clear on new link config
-- [x] Cleanup synthetic rows (clients/cases/intakes/config) — zero residue after 20260801T221625Z
+- [!] Synthetic **null_does_not_clear** (E2E-09) **FAIL** — re-verify after ifempty patch still clears; double-encoded `config` priors empty (see `20260801T223500Z-form1-null-omit-merge-fix-e2e09.md`)
+- [x] Cleanup synthetic rows (clients/cases/intakes/config) — zero residue after 20260801T223500Z
 - [x] Scenario returned inactive; no leftover schedules
-- [x] Evidence artifact under `artifacts/agent-runs/` (`20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md`)
+- [x] Evidence artifact under `artifacts/agent-runs/` (`20260801T223500Z-form1-null-omit-merge-fix-e2e09.md`)
 
-**Acceptance gate:** Make/Supabase Form 1 synthetic acceptance **NOT CLOSED** until E2E-09 PASS. **P2 cannot close** (GHL still unauthorized).
+**Acceptance gate:** Make/Supabase Form 1 synthetic acceptance **NOT CLOSED** until E2E-09 PASS. **P2 cannot close** (GHL still unauthorized / blocked). E2E-07 remains **WAIVED**.
 
 ---
 
@@ -117,8 +117,8 @@ Legend: `[x]` verified this checkpoint · `[ ]` open · `[~]` partial/stale docs
 - [x] Factory-contract tests 46/46
 - [x] Safety tests 31/31
 - [x] `brand:guard` pass
-- [!] Form 1 E2E green (P2C) — blocked on E2E-09
-- [ ] GHL Form 1 path live or owner deferral recorded
+- [!] Form 1 E2E green (P2C) — blocked on E2E-09 (ifempty patch insufficient; need prior-config unwrap)
+- [ ] GHL Form 1 path live or owner deferral recorded — remains **BLOCKED** until E2E-09 GO (not unblocked)
 - [ ] `EXECUTION_STATE` P2 overall flipped to complete by integrator only
 - [ ] Integration merged to `factory/p0-safety-lock` (recommended after E2E)
 

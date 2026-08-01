@@ -1,0 +1,36 @@
+{
+  "isActive": false,
+  "nextExec": null,
+  "lastEdit": "2026-08-01T19:46:02.512Z",
+  "link_config_modules": {
+    "link_by_client_id": {
+      "module_id": 33,
+      "client_id_mapper": "{{5.body[1].client_id}}",
+      "config_mapper": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+      "resolved_client_source": "5.body[1].client_id",
+      "prior_config_lookup": false
+    },
+    "link_by_deployment_key": {
+      "module_id": 43,
+      "client_id_mapper": "{{6.body[1].client_id}}",
+      "config_mapper": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+      "resolved_client_source": "6.body[1].client_id",
+      "prior_config_lookup": false
+    },
+    "link_by_client_slug": {
+      "module_id": 53,
+      "client_id_mapper": "{{7.body[1].client_id}}",
+      "config_mapper": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+      "resolved_client_source": "7.body[1].client_id",
+      "prior_config_lookup": false
+    },
+    "create_new": {
+      "module_id": 74,
+      "client_id_mapper": "{{70.client_id}}",
+      "config_mapper": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+      "resolved_client_source": "70.client_id",
+      "prior_config_lookup": false
+    }
+  },
+  "deterministic_order": "created_at.desc limit 1 by client_id (config_version is per-case, not client-global)"
+}

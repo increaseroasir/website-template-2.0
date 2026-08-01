@@ -1,0 +1,85 @@
+{
+  "create_unchanged": true,
+  "routing_unchanged": true,
+  "else_to_78": true,
+  "mapping_table": [
+    {
+      "branch": "link_by_client_id",
+      "prior_lookup_module": 36,
+      "config_insert_module": 33,
+      "client_id_source": "5.body[1].client_id",
+      "order": "created_at.desc limit 1",
+      "old_reported_map": {
+        "website_reported_status": "{{1.website_reported_status}}",
+        "website_reported_url": "{{1.website_reported_url}}",
+        "domain_reported_name": "{{1.domain_reported_name}}",
+        "domain_reported_ownership_status": "{{1.domain_reported_ownership_status}}",
+        "dns_reported_provider": "{{1.dns_reported_provider}}",
+        "dns_reported_owner": "{{1.dns_reported_owner}}"
+      },
+      "new_reported_map": {
+        "website_reported_status": "{{ifempty(trim(1.website_reported_status); 36.body[1].website_reported_status)}}",
+        "website_reported_url": "{{ifempty(trim(1.website_reported_url); 36.body[1].website_reported_url)}}",
+        "domain_reported_name": "{{ifempty(trim(1.domain_reported_name); 36.body[1].domain_reported_name)}}",
+        "domain_reported_ownership_status": "{{ifempty(trim(1.domain_reported_ownership_status); 36.body[1].domain_reported_ownership_status)}}",
+        "dns_reported_provider": "{{ifempty(trim(1.dns_reported_provider); 36.body[1].dns_reported_provider)}}",
+        "dns_reported_owner": "{{ifempty(trim(1.dns_reported_owner); 36.body[1].dns_reported_owner)}}"
+      },
+      "old_config_len": 692,
+      "new_config_len": 994
+    },
+    {
+      "branch": "link_by_deployment_key",
+      "prior_lookup_module": 46,
+      "config_insert_module": 43,
+      "client_id_source": "6.body[1].client_id",
+      "order": "created_at.desc limit 1",
+      "old_reported_map": {
+        "website_reported_status": "{{1.website_reported_status}}",
+        "website_reported_url": "{{1.website_reported_url}}",
+        "domain_reported_name": "{{1.domain_reported_name}}",
+        "domain_reported_ownership_status": "{{1.domain_reported_ownership_status}}",
+        "dns_reported_provider": "{{1.dns_reported_provider}}",
+        "dns_reported_owner": "{{1.dns_reported_owner}}"
+      },
+      "new_reported_map": {
+        "website_reported_status": "{{ifempty(trim(1.website_reported_status); 46.body[1].website_reported_status)}}",
+        "website_reported_url": "{{ifempty(trim(1.website_reported_url); 46.body[1].website_reported_url)}}",
+        "domain_reported_name": "{{ifempty(trim(1.domain_reported_name); 46.body[1].domain_reported_name)}}",
+        "domain_reported_ownership_status": "{{ifempty(trim(1.domain_reported_ownership_status); 46.body[1].domain_reported_ownership_status)}}",
+        "dns_reported_provider": "{{ifempty(trim(1.dns_reported_provider); 46.body[1].dns_reported_provider)}}",
+        "dns_reported_owner": "{{ifempty(trim(1.dns_reported_owner); 46.body[1].dns_reported_owner)}}"
+      },
+      "old_config_len": 692,
+      "new_config_len": 994
+    },
+    {
+      "branch": "link_by_client_slug",
+      "prior_lookup_module": 56,
+      "config_insert_module": 53,
+      "client_id_source": "7.body[1].client_id",
+      "order": "created_at.desc limit 1",
+      "old_reported_map": {
+        "website_reported_status": "{{1.website_reported_status}}",
+        "website_reported_url": "{{1.website_reported_url}}",
+        "domain_reported_name": "{{1.domain_reported_name}}",
+        "domain_reported_ownership_status": "{{1.domain_reported_ownership_status}}",
+        "dns_reported_provider": "{{1.dns_reported_provider}}",
+        "dns_reported_owner": "{{1.dns_reported_owner}}"
+      },
+      "new_reported_map": {
+        "website_reported_status": "{{ifempty(trim(1.website_reported_status); 56.body[1].website_reported_status)}}",
+        "website_reported_url": "{{ifempty(trim(1.website_reported_url); 56.body[1].website_reported_url)}}",
+        "domain_reported_name": "{{ifempty(trim(1.domain_reported_name); 56.body[1].domain_reported_name)}}",
+        "domain_reported_ownership_status": "{{ifempty(trim(1.domain_reported_ownership_status); 56.body[1].domain_reported_ownership_status)}}",
+        "dns_reported_provider": "{{ifempty(trim(1.dns_reported_provider); 56.body[1].dns_reported_provider)}}",
+        "dns_reported_owner": "{{ifempty(trim(1.dns_reported_owner); 56.body[1].dns_reported_owner)}}"
+      },
+      "old_config_len": 692,
+      "new_config_len": 994
+    }
+  ],
+  "deterministic_order": "created_at.desc limit 1 by client_id",
+  "create_config_module": 74,
+  "expression": "ifempty(trim(incoming); prior.body[1].field)"
+}

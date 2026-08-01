@@ -34,14 +34,15 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE; E2E-03/04/08 PASS; E2E-09 FAIL; E2E-07 WAIVED**
+- P2 Make intake: **INACTIVE; E2E-03/04/08 PASS; E2E-09 FAIL (re-verify); E2E-07 WAIVED**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`; active count **26**
   - Module 9 = `builtin:BasicIfElse` (17 branches, first-match); Else → module 78 only; BasicMerge omitted (Decision B)
   - Prior CREATE/LINK/REPLAY/IDENTITY_CONFLICT remain PASS (see `20260801T194942Z-…`)
   - E2E-03 PASS (link by deployment_key; omit slug): exec `2cea3cc544a843de95648a85f9e548d2`; ops **12**; client `398326b7-…`
   - E2E-04 PASS (link by client_slug; omit key): exec `eab7f315c66546f9aa3d6a00a01d63ec`; ops **12**; client `2b786b27-…`
   - E2E-08 PASS (forbidden auto-link): peer `created` `546fb4f7-…` not linked to C `5571e098-…`; C case unchanged
-  - E2E-09 FAIL: link with omitted reported wrote empty strings into new config (`6004e522-…`); prior create config retained values
+  - E2E-09 FAIL (20260801T2235Z re-verify after ifempty patch): link config `998d3c57-…` still wrote `""` for all six reported; create config `41a91770-…` retained values; ops **13**; no second patch
+  - Root cause: prior GET `config->>field` empty because `config` jsonb is double-encoded string
   - E2E-07 **WAIVED** (UNIQUE slug/key; multi branches retained; length>1 static-only residual risk)
   - `config_versions` SELECT+INSERT remain; grants/RLS unchanged; `apply_authorized=false`
   - Make/Supabase Form 1 synthetic acceptance gate **NOT CLOSED**; GHL Form 1 still blocked
@@ -62,13 +63,13 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 E2E-03/04/08 **PASS**; E2E-07 **WAIVED**; E2E-09 **FAIL** (null/omit clears reported into empty strings on new link config). Scenario inactive; capacity 26; residue 0. Make/Supabase Form 1 synthetic acceptance **not closed**. GHL Form 1 **blocked**. `apply_authorized=false`. P2 **not** complete.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 E2E-03/04/08 **PASS**; E2E-07 **WAIVED**; E2E-09 **FAIL** after ifempty patch re-verify (prior GET cannot read double-encoded `config`). Scenario inactive; capacity 26; residue 0. Make/Supabase Form 1 synthetic acceptance **not closed**. GHL Form 1 **blocked**. `apply_authorized=false`. P2 **not** complete.
 
-Evidence: `artifacts/agent-runs/integrator/20260801T221625Z-form1-e2e-03-04-08-09-and-waiver.md`
+Evidence: `artifacts/agent-runs/integrator/20260801T223500Z-form1-null-omit-merge-fix-e2e09.md` (+ prior `20260801T221625Z-…`, static proof `20260801T223000Z-…`)
 
 Next owner decision:
 
-1. Authorize a targeted inactive blueprint fix so link/create config writes preserve prior reported values when webhook fields are null/omitted, then re-run E2E-09 only. Do **not** start GHL until that returns GO.
+1. Authorize a targeted inactive blueprint fix so modules 36/46/56 return unwrapped reported fields from double-encoded `config` (or stop storing `config` as a JSON string), then re-run E2E-09 only. Do **not** start GHL until that returns GO.
 
 ## Usage governance
 
