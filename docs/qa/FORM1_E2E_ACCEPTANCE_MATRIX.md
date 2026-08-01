@@ -5,7 +5,8 @@
 **Scenario (target):** `4852018` · webhook `2785703` · connection `4834536`  
 **Project:** `htl-factory-dev` / `epeddfdifckzzmskhdsz`  
 **Contract / schema:** `0.2.0` / `1.1.0`  
-**Current status:** E2E **not authorized** — Make capacity + owner gate required  
+**Current status:** E2E **attempted 20260801** — Case A **FAIL** (`service_role` table grants); scenario inactive; see `artifacts/agent-runs/integrator/20260801T033100Z-form1-synthetic-e2e.md`  
+
 
 Legend: `[ ]` not run · `[x]` pass · `[!]` blocked · `N/A`
 
@@ -19,8 +20,8 @@ Claim labels: `live_verified_readonly` · `repository_derived` · `prior_evidenc
 |---|---|---|---|
 | P1 | Scenario `4852018` exists; name HTL Factory Form 1 Intake (dev_test) | [x] static | `prior_evidence_only` |
 | P2 | `isActive=false` before activation window | [x] last snapshot | `prior_evidence_only` |
-| P3 | Fresh Make poll confirms inactive + free active slot (or +1 capacity) | [!] | `pending_live_inventory` |
-| P4 | Owner written authorization for synthetic E2E (activate → send → deactivate) | [!] | `pending_live_inventory` |
+| P3 | Fresh Make poll confirms inactive + free active slot (or +1 capacity) | [x] Core + activate OK | `live_verified_readonly` |
+| P4 | Owner written authorization for synthetic E2E (activate → send → deactivate) | [x] | `live_verified_readonly` |
 | P5 | Supabase target remains `epeddfdifckzzmskhdsz`; `apply_authorized=false` | [x] | `repository_derived` |
 | P6 | No GHL / ClickUp modules in blueprint | [x] | `prior_evidence_only` |
 | P7 | Synthetic IDs only (`example.invalid`, fake contact/opp) | [x] planned | `repository_derived` |
@@ -50,16 +51,16 @@ Use distinct `submission_id` / `correlation_id` per case. Cleanup after suite.
 
 | Case ID | Intent | Key inputs | Expected `outcome` | Allowed writes | Forbidden writes | Status | Label |
 |---|---|---|---|---|---|---|---|
-| E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | [!] | `pending_live_inventory` |
-| E2E-02 | **link by client_id** | Existing synthetic `client_id` (+ agreeing key/slug or omit) | `linked` | new case + intake + config + RPC; clients PATCH `active_onboarding_case_id` only | clients create; overwrite domain/business_name | [!] | `pending_live_inventory` |
-| E2E-03 | **link by deployment_key** | Existing key; no `client_id` (or agreeing) | `linked` | same as E2E-02 | clients create; forbidden auto-link | [!] | `pending_live_inventory` |
-| E2E-04 | **link by client_slug** | Existing slug; no id/key (or agreeing) | `linked` | same as E2E-02 | clients create | [!] | `pending_live_inventory` |
-| E2E-05 | **replay** | Exact same `submission_id` as E2E-01 after success | `replayed` | respond only | any create/link/intake duplicate row | [!] | `pending_live_inventory` |
-| E2E-06 | **identity_conflict** | Supplied `client_id` not found OR id/key/slug disagree OR opportunity already bound | `identity_conflict` | respond only | client create; case create | [!] | `pending_live_inventory` |
-| E2E-07 | **review_required** | Force multi-row condition for one identifier (dev-only fixture) OR document skip if uniqueness makes multi impossible | `review_required` | respond only | client create | [!] | `pending_live_inventory` |
-| E2E-08 | **forbidden auto-link negative** | Existing client shares owner_email / business_name / domain only; no id/key/slug | `created` (new client) **or** explicit non-link | must **not** `linked` to the email/name/domain peer | company auto-link | [!] | `pending_live_inventory` |
-| E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | [!] | `pending_live_inventory` |
-| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | [!] | `pending_live_inventory` |
+| E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | **FAIL** | `live_verified_readonly` (403 intake_submissions) |
+| E2E-02 | **link by client_id** | Existing synthetic `client_id` (+ agreeing key/slug or omit) | `linked` | new case + intake + config + RPC; clients PATCH `active_onboarding_case_id` only | clients create; overwrite domain/business_name | **NOT EXECUTABLE** | blocked by E2E-01 |
+| E2E-03 | **link by deployment_key** | Existing key; no `client_id` (or agreeing) | `linked` | same as E2E-02 | clients create; forbidden auto-link | **DEFERRED** | not run this pass |
+| E2E-04 | **link by client_slug** | Existing slug; no id/key (or agreeing) | `linked` | same as E2E-02 | clients create | **DEFERRED** | not run this pass |
+| E2E-05 | **replay** | Exact same `submission_id` as E2E-01 after success | `replayed` | respond only | any create/link/intake duplicate row | **NOT EXECUTABLE** | blocked by E2E-01 |
+| E2E-06 | **identity_conflict** | Supplied `client_id` not found OR id/key/slug disagree OR opportunity already bound | `identity_conflict` | respond only | client create; case create | **NOT EXECUTABLE** | blocked by E2E-01 |
+| E2E-07 | **review_required** | Force multi-row condition for one identifier (dev-only fixture) OR document skip if uniqueness makes multi impossible | `review_required` | respond only | client create | **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS** | UNIQUE slug/key |
+| E2E-08 | **forbidden auto-link negative** | Existing client shares owner_email / business_name / domain only; no id/key/slug | `created` (new client) **or** explicit non-link | must **not** `linked` to the email/name/domain peer | company auto-link | **DEFERRED** | not run |
+| E2E-09 | **null_does_not_clear** | Link/create then second Form1 with null reported fields (new submission_id) | merge success; prior reported retained | intake append; config merge without clears | wipe Form2 ops; clear reported via null | **DEFERRED** | not run |
+| E2E-10 | **cleanup** | Delete/mark synthetic clients/cases/intakes/config for suite IDs | N/A | cleanup only | leave active schedule; leave orphan real data | **PASS** (zero residue; no Case A writes) | `live_verified_readonly` |
 
 ---
 
