@@ -5,21 +5,23 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T19:02Z):**
+**Status (verified 2026-08-01T19:24Z):**
 
 | Field | Value |
 |---|---|
 | Scenario active | **false** (inactive); `nextExec=null` |
 | Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
-| Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 — **no Router 3 fallback** |
+| Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 — filters on first modules of Router 3 routes |
 | Nested identity filters | `length(5\|6\|7\|8.body)` empty=`text:equal "0"` / single=`text:equal "1"`; multi keeps `numeric:greater "1"` |
 | Module 9 | `builtin:BasicIfElse` (17 branches; first-match); Else → module 78 only; **no BasicMerge** |
 | Module 78 | Else branch only (`identity_resolution_unclassified`) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
 | `config_versions` grants | service_role SELECT=**true**, INSERT=**true** (remote migration `20260801181727`) |
-| CREATE smoke | **PASS** — exec `289d3d945a2645b688ee96b4a18fb50e`; ops **13**; module **76** `outcome=created`; module 78 absent |
-| Next owner gate | Authorize LINK / REPLAY / IDENTITY_CONFLICT synthetic E2E |
-| Evidence | `artifacts/agent-runs/integrator/20260801T190200Z-form1-module9-exclusivity-and-create-smoke.md` |
+| CREATE | **PASS** — exec `3b49db6db2cd4a5d8f478000924d05db`; ops **13**; module **76** `outcome=created` |
+| LINK E2E | **FAIL** — exec `e56c85057f104a22857f10b8828aa111`; ops **7**; module **78** Else; no writes |
+| REPLAY / IDENTITY_CONFLICT | **NOT RUN** (hard stop after LINK) |
+| Next owner gate | Authorize targeted BasicIfElse `length=1` predicate fix + re-run LINK/REPLAY/CONFLICT |
+| Evidence | `artifacts/agent-runs/integrator/20260801T192430Z-form1-link-replay-conflict-e2e.md` |
 
 ## Matching order (company create-or-link)
 

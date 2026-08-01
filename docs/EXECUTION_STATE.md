@@ -34,14 +34,16 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE; MODULE 9 BasicIfElse EXCLUSIVE; CREATE SMOKE PASS**
+- P2 Make intake: **INACTIVE; MODULE 9 BasicIfElse EXCLUSIVE; CREATE PASS; LINK E2E FAIL**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`; active count **26**
   - Module 9 = `builtin:BasicIfElse` (17 branches, first-match); Else → module 78 only; BasicMerge omitted (Decision B)
-  - CREATE smoke exec `289d3d945a2645b688ee96b4a18fb50e`: ops **13**; module **76** `outcome=created`; module 78 absent; residue cleaned
-  - `config_versions` SELECT+INSERT remain; grants/RLS unchanged this pass; `apply_authorized=false`
+  - CREATE fixture exec `3b49db6db2cd4a5d8f478000924d05db`: ops **13**; module **76** `outcome=created`; module 78 absent
+  - LINK E2E **FAIL** exec `e56c85057f104a22857f10b8828aa111`: ops **7**; module **78** `identity_resolution_unclassified`; deactivated immediately; residue cleaned
+  - REPLAY / IDENTITY_CONFLICT **NOT RUN** (hard stop after LINK)
+  - `config_versions` SELECT+INSERT remain; grants/RLS unchanged; `apply_authorized=false`
   - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
   - GHL / ClickUp / Forms 2/3 still unauthorized
-- P2 overall: **NOT COMPLETE** (LINK/REPLAY/IDENTITY_CONFLICT E2E not run; GHL gates open)
+- P2 overall: **NOT COMPLETE** (LINK failed; REPLAY/IDENTITY_CONFLICT not proven; GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -57,11 +59,13 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 module 9 exclusivity fixed via BasicIfElse. CREATE smoke PASS (ops 13; `outcome=created`; module 78 absent). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 module 9 exclusivity fixed via BasicIfElse. CREATE PASS. LINK synthetic E2E **FAILED** (Else module 78). REPLAY/IDENTITY_CONFLICT not run. GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
+
+Evidence: `artifacts/agent-runs/integrator/20260801T192430Z-form1-link-replay-conflict-e2e.md`
 
 Next owner decision:
 
-1. Authorize synthetic LINK, REPLAY, and IDENTITY_CONFLICT E2E on inactive scenario `4852018`.
+1. Authorize a targeted inactive BasicIfElse length-predicate fix for branches that must match `length=1`, then re-run LINK → REPLAY → IDENTITY_CONFLICT only.
 
 ## Usage governance
 
