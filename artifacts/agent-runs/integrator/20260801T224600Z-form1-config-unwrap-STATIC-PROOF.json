@@ -1,0 +1,35 @@
+{
+  "probe": "jsonb_typeof string; arrow null; (config#>>{})::jsonb unwrap works",
+  "strategy": "select config blob; Make get(parseJSON(config); field)",
+  "create_unchanged": true,
+  "routing_unchanged": true,
+  "mapping": [
+    {
+      "branch": "link_by_client_id",
+      "prior_module": 36,
+      "config_module": 33,
+      "old_select": "config_version_id,client_id,config_version,created_at,website_reported_status:config->>website_reported_status,website_reported_url:config->>website_reported_url,domain_reported_name:config->>domain_reported_name,domain_reported_ownership_status:config->>domain_reported_ownership_status,dns_reported_provider:config->>dns_reported_provider,dns_reported_owner:config->>dns_reported_owner",
+      "new_select": "config_version_id,client_id,config_version,created_at,config",
+      "new_expr_example": "{{ifempty(trim(1.website_reported_status); get(parseJSON(36.body[1].config); \"website_reported_status\"))}}",
+      "old_had_ifempty": true
+    },
+    {
+      "branch": "link_by_deployment_key",
+      "prior_module": 46,
+      "config_module": 43,
+      "old_select": "config_version_id,client_id,config_version,created_at,website_reported_status:config->>website_reported_status,website_reported_url:config->>website_reported_url,domain_reported_name:config->>domain_reported_name,domain_reported_ownership_status:config->>domain_reported_ownership_status,dns_reported_provider:config->>dns_reported_provider,dns_reported_owner:config->>dns_reported_owner",
+      "new_select": "config_version_id,client_id,config_version,created_at,config",
+      "new_expr_example": "{{ifempty(trim(1.website_reported_status); get(parseJSON(46.body[1].config); \"website_reported_status\"))}}",
+      "old_had_ifempty": true
+    },
+    {
+      "branch": "link_by_client_slug",
+      "prior_module": 56,
+      "config_module": 53,
+      "old_select": "config_version_id,client_id,config_version,created_at,website_reported_status:config->>website_reported_status,website_reported_url:config->>website_reported_url,domain_reported_name:config->>domain_reported_name,domain_reported_ownership_status:config->>domain_reported_ownership_status,dns_reported_provider:config->>dns_reported_provider,dns_reported_owner:config->>dns_reported_owner",
+      "new_select": "config_version_id,client_id,config_version,created_at,config",
+      "new_expr_example": "{{ifempty(trim(1.website_reported_status); get(parseJSON(56.body[1].config); \"website_reported_status\"))}}",
+      "old_had_ifempty": true
+    }
+  ]
+}

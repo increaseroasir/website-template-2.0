@@ -5,7 +5,7 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T22:35Z):**
+**Status (verified 2026-08-01T23:07Z):**
 
 | Field | Value |
 |---|---|
@@ -18,15 +18,15 @@
 | Module 78 | Else branch only (`identity_resolution_unclassified`) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
 | `config_versions` grants | service_role SELECT=**true**, INSERT=**true** (remote migration `20260801181727`) |
-| Link reported merge | `ifempty(trim(incoming); prior)` on modules 33/43/53; prior GET 36/46/56 — **still FAIL live** (double-encoded `config`) |
+| Link reported merge | prior GET 36/46/56 select bare `config`; 33/43/53 use `get(parseJSON(...))` — **FAIL live** (`parseJSON` not found) |
 | CREATE / LINK / REPLAY / CONFLICT | **PASS** (prior `20260801T194942Z`) |
 | E2E-03 link by key | **PASS** — exec `2cea3cc544a843de95648a85f9e548d2`; ops **12** |
 | E2E-04 link by slug | **PASS** — exec `eab7f315c66546f9aa3d6a00a01d63ec`; ops **12** |
 | E2E-08 forbidden auto-link | **PASS** — weak peer `created`, not linked |
-| E2E-09 null_does_not_clear | **FAIL** — re-verify `998d3c57-…` cleared; diagnosis: `config->>` on string jsonb |
+| E2E-09 null_does_not_clear | **FAIL** — unwrap re-verify LINK `05023545…` HTTP 500: `Function 'parseJSON' not found!` |
 | E2E-07 review_required | **WAIVED** (UNIQUE; not PASS) |
-| Next owner gate | Unwrap prior `config` in GET 36/46/56 (or store object); re-run E2E-09 — GHL blocked until GO |
-| Evidence | `artifacts/agent-runs/integrator/20260801T223500Z-form1-null-omit-merge-fix-e2e09.md` |
+| Next owner gate | Remap 33/43/53 with Make-supported unwrap (or store object); re-run E2E-09 — GHL blocked until GO |
+| Evidence | `artifacts/agent-runs/integrator/20260801T230505Z-form1-config-unwrap-fix-e2e09.md` |
 
 ## Matching order (company create-or-link)
 
