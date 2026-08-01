@@ -1,0 +1,89 @@
+{
+  "utc": "20260801T160800Z",
+  "scenario_id": 4852018,
+  "isActive": false,
+  "nextExec": null,
+  "live_lastEdit": "2026-08-01T05:05:46.177Z",
+  "live_truncated": false,
+  "live_router_filters": [
+    {
+      "first_id": 78,
+      "filter": {
+        "name": "idempotency_lookup_error",
+        "conditions": [
+          [
+            {
+              "a": "{{2.statusCode}}",
+              "b": "200",
+              "o": "numeric:notequal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 77,
+      "filter": {
+        "name": "idempotency_integrity_error",
+        "conditions": [
+          [
+            {
+              "a": "{{2.statusCode}}",
+              "b": "200",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 4,
+      "filter": {
+        "name": "replay",
+        "conditions": [
+          [
+            {
+              "a": "{{2.statusCode}}",
+              "b": "200",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "first_id": 5,
+      "filter": {
+        "name": "not_replay",
+        "conditions": [
+          [
+            {
+              "a": "{{2.statusCode}}",
+              "b": "200",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(2.body)}}",
+              "b": "0",
+              "o": "numeric:equal"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "restore_source": {
+    "path": "artifacts/agent-runs/integrator/_tmp/form1-idempotency-AFTER-full.json",
+    "sha256": "058a4b701e1da912b5b71df948d08aae64bd1b09702ec96de07692adcbb24967"
+  }
+}

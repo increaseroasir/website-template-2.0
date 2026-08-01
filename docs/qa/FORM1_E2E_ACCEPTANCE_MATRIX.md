@@ -5,7 +5,7 @@
 **Scenario (target):** `4852018` · webhook `2785703` · connection `4834536`  
 **Project:** `htl-factory-dev` / `epeddfdifckzzmskhdsz`  
 **Contract / schema:** `0.2.0` / `1.1.0`  
-**Current status:** `service_role` grants applied (`20260801045303`); E2E Case A **FAIL** (false `replayed` idempotency filter); scenario inactive; see `artifacts/agent-runs/integrator/20260801T045400Z-form1-service-role-grant-and-e2e-rerun.md`  
+**Current status:** create-or-link restored + Router 3 length/fallback applied; CREATE smoke **FAIL** (`body_length=0` but not_replay unmatched → native fallback); scenario inactive; see `artifacts/agent-runs/integrator/20260801T160800Z-form1-idempotency-fix-and-e2e.md`  
 
 
 
@@ -52,7 +52,7 @@ Use distinct `submission_id` / `correlation_id` per case. Cleanup after suite.
 
 | Case ID | Intent | Key inputs | Expected `outcome` | Allowed writes | Forbidden writes | Status | Label |
 |---|---|---|---|---|---|---|---|
-| E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | **FAIL** | `live_verified_readonly` (false replay after grants) |
+| E2E-01 | **create** | New slug + deployment_key; no `client_id`; unique opportunity | `created` | clients insert; onboarding_cases; intake_submissions; config_versions; RPC | GHL/ClickUp; production | **FAIL** | `live_verified_readonly` (exec `146345b0…`; length mapper=0, not_replay filter unmatched, fallback) |
 | E2E-02 | **link by client_id** | Existing synthetic `client_id` (+ agreeing key/slug or omit) | `linked` | new case + intake + config + RPC; clients PATCH `active_onboarding_case_id` only | clients create; overwrite domain/business_name | **NOT EXECUTABLE** | blocked by E2E-01 |
 | E2E-03 | **link by deployment_key** | Existing key; no `client_id` (or agreeing) | `linked` | same as E2E-02 | clients create; forbidden auto-link | **DEFERRED** | not run this pass |
 | E2E-04 | **link by client_slug** | Existing slug; no id/key (or agreeing) | `linked` | same as E2E-02 | clients create | **DEFERRED** | not run this pass |

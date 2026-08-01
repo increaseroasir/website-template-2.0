@@ -34,16 +34,17 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE CREATE-OR-LINK — SERVICE_ROLE GRANTS APPLIED; E2E BLOCKED ON IDEMPOTENCY FILTER**
+- P2 Make intake: **INACTIVE CREATE-OR-LINK RESTORED; NATIVE FALLBACK ON ROUTER 3; CREATE SMOKE FAIL**
   - Make plan verified **Core**; capacity no longer blocks activation
-  - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`
-  - Privilege migration `20260801041000_grant_form1_service_role_privileges` applied on `htl-factory-dev` (remote `20260801045303`)
-  - Least-privilege `service_role`: clients SELECT/INSERT/UPDATE; cases+intake SELECT/INSERT; config INSERT; RPC EXECUTE; **no DELETE**
-  - No anon/authenticated grants; RLS unchanged; blueprint unpatched
-  - Synthetic E2E rerun: Case A false `replayed` (empty GET body ≠ text `"[]"`); no rows written; residue zero
+  - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`
+  - Privilege migration `20260801041000_grant_form1_service_role_privileges` applied (remote `20260801045303`); grants unchanged this pass
+  - Restore safety gate PASS on `_tmp/form1-idempotency-AFTER-full.json` SHA-256 `058a4b701e1da912b5b71df948d08aae64bd1b09702ec96de07692adcbb24967`
+  - Router 3: `length(2.body)` equal 0 / 1 / greater 1 + native `fallback:true` on module 78; create subtree restored (module 70 present)
+  - CREATE smoke FAIL exec `146345b0dc8f4fa4a55929114bdabe51`: mapper `body_length=0` but not_replay `numeric:equal 0` unmatched → fallback; zero rows
+  - Nested 5–8 literal `"[]"` filters unchanged / not reached; no second patch this run
   - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
   - GHL wiring still unauthorized; ClickUp still unauthorized; Forms 2/3 not built
-- P2 overall: **NOT COMPLETE** (Form 1 E2E blueprint filter + GHL gates open)
+- P2 overall: **NOT COMPLETE** (empty-length Router filter match + GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -59,11 +60,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 `service_role` least-privilege grants applied. Synthetic E2E blocked on blueprint idempotency filter false-replay. GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 create-or-link restored with native fallback Router 3. CREATE smoke failed: mapper reports `length(2.body)=0` but filtered `not_replay` did not match. GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
 
 Next owner decision:
 
-1. Authorize a blueprint-only fix to Form 1 idempotency routing on scenario `4852018` (treat empty intake GET as not-replay), then re-run synthetic Form 1 E2E. Do not broaden `service_role` grants.
+1. Authorize a blueprint-only follow-up on scenario `4852018` to make empty idempotency GET match `not_replay` under live module-2 filter evaluation (inspect exec `146345b0dc8f4fa4a55929114bdabe51`), then re-run CREATE smoke. Do not broaden `service_role` grants. Do not speculative-patch nested `"[]"` filters until length-0 routing works.
 
 ## Usage governance
 

@@ -5,17 +5,17 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified):**
+**Status (verified 2026-08-01T16:11Z):**
 
 | Field | Value |
 |---|---|
-| Scenario active | **false** (inactive) |
-| Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
+| Scenario active | **false** (inactive); `nextExec=null` |
+| Blueprint | Create-or-link restored; contract **0.2.0** / schema **1.1.0** |
+| Idempotency router | `length(2.body)` filters + **native fallback** (`fallback:true` on module 78) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
-| Executions / runs | **none observed** |
-| E2E verification | **blocked** — Make at 26 active scenarios |
-| Activation | **not authorized** until capacity + synthetic E2E authorization |
-| Capacity note | Prefer **raise Make active-slot capacity**; do not pause live lead/SMS/Typeform scenarios |
+| CREATE smoke | **FAIL** — exec `146345b0dc8f4fa4a55929114bdabe51`; mapper `body_length=0` but `numeric:equal 0` did not match; fallback responded; zero rows |
+| Nested 5–8 `"[]"` filters | unchanged (not reached this smoke) |
+| Evidence | `artifacts/agent-runs/integrator/20260801T160800Z-form1-idempotency-fix-and-e2e.md` |
 
 ## Matching order (company create-or-link)
 
@@ -36,8 +36,8 @@
 ## Modules (live shape)
 
 ```text
-webhook → idempotency GET → router(replay | continue)
-continue → lookup client_id → deployment_key → client_slug → opportunity
+webhook → idempotency GET → router(not_replay length=0 | replay length=1 | integrity length>1 | native fallback)
+not_replay → lookup client_id → deployment_key → client_slug → opportunity
          → router(review_required | identity_conflict | link_* | create_new)
 link/create → onboarding case → PATCH active case → intake → config → RPC → respond
 ```
