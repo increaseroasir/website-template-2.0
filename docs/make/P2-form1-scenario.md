@@ -5,17 +5,19 @@
 **Team:** My Team (`442605`) · Org Increase ROAS (`1111422`)  
 **Supabase:** `htl-factory-dev` / `epeddfdifckzzmskhdsz` only  
 
-**Status (verified 2026-08-01T16:58Z):**
+**Status (verified 2026-08-01T17:35Z):**
 
 | Field | Value |
 |---|---|
 | Scenario active | **false** (inactive); `nextExec=null` |
-| Blueprint | Create-or-link restored; contract **0.2.0** / schema **1.1.0** |
-| Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 + native `fallback:true` on module 78 |
+| Blueprint | Create-or-link; contract **0.2.0** / schema **1.1.0** |
+| Idempotency router | `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 — **no Router 3 fallback** |
+| Nested identity filters | `length(5\|6\|7\|8.body)` empty=`text:equal "0"` / single=`text:equal "1"`; multi keeps `numeric:greater "1"` |
+| Module 78 | Module 9 native fallback only (`identity_resolution_unclassified`) |
 | Connection | `4834536` `HTL Factory Dev (epeddfdifckzzmskhdsz)` |
-| CREATE smoke | **FAIL** — exec `17dcae12690b4bfe89f04dc0ce1be1a8`; ops **7** (entered modules 5–8); zero rows; response still fallback unclassified |
-| Nested 5–8 empty filters | unchanged — **next owner gate** (literal empty-array text compares) |
-| Evidence | `artifacts/agent-runs/integrator/20260801T162655Z-form1-empty-length-filter-fix-smoke.md` |
+| CREATE smoke | **FAIL** — exec `c1788f7b19424dac8423c0c29e24e426`; ops **11**; create_new wrote client/case/intake; hard-stop module **74** `config_versions` 403 (INSERT yes / SELECT no); module 78 absent |
+| Next owner gate | `GRANT SELECT ON public.config_versions TO service_role` then CREATE smoke only |
+| Evidence | `artifacts/agent-runs/integrator/20260801T173241Z-form1-nested-length-filter-fix-smoke.md` |
 
 ## Matching order (company create-or-link)
 
@@ -36,9 +38,9 @@
 ## Modules (live shape)
 
 ```text
-webhook → idempotency GET → router(not_replay length=0 | replay length=1 | integrity length>1 | native fallback)
+webhook → idempotency GET → router(not_replay length=0 | replay length=1 | integrity length>1)
 not_replay → lookup client_id → deployment_key → client_slug → opportunity
-         → router(review_required | identity_conflict | link_* | create_new)
+         → router(review_required | identity_conflict | link_* | create_new | native fallback module 78)
 link/create → onboarding case → PATCH active case → intake → config → RPC → respond
 ```
 
@@ -99,5 +101,6 @@ Duplicate → `outcome=replayed` before any create/link writes.
 
 ## Evidence
 
+- `artifacts/agent-runs/integrator/20260801T173241Z-form1-nested-length-filter-fix-smoke.md`
 - `artifacts/agent-runs/integrator/20260731T203300Z-form1-create-or-link-blueprint.md`
-- Before/after blueprint JSON snapshots beside that file
+- Before/after filter/proof JSON beside the nested-length evidence file

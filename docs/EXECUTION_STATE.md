@@ -34,15 +34,15 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE; ROUTER 3 TEXT LENGTH FILTERS; CREATE SMOKE REACHED MODULES 5–8**
+- P2 Make intake: **INACTIVE; NESTED LENGTH FILTERS + MODULE 78 UNDER MODULE 9; CREATE HARD-STOP AT config_versions**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`
-  - Router 3: `length(2.body)` `text:equal` 0/1 + `numeric:greater` 1 + native `fallback:true` on module 78
-  - CREATE smoke exec `17dcae12690b4bfe89f04dc0ce1be1a8`: ops **7** (entered 5–8); zero rows; response still fallback unclassified
-  - Nested 5–8 literal empty-array text compares unchanged — **next gate**; no second patch this run
+  - Router 3: `length(2.body)` text 0/1 + numeric >1; **no native fallback**
+  - Nested 5–8 / create_new: `length(N.body)` text `"0"` / `"1"` (32 conditions); module 78 = module 9 fallback only
+  - CREATE smoke exec `c1788f7b19424dac8423c0c29e24e426`: ops **11**; create_new wrote client/case/intake; failed module **74** `config_versions` 403 (`cv_sel=false`); module 78 absent; residue cleaned
   - Grants unchanged; RLS unchanged; `apply_authorized=false`
   - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
   - GHL / ClickUp / Forms 2/3 still unauthorized
-- P2 overall: **NOT COMPLETE** (nested empty filters + GHL gates open)
+- P2 overall: **NOT COMPLETE** (`config_versions` SELECT grant + GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -58,11 +58,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 Router 3 empty/one filters use `text:equal` on `length(2.body)`. CREATE smoke ops=7 entered modules 5–8 but wrote zero rows (nested empty-array text compares / fallback dual-response). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 nested identity empty/single-hit filters and module 78 exclusivity are live. CREATE smoke proved create_new writes then hard-stopped at module 74 `config_versions` (service_role INSERT without SELECT). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
 
 Next owner decision:
 
-1. Authorize a blueprint-only fix on scenario `4852018` nested modules 5–8 / create_new empty-result detection (replace literal empty-array text compares with `length(N.body)`), and confirm Router 3 fallback does not also respond when `not_replay` matches. Then re-run CREATE smoke. Do not broaden grants.
+1. Authorize `GRANT SELECT ON public.config_versions TO service_role` on `htl-factory-dev` only, then re-run CREATE smoke on scenario `4852018`. Do not reopen nested filter blueprint work. Do not grant DELETE.
 
 ## Usage governance
 

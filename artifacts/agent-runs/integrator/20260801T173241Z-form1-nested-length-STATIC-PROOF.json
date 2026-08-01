@@ -1,0 +1,112 @@
+{
+  "utc": "20260801T173526Z",
+  "patch_batch_utc": "20260801T173241Z",
+  "scenario_id": 4852018,
+  "isActive": false,
+  "hookId": 2785703,
+  "nextExec": null,
+  "name": "HTL Factory Form 1 Intake (dev_test)",
+  "checks": {
+    "create_or_link_present": true,
+    "module_70_present": true,
+    "no_PLACEHOLDER_CONTINUE": true,
+    "no_incomplete_apply": true,
+    "raw_identity_bracket_compares": true,
+    "raw_identity_count": 0,
+    "router3_routes": [
+      5,
+      4,
+      77
+    ],
+    "router3_no_fallback": true,
+    "router3_filters": [
+      {
+        "id": 5,
+        "name": "not_replay",
+        "fallback": null,
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      },
+      {
+        "id": 4,
+        "name": "replay",
+        "fallback": null,
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      },
+      {
+        "id": 77,
+        "name": "idempotency_integrity_error",
+        "fallback": null,
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    ],
+    "zero_one_multi_exclusive": true,
+    "create_new_filter": {
+      "name": "create_new",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ]
+    },
+    "create_new_requires_all_lookups_empty": true,
+    "module_78_trail": "/3.r0/9.r16",
+    "module_78_no_router3_inbound": true,
+    "module_78_only_module9_fallback": true,
+    "create_path_single_webhook_respond": true,
+    "match_order_client_id_key_slug": true,
+    "webhook_2785703": true,
+    "connection_4834536_only": true,
+    "contract_0_2_0_present": true,
+    "schema_1_1_0_present": true,
+    "scenario_inactive": true,
+    "module_count_not_replay_subtree": 43
+  },
+  "all_static_pass": true
+}

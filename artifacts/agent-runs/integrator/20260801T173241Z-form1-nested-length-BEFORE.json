@@ -1,0 +1,1604 @@
+{
+  "utc": "20260801T173241Z",
+  "scenario_id": 4852018,
+  "isActive": false,
+  "hookId": 2785703,
+  "nextExec": null,
+  "name": "HTL Factory Form 1 Intake (dev_test)",
+  "description": "Form 1 create-or-link; contract 0.2.0 / schema 1.1.0; inactive; match order client_id>deployment_key>client_slug",
+  "blueprint": {
+    "flow": [
+      {
+        "id": 1,
+        "mapper": {},
+        "module": "gateway:CustomWebHook",
+        "version": 1,
+        "metadata": {
+          "designer": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "parameters": {
+          "hook": 2785703
+        }
+      },
+      {
+        "id": 2,
+        "mapper": {
+          "qs": [
+            {
+              "key": "form",
+              "value": "eq.form1"
+            },
+            {
+              "key": "select",
+              "value": "intake_submission_id,client_id,onboarding_case_id"
+            },
+            {
+              "key": "submission_id",
+              "value": "eq.{{1.submission_id}}"
+            }
+          ],
+          "url": "/rest/v1/intake_submissions",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "module": "supabase:makeAnApiCall",
+        "version": 1,
+        "metadata": {
+          "designer": {
+            "x": 300,
+            "y": 0
+          }
+        },
+        "parameters": {
+          "__IMTCONN__": 4834536
+        }
+      },
+      {
+        "id": 3,
+        "mapper": {},
+        "module": "builtin:BasicRouter",
+        "routes": [
+          {
+            "flow": [
+              {
+                "id": 5,
+                "filter": {
+                  "name": "not_replay",
+                  "conditions": [
+                    [
+                      {
+                        "a": "{{length(2.body)}}",
+                        "b": "0",
+                        "o": "text:equal"
+                      }
+                    ]
+                  ]
+                },
+                "mapper": {
+                  "qs": [
+                    {
+                      "key": "client_id",
+                      "value": "eq.{{if(1.client_id; 1.client_id; \"00000000-0000-0000-0000-000000000000\")}}"
+                    },
+                    {
+                      "key": "select",
+                      "value": "client_id,client_slug,deployment_key,domain,business_name"
+                    }
+                  ],
+                  "url": "/rest/v1/clients",
+                  "method": "GET",
+                  "headers": [
+                    {
+                      "key": "Accept",
+                      "value": "application/json"
+                    }
+                  ]
+                },
+                "module": "supabase:makeAnApiCall",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 900,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 6,
+                "mapper": {
+                  "qs": [
+                    {
+                      "key": "deployment_key",
+                      "value": "eq.{{if(1.deployment_key; 1.deployment_key; \"__no_deployment_key__\")}}"
+                    },
+                    {
+                      "key": "select",
+                      "value": "client_id,client_slug,deployment_key,domain,business_name"
+                    }
+                  ],
+                  "url": "/rest/v1/clients",
+                  "method": "GET",
+                  "headers": [
+                    {
+                      "key": "Accept",
+                      "value": "application/json"
+                    }
+                  ]
+                },
+                "module": "supabase:makeAnApiCall",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1200,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 7,
+                "mapper": {
+                  "qs": [
+                    {
+                      "key": "client_slug",
+                      "value": "eq.{{if(1.client_slug; 1.client_slug; \"__no_client_slug__\")}}"
+                    },
+                    {
+                      "key": "select",
+                      "value": "client_id,client_slug,deployment_key,domain,business_name"
+                    }
+                  ],
+                  "url": "/rest/v1/clients",
+                  "method": "GET",
+                  "headers": [
+                    {
+                      "key": "Accept",
+                      "value": "application/json"
+                    }
+                  ]
+                },
+                "module": "supabase:makeAnApiCall",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1500,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 8,
+                "mapper": {
+                  "qs": [
+                    {
+                      "key": "ghl_opportunity_id",
+                      "value": "eq.{{if(1.ghl_opportunity_id; 1.ghl_opportunity_id; \"__no_opportunity__\")}}"
+                    },
+                    {
+                      "key": "select",
+                      "value": "onboarding_case_id,client_id,ghl_opportunity_id"
+                    }
+                  ],
+                  "url": "/rest/v1/onboarding_cases",
+                  "method": "GET",
+                  "headers": [
+                    {
+                      "key": "Accept",
+                      "value": "application/json"
+                    }
+                  ]
+                },
+                "module": "supabase:makeAnApiCall",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1800,
+                    "y": 100
+                  }
+                },
+                "parameters": {
+                  "__IMTCONN__": 4834536
+                }
+              },
+              {
+                "id": 9,
+                "mapper": {},
+                "module": "builtin:BasicRouter",
+                "routes": [
+                  {
+                    "flow": [
+                      {
+                        "id": 10,
+                        "filter": {
+                          "name": "multi_client_id",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{length(5.body)}}",
+                                "b": "1",
+                                "o": "numeric:greater"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"review_required\",\"error\":\"multiple_clients_for_client_id\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -400
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 11,
+                        "filter": {
+                          "name": "multi_deployment_key",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{length(6.body)}}",
+                                "b": "1",
+                                "o": "numeric:greater"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"review_required\",\"error\":\"multiple_clients_for_deployment_key\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -340
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 12,
+                        "filter": {
+                          "name": "multi_client_slug",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{length(7.body)}}",
+                                "b": "1",
+                                "o": "numeric:greater"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"review_required\",\"error\":\"multiple_clients_for_client_slug\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -280
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 13,
+                        "filter": {
+                          "name": "opportunity_bound",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.ghl_opportunity_id}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{8.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"ghl_opportunity_id_already_bound\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -220
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 14,
+                        "filter": {
+                          "name": "client_id_miss",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"client_id_not_found\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -160
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 15,
+                        "filter": {
+                          "name": "id_key_disagree",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{5.body[1].client_id}}",
+                                "b": "{{6.body[1].client_id}}",
+                                "o": "text:notequal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"client_id_deployment_key_disagree\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -100
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 16,
+                        "filter": {
+                          "name": "id_slug_disagree",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{5.body[1].client_id}}",
+                                "b": "{{7.body[1].client_id}}",
+                                "o": "text:notequal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"client_id_client_slug_disagree\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": -40
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 17,
+                        "filter": {
+                          "name": "key_slug_disagree",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{6.body[1].client_id}}",
+                                "b": "{{7.body[1].client_id}}",
+                                "o": "text:notequal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"deployment_key_client_slug_disagree\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": 20
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 18,
+                        "filter": {
+                          "name": "key_miss_slug_hit",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{1.deployment_key}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"deployment_key_mismatch_for_client_slug\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": 80
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 19,
+                        "filter": {
+                          "name": "slug_miss_key_hit",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{1.client_slug}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"client_slug_mismatch_for_deployment_key\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": 140
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 20,
+                        "filter": {
+                          "name": "id_hit_key_miss",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{1.deployment_key}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"client_id_row_deployment_key_mismatch\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 21,
+                        "filter": {
+                          "name": "id_hit_slug_miss",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{1.client_slug}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "body": "{\"ok\":false,\"outcome\":\"identity_conflict\",\"error\":\"client_id_row_client_slug_mismatch\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 409
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": 260
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 30,
+                        "filter": {
+                          "name": "link_by_client_id",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "exist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{length(5.body)}}",
+                                "b": "1",
+                                "o": "numeric:equal"
+                              },
+                              {
+                                "a": "{{8.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "table": "onboarding_cases",
+                          "status": "submitted",
+                          "version": "1",
+                          "client_id": "{{5.body[1].client_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "ghl_opportunity_id": "{{1.ghl_opportunity_id}}",
+                          "onboarding_schema_version": "1.1.0"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2700,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 31,
+                        "mapper": {
+                          "url": "/rest/v1/clients?client_id=eq.{{5.body[1].client_id}}",
+                          "body": "{\"active_onboarding_case_id\":\"{{30.onboarding_case_id}}\"}",
+                          "method": "PATCH",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            },
+                            {
+                              "key": "Prefer",
+                              "value": "return=representation"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3000,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 32,
+                        "mapper": {
+                          "form": "form1",
+                          "table": "intake_submissions",
+                          "payload": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"schema_version\":\"1.1.0\",\"submission_id\":\"{{1.submission_id}}\",\"correlation_id\":\"{{1.correlation_id}}\",\"client_slug\":\"{{1.client_slug}}\",\"deployment_key\":\"{{1.deployment_key}}\",\"domain\":\"{{1.domain}}\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{5.body[1].client_id}}",
+                          "submission_id": "{{1.submission_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "schema_version": "1.1.0",
+                          "onboarding_case_id": "{{30.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3300,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 33,
+                        "mapper": {
+                          "table": "config_versions",
+                          "config": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{5.body[1].client_id}}",
+                          "source_form": "form1",
+                          "submission_id": "{{1.submission_id}}",
+                          "config_version": "1",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "onboarding_case_id": "{{30.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3600,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 34,
+                        "mapper": {
+                          "url": "/rest/v1/rpc/request_client_transition",
+                          "body": "{\"p_client_id\":\"{{5.body[1].client_id}}\",\"p_onboarding_case_id\":\"{{30.onboarding_case_id}}\",\"p_expected_current_status\":\"submitted\",\"p_requested_status\":\"under_review\",\"p_expected_version\":1,\"p_actor\":\"make_service\",\"p_correlation_id\":\"{{1.correlation_id}}\",\"p_reason\":\"form1_intake_auto_review\",\"p_idempotency_key\":\"transition:{{30.onboarding_case_id}}:under_review:{{1.correlation_id}}\"}",
+                          "method": "POST",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3900,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 35,
+                        "mapper": {
+                          "body": "{\"ok\":true,\"outcome\":\"linked\",\"idempotent\":false,\"client_id\":\"{{5.body[1].client_id}}\",\"onboarding_case_id\":\"{{30.onboarding_case_id}}\",\"status\":\"under_review\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 200
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 4200,
+                            "y": 200
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 40,
+                        "filter": {
+                          "name": "link_by_deployment_key",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{length(6.body)}}",
+                                "b": "1",
+                                "o": "numeric:equal"
+                              },
+                              {
+                                "a": "{{8.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{1.client_slug}}",
+                                "o": "notexist"
+                              }
+                            ],
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{length(6.body)}}",
+                                "b": "1",
+                                "o": "numeric:equal"
+                              },
+                              {
+                                "a": "{{8.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{length(7.body)}}",
+                                "b": "1",
+                                "o": "numeric:equal"
+                              },
+                              {
+                                "a": "{{6.body[1].client_id}}",
+                                "b": "{{7.body[1].client_id}}",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "table": "onboarding_cases",
+                          "status": "submitted",
+                          "version": "1",
+                          "client_id": "{{6.body[1].client_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "ghl_opportunity_id": "{{1.ghl_opportunity_id}}",
+                          "onboarding_schema_version": "1.1.0"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2700,
+                            "y": 350
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 41,
+                        "mapper": {
+                          "url": "/rest/v1/clients?client_id=eq.{{6.body[1].client_id}}",
+                          "body": "{\"active_onboarding_case_id\":\"{{40.onboarding_case_id}}\"}",
+                          "method": "PATCH",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            },
+                            {
+                              "key": "Prefer",
+                              "value": "return=representation"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3000,
+                            "y": 350
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 42,
+                        "mapper": {
+                          "form": "form1",
+                          "table": "intake_submissions",
+                          "payload": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"schema_version\":\"1.1.0\",\"submission_id\":\"{{1.submission_id}}\",\"correlation_id\":\"{{1.correlation_id}}\",\"client_slug\":\"{{1.client_slug}}\",\"deployment_key\":\"{{1.deployment_key}}\",\"domain\":\"{{1.domain}}\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{6.body[1].client_id}}",
+                          "submission_id": "{{1.submission_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "schema_version": "1.1.0",
+                          "onboarding_case_id": "{{40.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3300,
+                            "y": 350
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 43,
+                        "mapper": {
+                          "table": "config_versions",
+                          "config": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{6.body[1].client_id}}",
+                          "source_form": "form1",
+                          "submission_id": "{{1.submission_id}}",
+                          "config_version": "1",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "onboarding_case_id": "{{40.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3600,
+                            "y": 350
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 44,
+                        "mapper": {
+                          "url": "/rest/v1/rpc/request_client_transition",
+                          "body": "{\"p_client_id\":\"{{6.body[1].client_id}}\",\"p_onboarding_case_id\":\"{{40.onboarding_case_id}}\",\"p_expected_current_status\":\"submitted\",\"p_requested_status\":\"under_review\",\"p_expected_version\":1,\"p_actor\":\"make_service\",\"p_correlation_id\":\"{{1.correlation_id}}\",\"p_reason\":\"form1_intake_auto_review\",\"p_idempotency_key\":\"transition:{{40.onboarding_case_id}}:under_review:{{1.correlation_id}}\"}",
+                          "method": "POST",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3900,
+                            "y": 350
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 45,
+                        "mapper": {
+                          "body": "{\"ok\":true,\"outcome\":\"linked\",\"idempotent\":false,\"client_id\":\"{{6.body[1].client_id}}\",\"onboarding_case_id\":\"{{40.onboarding_case_id}}\",\"status\":\"under_review\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 200
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 4200,
+                            "y": 350
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 50,
+                        "filter": {
+                          "name": "link_by_client_slug",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{1.deployment_key}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:notequal"
+                              },
+                              {
+                                "a": "{{length(7.body)}}",
+                                "b": "1",
+                                "o": "numeric:equal"
+                              },
+                              {
+                                "a": "{{8.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "table": "onboarding_cases",
+                          "status": "submitted",
+                          "version": "1",
+                          "client_id": "{{7.body[1].client_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "ghl_opportunity_id": "{{1.ghl_opportunity_id}}",
+                          "onboarding_schema_version": "1.1.0"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2700,
+                            "y": 480
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 51,
+                        "mapper": {
+                          "url": "/rest/v1/clients?client_id=eq.{{7.body[1].client_id}}",
+                          "body": "{\"active_onboarding_case_id\":\"{{50.onboarding_case_id}}\"}",
+                          "method": "PATCH",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            },
+                            {
+                              "key": "Prefer",
+                              "value": "return=representation"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3000,
+                            "y": 480
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 52,
+                        "mapper": {
+                          "form": "form1",
+                          "table": "intake_submissions",
+                          "payload": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"schema_version\":\"1.1.0\",\"submission_id\":\"{{1.submission_id}}\",\"correlation_id\":\"{{1.correlation_id}}\",\"client_slug\":\"{{1.client_slug}}\",\"deployment_key\":\"{{1.deployment_key}}\",\"domain\":\"{{1.domain}}\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{7.body[1].client_id}}",
+                          "submission_id": "{{1.submission_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "schema_version": "1.1.0",
+                          "onboarding_case_id": "{{50.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3300,
+                            "y": 480
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 53,
+                        "mapper": {
+                          "table": "config_versions",
+                          "config": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{7.body[1].client_id}}",
+                          "source_form": "form1",
+                          "submission_id": "{{1.submission_id}}",
+                          "config_version": "1",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "onboarding_case_id": "{{50.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3600,
+                            "y": 480
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 54,
+                        "mapper": {
+                          "url": "/rest/v1/rpc/request_client_transition",
+                          "body": "{\"p_client_id\":\"{{7.body[1].client_id}}\",\"p_onboarding_case_id\":\"{{50.onboarding_case_id}}\",\"p_expected_current_status\":\"submitted\",\"p_requested_status\":\"under_review\",\"p_expected_version\":1,\"p_actor\":\"make_service\",\"p_correlation_id\":\"{{1.correlation_id}}\",\"p_reason\":\"form1_intake_auto_review\",\"p_idempotency_key\":\"transition:{{50.onboarding_case_id}}:under_review:{{1.correlation_id}}\"}",
+                          "method": "POST",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3900,
+                            "y": 480
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 55,
+                        "mapper": {
+                          "body": "{\"ok\":true,\"outcome\":\"linked\",\"idempotent\":false,\"client_id\":\"{{7.body[1].client_id}}\",\"onboarding_case_id\":\"{{50.onboarding_case_id}}\",\"status\":\"under_review\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 200
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 4200,
+                            "y": 480
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  },
+                  {
+                    "flow": [
+                      {
+                        "id": 70,
+                        "filter": {
+                          "name": "create_new",
+                          "conditions": [
+                            [
+                              {
+                                "a": "{{1.client_id}}",
+                                "o": "notexist"
+                              },
+                              {
+                                "a": "{{5.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{6.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{7.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              },
+                              {
+                                "a": "{{8.body}}",
+                                "b": "[]",
+                                "o": "text:equal"
+                              }
+                            ]
+                          ]
+                        },
+                        "mapper": {
+                          "table": "clients",
+                          "domain": "{{1.domain}}",
+                          "client_slug": "{{1.client_slug}}",
+                          "business_name": "{{1.business_name}}",
+                          "deployment_key": "{{1.deployment_key}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2400,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 71,
+                        "mapper": {
+                          "table": "onboarding_cases",
+                          "status": "submitted",
+                          "version": "1",
+                          "client_id": "{{70.client_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "ghl_opportunity_id": "{{1.ghl_opportunity_id}}",
+                          "onboarding_schema_version": "1.1.0"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 2700,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 72,
+                        "mapper": {
+                          "url": "/rest/v1/clients?client_id=eq.{{70.client_id}}",
+                          "body": "{\"active_onboarding_case_id\":\"{{71.onboarding_case_id}}\"}",
+                          "method": "PATCH",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            },
+                            {
+                              "key": "Prefer",
+                              "value": "return=representation"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3000,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 73,
+                        "mapper": {
+                          "form": "form1",
+                          "table": "intake_submissions",
+                          "payload": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"schema_version\":\"1.1.0\",\"submission_id\":\"{{1.submission_id}}\",\"correlation_id\":\"{{1.correlation_id}}\",\"client_slug\":\"{{1.client_slug}}\",\"deployment_key\":\"{{1.deployment_key}}\",\"domain\":\"{{1.domain}}\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{70.client_id}}",
+                          "submission_id": "{{1.submission_id}}",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "ghl_contact_id": "{{1.ghl_contact_id}}",
+                          "schema_version": "1.1.0",
+                          "onboarding_case_id": "{{71.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3300,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 74,
+                        "mapper": {
+                          "table": "config_versions",
+                          "config": "{\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\",\"business_name\":\"{{1.business_name}}\",\"owner_name\":\"{{1.owner_name}}\",\"owner_email\":\"{{1.owner_email}}\",\"owner_phone\":\"{{1.owner_phone}}\",\"offer_summary\":\"{{1.offer_summary}}\",\"market\":\"{{1.market}}\",\"ghl_contact_id\":\"{{1.ghl_contact_id}}\",\"ghl_opportunity_id\":\"{{1.ghl_opportunity_id}}\",\"website_reported_status\":\"{{1.website_reported_status}}\",\"website_reported_url\":\"{{1.website_reported_url}}\",\"domain_reported_name\":\"{{1.domain_reported_name}}\",\"domain_reported_ownership_status\":\"{{1.domain_reported_ownership_status}}\",\"dns_reported_provider\":\"{{1.dns_reported_provider}}\",\"dns_reported_owner\":\"{{1.dns_reported_owner}}\"}",
+                          "client_id": "{{70.client_id}}",
+                          "source_form": "form1",
+                          "submission_id": "{{1.submission_id}}",
+                          "config_version": "1",
+                          "correlation_id": "{{1.correlation_id}}",
+                          "onboarding_case_id": "{{71.onboarding_case_id}}"
+                        },
+                        "module": "supabase:createARow",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3600,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 75,
+                        "mapper": {
+                          "url": "/rest/v1/rpc/request_client_transition",
+                          "body": "{\"p_client_id\":\"{{70.client_id}}\",\"p_onboarding_case_id\":\"{{71.onboarding_case_id}}\",\"p_expected_current_status\":\"submitted\",\"p_requested_status\":\"under_review\",\"p_expected_version\":1,\"p_actor\":\"make_service\",\"p_correlation_id\":\"{{1.correlation_id}}\",\"p_reason\":\"form1_intake_auto_review\",\"p_idempotency_key\":\"transition:{{71.onboarding_case_id}}:under_review:{{1.correlation_id}}\"}",
+                          "method": "POST",
+                          "headers": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ]
+                        },
+                        "module": "supabase:makeAnApiCall",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 3900,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {
+                          "__IMTCONN__": 4834536
+                        }
+                      },
+                      {
+                        "id": 76,
+                        "mapper": {
+                          "body": "{\"ok\":true,\"outcome\":\"created\",\"idempotent\":false,\"client_id\":\"{{70.client_id}}\",\"onboarding_case_id\":\"{{71.onboarding_case_id}}\",\"status\":\"under_review\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                          "status": 200
+                        },
+                        "module": "gateway:WebhookRespond",
+                        "version": 1,
+                        "metadata": {
+                          "designer": {
+                            "x": 4200,
+                            "y": 600
+                          }
+                        },
+                        "parameters": {}
+                      }
+                    ]
+                  }
+                ],
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 2100,
+                    "y": 100
+                  }
+                },
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "flow": [
+              {
+                "id": 4,
+                "filter": {
+                  "name": "replay",
+                  "conditions": [
+                    [
+                      {
+                        "a": "{{length(2.body)}}",
+                        "b": "1",
+                        "o": "text:equal"
+                      }
+                    ]
+                  ]
+                },
+                "mapper": {
+                  "body": "{\"ok\":true,\"outcome\":\"replayed\",\"idempotent\":true,\"result\":{{2.body}},\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                  "status": 200
+                },
+                "module": "gateway:WebhookRespond",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1000,
+                    "y": -250
+                  }
+                },
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "flow": [
+              {
+                "id": 77,
+                "filter": {
+                  "name": "idempotency_integrity_error",
+                  "conditions": [
+                    [
+                      {
+                        "a": "{{length(2.body)}}",
+                        "b": "1",
+                        "o": "numeric:greater"
+                      }
+                    ]
+                  ]
+                },
+                "mapper": {
+                  "body": "{\"ok\":false,\"outcome\":\"review_required\",\"error\":\"multiple_intake_rows_for_submission_id\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                  "status": 409
+                },
+                "module": "gateway:WebhookRespond",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1000,
+                    "y": -400
+                  }
+                },
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "flow": [
+              {
+                "id": 78,
+                "filter": {
+                  "name": "idempotency_lookup_error",
+                  "fallback": true
+                },
+                "mapper": {
+                  "body": "{\"ok\":false,\"outcome\":\"review_required\",\"error\":\"idempotency_lookup_unclassified\",\"body_length\":\"{{length(2.body)}}\",\"contract_version\":\"0.2.0\",\"onboarding_schema_version\":\"1.1.0\"}",
+                  "status": 500
+                },
+                "module": "gateway:WebhookRespond",
+                "version": 1,
+                "metadata": {
+                  "designer": {
+                    "x": 1000,
+                    "y": -500
+                  }
+                },
+                "parameters": {}
+              }
+            ]
+          }
+        ],
+        "version": 1,
+        "metadata": {
+          "designer": {
+            "x": 600,
+            "y": 0
+          }
+        },
+        "parameters": {}
+      }
+    ],
+    "name": "HTL Factory Form 1 Intake (dev_test)",
+    "metadata": {
+      "instant": true,
+      "version": 1
+    },
+    "scheduling": {
+      "type": "immediately"
+    },
+    "interface": {
+      "input": [],
+      "output": []
+    }
+  }
+}

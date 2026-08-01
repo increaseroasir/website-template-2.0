@@ -1,0 +1,532 @@
+{
+  "utc": "20260801T173526Z",
+  "scenario_id": 4852018,
+  "filters": [
+    {
+      "id": 5,
+      "module": "supabase:makeAnApiCall",
+      "filter": {
+        "name": "not_replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "multi_client_id",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "multi_deployment_key",
+        "conditions": [
+          [
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "multi_client_slug",
+        "conditions": [
+          [
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "opportunity_bound",
+        "conditions": [
+          [
+            {
+              "a": "{{1.ghl_opportunity_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "client_id_miss",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "id_key_disagree",
+        "conditions": [
+          [
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{5.body[1].client_id}}",
+              "b": "{{6.body[1].client_id}}",
+              "o": "text:notequal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "id_slug_disagree",
+        "conditions": [
+          [
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{5.body[1].client_id}}",
+              "b": "{{7.body[1].client_id}}",
+              "o": "text:notequal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "key_slug_disagree",
+        "conditions": [
+          [
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{6.body[1].client_id}}",
+              "b": "{{7.body[1].client_id}}",
+              "o": "text:notequal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "key_miss_slug_hit",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.deployment_key}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "slug_miss_key_hit",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.client_slug}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "id_hit_key_miss",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.deployment_key}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "id_hit_slug_miss",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.client_slug}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "module": "supabase:createARow",
+      "filter": {
+        "name": "link_by_client_id",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 40,
+      "module": "supabase:createARow",
+      "filter": {
+        "name": "link_by_deployment_key",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.client_slug}}",
+              "o": "notexist"
+            }
+          ],
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{6.body[1].client_id}}",
+              "b": "{{7.body[1].client_id}}",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 50,
+      "module": "supabase:createARow",
+      "filter": {
+        "name": "link_by_client_slug",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{1.deployment_key}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 70,
+      "module": "supabase:createARow",
+      "filter": {
+        "name": "create_new",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 78,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "identity_resolution_unclassified",
+        "fallback": true
+      }
+    },
+    {
+      "id": 4,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "replay",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 77,
+      "module": "gateway:WebhookRespond",
+      "filter": {
+        "name": "idempotency_integrity_error",
+        "conditions": [
+          [
+            {
+              "a": "{{length(2.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}
