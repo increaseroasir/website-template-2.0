@@ -32,7 +32,7 @@
 | Environment | `test` | Hard requirement |
 | GHL contact/opp (intake) | Reuse Form1 synthetic pattern (`test-*-fake-*`) | After P2 E2E path |
 
-**Evidence class:** `DESIGN_ONLY` — values not reserved in Supabase yet (`MISSING`).
+**Evidence class:** `design_only` — values not reserved in Supabase yet (`MISSING`).
 
 ---
 
@@ -46,7 +46,7 @@
 | 4 | Snapshot ID owner-approved | Named snapshot + approval | `MISSING` |
 | 5 | Test credentials only (CF / GHL / Google / Supabase dev) | Operator checklist (no values in Git) | `MISSING` |
 | 6 | Migrations for `provisioning_jobs` + `infrastructure_resources` applied in **dev** under new auth | Migration list | `MISSING` |
-| 7 | `provisioning_ready` true for case | Gate evaluation log | `DESIGN_ONLY` |
+| 7 | `provisioning_ready` true for case | Gate evaluation log | `design_only` |
 | 8 | Break-glass for Sun Pool **absent** | `artifacts/break-glass/` empty of live approvals | `CHECKPOINT` pattern |
 | 9 | No production tokens in shell | Env audit | Operator |
 
@@ -101,7 +101,7 @@ Use idempotency key: `provision:{client_id}:{approval_id}`.
 | D1 Second provision different approval same client without reconcile policy | Rejected or no-op per frozen rule |
 | D2 Protected slug in payload | Rejected; zero external creates |
 | D3 Timeout after CF create before SB write | Reconcile restores ID; no second Pages project |
-| D4 `deployment_configs` PATCH attempted | Forbidden / alert (`TRACKED_DOC` SECRETS_RUNBOOK) |
+| D4 `deployment_configs` PATCH attempted | Forbidden / alert (`repository_derived` SECRETS_RUNBOOK) |
 | D5 GitHub fork API | Zero calls |
 | D6 Production project IDs | Rejected by target allowlist |
 
@@ -121,7 +121,7 @@ Use idempotency key: `provision:{client_id}:{approval_id}`.
 
 Per resource: `not_requested` → `requested` → `creating` → `created` → `verified`  
 Failure: `failed` | `orphaned` | `externally_missing`  
-(`TRACKED_DOC` — P3-provision)
+(`repository_derived` — P3-provision)
 
 | Assertion | Expected |
 |---|---|
@@ -137,14 +137,14 @@ Failure: `failed` | `orphaned` | `externally_missing`
 After `infrastructure_ready`, P4 may hydrate `clients/<slug>/` — **not part of this P3 test**.  
 P3 pass does **not** require dist/, secrets install, or preview deploy.
 
-(`TRACKED_DOC` — P4-hydrate; P3 non-goals)
+(`repository_derived` — P4-hydrate; P3 non-goals)
 
 ---
 
 ## ClickUp mirror (optional soft assert)
 
 If connector available: milestones for sub-account created / snapshot installed / verified may update.  
-ClickUp failure must **not** roll back Supabase (`TRACKED_DOC` — sync policy). Open human task instead.
+ClickUp failure must **not** roll back Supabase (`repository_derived` — sync policy). Open human task instead.
 
 ---
 

@@ -11,9 +11,9 @@
 1. **Fail closed** — unknown client, identity disagreement, protected slug, missing approval → stop.  
 2. **Create-if-missing, never double-create** — idempotency keys + unique constraints.  
 3. **Supabase is authoritative for IDs** — external systems may be ahead; reconcile toward SB.  
-4. **Slug never unlocks** on failure or rollback (`TRACKED_DOC`).  
-5. **Rollback needs distinct authorization** — same pattern as production rollback (`TRACKED_DOC`).  
-6. **ClickUp never drives rollback** of Supabase (`TRACKED_DOC`).  
+4. **Slug never unlocks** on failure or rollback (`repository_derived`).  
+5. **Rollback needs distinct authorization** — same pattern as production rollback (`repository_derived`).  
+6. **ClickUp never drives rollback** of Supabase (`repository_derived`).  
 7. **No secret values** in job logs, SB columns, Git, or Make blueprints.
 
 ---
@@ -27,9 +27,9 @@
 | `provision_failed` | `provisioning` | Authorized retry | `make_service` / `tech_operator` / `system` |
 | `provisioning` | `infrastructure_ready` | All required resources `verified` | `make_service` / `system` |
 
-(`TRACKED_DOC` — `config/state-machine.json`)
+(`repository_derived` — `config/state-machine.json`)
 
-Make must **not** set `live` on any failure or success path (`TRACKED_DOC` — P3-provision).
+Make must **not** set `live` on any failure or success path (`repository_derived` — P3-provision).
 
 ---
 
@@ -75,7 +75,7 @@ Alt: `failed` | `orphaned` | `externally_missing`
 | `ghl:location:{client_id}` | One location |
 | `sheets:vault:{client_id}` | One sheet |
 
-**Reconcile job (design):** compare Cloudflare/GHL/Google vs Supabase; repair IDs; never double-create (`TRACKED_DOC` — P3-provision).
+**Reconcile job (design):** compare Cloudflare/GHL/Google vs Supabase; repair IDs; never double-create (`repository_derived` — P3-provision).
 
 Suggested reconcile order:
 
@@ -84,7 +84,7 @@ Suggested reconcile order:
 3. If SB present → GET external → mark `externally_missing` or `verified`  
 4. Emit audit event; do not change fulfillment status except via RPC when all verified  
 
-**Evidence class:** `DESIGN_ONLY` (job not built).
+**Evidence class:** `design_only` (job not built).
 
 ---
 
@@ -95,7 +95,7 @@ Suggested reconcile order:
 | **Retry** | Transient / fixed cause | Same or renewed P3 approval per frozen policy | Resume create-if-missing |
 | **Cleanup (fake client)** | Test residue after PASS/FAIL | Owner or tech_operator test cleanup auth | Delete/quarantine **test-tagged** resources |
 | **Rollback (P3)** | Need to undo mistaken provision | **Distinct rollback authorization** artifact | See below |
-| **Production rollback** | Live site | Production rollback auth + candidate | Out of P3 scope (`TRACKED_DOC` P6) |
+| **Production rollback** | Live site | Production rollback auth + candidate | Out of P3 scope (`repository_derived` P6) |
 
 ### P3 rollback authorization (design)
 
@@ -108,7 +108,7 @@ Rollback artifact must include:
 - `environment` = `test` \| `development` (never inferred production)
 - Explicit resource allowlist to tear down
 
-CLI flag alone is insufficient (`TRACKED_DOC`).
+CLI flag alone is insufficient (`repository_derived`).
 
 ### P3 rollback sequence (design — fake/test only)
 
@@ -126,7 +126,7 @@ CLI flag alone is insufficient (`TRACKED_DOC`).
 7. Audit event with correlation_id
 ```
 
-**Note:** Current `state-machine.json` does **not** define `infrastructure_ready` → `approved` or unlock paths. Any “return to approved” requires a **contract/state-machine bump** before implementation (`TRACKED_DOC` gap → `DESIGN_ONLY` proposal).
+**Note:** Current `state-machine.json` does **not** define `infrastructure_ready` → `approved` or unlock paths. Any “return to approved” requires a **contract/state-machine bump** before implementation (`repository_derived` gap → `design_only` proposal).
 
 **Recommended until bump:** rollback leaves status `provision_failed` and resources retired; new provision requires new `approval_id` and idempotency key.
 
@@ -150,7 +150,7 @@ CLI flag alone is insufficient (`TRACKED_DOC`).
 |---|---|
 | Wrong snapshot installed | Owner-approved snapshot ID bound in P3 approval; verify step fails closed |
 | Snapshot touches unintended location | Create location first; install only into stored `ghl_location_id` |
-| Retainer / production snapshot used in test | Deny list of production snapshot IDs in approval validator (`DESIGN_ONLY`) |
+| Retainer / production snapshot used in test | Deny list of production snapshot IDs in approval validator (`design_only`) |
 | Paradise / Sun Pool locations | Hard exclude from writable scope |
 
 ---
@@ -193,7 +193,7 @@ ClickUp may mirror these; Supabase/job tables remain SoT.
 
 ## Correlation and audit
 
-Preserve chain (`TRACKED_DOC`):
+Preserve chain (`repository_derived`):
 
 `submission` → `onboarding_case` → `client` → `approval` → `provisioning_job` → `resources` → (later) `hydration` → …
 
@@ -218,6 +218,6 @@ Failed steps append status history / audit events; no silent drops.
 2. Which resource is the canonical first for `slug_locked_by_resource_id`?  
 3. Exact allowed RPC path after rollback (`provision_failed` only vs return to `approved`).  
 4. Hard-delete vs disable for GHL test locations.  
-5. Whether Lead Vault copy-from-Paradise template is allowed in factory test or a blank factory template is required (legacy checklist vs monorepo factory — **prefer factory blank template** to avoid Paradise coupling) (`DESIGN_ONLY` recommendation).
+5. Whether Lead Vault copy-from-Paradise template is allowed in factory test or a blank factory template is required (legacy checklist vs monorepo factory — **prefer factory blank template** to avoid Paradise coupling) (`design_only` recommendation).
 
 Do not invent field names to close these; integrator + owner decide.

@@ -12,9 +12,9 @@
 
 | Class | Meaning |
 |---|---|
-| `VERIFIED_LIVE` | Confirmed against a live system in a cited evidence artifact this sprint |
-| `TRACKED_DOC` | Stated in committed factory docs / config on the audit base |
-| `DESIGN_ONLY` | Proposed here; not implemented / not authorized |
+| `live_verified_readonly` | Confirmed against a live system in a cited evidence artifact this sprint |
+| `repository_derived` | Stated in committed factory docs / config on the audit base |
+| `design_only` | Proposed here; not implemented / not authorized |
 | `CHECKPOINT` | Taken from integrator checkpoint (may lag live Make capacity) |
 | `MISSING` | Required for P3 but absent from repo or platforms |
 | `BLOCKED` | Cannot proceed until named gate clears |
@@ -26,9 +26,9 @@
 | Question | Answer | Evidence class |
 |---|---|---|
 | Is P3 authorized? | **No** | `CHECKPOINT` — `20260801T014500Z-factory-checkpoint-audit.md` |
-| Is `provisioning_ready` implemented? | **No** — design gate only | `TRACKED_DOC` — `docs/onboarding/PROVISIONING_READY.md` |
-| Are P3 migrations present? | **No** — `provisioning_jobs` / `infrastructure_resources` not in applied migrations | `MISSING` / `TRACKED_DOC` |
-| Can this docs PR merge as design? | **Yes (docs-only)** — does not unlock P3 | `DESIGN_ONLY` |
+| Is `provisioning_ready` implemented? | **No** — design gate only | `repository_derived` — `docs/onboarding/PROVISIONING_READY.md` |
+| Are P3 migrations present? | **No** — `provisioning_jobs` / `infrastructure_resources` not in applied migrations | `MISSING` / `repository_derived` |
+| Can this docs PR merge as design? | **Yes (docs-only)** — does not unlock P3 | `design_only` |
 | Is P3 ready to execute? | **No** — wait for P2 E2E + owner P3 auth | `BLOCKED` |
 
 **Overall label:** `informational_only` until P2 Form 1 synthetic E2E is green and owner signs P3 fake-client authorization.
@@ -53,8 +53,8 @@ P2 Form1 E2E (blocked: Make capacity)
 | Form 1 synthetic E2E | **Blocked** (Make active slots) | `CHECKPOINT` / `BLOCKED` | **Hard preferred** before P3 auth |
 | GHL factory Form 1/2/3 | Design only / unauthorized | `CHECKPOINT` | Soft for infra IDs; hard for CRM-complete fake client |
 | ClickUp live template | Design only; MCP disconnected | `CHECKPOINT` | Soft (mirror only; not lifecycle SoT) |
-| SECRETS_RUNBOOK accepted (no `deployment_configs` PATCH) | Documented | `TRACKED_DOC` | Hard before any CF secret install (P3+ wiring) |
-| State machine provision transitions | Present in `config/state-machine.json` | `TRACKED_DOC` | Soft — RPC must enforce when live |
+| SECRETS_RUNBOOK accepted (no `deployment_configs` PATCH) | Documented | `repository_derived` | Hard before any CF secret install (P3+ wiring) |
+| State machine provision transitions | Present in `config/state-machine.json` | `repository_derived` | Soft — RPC must enforce when live |
 | Owner P3 authorization artifact | Absent | `MISSING` / `BLOCKED` | **Hard** |
 
 ---
@@ -65,14 +65,14 @@ Source: `docs/work-packages/P3-provision.md`, `docs/CANONICAL_CONTRACT.md`, `doc
 
 | Resource | Supabase fields (IDs only) | Idempotency key | Evidence class |
 |---|---|---|---|
-| Cloudflare Pages | `pages_project_name`, `pages_project_id` | `cf:pages:{client_slug}` | `TRACKED_DOC` |
-| D1 | `d1_database_id` (+ binding `DB`) | `cf:d1:{client_id}` | `TRACKED_DOC` |
-| R2 | `r2_bucket_name` (+ binding `PRODUCT_IMAGES`) | `cf:r2:{client_id}` | `TRACKED_DOC` |
-| GHL location | `ghl_location_id` | `ghl:location:{client_id}` | `TRACKED_DOC` |
-| Lead sheet | `google_sheets_id` | `sheets:vault:{client_id}` | `TRACKED_DOC` |
-| Job row | `provisioning_jobs` status + timestamps | `provision:{client_id}:{approval_id}` | `TRACKED_DOC` |
+| Cloudflare Pages | `pages_project_name`, `pages_project_id` | `cf:pages:{client_slug}` | `repository_derived` |
+| D1 | `d1_database_id` (+ binding `DB`) | `cf:d1:{client_id}` | `repository_derived` |
+| R2 | `r2_bucket_name` (+ binding `PRODUCT_IMAGES`) | `cf:r2:{client_id}` | `repository_derived` |
+| GHL location | `ghl_location_id` | `ghl:location:{client_id}` | `repository_derived` |
+| Lead sheet | `google_sheets_id` | `sheets:vault:{client_id}` | `repository_derived` |
+| Job row | `provisioning_jobs` status + timestamps | `provision:{client_id}:{approval_id}` | `repository_derived` |
 
-**Non-goals (P3):** GitHub forks, site code generation, secret values in Make/Supabase/Git, marking `live`, hydrate/build/deploy (`TRACKED_DOC`).
+**Non-goals (P3):** GitHub forks, site code generation, secret values in Make/Supabase/Git, marking `live`, hydrate/build/deploy (`repository_derived`).
 
 ---
 
@@ -82,16 +82,16 @@ Design checklist lives in [`PROVISIONING_READY_GATE.md`](./PROVISIONING_READY_GA
 
 | Prerequisite | Required? | Current readiness | Evidence class |
 |---|---|---|---|
-| `payment_confirmed = true` | Yes | Field/path not proven end-to-end | `MISSING` / `DESIGN_ONLY` |
+| `payment_confirmed = true` | Yes | Field/path not proven end-to-end | `MISSING` / `design_only` |
 | `main_client_onboarding = complete` | Yes | Form1 path incomplete until E2E | `BLOCKED` |
 | `csm_review_status = approved` | Yes | No synthetic approved case proven | `BLOCKED` |
-| Canonical identity validated | Yes | Contract present; live create unproven | `TRACKED_DOC` + `BLOCKED` |
-| `client_slug` reserved | Yes | Reservation RPC/path not P3-proven | `DESIGN_ONLY` |
+| Canonical identity validated | Yes | Contract present; live create unproven | `repository_derived` + `BLOCKED` |
+| `client_slug` reserved | Yes | Reservation RPC/path not P3-proven | `design_only` |
 | Required GHL provisioning fields | Yes | Factory product forms absent | `CHECKPOINT` |
-| Duplicate client/location check | Yes | Design only | `DESIGN_ONLY` |
+| Duplicate client/location check | Yes | Design only | `design_only` |
 | No identity/ownership conflict | Yes | Form1 outcomes designed; E2E blocked | `BLOCKED` |
 | Owner-approved snapshot selected | Yes | Snapshot ID not pinned for fake client | `MISSING` |
-| Case status eligible via RPC only | Yes | Transitions exist in config | `TRACKED_DOC` |
+| Case status eligible via RPC only | Yes | Transitions exist in config | `repository_derived` |
 
 ---
 
@@ -103,13 +103,13 @@ Design checklist lives in [`PROVISIONING_READY_GATE.md`](./PROVISIONING_READY_GA
 | `onboarding_case_id` | Engagement UUID | Not for fake P3 client yet | `MISSING` |
 | `client_slug` | Reserved slug (not `sun-pool-spa`) | Not reserved | `MISSING` |
 | `deployment_key` | Immutable deploy key | Not issued | `MISSING` |
-| `approval_id` / provision approval | Binds ready → provision | No P3 approval artifact schema live | `DESIGN_ONLY` |
-| Idempotency `provision:{client_id}:{approval_id}` | Single job | N/A until auth | `TRACKED_DOC` |
+| `approval_id` / provision approval | Binds ready → provision | No P3 approval artifact schema live | `design_only` |
+| Idempotency `provision:{client_id}:{approval_id}` | Single job | N/A until auth | `repository_derived` |
 | Owner-approved GHL snapshot ID | Snapshot install target | Not selected for fake client | `MISSING` |
 | CF test account / token scope | Pages/D1/R2 create in **test** only | Must be confirmed before auth | `MISSING` |
 | GHL agency token (test) | Sub-account create | Must be confirmed before auth | `MISSING` |
 | Google SA for Lead Vault (test) | Sheet create | Must be confirmed before auth | `MISSING` |
-| Supabase service role (dev) | Job + resource ID writes | Dev project known | `TRACKED_DOC` (`htl-factory-dev`) |
+| Supabase service role (dev) | Job + resource ID writes | Dev project known | `repository_derived` (`htl-factory-dev`) |
 | Break-glass for Sun Pool | Must remain **absent** for normal P3 | Absent (correct) | `CHECKPOINT` |
 
 ---
@@ -131,7 +131,7 @@ Fake-client proof: [`P3_FAKE_CLIENT_TEST_PLAN.md`](./P3_FAKE_CLIENT_TEST_PLAN.md
 9. ClickUp mirror milestones (non-authoritative)
 ```
 
-Hydration (P4) and Cloudflare secret install are **after** `infrastructure_ready` and are out of P3 create scope (`TRACKED_DOC` — P3-provision + P4-hydrate).
+Hydration (P4) and Cloudflare secret install are **after** `infrastructure_ready` and are out of P3 create scope (`repository_derived` — P3-provision + P4-hydrate).
 
 ---
 
@@ -140,13 +140,13 @@ Hydration (P4) and Cloudflare secret install are **after** `infrastructure_ready
 1. **P2 Form 1 synthetic E2E green** (create / link / replay / identity_conflict / review_required) — `BLOCKED`  
 2. **Owner written P3 authorization** scoped to one fake client + test CF/GHL — `MISSING`  
 3. **`provisioning_jobs` + `infrastructure_resources` migrations** authored and owner-authorized for apply — `MISSING`  
-4. **`provisioning_ready` emitter** (Make/RPC/job) — `DESIGN_ONLY` / `MISSING`  
+4. **`provisioning_ready` emitter** (Make/RPC/job) — `design_only` / `MISSING`  
 5. **Pinned owner-approved snapshot ID** for fake-client install — `MISSING`  
-6. **Duplicate-detection implementation** against clients + GHL locations — `DESIGN_ONLY` / `MISSING`  
+6. **Duplicate-detection implementation** against clients + GHL locations — `design_only` / `MISSING`  
 7. **Payment confirmed + CSM approved path** proven on a test case — `BLOCKED`  
 8. **Test credential inventory confirmed** (CF test, GHL agency test, Google SA test) without production tokens — `MISSING`  
 9. **Fake client slug reservation** (non-protected, explicit test naming) — `MISSING`  
-10. **Reconcile job** for orphaned CF/GHL creates vs Supabase IDs — `DESIGN_ONLY` / `MISSING`
+10. **Reconcile job** for orphaned CF/GHL creates vs Supabase IDs — `design_only` / `MISSING`
 
 ---
 

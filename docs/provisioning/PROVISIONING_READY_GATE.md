@@ -9,7 +9,7 @@
 ## Hard rule
 
 Do **not** emit `provisioning_ready` (and do **not** start P3) from raw `main_client_onboarding` submission alone.  
-(`TRACKED_DOC` — `PROVISIONING_READY.md`)
+(`repository_derived` — `PROVISIONING_READY.md`)
 
 Provisioning is a **separate owner-authorized phase** after intake identity + CSM approval + payment + duplicate/slug checks.
 
@@ -27,7 +27,7 @@ Provisioning is a **separate owner-authorized phase** after intake identity + CS
 | Idempotency | Re-evaluation with same inputs returns same readiness; does not re-create resources |
 | Transition coupling | Only cases in `approved` (or explicitly re-enterable `provision_failed` after re-approval) may proceed to `provisioning` via `request_client_transition` |
 
-**Evidence class:** `DESIGN_ONLY` for emitter implementation; transition names are `TRACKED_DOC` in `state-machine.json`.
+**Evidence class:** `design_only` for emitter implementation; transition names are `repository_derived` in `state-machine.json`.
 
 ---
 
@@ -35,18 +35,18 @@ Provisioning is a **separate owner-authorized phase** after intake identity + CS
 
 | # | Predicate | Owner / source | Fail-closed behavior | Evidence class |
 |---|---|---|---|---|
-| 1 | `payment_confirmed = true` | Billing / CSM system of record (field TBD in contract bump if missing) | No emit | `DESIGN_ONLY` + `MISSING` field proof |
-| 2 | `main_client_onboarding = complete` | Form 1 (+ required children) complete for case | No emit | `TRACKED_DOC` intent; E2E `BLOCKED` |
-| 3 | `csm_review_status = approved` | CSM review before `approved` status | No emit | `TRACKED_DOC` (state machine `requires_approval_readiness`) |
-| 4 | Canonical client identity validated | `client_id` + `onboarding_case_id` agree; no forbidden aliases | No emit; log `identity_conflict` | `TRACKED_DOC` |
-| 5 | `client_slug` reserved | Unique reserved slug; folder name will match | No emit | `TRACKED_DOC` (slug rules) |
-| 6 | Required GHL provisioning fields present | Minimum set below | No emit; open human task | `DESIGN_ONLY` |
-| 7 | Duplicate client/location check passed | See duplicate detection | No emit | `DESIGN_ONLY` |
-| 8 | No blocking identity or ownership conflict | Form1 conflict outcomes | No emit | `TRACKED_DOC` Form1 outcomes |
-| 9 | Owner-approved snapshot selected | Explicit snapshot ID + approval record | No emit | `DESIGN_ONLY` / `MISSING` |
-| 10 | Case status eligible | `approved` (or authorized retry from `provision_failed`) via RPC only | No emit / reject transition | `TRACKED_DOC` |
-| 11 | Not a protected client without break-glass | `sun-pool-spa` denylist | Hard reject | `TRACKED_DOC` |
-| 12 | Environment is non-production for first P3 | `development` \| `test` only until P6 auth | Hard reject | `TRACKED_DOC` + `DESIGN_ONLY` |
+| 1 | `payment_confirmed = true` | Billing / CSM system of record (field TBD in contract bump if missing) | No emit | `design_only` + `MISSING` field proof |
+| 2 | `main_client_onboarding = complete` | Form 1 (+ required children) complete for case | No emit | `repository_derived` intent; E2E `BLOCKED` |
+| 3 | `csm_review_status = approved` | CSM review before `approved` status | No emit | `repository_derived` (state machine `requires_approval_readiness`) |
+| 4 | Canonical client identity validated | `client_id` + `onboarding_case_id` agree; no forbidden aliases | No emit; log `identity_conflict` | `repository_derived` |
+| 5 | `client_slug` reserved | Unique reserved slug; folder name will match | No emit | `repository_derived` (slug rules) |
+| 6 | Required GHL provisioning fields present | Minimum set below | No emit; open human task | `design_only` |
+| 7 | Duplicate client/location check passed | See duplicate detection | No emit | `design_only` |
+| 8 | No blocking identity or ownership conflict | Form1 conflict outcomes | No emit | `repository_derived` Form1 outcomes |
+| 9 | Owner-approved snapshot selected | Explicit snapshot ID + approval record | No emit | `design_only` / `MISSING` |
+| 10 | Case status eligible | `approved` (or authorized retry from `provision_failed`) via RPC only | No emit / reject transition | `repository_derived` |
+| 11 | Not a protected client without break-glass | `sun-pool-spa` denylist | Hard reject | `repository_derived` |
+| 12 | Environment is non-production for first P3 | `development` \| `test` only until P6 auth | Hard reject | `repository_derived` + `design_only` |
 
 ---
 
@@ -78,7 +78,7 @@ These are **inputs to create/link**, not proof that a sub-account already exists
 | Country / address (or deferred with approved deferral) | Location create payload |
 | Snapshot selection ID | Install target |
 
-Deferral rules: expired deferrals do not satisfy readiness (`TRACKED_DOC` — CANONICAL_CONTRACT).
+Deferral rules: expired deferrals do not satisfy readiness (`repository_derived` — CANONICAL_CONTRACT).
 
 ---
 
@@ -96,7 +96,7 @@ Run **before** emit and again at job start (TOCTOU).
 | Protected slug | `sun-pool-spa` | Fail closed |
 | Test / incomplete submissions | Flags / incomplete Form1 | Never emit |
 
-**Evidence class:** `DESIGN_ONLY` (implementation absent).
+**Evidence class:** `design_only` (implementation absent).
 
 ---
 
@@ -104,15 +104,15 @@ Run **before** emit and again at job start (TOCTOU).
 
 | Stage | Rule | Evidence class |
 |---|---|---|
-| Reservation | System proposes from business name; human-editable until lock | `TRACKED_DOC` |
-| Lock trigger | Explicit `slug_locked` when **first managed resource** reaches `created` | `TRACKED_DOC` |
-| Lock payload | `slug_locked`, `slug_locked_at`, `slug_locked_by_resource_id`, `slug_locked_reason` | `TRACKED_DOC` |
-| Unlock | **Never** on failure, rollback, or status change | `TRACKED_DOC` |
-| Business rename | Does **not** rename slug | `TRACKED_DOC` |
+| Reservation | System proposes from business name; human-editable until lock | `repository_derived` |
+| Lock trigger | Explicit `slug_locked` when **first managed resource** reaches `created` | `repository_derived` |
+| Lock payload | `slug_locked`, `slug_locked_at`, `slug_locked_by_resource_id`, `slug_locked_reason` | `repository_derived` |
+| Unlock | **Never** on failure, rollback, or status change | `repository_derived` |
+| Business rename | Does **not** rename slug | `repository_derived` |
 
 P3 must record which resource caused the lock (Pages project preferred as first managed CF resource, or GHL location if it lands first — **pick one factory rule before build**).
 
-**Proposed factory rule (design):** first of `{ghl_location, pages_project}` to reach `created` wins the lock; subsequent resources must use the locked slug. (`DESIGN_ONLY`)
+**Proposed factory rule (design):** first of `{ghl_location, pages_project}` to reach `created` wins the lock; subsequent resources must use the locked slug. (`design_only`)
 
 ---
 
@@ -120,12 +120,12 @@ P3 must record which resource caused the lock (Pages project preferred as first 
 
 | Approval | Binds to | TTL | Consumed when | Evidence class |
 |---|---|---|---|---|
-| CSM / approval readiness | Case → `approved` | Per state machine / readiness | Transition to `approved` | `TRACKED_DOC` |
-| Owner P3 provision approval | `client_id` + `onboarding_case_id` + `client_slug` + environment (`test`) + snapshot ID | Propose 24h (align with prod approval pattern) | Successful transition into `provisioning` **or** successful job create — **choose one and freeze before build** | `DESIGN_ONLY` |
-| Production approval | Deployment candidate | 24h | Prod success | `TRACKED_DOC` — **not used in P3** |
-| Rollback authorization | Distinct artifact | Scoped | Rollback job success | `TRACKED_DOC` pattern; P3 detail in failure plan |
+| CSM / approval readiness | Case → `approved` | Per state machine / readiness | Transition to `approved` | `repository_derived` |
+| Owner P3 provision approval | `client_id` + `onboarding_case_id` + `client_slug` + environment (`test`) + snapshot ID | Propose 24h (align with prod approval pattern) | Successful transition into `provisioning` **or** successful job create — **choose one and freeze before build** | `design_only` |
+| Production approval | Deployment candidate | 24h | Prod success | `repository_derived` — **not used in P3** |
+| Rollback authorization | Distinct artifact | Scoped | Rollback job success | `repository_derived` pattern; P3 detail in failure plan |
 
-CLI flags alone are never authorization (`TRACKED_DOC` — AGENTS.md / protected-clients).
+CLI flags alone are never authorization (`repository_derived` — AGENTS.md / protected-clients).
 
 ---
 
@@ -145,7 +145,7 @@ provisioning_ready
 → human tasks on any failed step
 ```
 
-(`TRACKED_DOC` consumer sketch in PROVISIONING_READY.md; expanded CF/sheet steps from P3-provision.)
+(`repository_derived` consumer sketch in PROVISIONING_READY.md; expanded CF/sheet steps from P3-provision.)
 
 ---
 
@@ -164,7 +164,7 @@ provisioning_ready
 | Free-form SQL status update attempt | Forbidden (RPC only) |
 | Second job same idempotency key | Return original job; no double-create |
 
-**Evidence class:** `DESIGN_ONLY` until `tests/provisioning/**` implements static fixtures (see fake-client plan).
+**Evidence class:** `design_only` until `tests/provisioning/**` implements static fixtures (see fake-client plan).
 
 ---
 
@@ -188,4 +188,4 @@ provisioning_ready
 | Resource create | Make garage (P3) | Create-if-missing only |
 | Docs for this gate | Provisioning readiness | This folder |
 
-Do not invent canonical field names; extend via contract bump if `payment_confirmed` / `csm_review_status` need formalization (`TRACKED_DOC` — do not invent).
+Do not invent canonical field names; extend via contract bump if `payment_confirmed` / `csm_review_status` need formalization (`repository_derived` — do not invent).
