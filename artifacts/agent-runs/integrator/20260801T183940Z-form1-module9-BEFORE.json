@@ -1,0 +1,549 @@
+{
+  "utc": "20260801T183940Z",
+  "scenario_id": 4852018,
+  "isActive": false,
+  "nextExec": null,
+  "hookId": 2785703,
+  "connections": [
+    4834536
+  ],
+  "module9": {
+    "module": "builtin:BasicRouter",
+    "route_count": 17,
+    "routes": [
+      {
+        "index": 0,
+        "fallback": false,
+        "filter_name": "multi_client_id",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ],
+        "flow_ids": [
+          10
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 1,
+        "fallback": false,
+        "filter_name": "multi_deployment_key",
+        "conditions": [
+          [
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ],
+        "flow_ids": [
+          11
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 2,
+        "fallback": false,
+        "filter_name": "multi_client_slug",
+        "conditions": [
+          [
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "numeric:greater"
+            }
+          ]
+        ],
+        "flow_ids": [
+          12
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 3,
+        "fallback": false,
+        "filter_name": "opportunity_bound",
+        "conditions": [
+          [
+            {
+              "a": "{{1.ghl_opportunity_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          13
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 4,
+        "fallback": false,
+        "filter_name": "client_id_miss",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          14
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 5,
+        "fallback": false,
+        "filter_name": "id_key_disagree",
+        "conditions": [
+          [
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{5.body[1].client_id}}",
+              "b": "{{6.body[1].client_id}}",
+              "o": "text:notequal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          15
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 6,
+        "fallback": false,
+        "filter_name": "id_slug_disagree",
+        "conditions": [
+          [
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{5.body[1].client_id}}",
+              "b": "{{7.body[1].client_id}}",
+              "o": "text:notequal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          16
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 7,
+        "fallback": false,
+        "filter_name": "key_slug_disagree",
+        "conditions": [
+          [
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{6.body[1].client_id}}",
+              "b": "{{7.body[1].client_id}}",
+              "o": "text:notequal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          17
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 8,
+        "fallback": false,
+        "filter_name": "key_miss_slug_hit",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.deployment_key}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          18
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 9,
+        "fallback": false,
+        "filter_name": "slug_miss_key_hit",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.client_slug}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          19
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 10,
+        "fallback": false,
+        "filter_name": "id_hit_key_miss",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.deployment_key}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          20
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 11,
+        "fallback": false,
+        "filter_name": "id_hit_slug_miss",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.client_slug}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          21
+        ],
+        "first_module": "gateway:WebhookRespond"
+      },
+      {
+        "index": 12,
+        "fallback": false,
+        "filter_name": "link_by_client_id",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "exist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          30,
+          31,
+          32,
+          33,
+          34,
+          35
+        ],
+        "first_module": "supabase:createARow"
+      },
+      {
+        "index": 13,
+        "fallback": false,
+        "filter_name": "link_by_deployment_key",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{1.client_slug}}",
+              "o": "notexist"
+            }
+          ],
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{6.body[1].client_id}}",
+              "b": "{{7.body[1].client_id}}",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          40,
+          41,
+          42,
+          43,
+          44,
+          45
+        ],
+        "first_module": "supabase:createARow"
+      },
+      {
+        "index": 14,
+        "fallback": false,
+        "filter_name": "link_by_client_slug",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{1.deployment_key}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "1",
+              "o": "numeric:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          50,
+          51,
+          52,
+          53,
+          54,
+          55
+        ],
+        "first_module": "supabase:createARow"
+      },
+      {
+        "index": 15,
+        "fallback": false,
+        "filter_name": "create_new",
+        "conditions": [
+          [
+            {
+              "a": "{{1.client_id}}",
+              "o": "notexist"
+            },
+            {
+              "a": "{{length(5.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(6.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(7.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            },
+            {
+              "a": "{{length(8.body)}}",
+              "b": "0",
+              "o": "text:equal"
+            }
+          ]
+        ],
+        "flow_ids": [
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76
+        ],
+        "first_module": "supabase:createARow"
+      },
+      {
+        "index": 16,
+        "fallback": true,
+        "filter_name": "identity_resolution_unclassified",
+        "conditions": null,
+        "flow_ids": [
+          78
+        ],
+        "first_module": "gateway:WebhookRespond"
+      }
+    ]
+  }
+}

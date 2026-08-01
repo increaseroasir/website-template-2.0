@@ -1,0 +1,231 @@
+{
+  "utc": "20260801T183940Z",
+  "decision": "B_omit_BasicMerge",
+  "equivalence": [
+    {
+      "old_route_index": 0,
+      "old_filter_name": "multi_client_id",
+      "old_fallback": false,
+      "old_flow_ids": [
+        10
+      ],
+      "new_branch_index": 0,
+      "new_type": "condition",
+      "new_label": "multi_client_id",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 1,
+      "old_filter_name": "multi_deployment_key",
+      "old_fallback": false,
+      "old_flow_ids": [
+        11
+      ],
+      "new_branch_index": 1,
+      "new_type": "condition",
+      "new_label": "multi_deployment_key",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 2,
+      "old_filter_name": "multi_client_slug",
+      "old_fallback": false,
+      "old_flow_ids": [
+        12
+      ],
+      "new_branch_index": 2,
+      "new_type": "condition",
+      "new_label": "multi_client_slug",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 3,
+      "old_filter_name": "opportunity_bound",
+      "old_fallback": false,
+      "old_flow_ids": [
+        13
+      ],
+      "new_branch_index": 3,
+      "new_type": "condition",
+      "new_label": "opportunity_bound",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 4,
+      "old_filter_name": "client_id_miss",
+      "old_fallback": false,
+      "old_flow_ids": [
+        14
+      ],
+      "new_branch_index": 4,
+      "new_type": "condition",
+      "new_label": "client_id_miss",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 5,
+      "old_filter_name": "id_key_disagree",
+      "old_fallback": false,
+      "old_flow_ids": [
+        15
+      ],
+      "new_branch_index": 5,
+      "new_type": "condition",
+      "new_label": "id_key_disagree",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 6,
+      "old_filter_name": "id_slug_disagree",
+      "old_fallback": false,
+      "old_flow_ids": [
+        16
+      ],
+      "new_branch_index": 6,
+      "new_type": "condition",
+      "new_label": "id_slug_disagree",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 7,
+      "old_filter_name": "key_slug_disagree",
+      "old_fallback": false,
+      "old_flow_ids": [
+        17
+      ],
+      "new_branch_index": 7,
+      "new_type": "condition",
+      "new_label": "key_slug_disagree",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 8,
+      "old_filter_name": "key_miss_slug_hit",
+      "old_fallback": false,
+      "old_flow_ids": [
+        18
+      ],
+      "new_branch_index": 8,
+      "new_type": "condition",
+      "new_label": "key_miss_slug_hit",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 9,
+      "old_filter_name": "slug_miss_key_hit",
+      "old_fallback": false,
+      "old_flow_ids": [
+        19
+      ],
+      "new_branch_index": 9,
+      "new_type": "condition",
+      "new_label": "slug_miss_key_hit",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 10,
+      "old_filter_name": "id_hit_key_miss",
+      "old_fallback": false,
+      "old_flow_ids": [
+        20
+      ],
+      "new_branch_index": 10,
+      "new_type": "condition",
+      "new_label": "id_hit_key_miss",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 11,
+      "old_filter_name": "id_hit_slug_miss",
+      "old_fallback": false,
+      "old_flow_ids": [
+        21
+      ],
+      "new_branch_index": 11,
+      "new_type": "condition",
+      "new_label": "id_hit_slug_miss",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 12,
+      "old_filter_name": "link_by_client_id",
+      "old_fallback": false,
+      "old_flow_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "new_branch_index": 12,
+      "new_type": "condition",
+      "new_label": "link_by_client_id",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 13,
+      "old_filter_name": "link_by_deployment_key",
+      "old_fallback": false,
+      "old_flow_ids": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "new_branch_index": 13,
+      "new_type": "condition",
+      "new_label": "link_by_deployment_key",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 14,
+      "old_filter_name": "link_by_client_slug",
+      "old_fallback": false,
+      "old_flow_ids": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "new_branch_index": 14,
+      "new_type": "condition",
+      "new_label": "link_by_client_slug",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 15,
+      "old_filter_name": "create_new",
+      "old_fallback": false,
+      "old_flow_ids": [
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76
+      ],
+      "new_branch_index": 15,
+      "new_type": "condition",
+      "new_label": "create_new",
+      "conditions_preserved": true
+    },
+    {
+      "old_route_index": 16,
+      "old_filter_name": "identity_resolution_unclassified",
+      "old_fallback": true,
+      "old_flow_ids": [
+        78
+      ],
+      "new_branch_index": 16,
+      "new_type": "else",
+      "new_label": "identity_resolution_unclassified",
+      "conditions_preserved": false
+    }
+  ]
+}

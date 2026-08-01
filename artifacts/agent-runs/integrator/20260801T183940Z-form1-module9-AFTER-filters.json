@@ -1,0 +1,604 @@
+{
+  "scenarioId": 4852018,
+  "update": "success",
+  "lastEdit": "2026-08-01T18:58:48.730Z",
+  "checks": {
+    "isActive": false,
+    "nextExec": null,
+    "hookId": 2785703,
+    "module9_module": "builtin:BasicIfElse",
+    "branch_count": 17,
+    "last_branch_type": "else",
+    "last_branch_flow_ids": [
+      78
+    ],
+    "branch15_label": "create_new",
+    "branch15_flow_ids": [
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76
+    ],
+    "create_new_contains_76": true,
+    "BasicMerge_count": 0,
+    "has_module_79": false,
+    "fallback_true_under_m9": false,
+    "hooks": [
+      2785703
+    ],
+    "connections": [
+      4834536
+    ],
+    "module_70_present": true
+  },
+  "expected_pass": {
+    "isActive_false": true,
+    "nextExec_null": true,
+    "module9_BasicIfElse": true,
+    "branches_17": true,
+    "last_else_to_78": true,
+    "branch15_create_new_has_76": true,
+    "no_BasicMerge": true,
+    "no_module_79": true,
+    "no_fallback_true": true,
+    "hook_2785703": true,
+    "only_conn_4834536": true,
+    "module_70_present": true
+  },
+  "all_pass": true,
+  "branches": [
+    {
+      "index": 0,
+      "type": "condition",
+      "label": "multi_client_id",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "numeric:greater"
+          }
+        ]
+      ],
+      "flow_ids": [
+        10
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 1,
+      "type": "condition",
+      "label": "multi_deployment_key",
+      "conditions": [
+        [
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "numeric:greater"
+          }
+        ]
+      ],
+      "flow_ids": [
+        11
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 2,
+      "type": "condition",
+      "label": "multi_client_slug",
+      "conditions": [
+        [
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "numeric:greater"
+          }
+        ]
+      ],
+      "flow_ids": [
+        12
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 3,
+      "type": "condition",
+      "label": "opportunity_bound",
+      "conditions": [
+        [
+          {
+            "a": "{{1.ghl_opportunity_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        13
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 4,
+      "type": "condition",
+      "label": "client_id_miss",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        14
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 5,
+      "type": "condition",
+      "label": "id_key_disagree",
+      "conditions": [
+        [
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{5.body[1].client_id}}",
+            "b": "{{6.body[1].client_id}}",
+            "o": "text:notequal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        15
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 6,
+      "type": "condition",
+      "label": "id_slug_disagree",
+      "conditions": [
+        [
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{5.body[1].client_id}}",
+            "b": "{{7.body[1].client_id}}",
+            "o": "text:notequal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        16
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 7,
+      "type": "condition",
+      "label": "key_slug_disagree",
+      "conditions": [
+        [
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{6.body[1].client_id}}",
+            "b": "{{7.body[1].client_id}}",
+            "o": "text:notequal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        17
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 8,
+      "type": "condition",
+      "label": "key_miss_slug_hit",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.deployment_key}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        18
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 9,
+      "type": "condition",
+      "label": "slug_miss_key_hit",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.client_slug}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        19
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 10,
+      "type": "condition",
+      "label": "id_hit_key_miss",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.deployment_key}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        20
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 11,
+      "type": "condition",
+      "label": "id_hit_slug_miss",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.client_slug}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        21
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 12,
+      "type": "condition",
+      "label": "link_by_client_id",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "exist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 13,
+      "type": "condition",
+      "label": "link_by_deployment_key",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{1.client_slug}}",
+            "o": "notexist"
+          }
+        ],
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{6.body[1].client_id}}",
+            "b": "{{7.body[1].client_id}}",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 14,
+      "type": "condition",
+      "label": "link_by_client_slug",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{1.deployment_key}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "1",
+            "o": "numeric:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 15,
+      "type": "condition",
+      "label": "create_new",
+      "conditions": [
+        [
+          {
+            "a": "{{1.client_id}}",
+            "o": "notexist"
+          },
+          {
+            "a": "{{length(5.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(6.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(7.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          },
+          {
+            "a": "{{length(8.body)}}",
+            "b": "0",
+            "o": "text:equal"
+          }
+        ]
+      ],
+      "flow_ids": [
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76
+      ],
+      "merge": false,
+      "fallback": null
+    },
+    {
+      "index": 16,
+      "type": "else",
+      "label": "identity_resolution_unclassified",
+      "conditions": null,
+      "flow_ids": [
+        78
+      ],
+      "merge": false,
+      "fallback": null
+    }
+  ]
+}

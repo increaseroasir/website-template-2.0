@@ -34,15 +34,14 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
   - RLS enabled; zero policies; no SELECT/INSERT/UPDATE/DELETE for anon/authenticated
   - Synthetic smoke passed; synthetic data deleted
   - `apply_authorized` returned to **false**
-- P2 Make intake: **INACTIVE; SELECT GRANT LIVE; CREATE SMOKE FAILED ON MODULE 78 DUAL-FIRE**
+- P2 Make intake: **INACTIVE; MODULE 9 BasicIfElse EXCLUSIVE; CREATE SMOKE PASS**
   - Scenario `4852018` inactive; webhook `2785703`; connection `4834536`; `nextExec=null`; active count **26**
-  - Router 3 / nested filters / module 78 placement: unchanged this pass (not reopened)
-  - `config_versions` service_role SELECT+INSERT granted (remote `20260801181727`); UPDATE/DELETE still false; RLS unchanged
-  - CREATE smoke exec `332f3838e38e48588bedaea1d2c71107`: ops **14**; modules 74–76 wrote client/case/intake/config + RPC; HTTP was module **78** unclassified; residue cleaned
-  - `apply_authorized=false`; MCP read-only restored
+  - Module 9 = `builtin:BasicIfElse` (17 branches, first-match); Else → module 78 only; BasicMerge omitted (Decision B)
+  - CREATE smoke exec `289d3d945a2645b688ee96b4a18fb50e`: ops **13**; module **76** `outcome=created`; module 78 absent; residue cleaned
+  - `config_versions` SELECT+INSERT remain; grants/RLS unchanged this pass; `apply_authorized=false`
   - `review_required` **NOT EXECUTABLE UNDER CURRENT CONSTRAINTS**; E2E-08/09 deferred
   - GHL / ClickUp / Forms 2/3 still unauthorized
-- P2 overall: **NOT COMPLETE** (CREATE PASS criteria unmet; GHL gates open)
+- P2 overall: **NOT COMPLETE** (LINK/REPLAY/IDENTITY_CONFLICT E2E not run; GHL gates open)
 - P3 provisioning: NOT STARTED
 - P4–P7: NOT STARTED
 
@@ -58,11 +57,11 @@ Integrator-only file. Agents report via `artifacts/agent-runs/`.
 
 ## Active Gate
 
-Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 nested filters live. `config_versions` SELECT grant applied and proven (module 74 succeeded). CREATE smoke still fails PASS criteria because module 78 dual-fires with create_new (ops 14; HTTP unclassified). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
+Child tables verified on `htl-factory-dev`. Make Core verified. Form 1 module 9 exclusivity fixed via BasicIfElse. CREATE smoke PASS (ops 13; `outcome=created`; module 78 absent). GHL / ClickUp / P3 remain unauthorized. `apply_authorized=false`.
 
 Next owner decision:
 
-1. Authorize investigation/fix of **module 9 fallback exclusivity** on inactive scenario `4852018` (Make-only; no privilege broadening), then re-run CREATE smoke only. Do not authorize LINK / REPLAY / IDENTITY_CONFLICT until CREATE PASS (module 76 `created`, module 78 absent).
+1. Authorize synthetic LINK, REPLAY, and IDENTITY_CONFLICT E2E on inactive scenario `4852018`.
 
 ## Usage governance
 
