@@ -16,7 +16,7 @@
 ## Open Items
 - B-3 OPEN: /api/readiness authenticated check — needs ADMIN_PASSWORD from Cloudflare Pages env
 - B-4 OPEN: Meta CAPI server-side token (WTV-051) — verify non-empty in Cloudflare Pages env
-- B-6 OPEN: Lead Vault sheet column widening to 35 (WTV-046) — owner action
+- B-6 RESOLVED: Lead Vault sheet updated to 35 columns (WTV-046) — 2026-08-01
 - PSI: Mobile perf 64 (1pt below threshold), CLS 0.19 — R2 image dimensions + Meta Pixel
 - DNS: Cutover to sunpoolandspasupply.com — requires explicit authorization
 
@@ -27,3 +27,8 @@ Deploy command: CLOUDFLARE_API_TOKEN=$CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID
 ## PSI Scores (2026-08-01, .pages.dev pre-DNS)
 Mobile: Perf 64, A11y 100, BP 96, SEO 69 | Desktop: Perf 96, A11y 100, BP 96, SEO 69
 SEO 69 expected pre-DNS (canonical mismatch on .pages.dev). Will resolve after cutover.
+
+## Google Sheets Lead Vault
+URL: https://docs.google.com/spreadsheets/d/1B6kaUHaPG_A4hlGPKoqpivXAwxFFa5aTKSSdsoXvC6g/edit
+Sheet ID: 1B6kaUHaPG_A4hlGPKoqpivXAwxFFa5aTKSSdsoXvC6g
+Tabs: All Leads (35 cols), Missed Leads
