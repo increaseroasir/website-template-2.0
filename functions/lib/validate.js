@@ -1,5 +1,15 @@
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/* Local part + domain, no spaces, no consecutive dots, no dots abutting @.
+   GHL rejects addresses the loose /^[^\s@]+@[^\s@]+\.[^\s@]+$/ accepted
+   (e.g. mucaekaerasmo.@gmail.com). Sanitize first, then this regex. */
+const EMAIL_RE = /^[a-z0-9](?:[a-z0-9_%+\-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9_%+\-]*[a-z0-9])?)*@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z]{2,})+$/;
 const PHONE_DIGITS_MIN = 10;
+
+export function sanitizeEmail(email) {
+  let value = String(email || '').trim().toLowerCase();
+  value = value.replace(/\.+@/g, '@').replace(/@\.+/g, '@');
+  value = value.replace(/\.{2,}/g, '.');
+  return value;
+}
 
 export function splitName(fullName) {
   const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
@@ -22,7 +32,7 @@ export function validateLeadPayload(body, opts) {
   const clientSubmissionId = String(body.submission_id || body.submissionId || body.meta_event_id || body.metaEventId || '').trim();
   const submissionId = /^[0-9a-f-]{36}$/i.test(clientSubmissionId) ? clientSubmissionId : crypto.randomUUID();
   const fullName = String(body.full_name || body.fullName || '').trim();
-  const email = String(body.email || '').trim().toLowerCase();
+  const email = sanitizeEmail(body.email || '');
   const phone = normalizePhone(body.phone);
   const source = String(body.source || 'website-form').trim();
   const financingInterest = String(body.financing_interest || body.financingInterest || '').trim();
