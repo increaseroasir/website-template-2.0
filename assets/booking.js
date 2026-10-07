@@ -158,6 +158,7 @@
       slot: slotField.value || '',
       preferred_day: (form.querySelector('[name="preferred_day"]') || {}).value || '',
       full_name: (form.querySelector('[name="full_name"]') || {}).value || '',
+      zip_code: (form.querySelector('[name="zip_code"]') || {}).value || '',
       phone: phone,
       email: email,
       campaign: (form.querySelector('[name="campaign"]') || {}).value || 'booking',

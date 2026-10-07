@@ -119,6 +119,9 @@
             <option value="maybe">Maybe &mdash; I&rsquo;d like more info</option>
             <option value="no">No &mdash; not right now</option>
           </select>
+          <label for="zip_code">ZIP code</label>
+          <input type="text" id="zip_code" name="zip_code" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required placeholder="92040">
+          <p class="inventory-gate-field-hint">We verify inventory by neighborhood.</p>
           <label for="full_name">Full name</label>
           <input type="text" id="full_name" name="full_name" autocomplete="name" required placeholder="Jane Smith">
           <label for="email">Email</label>

@@ -74,6 +74,7 @@
     <input type="hidden" name="product_interest" value="{{PRODUCT_INTEREST|Spa}}">
     <input type="hidden" name="campaign" value="{{CAMPAIGN_NAME|inventory}}">
     <input name="full_name" autocomplete="name" placeholder="Full name" required>
+    <input name="zip_code" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="ZIP code" required>
     <input name="phone" autocomplete="tel" placeholder="Mobile phone" required>
     <input name="email" autocomplete="email" placeholder="Email">
     <select name="form_intent" aria-label="What can we help with?"><option>Send price and availability</option><option>Check financing</option><option>Schedule a visit</option></select>

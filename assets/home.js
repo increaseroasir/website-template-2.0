@@ -196,6 +196,7 @@
       var field = form.querySelector('[name="' + name + '"]');
       if (field) field.value = value || '';
     }
+    set('zip_code', state.zip);
     set('product_name', product);
     set('product_interest', product);
     set('message', message);

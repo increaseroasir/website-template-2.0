@@ -32,7 +32,7 @@
   function bindForm(form) {
     if (form.dataset.leadBound === '1') return;
     form.dataset.leadBound = '1';
-    var submit = form.querySelector('[type="submit"]');
+    var submit = form.querySelector('[type="submit"]') || (form.id ? document.querySelector('button[type="submit"][form="' + form.id + '"]') : null);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var eventId = createEventId();
@@ -49,6 +49,8 @@
         email: email,
         phone: phone,
         message: (form.querySelector('[name="message"]') || {}).value || '',
+        zip_code: (form.querySelector('[name="zip_code"]') || form.querySelector('[name="zip_display"]') || {}).value || '',
+        backyard_access: (form.querySelector('[name="backyard_access"]') || {}).value || '',
         financing_interest: (form.querySelector('[name="financing_interest"]') || {}).value || '',
         product_name: (form.querySelector('[name="product_name"]') || form.querySelector('[name="product_interest"]') || {}).value || '',
         product_slug: (form.querySelector('[name="product_slug"]') || {}).value || '',
@@ -78,7 +80,16 @@
       };
       if (submit) { submit.disabled = true; submit.setAttribute('aria-busy', 'true'); }
       fetch(form.getAttribute('data-lead-api') || defaultApiPath, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-        .then(function (res) { return res.json().then(function (data) { return { res: res, data: data }; }); })
+        .then(function (res) {
+          return res.text().then(function (text) {
+            if (!text) {
+              if (!res.ok) throw new Error('Server error (' + res.status + '). The site backend may be offline — contact the store.');
+              throw new Error('Empty server response. Redeploy with wrangler from dist-prod (dashboard upload does not deploy forms).');
+            }
+            try { return { res: res, data: JSON.parse(text) }; }
+            catch (err) { throw new Error('Invalid server response. If forms just broke after a Cloudflare upload, redeploy with wrangler from dist-prod.'); }
+          });
+        })
         .then(function (result) {
           if (!result.data.ok) throw new Error(result.data.error || 'Something went wrong.');
           if (result.data.fire_meta !== false && result.data.ghl_ok && !result.data.duplicate) {

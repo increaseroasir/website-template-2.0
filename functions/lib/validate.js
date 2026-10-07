@@ -25,7 +25,7 @@ export function normalizePhone(phone) {
 }
 
 export function validateLeadPayload(body, opts) {
-  const options = opts || {}; // { emailOptional: true } for phone-first flows (booking page)
+  const options = opts || {}; // { emailOptional: true, zipOptional: true } for phone-first / ZIP-optional flows
   if (!body || typeof body !== 'object') return { ok: false, error: 'Invalid request body.' };
   if (body.website_url) return { ok: false, error: 'Spam detected.' };
 
@@ -34,6 +34,9 @@ export function validateLeadPayload(body, opts) {
   const fullName = String(body.full_name || body.fullName || '').trim();
   const email = sanitizeEmail(body.email || '');
   const phone = normalizePhone(body.phone);
+  const zipRaw = String(body.zip_code || body.zipCode || body.zip || body.postal_code || body.postalCode || '').trim();
+  const zipDigits = zipRaw.replace(/\D/g, '');
+  const zipCode = zipDigits.length >= 5 ? zipDigits.slice(0, 5) : '';
   const source = String(body.source || 'website-form').trim();
   const financingInterest = String(body.financing_interest || body.financingInterest || '').trim();
   const productName = String(body.product_name || body.productName || body.product_interest || '').trim();
@@ -48,6 +51,7 @@ export function validateLeadPayload(body, opts) {
   if (fullName.length > 120) return { ok: false, error: 'Please enter a valid name.' }; // oversized input is never a name — GHL would reject it downstream anyway
   if (!EMAIL_RE.test(email) && !(options.emailOptional && !email)) return { ok: false, error: 'Please enter a valid email.' };
   if (phone.length < PHONE_DIGITS_MIN) return { ok: false, error: 'Please enter a valid phone number.' };
+  if (!options.zipOptional && !/^\d{5}$/.test(zipCode)) return { ok: false, error: 'Please enter a valid 5-digit ZIP code.' };
 
   let availableQuantity = parseInt(availableQuantityRaw, 10);
   if (!Number.isFinite(availableQuantity)) availableQuantity = 0;
@@ -60,6 +64,7 @@ export function validateLeadPayload(body, opts) {
     lastName: names.lastName,
     email,
     phone,
+    zipCode,
     source,
     financingInterest,
     message: String(body.message || '').trim().slice(0, 2000),

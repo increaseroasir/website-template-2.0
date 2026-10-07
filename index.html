@@ -152,6 +152,7 @@
         <input type="hidden" name="full_name" value="">
         <input type="hidden" name="phone" value="">
         <input type="hidden" name="email" value="">
+        <input type="hidden" name="zip_code" value="">
 
         <div class="fstep on" data-step="1">
           <div class="field">
@@ -445,6 +446,7 @@
           <input type="hidden" name="campaign" value="{{HOME_CAMPAIGN|homepage}}">
           <input type="hidden" name="message" value="Requested local pricing guide from homepage">
           <input name="full_name" autocomplete="name" placeholder="First name" aria-label="First name" required>
+          <input name="zip_code" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="ZIP code" aria-label="ZIP code" required>
           <input name="phone" inputmode="tel" autocomplete="tel" placeholder="Mobile number" aria-label="Mobile number" required>
           <input name="email" type="email" autocomplete="email" placeholder="Email" aria-label="Email" required>
           <button class="btn btn-gold" type="submit">{{GUIDE_CTA_LABEL}}</button>

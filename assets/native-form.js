@@ -19,7 +19,7 @@
     }).join('');
   }
   function contactFields(prefix, showMessage) {
-    var html = '<label for="' + fieldId(prefix, 'full_name') + '">Full name</label><input type="text" id="' + fieldId(prefix, 'full_name') + '" name="full_name" autocomplete="name" required placeholder="Full name"><label for="' + fieldId(prefix, 'email') + '">Email</label><input type="email" id="' + fieldId(prefix, 'email') + '" name="email" autocomplete="email" required placeholder="you@email.com"><label for="' + fieldId(prefix, 'phone') + '">Phone</label><input type="tel" id="' + fieldId(prefix, 'phone') + '" name="phone" autocomplete="tel" required placeholder="Phone number">';
+    var html = '<label for="' + fieldId(prefix, 'full_name') + '">Full name</label><input type="text" id="' + fieldId(prefix, 'full_name') + '" name="full_name" autocomplete="name" required placeholder="Full name"><label for="' + fieldId(prefix, 'zip_code') + '">ZIP code</label><input type="text" id="' + fieldId(prefix, 'zip_code') + '" name="zip_code" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" required placeholder="ZIP code"><label for="' + fieldId(prefix, 'email') + '">Email</label><input type="email" id="' + fieldId(prefix, 'email') + '" name="email" autocomplete="email" required placeholder="you@email.com"><label for="' + fieldId(prefix, 'phone') + '">Phone</label><input type="tel" id="' + fieldId(prefix, 'phone') + '" name="phone" autocomplete="tel" required placeholder="Phone number">';
     if (showMessage) html += '<label for="' + fieldId(prefix, 'message') + '">How can we help?</label><textarea id="' + fieldId(prefix, 'message') + '" name="message" rows="4" placeholder="Tell us what you are looking for"></textarea>';
     return html;
   }
