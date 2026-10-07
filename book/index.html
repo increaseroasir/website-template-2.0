@@ -61,6 +61,7 @@
         <input type="hidden" name="campaign" value="{{BOOK_CAMPAIGN|booking}}">
         <input type="hidden" name="lead_source" value="booking-page">
         <input name="full_name" autocomplete="name" placeholder="Full name" required>
+        <input name="zip_code" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="ZIP code" required>
         <input name="phone" type="tel" autocomplete="tel" placeholder="Mobile phone" required>
         <input name="email" type="email" autocomplete="email" placeholder="Email (optional)">
         <button class="btn btn-gold" type="submit" data-book-submit>{{BOOK_CTA_LABEL|Lock In My Visit}}</button>

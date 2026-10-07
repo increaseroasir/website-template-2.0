@@ -33,7 +33,7 @@ function customFieldsForLead(lead, env) {
   /* Meta attribution fields — MUST exist as custom fields on the GHL location
      (snapshot) or resolveCustomFields silently drops them. Never store CAPI tokens. */
   const entries = [
-    ['financing_interest', lead.financingInterest], ['contact_message', lead.message], ['product_interest', lead.productName], ['product_slug', lead.productSlug], ['product_id', lead.productId], ['product_category', lead.productCategory], ['product_page_url', lead.productPageUrl], ['inventory_status', lead.inventoryStatus], ['available_quantity', typeof lead.availableQuantity === 'number' ? String(lead.availableQuantity) : ''], ['inventory_status_tag', lead.inventoryStatusTag], ['lead_source', lead.leadSource], ['campaign', lead.campaign], ['model_interest_tag', lead.modelInterestTag], ['form_intent', lead.formIntent], ['submission_timestamp', lead.timestamp], ['estimated_retail_price', lead.estimatedRetailPrice], ['our_price', lead.ourPrice], ['monthly_payment', lead.monthlyPayment], ['lead_source_page', lead.pageUrl], ['landing_page_url', lead.landingPageUrl], ['referrer_url', lead.referrerUrl], ['traffic_channel', lead.trafficChannel], ['utm_source', lead.utmSource], ['utm_medium', lead.utmMedium], ['utm_campaign', lead.utmCampaign], ['utm_content', lead.utmContent], ['utm_term', lead.utmTerm], ['fbclid', lead.fbclid], ['gclid', lead.gclid], ['msclkid', lead.msclkid],
+    ['zip_code', lead.zipCode], ['financing_interest', lead.financingInterest], ['contact_message', lead.message], ['product_interest', lead.productName], ['product_slug', lead.productSlug], ['product_id', lead.productId], ['product_category', lead.productCategory], ['product_page_url', lead.productPageUrl], ['inventory_status', lead.inventoryStatus], ['available_quantity', typeof lead.availableQuantity === 'number' ? String(lead.availableQuantity) : ''], ['inventory_status_tag', lead.inventoryStatusTag], ['lead_source', lead.leadSource], ['campaign', lead.campaign], ['model_interest_tag', lead.modelInterestTag], ['form_intent', lead.formIntent], ['submission_timestamp', lead.timestamp], ['estimated_retail_price', lead.estimatedRetailPrice], ['our_price', lead.ourPrice], ['monthly_payment', lead.monthlyPayment], ['lead_source_page', lead.pageUrl], ['landing_page_url', lead.landingPageUrl], ['referrer_url', lead.referrerUrl], ['traffic_channel', lead.trafficChannel], ['utm_source', lead.utmSource], ['utm_medium', lead.utmMedium], ['utm_campaign', lead.utmCampaign], ['utm_content', lead.utmContent], ['utm_term', lead.utmTerm], ['fbclid', lead.fbclid], ['gclid', lead.gclid], ['msclkid', lead.msclkid],
     ['fbp', lead.fbp],
     ['fbc', lead.fbc],
     ['meta_event_id', lead.metaEventId || lead.submissionId],
@@ -45,6 +45,8 @@ function customFieldsForLead(lead, env) {
 }
 function buildContactPayload(env, lead, locationId, forCreate) {
   const payload = { firstName: lead.firstName, lastName: lead.lastName || '.', email: lead.email, phone: '+1' + lead.phone, source: lead.leadSource || ((env.CLIENT_NAME || 'Dealer Website') + ' — ' + lead.source), tags: tagsForLead(env, lead) };
+  if (lead.zipCode) payload.postalCode = String(lead.zipCode);
+  /* Also mirror to custom field when location has zip_code / postal_code defined. */
   if (!payload.email) delete payload.email; // GHL rejects email:"" with "email must be an email" — omit instead (phone-first booking flow)
   if (forCreate) payload.locationId = locationId;
   payload.customFields = customFieldsForLead(lead, env);
@@ -67,16 +69,46 @@ async function resolveCustomFields(env, locationId, customFields) {
   fields.forEach(field => { byKey[normalizeKey(field.fieldKey || field.key || field.name)] = field.id; });
   return customFields.map(field => byKey[normalizeKey(field.key)] ? { id: byKey[normalizeKey(field.key)], field_value: field.field_value } : field);
 }
-async function searchContact(env, locationId, lead) {
-  const query = encodeURIComponent(lead.email || lead.phone || '');
-  if (!query) return null;
+function normEmail(email) { return String(email || '').trim().toLowerCase(); }
+function contactIdFrom(data, fallback) {
+  return (data && data.contact && data.contact.id) || (data && data.id) || (fallback && fallback.id) || '';
+}
+async function searchDuplicate(env, locationId, query) {
   const params = new URLSearchParams({ locationId });
-  if (lead.email) params.set('email', lead.email); // omit when empty — phone-only dedupe still works
-  if (lead.phone) params.set('number', '+1' + lead.phone);
+  if (query.email) params.set('email', query.email);
+  if (query.number) params.set('number', query.number);
+  if (!query.email && !query.number) return null;
   const res = await fetch(GHL_BASE + '/contacts/search/duplicate?' + params.toString(), { headers: ghlHeaders(env.GHL_API_TOKEN) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) return null;
   return data.contact || (data.contacts && data.contacts[0]) || null;
+}
+/* Email-primary: never treat a phone-only hit as the same person when that
+   contact already has a different email (shared household phone was merging
+   unrelated people onto one GHL record). */
+async function searchContact(env, locationId, lead) {
+  if (lead.email) {
+    const byEmail = await searchDuplicate(env, locationId, { email: lead.email });
+    if (byEmail) return byEmail;
+  }
+  if (lead.phone) {
+    const byPhone = await searchDuplicate(env, locationId, { number: '+1' + lead.phone });
+    if (!byPhone) return null;
+    const existingEmail = normEmail(byPhone.email);
+    if (!existingEmail || existingEmail === normEmail(lead.email)) return byPhone;
+    return null;
+  }
+  return null;
+}
+async function createContact(env, payload) {
+  const upsertPayload = Object.assign({}, payload, { createNewIfDuplicateAllowed: true });
+  const upsertRes = await fetch(GHL_BASE + '/contacts/upsert', { method: 'POST', headers: ghlHeaders(env.GHL_API_TOKEN), body: JSON.stringify(upsertPayload) });
+  const upsertData = await upsertRes.json().catch(() => ({}));
+  if (upsertRes.ok) return { ok: true, contactId: contactIdFrom(upsertData) };
+  const createRes = await fetch(GHL_BASE + '/contacts/', { method: 'POST', headers: ghlHeaders(env.GHL_API_TOKEN), body: JSON.stringify(payload) });
+  const createData = await createRes.json().catch(() => ({}));
+  if (!createRes.ok) return { ok: false, status: createRes.status, error: createData.message || createData.error || upsertData.message || upsertData.error || 'GHL request failed' };
+  return { ok: true, contactId: contactIdFrom(createData) };
 }
 /* Trimmed truthiness, so this agrees with ghlConfigError below: a
    whitespace-only secret previously read as configured and produced a 401. */
@@ -109,12 +141,13 @@ export async function upsertContact(env, lead) {
     const existing = await searchContact(env, locationId, lead);
     const payload = buildContactPayload(env, lead, locationId, !existing);
     payload.customFields = await resolveCustomFields(env, locationId, payload.customFields || []);
-    const endpoint = existing && existing.id ? GHL_BASE + '/contacts/' + existing.id : GHL_BASE + '/contacts/';
-    const method = existing && existing.id ? 'PUT' : 'POST';
-    if (method === 'PUT') delete payload.locationId;
-    const res = await fetch(endpoint, { method, headers: ghlHeaders(env.GHL_API_TOKEN), body: JSON.stringify(payload) });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) return { ok: false, status: res.status, error: data.message || data.error || 'GHL request failed' };
-    return { ok: true, contactId: (data.contact && data.contact.id) || data.id || (existing && existing.id) || '' };
+    if (existing && existing.id) {
+      delete payload.locationId;
+      const res = await fetch(GHL_BASE + '/contacts/' + existing.id, { method: 'PUT', headers: ghlHeaders(env.GHL_API_TOKEN), body: JSON.stringify(payload) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return { ok: false, status: res.status, error: data.message || data.error || 'GHL request failed' };
+      return { ok: true, contactId: contactIdFrom(data, existing) };
+    }
+    return await createContact(env, payload);
   } catch (err) { return { ok: false, error: err.message || String(err) }; }
 }
